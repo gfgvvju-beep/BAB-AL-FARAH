@@ -19,16 +19,24 @@ input,select,textarea{border:1px solid #ddd2bf;background:white;color:#493b2b}
 input[type=checkbox]{width:auto}
 textarea{resize:vertical;min-height:85px}
 button{border:0;background:#aa8950;color:white;cursor:pointer;font-weight:bold}
-button:disabled{opacity:.5}
+button:disabled{opacity:.5;cursor:not-allowed}
 .secondary{background:#6d6253}
 .hidden{display:none!important}
 .help{font-size:12px;color:#81715d;line-height:1.8}
 .door-panel{margin:15px 0;padding:14px;border:1px solid #e5d6b7;border-radius:14px;background:#fbf7ef}
+.door-panel summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;background:linear-gradient(135deg,#fffdf8,#f1e4c9);border:1px solid #e5d6b7;border-radius:11px;color:#8d703e;font-weight:bold;user-select:none}
+.door-panel summary::-webkit-details-marker{display:none}
+.door-panel summary::after{content:"＋";font-size:20px;flex-shrink:0}
+.door-panel[open] summary{border-radius:11px 11px 0 0}
+.door-panel[open] summary::after{content:"−"}
+.door-content{padding-top:12px}
 .door-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.door-option{margin:0;background:white;color:#493b2b;border:1px solid #ded0b7;font-size:13px;line-height:1.7}
+.door-option{margin:0;background:white;color:#493b2b;border:1px solid #ded0b7;font-size:13px;line-height:1.7;transition:background .2s,border-color .2s}
+.door-option:hover{background:#f8f0df;border-color:#aa8950}
 .door-option.selected{border:2px solid #aa8950;background:#f5ecd9;color:#755821}
 .number{display:block;font-size:22px;color:#aa8950;font-weight:bold}
-.door-description{font-size:13px;line-height:1.8;color:#746550}
+.door-description{font-size:13px;line-height:1.8;color:#746550;background:#fffdf8;border-radius:8px;padding:9px;margin:10px 0 0}
+.selected-door{font-size:12px;color:#746550;font-weight:normal}
 .item{padding:15px;border:1px solid #e6ddcf;border-radius:12px;margin-top:12px;background:white;line-height:1.9;overflow-wrap:anywhere}
 .item strong{color:#8d703e}
 .item a{display:block;color:#8d703e;overflow-wrap:anywhere}
@@ -87,7 +95,9 @@ button:disabled{opacity:.5}
 <label for="notes">ملاحظات إضافية</label>
 <textarea id="notes" placeholder="اكتب أي ملاحظات تريد إضافتها للدعوة"></textarea>
 
-<div class="door-panel">
+<details class="door-panel">
+<summary>🔊 إعدادات صوت فتح الباب</summary>
+<div class="door-content">
 <label for="audioType">اختيار الصوت عند فتح الباب</label>
 <select id="audioType">
 <option value="none">🔇 بدون صوت</option>
@@ -96,29 +106,35 @@ button:disabled{opacity:.5}
 </select>
 <p class="help">قد يحتاج تشغيل الصوت إلى تفاعل الزائر مع الصفحة.</p>
 </div>
+</details>
 
-<div class="door-panel">
-<label>اختيار تصميم الباب</label>
+<details class="door-panel" id="doorPicker">
+<summary>
+<span>🚪 اختيار تصميم الباب</span>
+<span class="selected-door" id="selectedDoorLabel">المحدد: الملكي الذهبي</span>
+</summary>
+<div class="door-content">
 <input id="template" type="hidden" value="1">
 <div class="door-grid">
-<button type="button" class="door-option selected" data-id="1"><span class="number">01</span>الملكي الذهبي</button>
-<button type="button" class="door-option" data-id="2"><span class="number">02</span>الأبيض الملكي</button>
-<button type="button" class="door-option" data-id="3"><span class="number">03</span>التراثي الشرقي</button>
-<button type="button" class="door-option" data-id="4"><span class="number">04</span>الزجاجي الحديث</button>
-<button type="button" class="door-option" data-id="5"><span class="number">05</span>الأخضر الملكي</button>
-<button type="button" class="door-option" data-id="6"><span class="number">06</span>الوردي الرومانسي</button>
-<button type="button" class="door-option" data-id="7"><span class="number">07</span>الأزرق الليلي</button>
-<button type="button" class="door-option" data-id="8"><span class="number">08</span>الرخام الفخم</button>
-<button type="button" class="door-option" data-id="9"><span class="number">09</span>القالب التاسع</button>
-<button type="button" class="door-option" data-id="10"><span class="number">10</span>القالب العاشر</button>
-<button type="button" class="door-option" data-id="11"><span class="number">11</span>القالب الحادي عشر</button>
-<button type="button" class="door-option" data-id="12"><span class="number">12</span>القالب الثاني عشر</button>
-<button type="button" class="door-option" data-id="13"><span class="number">13</span>القالب الثالث عشر</button>
-<button type="button" class="door-option" data-id="14"><span class="number">14</span>القالب الرابع عشر</button>
+<button type="button" class="door-option selected" data-id="1" aria-pressed="true"><span class="number">01</span>الملكي الذهبي</button>
+<button type="button" class="door-option" data-id="2" aria-pressed="false"><span class="number">02</span>الأبيض الملكي</button>
+<button type="button" class="door-option" data-id="3" aria-pressed="false"><span class="number">03</span>التراثي الشرقي</button>
+<button type="button" class="door-option" data-id="4" aria-pressed="false"><span class="number">04</span>الزجاجي الحديث</button>
+<button type="button" class="door-option" data-id="5" aria-pressed="false"><span class="number">05</span>الأخضر الملكي</button>
+<button type="button" class="door-option" data-id="6" aria-pressed="false"><span class="number">06</span>الوردي الرومانسي</button>
+<button type="button" class="door-option" data-id="7" aria-pressed="false"><span class="number">07</span>الأزرق الليلي</button>
+<button type="button" class="door-option" data-id="8" aria-pressed="false"><span class="number">08</span>الرخام الفخم</button>
+<button type="button" class="door-option" data-id="9" aria-pressed="false"><span class="number">09</span>القالب التاسع</button>
+<button type="button" class="door-option" data-id="10" aria-pressed="false"><span class="number">10</span>القالب العاشر</button>
+<button type="button" class="door-option" data-id="11" aria-pressed="false"><span class="number">11</span>القالب الحادي عشر</button>
+<button type="button" class="door-option" data-id="12" aria-pressed="false"><span class="number">12</span>القالب الثاني عشر</button>
+<button type="button" class="door-option" data-id="13" aria-pressed="false"><span class="number">13</span>القالب الثالث عشر</button>
+<button type="button" class="door-option" data-id="14" aria-pressed="false"><span class="number">14</span>القالب الرابع عشر</button>
 </div>
 <p id="doorDescription" class="door-description"></p>
-<p class="help">القوالب 9–14 مضافة للاختيار والحفظ. يجب إضافة تصاميمها إلى صفحة الدعوة حتى تظهر بتصاميم مختلفة.</p>
+<p class="help">اختَر الباب المناسب؛ سيُحفظ اختيارك مع الدعوة. يجب توفر تصميم القالب في صفحة الدعوة حتى يظهر بشكل مختلف.</p>
 </div>
+</details>
 
 <label><input id="published" type="checkbox"> نشر الدعوة لتكون متاحة عبر رابطها</label>
 <button type="submit" id="saveBtn">حفظ الدعوة</button>
@@ -169,12 +185,12 @@ const doorDescriptions={
 6:"وردي لؤلؤي رومانسي.",
 7:"أزرق ليلي بزخارف فضية.",
 8:"رخام عاجي بخطوط برونزية.",
-9:"قالب جديد — التصميم يضاف لاحقاً.",
-10:"قالب جديد — التصميم يضاف لاحقاً.",
-11:"قالب جديد — التصميم يضاف لاحقاً.",
-12:"قالب جديد — التصميم يضاف لاحقاً.",
-13:"قالب جديد — التصميم يضاف لاحقاً.",
-14:"قالب جديد — التصميم يضاف لاحقاً."
+9:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
+10:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
+11:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
+12:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
+13:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
+14:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة."
 };
 
 const audioNames={
@@ -198,20 +214,26 @@ function newUniqueSlug(){
 $("slug").value=makeSlug();
 }
 
-function selectDoor(id){
+function selectDoor(id,closePicker=false){
 id=Number(id);
 if(!doorNames[id])id=1;
 $("template").value=String(id);
 $("doorDescription").textContent="الباب "+id+" — "+doorNames[id]+": "+doorDescriptions[id];
+$("selectedDoorLabel").textContent="المحدد: "+doorNames[id];
+
 document.querySelectorAll(".door-option").forEach(button=>{
 const selected=Number(button.dataset.id)===id;
 button.classList.toggle("selected",selected);
 button.setAttribute("aria-pressed",String(selected));
 });
+
+if(closePicker){
+$("doorPicker").open=false;
+}
 }
 
 document.querySelectorAll(".door-option").forEach(button=>{
-button.addEventListener("click",()=>selectDoor(button.dataset.id));
+button.addEventListener("click",()=>selectDoor(button.dataset.id,true));
 });
 
 function showSession(session){
@@ -336,6 +358,7 @@ $("notes").value=item.notes||"";
 $("audioType").value=item.audio_type||"none";
 $("published").checked=!!item.is_published;
 selectDoor(item.template_id||1);
+$("doorPicker").open=false;
 status("عدّل البيانات ثم اضغط حفظ الدعوة. رابط الدعوة سيبقى نفسه.");
 window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -406,6 +429,7 @@ editingId=null;
 $("formTitle").textContent="إضافة دعوة جديدة";
 newUniqueSlug();
 selectDoor(1);
+$("doorPicker").open=false;
 $("audioType").value="none";
 $("notes").value="";
 }
