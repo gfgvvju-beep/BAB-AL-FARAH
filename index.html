@@ -175,14 +175,43 @@ let knockTimer=null;
 let doorVideoActive=false;
 let doorVideoReady=false;
 
+function stopAllAudio(){
+ const audio=$("invitationAudio");
+
+ if(audio){
+  audio.pause();
+  try{audio.currentTime=0}catch(e){}
+ }
+
+ const button=$("audioControl");
+ if(button){
+  button.textContent="🔊 تشغيل الصوت";
+ }
+}
+
+document.addEventListener("visibilitychange",()=>{
+ if(document.hidden){
+  stopAllAudio();
+ }
+});
+
+window.addEventListener("pagehide",()=>{
+ stopAllAudio();
+ stopDoorVideo();
+});
+
+window.addEventListener("beforeunload",()=>{
+ stopAllAudio();
+ stopDoorVideo();
+});
+
 function isVideoUrl(value){
  try{
   const u=new URL(String(value||""));
   return /\.mp4$/i.test(u.pathname);
  }catch(e){
   return false;
-}
-
+ }
 }
 
 function clearDoorImage(){
@@ -499,6 +528,7 @@ function showExpiredInvitation(){
  $("invite").style.display="none";
 
  stopDoorVideo();
+ stopAllAudio();
  configureAudio("none","");
 }
 
@@ -814,7 +844,6 @@ function handleKnock(){
   $("start").textContent="الباب ينفتح...";
   $("hint").textContent="أهلاً وسهلاً بكم ❤️";
 
-  // يبدأ الصوت مع الدقّة الثالثة، بالتزامن مع فيديو الباب.
   playInvitationAudio();
 
   if(isVideoUrl(selectedDoorImageUrl)){
