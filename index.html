@@ -36,28 +36,65 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 
 .invite{
  display:none;
- padding:24px 20px 35px;
+ position:relative;
+ isolation:isolate;
+ overflow:hidden;
+ padding:35px 23px 38px;
  max-width:600px;
  width:calc(100% - 24px);
- margin:20px auto;
+ margin:24px auto;
  color:var(--design-text,#574632);
  background:var(--design-bg,#fffaf0);
- border:3px solid var(--design-border,#ddc58f);
+ border:5px double var(--design-border,#ddc58f);
  border-radius:24px;
- box-shadow:0 12px 35px #0000000d;
+ box-shadow:0 12px 35px #00000012,inset 0 0 0 5px #ffffff66;
  transition:background .35s,color .35s,border-color .35s;
 }
 .invite.show{display:block;animation:rise 1.3s ease}
 @keyframes rise{from{opacity:0;transform:translateY(45px)}to{opacity:1;transform:translateY(0)}}
 
-.bismillah{color:var(--design-accent,#a27b3f);font-size:22px;margin:10px}
-.verse{margin:24px auto;padding:20px 16px;line-height:2.2;border-top:1px solid var(--design-border,#ddc58f);border-bottom:1px solid var(--design-border,#ddc58f);color:var(--design-text,#70562d);font-size:21px}
+/* زخارف نباتية ووردية فخمة */
+.invite:before,.invite:after{
+ position:absolute;
+ z-index:-1;
+ pointer-events:none;
+ color:var(--design-accent,#a27b3f);
+ opacity:.2;
+ font-family:Georgia,"Times New Roman",serif;
+ line-height:1;
+ white-space:pre;
+}
+.invite:before{
+ content:"❦\A❀  ✿";
+ top:7px;
+ right:8px;
+ font-size:clamp(38px,10vw,66px);
+ text-align:right;
+}
+.invite:after{
+ content:"✿  ❀\A❦";
+ bottom:7px;
+ left:8px;
+ font-size:clamp(38px,10vw,66px);
+ text-align:left;
+}
+.invite .bismillah:before,.invite .bismillah:after{
+ content:"  ❀  ";
+ color:var(--design-accent,#a27b3f);
+ font-size:23px;
+}
+.bismillah{color:var(--design-accent,#a27b3f);font-size:22px;margin:12px 0 18px}
+.verse{margin:24px auto;padding:22px 16px;line-height:2.2;border-top:2px solid var(--design-border,#ddc58f);border-bottom:2px solid var(--design-border,#ddc58f);color:var(--design-text,#70562d);font-size:21px;position:relative}
+.verse:before,.verse:after{content:"✿";display:block;color:var(--design-accent,#a27b3f);font-size:22px;margin:3px}
 .ref{font-size:15px;color:var(--design-accent,#96846a)}
-.title{color:var(--design-accent,#b18b49);font-size:30px;margin:22px 0}
-.names{font-size:34px;color:var(--design-accent,#8d6833);line-height:1.8}
-.heart{color:var(--heart-color,#c58b93);font-size:28px}
+.title{color:var(--design-accent,#b18b49);font-size:30px;margin:22px 0;padding:13px 0;border-top:1px solid var(--design-border,#ddc58f);border-bottom:1px solid var(--design-border,#ddc58f)}
+.names{font-size:34px;color:var(--design-accent,#8d6833);line-height:1.8;padding:10px 0}
+.names:before,.names:after{display:block;color:var(--design-accent,#a27b3f);font-size:22px;line-height:1.4}
+.names:before{content:"❀  ❦  ✿"}
+.names:after{content:"✿  ❦  ❀"}
+.heart{color:var(--heart-color,#c58b93);font-size:28px;text-shadow:0 0 12px #d99aaa44}
 
-.details{margin:24px auto;padding:20px 15px;max-width:420px;background:var(--design-card,#fffaf0);border:1px solid var(--design-border,#ead9b4);border-radius:15px;line-height:2.4;font-size:19px}
+.details{margin:24px auto;padding:20px 15px;max-width:420px;background:var(--design-card,#fffaf0);border:3px double var(--design-border,#ead9b4);border-radius:15px;line-height:2.4;font-size:19px}
 .detail{border-bottom:1px solid var(--design-border,#eee3ce);padding:5px}
 .detail:last-child{border:0}
 
@@ -67,23 +104,24 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .map-button:hover{transform:translateY(-2px)}
 .map-note{font-size:13px;color:var(--design-text,#897a69);margin-top:8px}
 
-.notes-box{display:none;margin:18px auto;padding:18px 16px;max-width:420px;text-align:right;background:var(--design-card,#fffaf0);border:1px solid var(--design-border,#ddc58f);border-radius:15px;box-shadow:0 5px 18px #8e713510;line-height:2}
+.notes-box{display:none;margin:18px auto;padding:18px 16px;max-width:420px;text-align:right;background:var(--design-card,#fffaf0);border:3px double var(--design-border,#ddc58f);border-radius:15px;box-shadow:0 5px 18px #8e713510;line-height:2}
 .notes-title{color:var(--design-accent,#98733c);font-weight:bold;font-size:19px;margin-bottom:7px}
 .notes-text{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--design-text,#574632);font-size:17px}
 
-.groom-contact{margin:18px auto;padding:16px 14px;max-width:420px;border:1px solid var(--design-border,#e5d3ae);border-radius:14px;background:var(--design-card,#fffaf0);line-height:2}
+.groom-contact{margin:18px auto;padding:16px 14px;max-width:420px;border:3px double var(--design-border,#e5d3ae);border-radius:14px;background:var(--design-card,#fffaf0);line-height:2}
 .groom-contact[hidden]{display:none}
 .groom-contact-title{color:var(--design-accent,#98733c);font-weight:bold;font-size:19px}
 .groom-phone{display:block;font-size:23px;font-weight:bold;color:var(--design-accent,#80602e);direction:ltr;margin:8px 0;text-decoration:none}
 .groom-call{display:inline-block;background:var(--design-accent,#aa8950);color:#fff;padding:9px 20px;border-radius:24px;text-decoration:none}
 
 .footer{color:var(--design-accent,#a08049);margin:25px 0;font-size:19px}
+.footer:before,.footer:after{content:"  ❀  ";opacity:.8}
 .share-area{margin:20px auto;padding:0 10px}
 .whatsapp-share{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;padding:14px 23px;border-radius:30px;text-decoration:none;font-weight:bold;font-size:18px;box-shadow:0 5px 16px #25d36640;transition:transform .2s}
 .whatsapp-share:hover{transform:translateY(-2px)}
 .share-note{font-size:14px;color:var(--design-text,#897a69);margin-top:10px}
 
-.contact{margin:20px auto 0;padding:22px 16px;max-width:440px;border:1px solid var(--design-border,#ddc58f);border-radius:16px;background:var(--design-card,#fffaf0);line-height:2}
+.contact{margin:20px auto 0;padding:22px 16px;max-width:440px;border:3px double var(--design-border,#ddc58f);border-radius:16px;background:var(--design-card,#fffaf0);line-height:2}
 .contact-brand{font-size:22px;font-weight:bold;color:var(--design-accent,#ad8748)}
 .contact-number{font-size:25px;font-weight:bold;letter-spacing:1px;color:var(--design-accent,#80602e);direction:ltr;display:block;margin:10px 0;text-decoration:none}
 .contact-buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
@@ -98,10 +136,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .petal{position:fixed;top:-30px;z-index:10;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(var(--drift)) rotate(720deg);opacity:0}}
 
-/* ===========================
-   تصاميم الأبواب 1 إلى 14
-   =========================== */
-
+/* تصاميم الأبواب 1 إلى 14 */
 .arch.template-1{--wood:repeating-linear-gradient(90deg,#211b18 0 25px,#342820 26px 29px,#171310 30px 50px);--gold:#d8b05b;--gold-shadow:#9c702b;background:#191512;border-color:#e2c477}
 .arch.template-2{--wood:linear-gradient(90deg,#e9dfcb,#fffaf0 48%,#ded0b7);--gold:#c8a45e;--gold-shadow:#9f8046;background:#fff9ec;border-color:#ddc48b}
 .arch.template-2 .leaf{box-shadow:inset 0 0 20px #9b825033}
@@ -137,10 +172,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .arch.template-14 .leaf:before{inset:17px 10px;border-radius:85px 85px 4px 4px;border:4px double var(--gold)}
 .arch.template-14 .leaf:after{background:repeating-linear-gradient(45deg,transparent 0 13px,#f0cf771c 14px 16px),repeating-linear-gradient(-45deg,transparent 0 13px,#f0cf771c 14px 16px)}
 
-/* ===========================
-   تصاميم الدعوات نفسها 1 إلى 14
-   =========================== */
-
+/* تصاميم الدعوات 1 إلى 14 */
 .invite.design-1{--design-bg:#fffaf0;--design-card:#fffdf8;--design-text:#493522;--design-accent:#a27b3f;--design-border:#d9bd7c;--heart-color:#c58b93}
 .invite.design-2{--design-bg:#fff;--design-card:#f8f8f5;--design-text:#555b62;--design-accent:#8b929b;--design-border:#d6d9dc;--heart-color:#aab4bf}
 .invite.design-3{--design-bg:#f8eee4;--design-card:#fff8ef;--design-text:#563321;--design-accent:#874b2b;--design-border:#c69a69;--heart-color:#a95d45}
@@ -156,10 +188,9 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .invite.design-13{--design-bg:#fff0f5;--design-card:#fff9fb;--design-text:#78465b;--design-accent:#bf7595;--design-border:#edc5d5;--heart-color:#dc78a1}
 .invite.design-14{--design-bg:#eaf4ed;--design-card:#f7fcf8;--design-text:#204b3b;--design-accent:#187052;--design-border:#d6b765;--heart-color:#3d9b77}
 
-/* زخارف إضافية لبعض التصاميم */
-.invite.design-3,.invite.design-5,.invite.design-7,.invite.design-9,.invite.design-11,.invite.design-12,.invite.design-14{border-width:4px;box-shadow:0 10px 28px #00000012}
+.invite.design-3,.invite.design-5,.invite.design-7,.invite.design-9,.invite.design-11,.invite.design-12,.invite.design-14{box-shadow:0 10px 28px #00000012,inset 0 0 0 5px #ffffff55}
 .invite.design-6,.invite.design-9,.invite.design-13{border-radius:32px 32px 18px 18px}
-.invite.design-3 .verse,.invite.design-5 .verse,.invite.design-7 .verse,.invite.design-9 .verse,.invite.design-12 .verse,.invite.design-14 .verse{border-top-width:2px;border-bottom-width:2px}
+.invite.design-3 .verse,.invite.design-5 .verse,.invite.design-7 .verse,.invite.design-9 .verse,.invite.design-12 .verse,.invite.design-14 .verse{border-top-width:3px;border-bottom-width:3px}
 
 @media(max-width:400px){
  .frame{height:370px}
@@ -168,7 +199,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
  .whatsapp-share{font-size:15px;padding:13px 18px}
  #start{font-size:21px;padding:15px 22px}
  .map-button{font-size:16px}
- .invite{padding:20px 13px 30px}
+ .invite{padding:29px 13px 32px}
  .names{font-size:30px}
  .verse{font-size:18px}
 }
@@ -293,11 +324,9 @@ function formatDate(value){
  return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
-/* تطبيق تصميم الباب والدعوة معاً */
 function applyTemplate(value){
  const n=Number(value);
  const valid=Number.isInteger(n)&&n>=1&&n<=14?n:1;
-
  const arch=$("arch");
  const invite=$("invite");
 
@@ -329,13 +358,11 @@ function showMapLink(value){
 
  try{
   const url=new URL(raw);
-
   if(url.protocol!=="https:"&&url.protocol!=="http:"){
    section.hidden=true;
    button.removeAttribute("href");
    return;
   }
-
   button.href=url.href;
   section.hidden=false;
  }catch(error){
@@ -357,7 +384,6 @@ function showGroomContact(value){
  }
 
  const tel=phone.replace(/[^\d+]/g,"");
-
  if(!tel){
   section.hidden=true;
   return;
@@ -370,8 +396,6 @@ function showGroomContact(value){
 }
 
 function setupWhatsAppShare(){
- const button=$("whatsappShare");
-
  const message=
   "💍❤️ دعوة زفاف "+
   $("groom").textContent.trim()+
@@ -380,7 +404,7 @@ function setupWhatsAppShare(){
   "افتحوا دعوتنا الإلكترونية من الرابط التالي:\n"+
   window.location.href;
 
- button.href="https://wa.me/?text="+encodeURIComponent(message);
+ $("whatsappShare").href="https://wa.me/?text="+encodeURIComponent(message);
 }
 
 function configureAudio(type,url){
@@ -400,7 +424,6 @@ function configureAudio(type,url){
  }
 
  let source="";
-
  if(selectedAudioType==="quran"){
   source=selectedAudioUrl||QURAN_URL;
  }else if(selectedAudioType==="song"){
@@ -416,12 +439,9 @@ function configureAudio(type,url){
 
 async function playInvitationAudio(){
  if(selectedAudioType==="none")return;
-
  const audio=$("invitationAudio");
 
- if(!audio.src){
-  configureAudio(selectedAudioType,selectedAudioUrl);
- }
+ if(!audio.src)configureAudio(selectedAudioType,selectedAudioUrl);
 
  try{
   await audio.play();
@@ -434,7 +454,6 @@ async function playInvitationAudio(){
 
 $("audioControl").addEventListener("click",async()=>{
  const audio=$("invitationAudio");
-
  if(audio.paused){
   await playInvitationAudio();
  }else{
@@ -446,7 +465,6 @@ $("audioControl").addEventListener("click",async()=>{
 $("invitationAudio").addEventListener("play",()=>{
  $("audioControl").textContent="🔇 إيقاف الصوت";
 });
-
 $("invitationAudio").addEventListener("pause",()=>{
  $("audioControl").textContent="🔊 تشغيل الصوت";
 });
@@ -458,7 +476,6 @@ async function loadInvitation(){
   for(const key of ["groom","bride","date","time","place"]){
    showField(key,params.get(key),defaults[key]);
   }
-
   showNotes(params.get("notes")||"");
   showMapLink(params.get("map_url")||"");
   showGroomContact(params.get("contact_phone")||params.get("phone"));
@@ -471,13 +488,8 @@ async function loadInvitation(){
  $("hint").textContent="جارٍ تحميل تفاصيل الدعوة...";
 
  try{
-  const {data,error}=await db.rpc(
-   "get_invitation_by_slug",
-   {p_slug:slug}
-  );
-
+  const {data,error}=await db.rpc("get_invitation_by_slug",{p_slug:slug});
   if(error)throw error;
-
   const item=Array.isArray(data)?data[0]:data;
 
   if(!item){
@@ -491,20 +503,16 @@ async function loadInvitation(){
   showField("date",formatDate(item.wedding_date),defaults.date);
   showField("time",item.wedding_time,defaults.time);
   showField("place",item.venue_name,defaults.place);
-
   showNotes(item.notes);
   showMapLink(item.map_url);
   showGroomContact(item.contact_phone);
   applyTemplate(item.template_id);
   configureAudio(item.audio_type||"song",item.audio_url||"");
 
-  if(item.day_name){
-   $("date").textContent+=" — "+item.day_name;
-  }
+  if(item.day_name)$("date").textContent+=" — "+item.day_name;
 
   setupWhatsAppShare();
   $("hint").textContent="انتظر 3 دقات حتى تُفتح الدعوة";
-
  }catch(error){
   console.error("Invitation loading error:",error);
   $("hint").textContent="تعذر تحميل معلومات الدعوة. تحقق من إعدادات الاتصال.";
@@ -515,7 +523,6 @@ async function loadInvitation(){
 
 $("copyPhone").addEventListener("click",async()=>{
  const phone="07867430232";
-
  try{
   if(navigator.clipboard&&window.isSecureContext){
    await navigator.clipboard.writeText(phone);
@@ -526,37 +533,29 @@ $("copyPhone").addEventListener("click",async()=>{
    field.style.opacity="0";
    document.body.appendChild(field);
    field.select();
-
    const copied=document.execCommand("copy");
    field.remove();
-
    if(!copied)throw new Error("copy failed");
   }
-
   $("copyStatus").textContent="تم نسخ رقم التواصل ✓";
-
  }catch(error){
   $("copyStatus").textContent="رقم التواصل: 07867430232";
  }
 });
 
 function petals(){
- const symbols=["🌸","🌹","✿","❀"];
-
+ const symbols=["🌸","🌹","✿","❀","🌺","💮"];
  for(let i=0;i<55;i++){
   setTimeout(()=>{
    const p=document.createElement("span");
-
    p.className="petal";
    p.textContent=symbols[Math.floor(Math.random()*symbols.length)];
    p.style.left=Math.random()*100+"vw";
    p.style.fontSize=(14+Math.random()*15)+"px";
    p.style.setProperty("--drift",(Math.random()*180-90)+"px");
    p.style.animationDuration=(4+Math.random()*5)+"s";
-
    document.body.appendChild(p);
    setTimeout(()=>p.remove(),10000);
-
   },i*65);
  }
 }
@@ -565,25 +564,19 @@ function knockSound(){
  try{
   const AudioContext=window.AudioContext||window.webkitAudioContext;
   if(!AudioContext)return;
-
   const ctx=new AudioContext();
   const osc=ctx.createOscillator();
   const gain=ctx.createGain();
-
   osc.type="sine";
   osc.frequency.setValueAtTime(100,ctx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(45,ctx.currentTime+.12);
-
   gain.gain.setValueAtTime(.35,ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.14);
-
   osc.connect(gain);
   gain.connect(ctx.destination);
-
   osc.start();
   osc.stop(ctx.currentTime+.15);
   osc.onended=()=>ctx.close();
-
  }catch(e){}
 }
 
@@ -594,17 +587,14 @@ const invite=$("invite");
 start.addEventListener("click",()=>{
  start.disabled=true;
  hint.textContent="طَق... طَق... طَق...";
-
  const arch=$("arch");
  let count=0;
 
  function nextKnock(){
   count++;
-
   arch.classList.remove("knock");
   void arch.offsetWidth;
   arch.classList.add("knock");
-
   knockSound();
 
   if(count<3){
@@ -613,22 +603,14 @@ start.addEventListener("click",()=>{
    setTimeout(()=>{
     arch.classList.remove("knock");
     arch.classList.add("open");
-
     petals();
-
     hint.textContent="تم فتح الدعوة ♥";
     invite.classList.add("show");
-
     playInvitationAudio();
-
-    setTimeout(()=>{
-     invite.scrollIntoView({behavior:"smooth",block:"start"});
-    },500);
-
+    setTimeout(()=>invite.scrollIntoView({behavior:"smooth",block:"start"}),500);
    },650);
   }
  }
-
  nextKnock();
 });
 
