@@ -31,7 +31,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .door-panel[open] summary::after{content:"−"}
 .door-content{padding-top:12px}
 .door-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.door-option{margin:0;background:white;color:#493b2b;border:1px solid #ded0b7;font-size:13px;line-height:1.7;transition:background .2s,border-color .2s}
+.door-option{margin:0;background:white;color:#493b2b;border:1px solid #ded0b7;font-size:13px;line-height:1.7}
 .door-option:hover{background:#f8f0df;border-color:#aa8950}
 .door-option.selected{border:2px solid #aa8950;background:#f5ecd9;color:#755821}
 .number{display:block;font-size:22px;color:#aa8950;font-weight:bold}
@@ -47,8 +47,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #status{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
 .inline-check{display:flex;align-items:center;gap:8px}
 .inline-check label{display:inline;margin:0}
-.grid-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}.door-grid{grid-template-columns:1fr}.grid-two{grid-template-columns:1fr}}
+@media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}.door-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -66,10 +65,11 @@ button:disabled{opacity:.5;cursor:not-allowed}
 </section>
 
 <section id="panel" class="hidden">
+
 <details class="door-panel" id="bookingsPanel">
 <summary>📒 إدارة الحجوزات</summary>
 <div class="door-content">
-<p class="help">سجّل حجوزات الزبائن وتابع حالة كل حجز. هذه الحجوزات منفصلة عن دعوات الزفاف المنشورة.</p>
+<p class="help">إدارة حجوزات الزبائن.</p>
 <form id="bookingForm">
 <input id="bookingId" type="hidden">
 <label for="customerName">اسم الزبون</label>
@@ -115,7 +115,6 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <input id="date" type="date">
 <label for="expiresAt">تاريخ انتهاء صلاحية الدعوة</label>
 <input id="expiresAt" type="date">
-<p class="help">بعد هذا التاريخ لن تعمل الدعوة المنشورة. اتركه فارغاً إذا تريد الرابط بلا تاريخ انتهاء.</p>
 <label for="day">يوم الحفل</label>
 <input id="day" placeholder="مثال: الخميس">
 <label for="time">وقت الحفل</label>
@@ -127,18 +126,17 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <label for="phone">رقم التواصل</label>
 <input id="phone" type="tel" placeholder="رقم الهاتف">
 <label for="notes">ملاحظات إضافية</label>
-<textarea id="notes" placeholder="اكتب أي ملاحظات تريد إضافتها للدعوة"></textarea>
+<textarea id="notes" placeholder="اكتب الملاحظات"></textarea>
 
 <details class="door-panel">
 <summary>🔊 إعدادات صوت فتح الباب</summary>
 <div class="door-content">
-<label for="audioType">اختيار الصوت عند فتح الباب</label>
+<label for="audioType">اختيار الصوت</label>
 <select id="audioType">
 <option value="none">🔇 بدون صوت</option>
 <option value="song">🎵 أغنية زفاف رومانسية</option>
 <option value="quran">📖 القرآن الكريم — سورة الروم، الآية 21</option>
 </select>
-<p class="help">قد يحتاج تشغيل الصوت إلى تفاعل الزائر مع الصفحة.</p>
 </div>
 </details>
 
@@ -150,34 +148,38 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <div class="door-content">
 <input id="template" type="hidden" value="1">
 <div class="door-grid">
-<button type="button" class="door-option selected" data-id="1" aria-pressed="true"><span class="number">01</span>الملكي الذهبي</button>
-<button type="button" class="door-option" data-id="2" aria-pressed="false"><span class="number">02</span>الأبيض الملكي</button>
-<button type="button" class="door-option" data-id="3" aria-pressed="false"><span class="number">03</span>التراثي الشرقي</button>
-<button type="button" class="door-option" data-id="4" aria-pressed="false"><span class="number">04</span>الزجاجي الحديث</button>
-<button type="button" class="door-option" data-id="5" aria-pressed="false"><span class="number">05</span>الأخضر الملكي</button>
-<button type="button" class="door-option" data-id="6" aria-pressed="false"><span class="number">06</span>الوردي الرومانسي</button>
-<button type="button" class="door-option" data-id="7" aria-pressed="false"><span class="number">07</span>الأزرق الليلي</button>
-<button type="button" class="door-option" data-id="8" aria-pressed="false"><span class="number">08</span>الرخام الفخم</button>
-<button type="button" class="door-option" data-id="9" aria-pressed="false"><span class="number">09</span>القالب التاسع</button>
-<button type="button" class="door-option" data-id="10" aria-pressed="false"><span class="number">10</span>القالب العاشر</button>
-<button type="button" class="door-option" data-id="11" aria-pressed="false"><span class="number">11</span>القالب الحادي عشر</button>
-<button type="button" class="door-option" data-id="12" aria-pressed="false"><span class="number">12</span>القالب الثاني عشر</button>
-<button type="button" class="door-option" data-id="13" aria-pressed="false"><span class="number">13</span>القالب الثالث عشر</button>
-<button type="button" class="door-option" data-id="14" aria-pressed="false"><span class="number">14</span>القالب الرابع عشر</button>
+<button type="button" class="door-option selected" data-id="1"><span class="number">01</span>الملكي الذهبي</button>
+<button type="button" class="door-option" data-id="2"><span class="number">02</span>الأبيض الملكي</button>
+<button type="button" class="door-option" data-id="3"><span class="number">03</span>التراثي الشرقي</button>
+<button type="button" class="door-option" data-id="4"><span class="number">04</span>الزجاجي الحديث</button>
+<button type="button" class="door-option" data-id="5"><span class="number">05</span>الأخضر الملكي</button>
+<button type="button" class="door-option" data-id="6"><span class="number">06</span>الوردي الرومانسي</button>
+<button type="button" class="door-option" data-id="7"><span class="number">07</span>الأزرق الليلي</button>
+<button type="button" class="door-option" data-id="8"><span class="number">08</span>الرخام الفخم</button>
+<button type="button" class="door-option" data-id="9"><span class="number">09</span>القالب التاسع</button>
+<button type="button" class="door-option" data-id="10"><span class="number">10</span>القالب العاشر</button>
+<button type="button" class="door-option" data-id="11"><span class="number">11</span>القالب الحادي عشر</button>
+<button type="button" class="door-option" data-id="12"><span class="number">12</span>القالب الثاني عشر</button>
+<button type="button" class="door-option" data-id="13"><span class="number">13</span>القالب الثالث عشر</button>
+<button type="button" class="door-option" data-id="14"><span class="number">14</span>القالب الرابع عشر</button>
 </div>
 <p id="doorDescription" class="door-description"></p>
-<p class="help">اختَر الباب المناسب؛ سيُحفظ اختيارك مع الدعوة. يجب توفر تصميم القالب في صفحة الدعوة حتى يظهر بشكل مختلف.</p>
 </div>
 </details>
 
-<label class="inline-check"><input id="published" type="checkbox"> نشر الدعوة لتكون متاحة عبر رابطها</label>
+<label class="inline-check"><input id="published" type="checkbox"> نشر الدعوة</label>
 <button type="submit" id="saveBtn">حفظ الدعوة</button>
 <button type="button" class="secondary" id="newBtn">دعوة جديدة</button>
 </form>
 
-<h3>دعواتي</h3>
-<button id="refreshBtn" type="button">تحديث القائمة</button>
+<details class="door-panel" id="myInvitationsPanel">
+<summary>💌 دعواتي</summary>
+<div class="door-content">
+<button id="refreshBtn" type="button">تحديث قائمة الدعوات</button>
 <div id="list"></div>
+</div>
+</details>
+
 <button id="logoutBtn" type="button" class="secondary">تسجيل الخروج</button>
 </section>
 <p id="status" role="status" aria-live="polite"></p>
@@ -188,10 +190,7 @@ const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
-let editingId=null;
-let editingBookingId=null;
-let busy=false;
-let bookingBusy=false;
+let editingId=null,editingBookingId=null,busy=false,bookingBusy=false;
 
 const doorNames={
 1:"الملكي الذهبي",2:"الأبيض الملكي",3:"التراثي الشرقي",4:"الزجاجي الحديث",
@@ -203,75 +202,21 @@ const doorDescriptions={
 1:"أسود ملكي مع زخارف ذهبية.",2:"أبيض عاجي بلمسات ذهبية.",3:"خشب داكن بنقوش شرقية.",
 4:"زجاج حديث بإطار معدني.",5:"أخضر زمردي بتفاصيل نحاسية.",6:"وردي لؤلؤي رومانسي.",
 7:"أزرق ليلي بزخارف فضية.",8:"رخام عاجي بخطوط برونزية.",
-9:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-10:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-11:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-12:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-13:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-14:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة."
+9:"القالب التاسع.",10:"القالب العاشر.",11:"القالب الحادي عشر.",
+12:"القالب الثاني عشر.",13:"القالب الثالث عشر.",14:"القالب الرابع عشر."
 };
-const audioNames={none:"بدون صوت",song:"أغنية زفاف",quran:"القرآن الكريم — سورة الروم، الآية 21"};
+const audioNames={none:"بدون صوت",song:"أغنية زفاف",quran:"القرآن الكريم"};
 function status(message){$("status").textContent=message;}
 
 function makeSlug(){
 const bytes=new Uint8Array(7);
 crypto.getRandomValues(bytes);
-const token=Array.from(bytes,b=>b.toString(36).padStart(2,"0")).join("").slice(0,10);
-return "wedding-"+token;
+return "wedding-"+Array.from(bytes,b=>b.toString(36).padStart(2,"0")).join("").slice(0,10);
 }
 function newUniqueSlug(){$("slug").value=makeSlug();}
+
 function selectDoor(id,closePicker=false){
 id=Number(id);if(!doorNames[id])id=1;
 $("template").value=String(id);
 $("doorDescription").textContent="الباب "+id+" — "+doorNames[id]+": "+doorDescriptions[id];
-$("selectedDoorLabel").textContent="المحدد: "+doorNames[id];
-document.querySelectorAll(".door-option").forEach(button=>{
-const selected=Number(button.dataset.id)===id;
-button.classList.toggle("selected",selected);
-button.setAttribute("aria-pressed",String(selected));
-});
-if(closePicker)$("doorPicker").open=false;
-}
-document.querySelectorAll(".door-option").forEach(button=>button.addEventListener("click",()=>selectDoor(button.dataset.id,true)));
-
-function showSession(session){
-$("login").classList.toggle("hidden",!!session);
-$("panel").classList.toggle("hidden",!session);
-if(session){loadInvitations();loadBookings();}
-}
-$("loginBtn").onclick=async()=>{
-const email=$("email").value.trim(),password=$("password").value;
-if(!email||!password)return status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");
-$("loginBtn").disabled=true;
-try{
-const {error}=await db.auth.signInWithPassword({email,password});
-if(error)return status("تعذر الدخول: "+error.message);
-status("تم تسجيل الدخول.");
-}catch(e){status("تعذر الاتصال. حاول مرة أخرى.");}
-finally{$("loginBtn").disabled=false;}
-};
-db.auth.onAuthStateChange((_event,session)=>showSession(session));
-
-function invitationUrl(slug){
-const base=location.origin+location.pathname.replace(/admin\.html$/,"");
-const url=new URL(base);url.searchParams.set("invite",slug);return url.href;
-}
-async function copyText(text){
-if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return;}
-const field=document.createElement("textarea");field.value=text;
-field.style.position="fixed";field.style.opacity="0";document.body.appendChild(field);
-field.select();const ok=document.execCommand("copy");field.remove();
-if(!ok)throw new Error("copy failed");
-}
-function isExpired(date){return !!date && date < new Date().toISOString().slice(0,10);}
-
-async function loadInvitations(){
-const {data,error}=await db.from("invitations").select("*").order("created_at",{ascending:false});
-if(error)return status("تعذر تحميل الدعوات: "+error.message);
-$("list").replaceChildren();
-for(const item of data||[]){
-const card=document.createElement("div");card.className="item";
-const title=document.createElement("strong");title.textContent=(item.groom_name||"")+" و "+(item.bride_name||"");
-const details=document.createElement("p");details.style.whiteSpace="pre-line";
-details.textContent="رمز الدعوة: "+item.slug+
-"\nالباب: "+(item.template_id||1)+" — "+(doorNames
+$("selected
