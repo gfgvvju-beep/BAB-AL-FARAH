@@ -15,16 +15,16 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .frame{position:relative;width:min(340px,88vw);height:420px;margin:22px auto 18px;padding:9px;background:linear-gradient(135deg,#d7b979,#fff1c9,#aa803e);border-radius:170px 170px 5px 5px;box-shadow:0 12px 35px #8e713526}
 .arch{width:100%;height:100%;position:relative;overflow:hidden;border:3px solid #f9e7bb;border-radius:160px 160px 2px 2px;background:#f7eddb}
 .door{position:absolute;inset:0;display:flex;z-index:2;perspective:1000px}
-.leaf{position:relative;width:50%;height:100%;background:repeating-linear-gradient(90deg,transparent 0 35px,#0000000a 36px 38px),linear-gradient(90deg,#6d4227,#a87548 45%,#71452b);border:2px solid #d7b66d;transition:transform 2s cubic-bezier(.2,.7,.2,1);box-shadow:inset 0 0 20px #39201466}
-.leaf:before{content:"";position:absolute;inset:16px 9px;border:2px solid #d5b16a;border-radius:90px 90px 3px 3px}
-.leaf:after{content:"";position:absolute;inset:29px 19px;border:1px solid #dfc58b;border-radius:80px 80px 2px 2px}
+.leaf{position:relative;width:50%;height:100%;background:var(--wood);border:2px solid var(--gold);transition:transform 2s cubic-bezier(.2,.7,.2,1);box-shadow:inset 0 0 20px #0005}
+.leaf:before{content:"";position:absolute;inset:16px 9px;border:3px solid var(--gold);border-radius:90px 90px 3px 3px}
+.leaf:after{content:"";position:absolute;inset:29px 19px;border:1px solid var(--gold);border-radius:80px 80px 2px 2px;background:repeating-linear-gradient(45deg,transparent 0 17px,#ffffff0a 18px 20px)}
 .left{transform-origin:left center}
 .right{transform-origin:right center}
 .open .left{transform:rotateY(-108deg)}
 .open .right{transform:rotateY(108deg)}
 .knock .leaf{animation:shake .16s 2}
 @keyframes shake{0%,100%{translate:0 0}40%{translate:2px 0}70%{translate:-2px 0}}
-.handle{position:absolute;top:52%;width:9px;height:9px;border-radius:50%;background:#f8df91;box-shadow:0 0 0 4px #b58a42,0 0 12px #ffe7a3;z-index:1}
+.handle{position:absolute;top:52%;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px var(--gold-shadow),0 0 12px var(--gold);z-index:1}
 .left .handle{right:13px}.right .handle{left:13px}
 .center-glow{position:absolute;inset:0;display:grid;place-items:center;color:#ad8748;font-size:34px}
 #start{border:0;border-radius:30px;padding:14px 27px;color:white;background:linear-gradient(135deg,#c6a15c,#96703a);font-size:16px;cursor:pointer;box-shadow:0 6px 18px #aa874444}
@@ -45,6 +45,31 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .footer{color:#a08049;margin:25px 0}
 .petal{position:fixed;top:-30px;z-index:10;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(var(--drift)) rotate(720deg);opacity:0}}
+
+/* 1: الملكي الذهبي */
+.arch.template-1{--wood:repeating-linear-gradient(90deg,#211b18 0 25px,#342820 26px 29px,#171310 30px 50px);--gold:#d8b05b;--gold-shadow:#9c702b;background:#191512;border-color:#e2c477}
+/* 2: الأبيض الملكي */
+.arch.template-2{--wood:linear-gradient(90deg,#e9dfcb,#fffaf0 48%,#ded0b7);--gold:#c8a45e;--gold-shadow:#9f8046;background:#fff9ec;border-color:#ddc48b}
+.arch.template-2 .leaf{box-shadow:inset 0 0 20px #9b825033}
+/* 3: التراثي الشرقي */
+.arch.template-3{--wood:repeating-linear-gradient(90deg,#48291a 0 16px,#74442a 17px 22px,#3a2117 23px 36px);--gold:#c99b4f;--gold-shadow:#815527;background:#472b1c;border-color:#c99b4f}
+.arch.template-3 .leaf:after{background:repeating-linear-gradient(45deg,transparent 0 12px,#d8b36a22 13px 15px),repeating-linear-gradient(-45deg,transparent 0 12px,#d8b36a22 13px 15px)}
+/* 4: الزجاجي الحديث */
+.arch.template-4{--wood:linear-gradient(90deg,#19262cdd,#52636ccc 48%,#172229dd);--gold:#d5c59c;--gold-shadow:#a99b7b;background:linear-gradient(135deg,#e2e9e9,#849598,#e0e7e7);border-color:#d8c89e}
+.arch.template-4 .leaf{backdrop-filter:blur(3px)}
+.arch.template-4 .leaf:before{inset:18px 12px;border-radius:3px;border-width:4px}
+/* 5: الأخضر الملكي */
+.arch.template-5{--wood:repeating-linear-gradient(90deg,#073d32 0 24px,#0e5947 25px 29px,#063328 30px 48px);--gold:#d8b55f;--gold-shadow:#94712c;background:#073b30;border-color:#d8b55f}
+/* 6: الوردي الرومانسي */
+.arch.template-6{--wood:linear-gradient(90deg,#a85f6b,#e8b8b5 48%,#a95e69);--gold:#e7c39b;--gold-shadow:#ba8a71;background:#f6e1df;border-color:#e6c2a0}
+.arch.template-6 .leaf:after{border-radius:70px 70px 35px 35px}
+/* 7: الأزرق الليلي */
+.arch.template-7{--wood:repeating-linear-gradient(90deg,#111c3d 0 24px,#26365d 25px 29px,#10172e 30px 48px);--gold:#c6d1e5;--gold-shadow:#8b9bb9;background:#101a36;border-color:#c6d1e5}
+/* 8: الرخام الفخم */
+.arch.template-8{--wood:repeating-linear-gradient(115deg,#e6d8c0 0 30px,#f8f0e2 31px 49px,#d4c1a3 50px 53px,#f2e7d4 54px 85px);--gold:#b58a50;--gold-shadow:#876335;background:#e9ddca;border-color:#c3a06d}
+.arch.template-8 .leaf:before{border-radius:2px;border-width:4px;inset:20px 12px}
+.arch.template-8 .leaf:after{border-radius:2px}
+
 @media(max-width:400px){.frame{height:370px}.brand{font-size:26px}}
 </style>
 </head>
@@ -55,7 +80,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 </header>
 <main>
  <div class="frame">
-  <div class="arch" id="arch">
+  <div class="arch template-1" id="arch">
    <div class="center-glow">♥</div>
    <div class="door" id="door">
     <div class="leaf left"><span class="handle"></span></div>
@@ -102,6 +127,13 @@ function formatDate(value){
  if(parts.length!==3)return value;
  return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
+function applyTemplate(value){
+ let n=Number(value);
+ if(!Number.isInteger(n)||n<1||n>8)n=1;
+ const arch=$("arch");
+ for(let i=1;i<=8;i++)arch.classList.remove("template-"+i);
+ arch.classList.add("template-"+n);
+}
 
 async function loadInvitation(){
  const slug=params.get("invite");
@@ -109,6 +141,7 @@ async function loadInvitation(){
   for(const key of ["groom","bride","date","time","place"]){
    showField(key,params.get(key),defaults[key]);
   }
+  applyTemplate(params.get("template"));
   return;
  }
  $("hint").textContent="جارٍ تحميل تفاصيل الدعوة...";
@@ -125,6 +158,7 @@ async function loadInvitation(){
   showField("date",formatDate(item.wedding_date),defaults.date);
   showField("time",item.wedding_time,defaults.time);
   showField("place",item.venue_name,defaults.place);
+  applyTemplate(item.template_id);
   if(item.day_name)$("date").textContent+=" — "+item.day_name;
   $("hint").textContent="انتظر 3 دقات حتى تُفتح الدعوة";
  }catch(error){
@@ -168,7 +202,6 @@ function knockSound(){
  }catch(e){}
 }
 
-const door=$("door");
 const start=$("start");
 const hint=$("hint");
 const invite=$("invite");
