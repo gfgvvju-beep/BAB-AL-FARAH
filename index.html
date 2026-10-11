@@ -43,10 +43,15 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .detail{border-bottom:1px solid #eee3ce;padding:5px}
 .detail:last-child{border:0}
 .groom-contact{margin:18px auto;padding:16px 14px;max-width:420px;border:1px solid #e5d3ae;border-radius:14px;background:#fffaf0;line-height:2}
+.groom-contact[hidden]{display:none}
 .groom-contact-title{color:#98733c;font-weight:bold;font-size:17px}
 .groom-phone{display:block;font-size:23px;font-weight:bold;color:#80602e;direction:ltr;margin:8px 0;text-decoration:none}
 .groom-call{display:inline-block;background:#aa8950;color:#fff;padding:9px 20px;border-radius:24px;text-decoration:none}
 .footer{color:#a08049;margin:25px 0}
+.share-area{margin:20px auto;padding:0 10px}
+.whatsapp-share{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;padding:14px 23px;border-radius:30px;text-decoration:none;font-weight:bold;font-size:16px;box-shadow:0 5px 16px #25d36640;transition:transform .2s}
+.whatsapp-share:hover{transform:translateY(-2px)}
+.share-note{font-size:12px;color:#897a69;margin-top:10px}
 .contact{margin:20px auto 0;padding:22px 16px;max-width:440px;border:1px solid #ddc58f;border-radius:16px;background:linear-gradient(145deg,#fffaf0,#f7eddb);line-height:2}
 .contact-brand{font-size:22px;font-weight:bold;color:#ad8748}
 .contact-number{font-size:25px;font-weight:bold;letter-spacing:1px;color:#80602e;direction:ltr;display:block;margin:10px 0}
@@ -81,7 +86,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .arch.template-8{--wood:repeating-linear-gradient(115deg,#e6d8c0 0 30px,#f8f0e2 31px 49px,#d4c1a3 50px 53px,#f2e7d4 54px 85px);--gold:#b58a50;--gold-shadow:#876335;background:#e9ddca;border-color:#c3a06d}
 .arch.template-8 .leaf:before{border-radius:2px;border-width:4px;inset:20px 12px}
 .arch.template-8 .leaf:after{border-radius:2px}
-@media(max-width:400px){.frame{height:370px}.brand{font-size:26px}.contact-number{font-size:22px}}
+@media(max-width:400px){.frame{height:370px}.brand{font-size:26px}.contact-number{font-size:22px}.whatsapp-share{font-size:15px;padding:13px 18px}}
 </style>
 </head>
 <body>
@@ -89,6 +94,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
  <div class="brand">باب الفرح</div>
  <div class="sub">BAB AL FARAH · دعوات زفاف إلكترونية</div>
 </header>
+
 <main>
  <div class="frame">
   <div class="arch template-1" id="arch">
@@ -99,6 +105,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
    </div>
   </div>
  </div>
+
  <button id="start">طرق الباب واكتشف دعوتك ♥</button>
  <div class="hint" id="hint">انتظر 3 دقات حتى تُفتح الدعوة</div>
 
@@ -108,8 +115,10 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
    ﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ﴾
    <div class="ref">سورة الروم — الآية ٢١</div>
   </div>
+
   <div class="title">دعوة زفاف</div>
   <p>بكل الحب والسرور، نتشرف بدعوتكم لحضور حفل زفاف</p>
+
   <div class="names">
    <span id="groom">محمد</span><br>
    <span class="heart">♥</span><br>
@@ -122,7 +131,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
    <div class="detail">📍 المكان: <span id="place">قاعة الأفراح</span></div>
   </div>
 
-  <!-- يظهر رقم العريس فقط إذا كان موجوداً -->
+  <!-- رقم العريس -->
   <section class="groom-contact" id="groomContact" hidden>
    <div class="groom-contact-title">📞 للتواصل مع العريس</div>
    <a class="groom-phone" id="groomPhone" href="#" dir="ltr"></a>
@@ -130,6 +139,16 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
   </section>
 
   <div class="footer">حضوركم يكتمل به فرحنا ❤️</div>
+
+  <!-- زر مشاركة رابط الدعوة -->
+  <div class="share-area">
+   <a class="whatsapp-share" id="whatsappShare" href="#" target="_blank" rel="noopener noreferrer">
+    <span>💚</span>
+    <span>شارك دعوتك بالواتساب</span>
+   </a>
+   <div class="share-note">أرسل دعوتك للأهل والأصدقاء بكل سهولة ❤️</div>
+  </div>
+
   <div class="sub">باب الفرح — نصنع لحظاتكم الجميلة</div>
 
   <!-- معلومات التواصل مع صاحب الموقع الرئيسي -->
@@ -181,7 +200,6 @@ function applyTemplate(value){
  arch.classList.add("template-"+n);
 }
 
-/* عرض رقم العريس مع منع ظهور القسم إذا كان الرقم فارغاً */
 function showGroomContact(value){
  const phone=String(value||"").trim();
  const section=$("groomContact");
@@ -206,6 +224,24 @@ function showGroomContact(value){
  section.hidden=false;
 }
 
+/* إعداد مشاركة رابط الدعوة الحالية */
+function setupWhatsAppShare(){
+ const button=$("whatsappShare");
+ if(!button)return;
+
+ const invitationUrl=window.location.href;
+ const groom=$("groom").textContent.trim();
+ const bride=$("bride").textContent.trim();
+
+ const message=
+  "💍❤️ دعوة زفاف "+groom+" و"+bride+"\n"+
+  "بكل الحب والسرور نتشرف بدعوتكم لمشاركتنا فرحتنا.\n"+
+  "افتحوا دعوتنا الإلكترونية من الرابط التالي:\n"+
+  invitationUrl;
+
+ button.href="https://wa.me/?text="+encodeURIComponent(message);
+}
+
 async function loadInvitation(){
  const slug=params.get("invite");
 
@@ -215,6 +251,7 @@ async function loadInvitation(){
   }
   showGroomContact(params.get("contact_phone")||params.get("phone"));
   applyTemplate(params.get("template"));
+  setupWhatsAppShare();
   return;
  }
 
@@ -237,18 +274,18 @@ async function loadInvitation(){
   showField("time",item.wedding_time,defaults.time);
   showField("place",item.venue_name,defaults.place);
 
-  /* رقم التواصل المدخل من صفحة الإدارة */
   showGroomContact(item.contact_phone);
-
   applyTemplate(item.template_id);
 
   if(item.day_name)$("date").textContent+=" — "+item.day_name;
 
+  setupWhatsAppShare();
   $("hint").textContent="انتظر 3 دقات حتى تُفتح الدعوة";
 
  }catch(error){
   console.error("Invitation loading error:",error);
   $("hint").textContent="تعذر تحميل معلومات الدعوة. تحقق من إعدادات الاتصال.";
+  setupWhatsAppShare();
  }
 }
 
