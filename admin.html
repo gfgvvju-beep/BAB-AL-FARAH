@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -17,6 +16,7 @@ label{display:block;margin:12px 0 5px;font-weight:bold;font-size:14px}
 input,button,select,textarea{width:100%;padding:12px;margin:6px 0;border-radius:9px;font:inherit}
 input,select,textarea{border:1px solid #ddd2bf;background:white;color:#493b2b}
 input[type=checkbox]{width:auto}
+input[type=file]{padding:10px;background:#fff;border:1px dashed #aa8950}
 textarea{resize:vertical;min-height:85px}
 button{border:0;background:#aa8950;color:white;cursor:pointer;font-weight:bold}
 button:disabled{opacity:.5;cursor:not-allowed}
@@ -94,7 +94,7 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <h3>⏳ مدة صلاحية الرابط</h3>
 <label for="expiresAt">تاريخ ووقت إيقاف رابط الدعوة</label>
 <input id="expiresAt" type="datetime-local">
-<p class="help">هذا الإعداد خاص بلوحة الإدارة ولا يظهر للضيوف. عند حلول الوقت المحدد، يتوقف الرابط بعد تفعيل فحص الصلاحية في صفحة الدعوة. اترك الحقل فارغاً إذا أردت أن يبقى الرابط بلا انتهاء.</p>
+<p class="help">هذا الإعداد خاص بلوحة الإدارة ولا يظهر للضيوف. اترك الحقل فارغاً إذا أردت أن يبقى الرابط بلا انتهاء.</p>
 
 <details class="door-panel">
 <summary>🔊 إعدادات صوت فتح الباب</summary>
@@ -102,10 +102,15 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <label for="audioType">اختيار الصوت عند فتح الباب</label>
 <select id="audioType">
 <option value="none">🔇 بدون صوت</option>
-<option value="song">🎵 أغنية زفاف رومانسية</option>
+<option value="song">🎵 أغنية زفاف من جهازك</option>
 <option value="quran">📖 القرآن الكريم — سورة الروم، الآية 21</option>
 </select>
-<p class="help">يجب أن يكون الصوت مدعوماً في صفحة الدعوة نفسها حتى يعمل للزائر.</p>
+
+<label for="audioFile">🎵 اختيار أغنية MP3 من الجهاز</label>
+<input id="audioFile" type="file" accept=".mp3,audio/mpeg">
+<p class="help">اختر أغنية بصيغة MP3، بحد أقصى 10 ميغابايت. على الآيفون يمكنك اختيار الملف من تطبيق «الملفات» أو iCloud Drive. عند تعديل دعوة واختيار أغنية جديدة، سيُستبدل رابط الأغنية الخاص بالدعوة.</p>
+<p id="audioFileStatus" class="help">لم يتم اختيار ملف جديد.</p>
+<p class="help">يتم رفع الأغنية إلى Supabase Storage حتى يستطيع المدعوون تشغيلها من رابط الدعوة.</p>
 </div>
 </details>
 
@@ -183,6 +188,9 @@ const $=id=>document.getElementById(id);
 let editingId=null;
 let busy=false;
 let loading=false;
+let currentAudioUrl="";
+
+const MAX_AUDIO_SIZE=10*1024*1024;
 
 const doorNames={
 1:"الملكي الذهبي",2:"الأبيض الملكي",3:"التراثي الشرقي",4:"الزجاجي الحديث",
@@ -220,7 +228,6 @@ return "wedding-"+Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
 
 function newUniqueSlug(){$("slug").value=makeSlug()}
 
-/* تحويل تاريخ قاعدة البيانات إلى توقيت الجهاز لعرضه في الحقل */
 function toLocalDateTime(value){
 if(!value)return "";
 const date=new Date(value);
@@ -229,7 +236,6 @@ const local=new Date(date.getTime()-date.getTimezoneOffset()*60000);
 return local.toISOString().slice(0,16);
 }
 
-/* عرض تاريخ الانتهاء داخل لوحة الإدارة فقط */
 function formatExpiry(value){
 if(!value)return "بدون انتهاء";
 const date=new Date(value);
@@ -255,6 +261,37 @@ button.setAttribute("aria-pressed",String(selected));
 
 document.querySelectorAll(".door-option").forEach(button=>{
 button.addEventListener("click",()=>selectDoor(button.dataset.id));
+});
+
+$("audioFile").addEventListener("change",()=>{
+const file=$("audioFile").files[0];
+
+if(!file){
+$("audioFileStatus").textContent=currentAudioUrl
+?"توجد أغنية محفوظة لهذه الدعوة. لن يتغير الرابط ما لم تختر ملفاً جديداً."
+:"لم يتم اختيار ملف جديد.";
+return;
+}
+
+if(!file.name.toLowerCase().endsWith(".mp3")||
+(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
+$("audioFile").value="";
+status("اختر ملف MP3 صحيحاً.");
+$("audioFileStatus").textContent="لم يتم اختيار ملف صالح.";
+return;
+}
+
+if(file.size>MAX_AUDIO_SIZE){
+$("audioFile").value="";
+status("حجم الأغنية أكبر من 10 ميغابايت.");
+$("audioFileStatus").textContent="الملف أكبر من الحجم المسموح.";
+return;
+}
+
+$("audioType").value="song";
+$("audioFileStatus").textContent="الملف المختار: "+file.name+
+" — الحجم: "+(file.size/1024/1024).toFixed(2)+" ميغابايت";
+status("تم اختيار الأغنية. اضغط حفظ الدعوة لرفعها.");
 });
 
 function showSession(session){
@@ -336,16 +373,13 @@ details.textContent=
 "\nرقم التواصل: "+(item.contact_phone||"غير محدد")+
 "\nالملاحظات: "+(item.notes||"لا توجد")+
 "\nالصوت: "+(audioNames[item.audio_type]||audioNames.none)+
+"\nالأغنية: "+(item.audio_url?"مرفوعة ومحفوظة":"لا يوجد رابط أغنية مخصص")+
 "\nانتهاء الرابط: "+formatExpiry(item.expires_at);
 card.appendChild(details);
 
 if(item.expires_at){
 const expired=new Date(item.expires_at).getTime()<=Date.now();
-addText(
-card,"p",
-expired?"انتهت مدة الرابط المحددة":"الرابط محدد بموعد انتهاء",
-expired?"expired":"active-expiry"
-);
+addText(card,"p",expired?"انتهت مدة الرابط المحددة":"الرابط محدد بموعد انتهاء",expired?"expired":"active-expiry");
 }
 
 const url=invitationUrl(item.slug||"");
@@ -409,6 +443,13 @@ $("phone").value=item.contact_phone||"";
 $("notes").value=item.notes||"";
 $("expiresAt").value=toLocalDateTime(item.expires_at);
 $("audioType").value=item.audio_type||"none";
+
+currentAudioUrl=item.audio_url||"";
+$("audioFile").value="";
+$("audioFileStatus").textContent=currentAudioUrl
+?"توجد أغنية محفوظة لهذه الدعوة. اختيار ملف جديد سيستبدل رابط الأغنية."
+:"لا توجد أغنية مرفوعة لهذه الدعوة.";
+
 $("published").checked=!!item.is_published;
 selectDoor(item.template_id||1);
 $("doorPicker").open=false;
@@ -484,6 +525,7 @@ map_url:$("map").value.trim()||null,
 contact_phone:$("phone").value.trim(),
 notes:$("notes").value.trim(),
 audio_type:$("audioType").value,
+audio_url:currentAudioUrl||null,
 template_id:Number($("template").value),
 is_published:$("published").checked,
 expires_at:expiresAt
@@ -493,19 +535,72 @@ if(!record.slug)return status("تعذر إنشاء رابط الدعوة. اضغ
 if(!record.groom_name||!record.bride_name)return status("اكتب اسم العريس واسم العروس.");
 if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>14)return status("اختَر قالباً من القوالب الأربعة عشر.");
 
+const file=$("audioFile").files[0];
+
+if(file){
+if(!file.name.toLowerCase().endsWith(".mp3")||
+(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
+status("اختر ملف MP3 صحيحاً.");
+return;
+}
+if(file.size>MAX_AUDIO_SIZE){
+status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");
+return;
+}
+}
+
 busy=true;
 $("saveBtn").disabled=true;
-status("جارٍ حفظ الدعوة...");
 
 let result;
+
 try{
+if(file){
+status("جارٍ رفع الأغنية إلى التخزين...");
+
+const safeName=file.name
+.normalize("NFKD")
+.replace(/[^\w.-]+/g,"_")
+.replace(/^\.+/,"")
+.slice(-100)||"wedding-song.mp3";
+
+const path=record.slug+"/"+Date.now()+"-"+safeName;
+
+const {data:uploadData,error:uploadError}=await db.storage
+.from("invitation-audio")
+.upload(path,file,{
+cacheControl:"3600",
+upsert:false,
+contentType:"audio/mpeg"
+});
+
+if(uploadError)throw uploadError;
+
+const {data:publicData}=db.storage
+.from("invitation-audio")
+.getPublicUrl(uploadData.path);
+
+if(!publicData||!publicData.publicUrl){
+throw new Error("تعذر الحصول على رابط الأغنية.");
+}
+
+currentAudioUrl=publicData.publicUrl;
+record.audio_url=currentAudioUrl;
+record.audio_type="song";
+$("audioType").value="song";
+$("audioFileStatus").textContent="تم رفع الأغنية بنجاح: "+file.name;
+}
+
+status("جارٍ حفظ بيانات الدعوة...");
+
 if(editingId){
 result=await db.from("invitations").update(record).eq("id",editingId);
 }else{
 result=await db.from("invitations").insert(record);
 }
 }catch(e){
-status("حدث خطأ أثناء الحفظ. حاول مرة أخرى.");
+console.error("Save invitation error:",e);
+status("تعذر حفظ الدعوة أو رفع الأغنية: "+(e.message||"خطأ غير معروف"));
 busy=false;
 $("saveBtn").disabled=false;
 return;
@@ -533,6 +628,9 @@ await loadInvitations();
 function resetForm(){
 $("inviteForm").reset();
 editingId=null;
+currentAudioUrl="";
+$("audioFile").value="";
+$("audioFileStatus").textContent="لم يتم اختيار ملف جديد.";
 $("formTitle").textContent="إضافة دعوة جديدة";
 $("saveBtn").textContent="حفظ الدعوة";
 $("deleteCurrentBtn").classList.add("hidden");
