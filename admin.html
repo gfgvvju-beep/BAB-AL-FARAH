@@ -54,6 +54,10 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .audio-library-item button{width:auto;min-width:100px;margin:0}
 .audio-library-item.selected-audio{border:2px solid #aa8950;background:#f5ecd9}
 .audio-library-item audio{width:100%;max-width:100%}
+.prompt-choice{padding:14px;border:1px solid #e5d6b7;border-radius:12px;background:#fffdf8;margin:10px 0}
+.prompt-choice label{display:flex;align-items:flex-start;gap:9px;line-height:1.9;margin:10px 0;cursor:pointer}
+.prompt-choice input[type=radio]{width:auto;margin:5px 0 0;accent-color:#aa8950;flex-shrink:0}
+.prompt-preview{padding:13px;border-radius:10px;background:#f5ecd9;color:#755821;text-align:center;font-weight:bold;line-height:1.9;margin-top:10px}
 hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 @media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}.door-grid{grid-template-columns:1fr}.row-buttons{grid-template-columns:1fr}.audio-library-item button{width:100%}}
 </style>
@@ -99,6 +103,21 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <textarea id="notes" placeholder="اكتب الملاحظات التي تريد إضافتها للدعوة"></textarea>
 
 <hr>
+<h3>✨ العبارة التي تظهر عند فتح الدعوة</h3>
+<p class="help">اختَر العبارة المناسبة للفيديو الخاص بهذه الدعوة. سيتم حفظ اختيارك مع الدعوة.</p>
+<div class="prompt-choice">
+<label>
+<input type="radio" name="openingPrompt" value="knock" checked>
+<span>🚪 أطرق الباب وأكتشف دعوتك الخاصة ❤️</span>
+</label>
+<label>
+<input type="radio" name="openingPrompt" value="tap">
+<span>👆 اضغط على الشاشة 3 مرات لفتح الدعوة ❤️</span>
+</label>
+<div id="openingPromptPreview" class="prompt-preview">أطرق الباب وأكتشف دعوتك الخاصة ❤️</div>
+</div>
+
+<hr>
 <h3>⏳ مدة صلاحية الرابط</h3>
 <label for="expiresAt">تاريخ ووقت إيقاف رابط الدعوة</label>
 <input id="expiresAt" type="datetime-local">
@@ -113,16 +132,11 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <option value="song">🎵 أغنية زفاف</option>
 <option value="quran">📖 القرآن الكريم — سورة الروم، الآية 21</option>
 </select>
-
 <label for="audioLibrary">🎵 اختيار أغنية محفوظة</label>
-<select id="audioLibrary">
-<option value="">جارٍ تحميل قائمة الأغاني...</option>
-</select>
+<select id="audioLibrary"><option value="">جارٍ تحميل قائمة الأغاني...</option></select>
 <button type="button" id="useLibrarySongBtn">استخدام الأغنية المحددة</button>
 <p class="help">الأغاني التي ترفعها تُحفظ في مكتبة الأغاني المشتركة، ويمكنك اختيارها لأي دعوة أو تغيير أغنية الدعوة الحالية.</p>
-
 <div id="audioLibraryList"></div>
-
 <hr>
 <h3>إضافة أغنية جديدة إلى المكتبة</h3>
 <label for="librarySongName">اسم الأغنية</label>
@@ -131,7 +145,6 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <input id="librarySongFile" type="file" accept=".mp3,audio/mpeg">
 <button type="button" id="uploadLibrarySongBtn">رفع الأغنية وإضافتها إلى المكتبة</button>
 <p id="librarySongStatus" class="help">اختر أغنية MP3 لإضافتها إلى مكتبة الأغاني.</p>
-
 <hr>
 <h3>رفع أغنية خاصة بهذه الدعوة فقط</h3>
 <label for="audioFile">اختيار أغنية MP3 من الجهاز</label>
@@ -167,7 +180,6 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <button type="button" class="door-option" data-id="14"><span class="number">14</span>القالب الرابع عشر</button>
 </div>
 <p id="doorDescription" class="door-description"></p>
-
 <hr>
 <h3>🚪 ملف الباب المتحرك لهذا القالب</h3>
 <p class="help">يمكنك رفع صورة JPG أو PNG أو WEBP أو GIF متحرك أو فيديو MP4. كل قالب له ملف مستقل.</p>
@@ -205,13 +217,11 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <div id="list"></div>
 </div>
 </details>
-
 <hr>
 <h3>إدارة الحجوزات</h3>
 <p class="help">يعرض هذا القسم الحجوزات إذا كان جدول bookings موجوداً ومهيأً في Supabase.</p>
 <button id="refreshBookingsBtn" type="button">تحديث الحجوزات</button>
 <div id="bookingsList"></div>
-
 <h3>الحساب</h3>
 <button id="logoutBtn" type="button" class="secondary">تسجيل الخروج</button>
 </section>
@@ -245,6 +255,27 @@ const AUDIO_LIBRARY_TABLE="audio_library";
 const DOOR_BUCKET="template-doors";
 const allowedDoorImageTypes=["image/jpeg","image/png","image/webp","image/gif","video/mp4"];
 let librarySongs=[];
+
+const openingPrompts={
+knock:"أطرق الباب وأكتشف دعوتك الخاصة ❤️",
+tap:"اضغط على الشاشة 3 مرات لفتح الدعوة ❤️"
+};
+
+function getOpeningPrompt(){
+const selected=document.querySelector('input[name="openingPrompt"]:checked');
+return selected&&openingPrompts[selected.value]?selected.value:"knock";
+}
+
+function setOpeningPrompt(value){
+const safeValue=openingPrompts[value]?value:"knock";
+const radio=document.querySelector('input[name="openingPrompt"][value="'+safeValue+'"]');
+if(radio)radio.checked=true;
+$("openingPromptPreview").textContent=openingPrompts[safeValue];
+}
+
+document.querySelectorAll('input[name="openingPrompt"]').forEach(radio=>{
+radio.addEventListener("change",()=>setOpeningPrompt(getOpeningPrompt()));
+});
 
 const doorNames={
 1:"الملكي الذهبي",2:"الأبيض الملكي",3:"التراثي الشرقي",4:"الزجاجي الحديث",
@@ -370,9 +401,7 @@ select.appendChild(option);
 }
 if(currentLibrarySongId!==null&&librarySongs.some(s=>String(s.id)===String(currentLibrarySongId))){
 select.value=String(currentLibrarySongId);
-}else{
-select.value="";
-}
+}else select.value="";
 }
 
 function renderLibraryList(){
@@ -394,19 +423,16 @@ const strong=document.createElement("strong");
 strong.textContent=song.name;
 name.appendChild(strong);
 card.appendChild(name);
-
 const choose=document.createElement("button");
 choose.type="button";
 choose.textContent=currentAudioUrl===song.audio_url?"الأغنية مختارة ✓":"اختيار للدعوة";
 choose.onclick=()=>useLibrarySong(song);
 card.appendChild(choose);
-
 const preview=document.createElement("audio");
 preview.controls=true;
 preview.preload="none";
 preview.src=song.audio_url;
 card.appendChild(preview);
-
 const remove=document.createElement("button");
 remove.type="button";
 remove.className="danger";
@@ -441,10 +467,7 @@ $("uploadLibrarySongBtn").disabled=false;
 }
 
 async function useLibrarySong(song){
-if(!song||!song.audio_url){
-status("رابط الأغنية غير متوفر.");
-return;
-}
+if(!song||!song.audio_url){status("رابط الأغنية غير متوفر.");return}
 currentAudioUrl=song.audio_url;
 currentAudioType="song";
 currentLibrarySongId=song.id;
@@ -472,30 +495,18 @@ if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpe
 status("اختر ملف MP3 صحيحاً.");return;
 }
 if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
-
 $("uploadLibrarySongBtn").disabled=true;
 $("librarySongStatus").textContent="جارٍ رفع الأغنية...";
 try{
 const path="library/"+Date.now()+"-"+crypto.randomUUID()+"-"+safeAudioName(file);
-const {data:uploadData,error:uploadError}=await db.storage.from(AUDIO_LIBRARY_BUCKET).upload(path,file,{
-cacheControl:"3600",upsert:false,contentType:"audio/mpeg"
-});
+const {data:uploadData,error:uploadError}=await db.storage.from(AUDIO_LIBRARY_BUCKET).upload(path,file,{cacheControl:"3600",upsert:false,contentType:"audio/mpeg"});
 if(uploadError)throw uploadError;
 const {data:publicData}=db.storage.from(AUDIO_LIBRARY_BUCKET).getPublicUrl(uploadData.path);
 if(!publicData?.publicUrl)throw new Error("تعذر الحصول على رابط الأغنية.");
-
 const {data:inserted,error:insertError}=await db.from(AUDIO_LIBRARY_TABLE).insert({
-name,
-audio_url:publicData.publicUrl,
-storage_path:uploadData.path,
-file_name:file.name,
-created_at:new Date().toISOString()
+name,audio_url:publicData.publicUrl,storage_path:uploadData.path,file_name:file.name,created_at:new Date().toISOString()
 }).select("*").single();
-
-if(insertError){
-console.error("Audio library insert:",insertError);
-throw new Error("تم رفع الملف لكن لم تتم إضافته إلى جدول المكتبة: "+insertError.message);
-}
+if(insertError)throw new Error("تم رفع الملف لكن لم تتم إضافته إلى جدول المكتبة: "+insertError.message);
 $("librarySongFile").value="";
 $("librarySongName").value="";
 await loadAudioLibrary();
@@ -507,9 +518,7 @@ status("تمت إضافة الأغنية إلى المكتبة. تم اختيا�
 console.error("Upload library song:",error);
 $("librarySongStatus").textContent="تعذرت إضافة الأغنية: "+(error.message||"خطأ غير معروف");
 status("تعذرت إضافة الأغنية إلى المكتبة. تحقق من إعدادات جدول audio_library وصلاحيات Supabase.");
-}finally{
-$("uploadLibrarySongBtn").disabled=false;
-}
+}finally{$("uploadLibrarySongBtn").disabled=false}
 });
 
 async function deleteLibrarySong(song){
@@ -522,9 +531,7 @@ const {error:storageError}=await db.storage.from(AUDIO_LIBRARY_BUCKET).remove([s
 if(storageError)console.warn("Could not remove audio file:",storageError);
 }
 librarySongs=librarySongs.filter(s=>String(s.id)!==String(song.id));
-if(String(currentLibrarySongId)===String(song.id)){
-currentLibrarySongId=null;
-}
+if(String(currentLibrarySongId)===String(song.id))currentLibrarySongId=null;
 renderLibrarySelect();
 renderLibraryList();
 status("تم حذف الأغنية من المكتبة.");
@@ -549,9 +556,7 @@ currentDoorImageUrl=data.image_url;
 currentDoorMediaType=/\.mp4(?:$|\?)/i.test(data.image_url)?"video/mp4":"image";
 showDoorPreview(data.image_url,currentDoorMediaType);
 $("doorImageStatus").textContent="يوجد ملف محفوظ للقالب "+id+". يمكنك اختيار ملف جديد لاستبداله.";
-}else{
-$("doorImageStatus").textContent="لا يوجد ملف مخصص لهذا القالب. سيُستخدم الباب الافتراضي.";
-}
+}else $("doorImageStatus").textContent="لا يوجد ملف مخصص لهذا القالب. سيُستخدم الباب الافتراضي.";
 }catch(error){
 console.error("Load door media:",error);
 $("doorImageStatus").textContent="تعذر تحميل ملف القالب: "+(error.message||"خطأ غير معروف");
@@ -773,6 +778,7 @@ const details=document.createElement("p");
 details.style.whiteSpace="pre-line";
 details.textContent="رمز الدعوة: "+(item.slug||"—")+
 "\nالباب: "+(item.template_id||1)+" — "+(doorNames[Number(item.template_id)]||"قالب غير معروف")+
+"\nعبارة البداية: "+(openingPrompts[item.opening_prompt]||openingPrompts.knock)+
 "\nالتاريخ: "+(item.wedding_date||"غير محدد")+
 "\nاليوم: "+(item.day_name||"غير محدد")+
 "\nالوقت: "+(item.wedding_time||"غير محدد")+
@@ -827,6 +833,7 @@ $("venue").value=item.venue_name||"";
 $("map").value=item.map_url||"";
 $("phone").value=item.contact_phone||"";
 $("notes").value=item.notes||"";
+setOpeningPrompt(item.opening_prompt||"knock");
 $("expiresAt").value=toLocalDateTime(item.expires_at);
 $("audioType").value=item.audio_type||"none";
 currentAudioUrl=item.audio_url||"";
@@ -846,7 +853,7 @@ $("deleteCurrentBtn").classList.remove("hidden");
 $("cancelEditBtn").classList.remove("hidden");
 $("saveBtn").textContent="حفظ التعديلات";
 renderLibraryList();
-status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه، ويمكنك تغيير الأغنية وحفظها.");
+status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه، ويمكنك تغيير العبارة والأغنية ثم حفظ التعديلات.");
 }
 
 async function deleteInvitation(item){
@@ -896,6 +903,7 @@ venue_name:$("venue").value.trim(),
 map_url:$("map").value.trim()||null,
 contact_phone:$("phone").value.trim(),
 notes:$("notes").value.trim(),
+opening_prompt:getOpeningPrompt(),
 audio_type:selectedType,
 audio_url:selectedType==="song"?(currentAudioUrl||null):null,
 template_id:Number($("template").value),
@@ -925,7 +933,7 @@ let result;
 try{
 if(file){
 status("جارٍ رفع الأغنية إلى التخزين...");
-const path=(editingId?"library/":"library/")+Date.now()+"-"+crypto.randomUUID()+"-"+safeAudioName(file);
+const path="library/"+Date.now()+"-"+crypto.randomUUID()+"-"+safeAudioName(file);
 const {data:uploadData,error:uploadError}=await db.storage.from(AUDIO_BUCKET).upload(path,file,{
 cacheControl:"3600",upsert:false,contentType:"audio/mpeg"
 });
@@ -936,7 +944,6 @@ currentAudioUrl=publicData.publicUrl;
 record.audio_url=currentAudioUrl;
 record.audio_type="song";
 
-/* محاولة حفظ الأغنية في المكتبة المشتركة كذلك. */
 const libraryName=$("librarySongName").value.trim()||file.name.replace(/\.mp3$/i,"")||"أغنية زفاف";
 const {data:libraryRow,error:libraryError}=await db.from(AUDIO_LIBRARY_TABLE).insert({
 name:libraryName,
@@ -1005,6 +1012,7 @@ $("saveBtn").textContent="حفظ الدعوة";
 $("deleteCurrentBtn").classList.add("hidden");
 $("cancelEditBtn").classList.add("hidden");
 newUniqueSlug();
+setOpeningPrompt("knock");
 selectDoor(1);
 loadDoorImage(1);
 $("doorPicker").open=false;
@@ -1087,6 +1095,7 @@ status("تم تسجيل الخروج.");
 };
 
 selectDoor(1);
+setOpeningPrompt("knock");
 newUniqueSlug();
 db.auth.onAuthStateChange((_event,session)=>{showSession(session)});
 (async()=>{
