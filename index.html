@@ -10,7 +10,7 @@
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
@@ -44,31 +44,31 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .ref{font-size:15px;color:var(--design-accent,#96846a)}
 .title{color:var(--design-accent,#b18b49);font-size:30px;margin:22px 0;padding:13px 0;border-top:1px solid var(--design-border,#ddc58f);border-bottom:1px solid var(--design-border,#ddc58f)}
 
-/* عبارة الدعوة بخط عربي مزخرف */
+/* عبارة الدعوة المزخرفة بخط عربي كبير وواضح */
 .wedding-intro{
  display:block;
  width:100%;
- margin:18px auto;
- padding:9px 0;
+ max-width:100%;
+ margin:20px auto;
+ padding:10px 5px;
  color:var(--design-accent,#a27b3f);
- font-family:"Amiri","Noto Naskh Arabic",Tahoma,serif;
- font-size:clamp(14px,3.4vw,19px);
+ font-family:"Amiri",Tahoma,Arial,serif;
+ font-size:22px;
  font-weight:700;
  line-height:2;
  text-align:center;
  white-space:normal;
- overflow-wrap:normal;
+ overflow-wrap:break-word;
  letter-spacing:0;
  text-shadow:0 1px 1px #00000010;
 }
 .wedding-intro .intro-decoration{
- display:inline-block;
+ display:inline;
  font-family:"Amiri",Georgia,serif;
- font-size:1.2em;
+ font-size:25px;
  font-weight:700;
  margin:0 5px;
  color:var(--design-accent,#a27b3f);
- text-shadow:0 1px 2px #a27b3f33;
 }
 
 .names{font-size:34px;color:var(--design-accent,#8d6833);line-height:1.8;padding:10px 0}
@@ -124,15 +124,14 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 
 @media(max-width:600px){
  .wedding-intro{
-  font-size:clamp(13px,3.5vw,16px);
-  white-space:normal;
-  margin:14px auto;
-  padding:6px 0;
+  font-size:19px;
   line-height:2;
+  margin:17px auto;
+  padding:8px 2px;
   letter-spacing:0;
  }
  .wedding-intro .intro-decoration{
-  font-size:1.1em;
+  font-size:21px;
   margin:0 3px;
  }
 }
@@ -145,6 +144,8 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
  .invite{padding:29px 13px 32px}
  .names{font-size:30px}
  .verse{font-size:18px}
+ .wedding-intro{font-size:18px;padding:8px 0}
+ .wedding-intro .intro-decoration{font-size:20px;margin:0 2px}
 }
 @media(prefers-reduced-motion:reduce){.leaf,.frame,.invite.show{transition:none;animation:none}}
 </style>
@@ -172,13 +173,7 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
   <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
   <div class="verse">﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ﴾<div class="ref">سورة الروم — الآية ٢١</div></div>
   <div class="title">دعوة زفاف</div>
-
-  <p class="wedding-intro">
-   <span class="intro-decoration">༺❀♡</span>
-   بِكُلِّ الْحُبِّ وَالسُّرُورِ، نَتَشَرَّفُ بِدَعْوَتِكُمْ لِحُضُورِ حَفْلِ زَفَاف
-   <span class="intro-decoration">♡❀༻</span>
-  </p>
-
+  <p class="wedding-intro"><span class="intro-decoration">❀༺</span> بِكُلِّ الْحُبِّ وَالسُّرُورِ، نَتَشَرَّفُ بِدَعْوَتِكُمْ لِحُضُورِ حَفْلِ زَفَافِنَا <span class="intro-decoration">༻❀</span></p>
   <div class="names"><span id="groom">محمد</span><br><span class="heart">♥</span><br><span id="bride">نور</span></div>
   <div class="details">
    <div class="detail">📅 التاريخ: <span id="date">يحدد لاحقاً</span></div>
