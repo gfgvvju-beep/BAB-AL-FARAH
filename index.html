@@ -3,20 +3,19 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#fffdf9">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#171310">
 <title>باب الفرح | دعوة زفاف إلكترونية</title>
 <link rel="preconnect" href="https://gnsnbretccdlwpmimuap.supabase.co">
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-serif;text-align:center;transition:background .4s}
-.hero{padding:22px 15px 10px}
-.brand{color:#ad8748;font-size:30px;font-weight:bold}
-.sub{color:#897a69;margin-top:9px;font-size:14px}
-.frame{position:relative;width:min(430px,94vw);height:min(650px,125vw);min-height:400px;margin:18px auto;padding:0;background:#171310;border-radius:18px;box-shadow:0 12px 35px #8e713540;overflow:hidden;transition:transform .8s,opacity .8s;touch-action:manipulation}
-.arch{width:100%;height:100%;position:relative;overflow:hidden;background:#171310;border:0;border-radius:0;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;font-family:Tahoma,Arial,sans-serif}
+body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
+.hero{display:none}
+.frame{position:fixed;inset:0;z-index:15;width:100%;height:100vh;height:100dvh;min-height:0;margin:0;padding:0;background:#171310;border-radius:0;box-shadow:none;overflow:hidden;transition:opacity .8s,transform .8s}
+.arch{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:#171310;border:0;border-radius:0;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .door{position:absolute;inset:0;display:flex;z-index:2;perspective:1200px;overflow:hidden;pointer-events:none}
 .leaf{position:absolute;top:0;width:50%;height:100%;background-color:#47301e;background-image:var(--door-image);background-size:200% 100%;background-repeat:no-repeat;border:0;transition:transform 1.15s cubic-bezier(.2,.7,.2,1);box-shadow:inset 0 0 18px #0002;will-change:transform}
 .left{left:0;transform-origin:left center;background-position:left center}
@@ -25,9 +24,9 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .open .right{transform:rotateY(110deg)}
 .knock .leaf{animation:shake .16s 2}
 @keyframes shake{0%,100%{translate:0 0}40%{translate:2px 0}70%{translate:-2px 0}}
-#start{border:0;border-radius:30px;padding:16px 24px;color:white;background:linear-gradient(135deg,#c6a15c,#96703a);font-size:20px;cursor:pointer;box-shadow:0 6px 18px #aa874444;touch-action:manipulation}
-#start:disabled{opacity:.65;cursor:not-allowed}
-.hint{font-size:17px;color:#948675;margin:14px}
+#start{position:fixed;z-index:25;bottom:calc(72px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:max-content;max-width:92vw;border:1px solid #e4c47e;border-radius:30px;padding:15px 22px;color:white;background:linear-gradient(135deg,#c6a15c,#96703a);font-size:18px;cursor:pointer;box-shadow:0 6px 25px #0006;touch-action:manipulation}
+#start:disabled{opacity:.8;cursor:not-allowed}
+.hint{position:fixed;z-index:25;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:0;right:0;width:fit-content;max-width:94vw;margin:0 auto;padding:8px 14px;border-radius:20px;background:#171310b8;color:#fff;font-size:15px;text-shadow:0 1px 4px #000;pointer-events:none}
 .invite{display:none;position:relative;isolation:isolate;overflow:hidden;padding:35px 23px 38px;max-width:600px;width:calc(100% - 24px);margin:24px auto;color:var(--design-text,#574632);background:var(--design-bg,#fffaf0);border:5px double var(--design-border,#ddc58f);border-radius:24px;box-shadow:0 12px 35px #00000012,inset 0 0 0 5px #ffffff66}
 .invite.show{display:block;animation:rise .7s ease both}
 @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -90,7 +89,16 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .invite.design-12{--design-bg:#f2eafa;--design-card:#fcf8ff;--design-text:#4c315d;--design-accent:#76499a;--design-border:#c5a5df;--heart-color:#ad7bc4}
 .invite.design-13{--design-bg:#fff0f5;--design-card:#fff9fb;--design-text:#78465b;--design-accent:#bf7595;--design-border:#edc5d5;--heart-color:#dc78a1}
 .invite.design-14{--design-bg:#eaf4ed;--design-card:#f7fcf8;--design-text:#204b3b;--design-accent:#187052;--design-border:#d6b765;--heart-color:#3d9b77}
-@media(max-width:400px){.brand{font-size:26px}.contact-number{font-size:22px}.whatsapp-share{font-size:15px;padding:13px 18px}#start{font-size:18px;padding:14px 18px}.map-button{font-size:16px}.invite{padding:29px 13px 32px}.names{font-size:30px}.verse{font-size:18px}}
+@media(max-width:480px){
+ #start{bottom:calc(72px + env(safe-area-inset-bottom,0px));font-size:16px;padding:14px 18px}
+ .hint{bottom:calc(18px + env(safe-area-inset-bottom,0px));font-size:14px}
+ .contact-number{font-size:22px}
+ .whatsapp-share{font-size:15px;padding:13px 18px}
+ .map-button{font-size:16px}
+ .invite{padding:29px 13px 32px}
+ .names{font-size:30px}
+ .verse{font-size:18px}
+}
 @media(prefers-reduced-motion:reduce){.leaf,.frame,.invite.show{transition:none;animation:none}}
 </style>
 </head>
@@ -156,26 +164,54 @@ function clearDoorImage(){
  $("arch").style.removeProperty("--door-image");
  document.querySelectorAll("#arch .leaf").forEach(leaf=>leaf.style.backgroundImage="");
 }
+
 function setDoorImage(imageUrl){
  const url=String(imageUrl||"").trim();
  if(!url)return;
- try{const parsed=new URL(url);if(!["https:","http:"].includes(parsed.protocol))return;}catch(e){return;}
+ try{
+  const parsed=new URL(url);
+  if(!["https:","http:"].includes(parsed.protocol))return;
+ }catch(e){return;}
+
  selectedDoorImageUrl=url;
  const image=new Image();
- image.onload=()=>{
-  if(selectedDoorImageUrl!==url)return;
-  $("arch").style.setProperty("--door-image",'url("'+url.replace(/["\\\n\r]/g,"")+'")');
-  document.querySelectorAll("#arch .leaf").forEach(leaf=>{
-   leaf.style.backgroundImage="var(--door-image)";
-   leaf.style.backgroundSize="200% 100%";
+
+ function fitDoorImage(){
+  if(selectedDoorImageUrl!==url||!image.naturalWidth)return;
+
+  const frame=$("doorFrame");
+  const w=frame.clientWidth;
+  const h=frame.clientHeight;
+  if(!w||!h)return;
+
+  const scale=Math.max(w/image.naturalWidth,h/image.naturalHeight);
+  const imageW=image.naturalWidth*scale;
+  const imageH=image.naturalHeight*scale;
+  const offsetX=(w-imageW)/2;
+  const offsetY=(h-imageH)/2;
+  const safeUrl=url.replace(/["\\\n\r]/g,"");
+
+  const left=$("arch").querySelector(".left");
+  const right=$("arch").querySelector(".right");
+
+  [left,right].forEach(leaf=>{
+   leaf.style.backgroundImage='url("'+safeUrl+'")';
+   leaf.style.backgroundSize=imageW+"px "+imageH+"px";
    leaf.style.backgroundRepeat="no-repeat";
+   leaf.style.backgroundColor="#171310";
   });
-  $("arch").querySelector(".left").style.backgroundPosition="left center";
-  $("arch").querySelector(".right").style.backgroundPosition="right center";
- };
+
+  left.style.backgroundPosition=offsetX+"px "+offsetY+"px";
+  right.style.backgroundPosition=(offsetX-w/2)+"px "+offsetY+"px";
+ }
+
+ image.onload=fitDoorImage;
  image.onerror=()=>console.warn("تعذر تحميل صورة الباب");
  image.src=url;
+ if(image.complete&&image.naturalWidth)fitDoorImage();
+ window.addEventListener("resize",fitDoorImage);
 }
+
 function applyTemplate(value){
  const n=Number(value),valid=Number.isInteger(n)&&n>=1&&n<=14?n:1;
  const invite=$("invite");
