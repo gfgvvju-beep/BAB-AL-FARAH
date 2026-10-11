@@ -8,6 +8,9 @@
 <title>باب الفرح | دعوة زفاف إلكترونية</title>
 <link rel="preconnect" href="https://gnsnbretccdlwpmimuap.supabase.co">
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
@@ -41,28 +44,31 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .ref{font-size:15px;color:var(--design-accent,#96846a)}
 .title{color:var(--design-accent,#b18b49);font-size:30px;margin:22px 0;padding:13px 0;border-top:1px solid var(--design-border,#ddc58f);border-bottom:1px solid var(--design-border,#ddc58f)}
 
-/* عبارة الدعوة المزخرفة بحجم أصغر وفي سطر واحد */
+/* عبارة الدعوة بخط عربي مزخرف */
 .wedding-intro{
  display:block;
  width:100%;
- margin:14px auto;
- padding:5px 0;
+ margin:18px auto;
+ padding:9px 0;
  color:var(--design-accent,#a27b3f);
- font-family:Tahoma,Arial,serif;
- font-size:12px;
- font-weight:bold;
- line-height:1.8;
+ font-family:"Amiri","Noto Naskh Arabic",Tahoma,serif;
+ font-size:clamp(14px,3.4vw,19px);
+ font-weight:700;
+ line-height:2;
  text-align:center;
- white-space:nowrap;
- letter-spacing:-.3px;
+ white-space:normal;
+ overflow-wrap:normal;
+ letter-spacing:0;
  text-shadow:0 1px 1px #00000010;
 }
 .wedding-intro .intro-decoration{
- display:inline;
- font-family:Georgia,serif;
- font-size:13px;
- margin:0 2px;
+ display:inline-block;
+ font-family:"Amiri",Georgia,serif;
+ font-size:1.2em;
+ font-weight:700;
+ margin:0 5px;
  color:var(--design-accent,#a27b3f);
+ text-shadow:0 1px 2px #a27b3f33;
 }
 
 .names{font-size:34px;color:var(--design-accent,#8d6833);line-height:1.8;padding:10px 0}
@@ -115,17 +121,19 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .invite.design-12{--design-bg:#f2eafa;--design-card:#fcf8ff;--design-text:#4c315d;--design-accent:#76499a;--design-border:#c5a5df;--heart-color:#ad7bc4}
 .invite.design-13{--design-bg:#fff0f5;--design-card:#fff9fb;--design-text:#78465b;--design-accent:#bf7595;--design-border:#edc5d5;--heart-color:#dc78a1}
 .invite.design-14{--design-bg:#eaf4ed;--design-card:#f7fcf8;--design-text:#204b3b;--design-accent:#187052;--design-border:#d6b765;--heart-color:#3d9b77}
+
 @media(max-width:600px){
  .wedding-intro{
-  font-size:clamp(9px,2.6vw,12px);
-  white-space:nowrap;
-  margin:12px auto;
-  padding:5px 0;
-  letter-spacing:-.45px;
+  font-size:clamp(13px,3.5vw,16px);
+  white-space:normal;
+  margin:14px auto;
+  padding:6px 0;
+  line-height:2;
+  letter-spacing:0;
  }
  .wedding-intro .intro-decoration{
-  font-size:clamp(10px,2.8vw,12px);
-  margin:0 1px;
+  font-size:1.1em;
+  margin:0 3px;
  }
 }
 @media(max-width:480px){
@@ -164,7 +172,13 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
   <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
   <div class="verse">﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ﴾<div class="ref">سورة الروم — الآية ٢١</div></div>
   <div class="title">دعوة زفاف</div>
-  <p class="wedding-intro"><span class="intro-decoration">❀༺</span> بِكُلِّ الْحُبِّ وَالسُّرُورِ، نَتَشَرَّفُ بِدَعْوَتِكُمْ لِحُضُورِ حَفْلِ زَفَافِنَا <span class="intro-decoration">༻❀</span></p>
+
+  <p class="wedding-intro">
+   <span class="intro-decoration">༺❀♡</span>
+   بِكُلِّ الْحُبِّ وَالسُّرُورِ، نَتَشَرَّفُ بِدَعْوَتِكُمْ لِحُضُورِ حَفْلِ زَفَاف
+   <span class="intro-decoration">♡❀༻</span>
+  </p>
+
   <div class="names"><span id="groom">محمد</span><br><span class="heart">♥</span><br><span id="bride">نور</span></div>
   <div class="details">
    <div class="detail">📅 التاريخ: <span id="date">يحدد لاحقاً</span></div>
