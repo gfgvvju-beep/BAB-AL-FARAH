@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -48,8 +49,13 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .row-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .door-image-preview{display:block;width:100%;max-width:320px;max-height:350px;object-fit:contain;margin:12px auto;border:1px solid #e5d6b7;border-radius:12px;background:#fff}
 .door-video-preview{display:block;width:100%;max-width:320px;max-height:450px;object-fit:contain;margin:12px auto;border:1px solid #e5d6b7;border-radius:12px;background:#222}
+.audio-library-item{display:flex;gap:8px;align-items:center;border:1px solid #e6ddcf;background:white;border-radius:10px;padding:10px;margin:8px 0;flex-wrap:wrap}
+.audio-library-item .audio-name{flex:1;min-width:150px;overflow-wrap:anywhere}
+.audio-library-item button{width:auto;min-width:100px;margin:0}
+.audio-library-item.selected-audio{border:2px solid #aa8950;background:#f5ecd9}
+.audio-library-item audio{width:100%;max-width:100%}
 hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
-@media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}.door-grid{grid-template-columns:1fr}.row-buttons{grid-template-columns:1fr}}
+@media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}.door-grid{grid-template-columns:1fr}.row-buttons{grid-template-columns:1fr}.audio-library-item button{width:100%}}
 </style>
 </head>
 <body>
@@ -99,19 +105,41 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <p class="help">هذا الإعداد خاص بلوحة الإدارة ولا يظهر للضيوف. اترك الحقل فارغاً إذا أردت أن يبقى الرابط بلا انتهاء.</p>
 
 <details class="door-panel">
-<summary>🔊 إعدادات صوت فتح الباب</summary>
+<summary>🔊 إعدادات الصوت والأغاني</summary>
 <div class="door-content">
 <label for="audioType">اختيار الصوت عند فتح الباب</label>
 <select id="audioType">
 <option value="none">🔇 بدون صوت</option>
-<option value="song">🎵 أغنية زفاف من جهازك</option>
+<option value="song">🎵 أغنية زفاف</option>
 <option value="quran">📖 القرآن الكريم — سورة الروم، الآية 21</option>
 </select>
-<label for="audioFile">🎵 اختيار أغنية MP3 من الجهاز</label>
+
+<label for="audioLibrary">🎵 اختيار أغنية محفوظة</label>
+<select id="audioLibrary">
+<option value="">جارٍ تحميل قائمة الأغاني...</option>
+</select>
+<button type="button" id="useLibrarySongBtn">استخدام الأغنية المحددة</button>
+<p class="help">الأغاني التي ترفعها تُحفظ في مكتبة الأغاني المشتركة، ويمكنك اختيارها لأي دعوة أو تغيير أغنية الدعوة الحالية.</p>
+
+<div id="audioLibraryList"></div>
+
+<hr>
+<h3>إضافة أغنية جديدة إلى المكتبة</h3>
+<label for="librarySongName">اسم الأغنية</label>
+<input id="librarySongName" placeholder="مثال: أغنية زفاف أحمد">
+<label for="librarySongFile">اختيار ملف MP3 من الجهاز</label>
+<input id="librarySongFile" type="file" accept=".mp3,audio/mpeg">
+<button type="button" id="uploadLibrarySongBtn">رفع الأغنية وإضافتها إلى المكتبة</button>
+<p id="librarySongStatus" class="help">اختر أغنية MP3 لإضافتها إلى مكتبة الأغاني.</p>
+
+<hr>
+<h3>رفع أغنية خاصة بهذه الدعوة فقط</h3>
+<label for="audioFile">اختيار أغنية MP3 من الجهاز</label>
 <input id="audioFile" type="file" accept=".mp3,audio/mpeg">
-<p class="help">اختر أغنية بصيغة MP3، بحد أقصى 10 ميغابايت. عند تعديل دعوة واختيار أغنية جديدة، سيُستبدل رابط الأغنية الخاص بالدعوة.</p>
+<p class="help">هذا الخيار يرفع أغنية خاصة بالدعوة الحالية. يمكنك بدلاً منه اختيار أغنية من المكتبة المشتركة أعلاه.</p>
 <p id="audioFileStatus" class="help">لم يتم اختيار ملف جديد.</p>
-<p class="help">يتم رفع الأغنية إلى Supabase Storage حتى يستطيع المدعوون تشغيلها من رابط الدعوة.</p>
+<p id="currentSongStatus" class="help"></p>
+<button type="button" id="clearSongBtn" class="secondary">إزالة الأغنية من هذه الدعوة</button>
 </div>
 </details>
 
@@ -142,7 +170,7 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 
 <hr>
 <h3>🚪 ملف الباب المتحرك لهذا القالب</h3>
-<p class="help">يمكنك رفع صورة JPG أو PNG أو WEBP أو GIF متحرك أو فيديو MP4. بعد الدقات الثلاث، يجب أن يشغّل ملف index.html الفيديو أو الحركة. كل قالب له ملف مستقل.</p>
+<p class="help">يمكنك رفع صورة JPG أو PNG أو WEBP أو GIF متحرك أو فيديو MP4. كل قالب له ملف مستقل.</p>
 <label for="doorImageFile">اختيار صورة أو GIF أو فيديو MP4</label>
 <input id="doorImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,.mp4">
 <div id="doorImagePreviewBox" class="hidden">
@@ -153,7 +181,7 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <p id="doorImageStatus" class="help">جارٍ تحميل إعدادات ملف الباب...</p>
 <button type="button" id="saveDoorImageBtn">رفع وحفظ ملف الباب لهذا القالب</button>
 <button type="button" id="deleteDoorImageBtn" class="danger">إزالة الملف المخصص لهذا القالب</button>
-<p class="help">يدعم هذا الحقل الملفات المرفوعة إلى مخزن template-doors. يجب أن يكون جدول template_doors موجوداً وأن تسمح سياسات Supabase بالرفع والتعديل.</p>
+<p class="help">يجب أن يكون مخزن template-doors وجدول template_doors موجودين ومهيئين في Supabase.</p>
 </div>
 </details>
 
@@ -196,12 +224,14 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const $=id=>document.getElementById(id);
 
+const $=id=>document.getElementById(id);
 let editingId=null;
 let busy=false;
 let loading=false;
 let currentAudioUrl="";
+let currentAudioType="none";
+let currentLibrarySongId=null;
 let doorImageBusy=false;
 let currentDoorImageUrl="";
 let currentDoorMediaType="";
@@ -209,8 +239,12 @@ let doorPreviewObjectUrl="";
 
 const MAX_AUDIO_SIZE=10*1024*1024;
 const MAX_DOOR_IMAGE_SIZE=50*1024*1024;
+const AUDIO_BUCKET="invitation-audio";
+const AUDIO_LIBRARY_BUCKET="invitation-audio";
+const AUDIO_LIBRARY_TABLE="audio_library";
 const DOOR_BUCKET="template-doors";
 const allowedDoorImageTypes=["image/jpeg","image/png","image/webp","image/gif","video/mp4"];
+let librarySongs=[];
 
 const doorNames={
 1:"الملكي الذهبي",2:"الأبيض الملكي",3:"التراثي الشرقي",4:"الزجاجي الحديث",
@@ -306,6 +340,200 @@ if(file.type==="image/jpeg"||/\.(jpg|jpeg)$/i.test(file.name))return "image/jpeg
 return file.type||"application/octet-stream";
 }
 
+/* مكتبة الأغاني المشتركة */
+function safeAudioName(file){
+return file.name.normalize("NFKD").replace(/[^\w.-]+/g,"_").replace(/^\.+/,"").slice(-100)||"wedding-song.mp3";
+}
+
+function normalizeLibrarySong(row){
+return {
+id:row.id,
+name:row.name||row.title||row.song_name||row.file_name||"أغنية بدون اسم",
+audio_url:row.audio_url||row.url||row.public_url||row.file_url||"",
+storage_path:row.storage_path||row.file_path||row.path||"",
+created_at:row.created_at||""
+};
+}
+
+function renderLibrarySelect(){
+const select=$("audioLibrary");
+select.replaceChildren();
+const empty=document.createElement("option");
+empty.value="";
+empty.textContent=librarySongs.length?"اختر أغنية من المكتبة":"لا توجد أغاني محفوظة في المكتبة";
+select.appendChild(empty);
+for(const song of librarySongs){
+const option=document.createElement("option");
+option.value=String(song.id);
+option.textContent=song.name;
+select.appendChild(option);
+}
+if(currentLibrarySongId!==null&&librarySongs.some(s=>String(s.id)===String(currentLibrarySongId))){
+select.value=String(currentLibrarySongId);
+}else{
+select.value="";
+}
+}
+
+function renderLibraryList(){
+const box=$("audioLibraryList");
+box.replaceChildren();
+if(!librarySongs.length){
+const p=document.createElement("p");
+p.className="help";
+p.textContent="قائمة المكتبة فارغة حالياً. ارفع أغنية جديدة لإضافتها.";
+box.appendChild(p);
+return;
+}
+for(const song of librarySongs){
+const card=document.createElement("div");
+card.className="audio-library-item"+(currentAudioUrl===song.audio_url?" selected-audio":"");
+const name=document.createElement("div");
+name.className="audio-name";
+const strong=document.createElement("strong");
+strong.textContent=song.name;
+name.appendChild(strong);
+card.appendChild(name);
+
+const choose=document.createElement("button");
+choose.type="button";
+choose.textContent=currentAudioUrl===song.audio_url?"الأغنية مختارة ✓":"اختيار للدعوة";
+choose.onclick=()=>useLibrarySong(song);
+card.appendChild(choose);
+
+const preview=document.createElement("audio");
+preview.controls=true;
+preview.preload="none";
+preview.src=song.audio_url;
+card.appendChild(preview);
+
+const remove=document.createElement("button");
+remove.type="button";
+remove.className="danger";
+remove.textContent="حذف من المكتبة";
+remove.onclick=()=>deleteLibrarySong(song);
+card.appendChild(remove);
+box.appendChild(card);
+}
+}
+
+async function loadAudioLibrary(){
+$("audioLibrary").disabled=true;
+$("uploadLibrarySongBtn").disabled=true;
+$("librarySongStatus").textContent="جارٍ تحميل قائمة الأغاني...";
+try{
+const {data,error}=await db.from(AUDIO_LIBRARY_TABLE).select("*").order("created_at",{ascending:false});
+if(error)throw error;
+librarySongs=(data||[]).map(normalizeLibrarySong).filter(song=>song.audio_url);
+renderLibrarySelect();
+renderLibraryList();
+$("librarySongStatus").textContent="تم تحميل "+librarySongs.length+" أغنية من المكتبة.";
+}catch(error){
+console.error("Load audio library:",error);
+librarySongs=[];
+renderLibrarySelect();
+renderLibraryList();
+$("librarySongStatus").textContent="تعذر تحميل مكتبة الأغاني. تأكد من إنشاء جدول audio_library في Supabase.";
+}finally{
+$("audioLibrary").disabled=false;
+$("uploadLibrarySongBtn").disabled=false;
+}
+}
+
+async function useLibrarySong(song){
+if(!song||!song.audio_url){
+status("رابط الأغنية غير متوفر.");
+return;
+}
+currentAudioUrl=song.audio_url;
+currentAudioType="song";
+currentLibrarySongId=song.id;
+$("audioType").value="song";
+$("audioFile").value="";
+$("audioFileStatus").textContent="تم اختيار أغنية من المكتبة.";
+$("currentSongStatus").textContent="الأغنية المختارة للدعوة: "+song.name;
+$("audioLibrary").value=String(song.id);
+renderLibraryList();
+status("تم اختيار أغنية «"+song.name+"». اضغط حفظ الدعوة لحفظ الاختيار.");
+}
+
+$("useLibrarySongBtn").addEventListener("click",()=>{
+const id=$("audioLibrary").value;
+const song=librarySongs.find(s=>String(s.id)===String(id));
+if(!song){status("اختر أغنية من القائمة أولاً.");return}
+useLibrarySong(song);
+});
+
+$("uploadLibrarySongBtn").addEventListener("click",async()=>{
+const file=$("librarySongFile").files[0];
+const name=$("librarySongName").value.trim()||file?.name.replace(/\.mp3$/i,"")||"أغنية زفاف";
+if(!file){status("اختر ملف MP3 من جهازك أولاً.");return}
+if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
+status("اختر ملف MP3 صحيحاً.");return;
+}
+if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
+
+$("uploadLibrarySongBtn").disabled=true;
+$("librarySongStatus").textContent="جارٍ رفع الأغنية...";
+try{
+const path="library/"+Date.now()+"-"+crypto.randomUUID()+"-"+safeAudioName(file);
+const {data:uploadData,error:uploadError}=await db.storage.from(AUDIO_LIBRARY_BUCKET).upload(path,file,{
+cacheControl:"3600",upsert:false,contentType:"audio/mpeg"
+});
+if(uploadError)throw uploadError;
+const {data:publicData}=db.storage.from(AUDIO_LIBRARY_BUCKET).getPublicUrl(uploadData.path);
+if(!publicData?.publicUrl)throw new Error("تعذر الحصول على رابط الأغنية.");
+
+const {data:inserted,error:insertError}=await db.from(AUDIO_LIBRARY_TABLE).insert({
+name,
+audio_url:publicData.publicUrl,
+storage_path:uploadData.path,
+file_name:file.name,
+created_at:new Date().toISOString()
+}).select("*").single();
+
+if(insertError){
+console.error("Audio library insert:",insertError);
+throw new Error("تم رفع الملف لكن لم تتم إضافته إلى جدول المكتبة: "+insertError.message);
+}
+$("librarySongFile").value="";
+$("librarySongName").value="";
+await loadAudioLibrary();
+const song=normalizeLibrarySong(inserted);
+if(song.audio_url)await useLibrarySong(song);
+$("librarySongStatus").textContent="تم رفع الأغنية وإضافتها إلى المكتبة بنجاح.";
+status("تمت إضافة الأغنية إلى المكتبة. تم اختيارها للدعوة الحالية؛ اضغط حفظ الدعوة لتطبيقها.");
+}catch(error){
+console.error("Upload library song:",error);
+$("librarySongStatus").textContent="تعذرت إضافة الأغنية: "+(error.message||"خطأ غير معروف");
+status("تعذرت إضافة الأغنية إلى المكتبة. تحقق من إعدادات جدول audio_library وصلاحيات Supabase.");
+}finally{
+$("uploadLibrarySongBtn").disabled=false;
+}
+});
+
+async function deleteLibrarySong(song){
+if(!confirm("حذف الأغنية «"+song.name+"» من المكتبة؟ الدعوات التي تستخدم رابطها الحالي لن تتغير تلقائياً."))return;
+try{
+const {error}=await db.from(AUDIO_LIBRARY_TABLE).delete().eq("id",song.id);
+if(error)throw error;
+if(song.storage_path){
+const {error:storageError}=await db.storage.from(AUDIO_LIBRARY_BUCKET).remove([song.storage_path]);
+if(storageError)console.warn("Could not remove audio file:",storageError);
+}
+librarySongs=librarySongs.filter(s=>String(s.id)!==String(song.id));
+if(String(currentLibrarySongId)===String(song.id)){
+currentLibrarySongId=null;
+}
+renderLibrarySelect();
+renderLibraryList();
+status("تم حذف الأغنية من المكتبة.");
+}catch(error){
+console.error("Delete library song:",error);
+status("تعذر حذف الأغنية: "+(error.message||"خطأ غير معروف"));
+}
+}
+
 async function loadDoorImage(templateId){
 const id=Number(templateId);
 currentDoorImageUrl="";
@@ -314,10 +542,7 @@ $("doorImageFile").value="";
 clearDoorPreview();
 $("doorImageStatus").textContent="جارٍ تحميل ملف القالب "+id+"...";
 try{
-const {data,error}=await db.from("template_doors")
-.select("image_url")
-.eq("template_id",id)
-.maybeSingle();
+const {data,error}=await db.from("template_doors").select("image_url").eq("template_id",id).maybeSingle();
 if(error)throw error;
 if(data&&data.image_url){
 currentDoorImageUrl=data.image_url;
@@ -342,13 +567,9 @@ loadDoorImage(button.dataset.id);
 
 $("doorImageFile").addEventListener("change",()=>{
 const file=$("doorImageFile").files[0];
-if(!file){
-loadDoorImage($("template").value);
-return;
-}
+if(!file){loadDoorImage($("template").value);return}
 const type=mediaTypeFromFile(file);
-const valid=allowedDoorImageTypes.includes(type);
-if(!valid){
+if(!allowedDoorImageTypes.includes(type)){
 $("doorImageFile").value="";
 status("اختر صورة JPG أو PNG أو WEBP أو GIF أو فيديو MP4 صحيحاً.");
 return;
@@ -373,42 +594,32 @@ if(!file){status("اختر صورة أو GIF أو فيديو MP4 من جهازك
 const type=mediaTypeFromFile(file);
 if(!allowedDoorImageTypes.includes(type)){status("نوع الملف غير مدعوم.");return}
 if(file.size>MAX_DOOR_IMAGE_SIZE){status("حجم الملف أكبر من 50 ميغابايت.");return}
-
 doorImageBusy=true;
 $("saveDoorImageBtn").disabled=true;
 $("deleteDoorImageBtn").disabled=true;
 try{
-const extension={
-"image/jpeg":"jpg","image/png":"png","image/webp":"webp",
-"image/gif":"gif","video/mp4":"mp4"
-}[type];
+const extension={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif","video/mp4":"mp4"}[type];
 const path=id+"/door."+extension;
 $("doorImageStatus").textContent="جارٍ رفع الملف إلى Supabase Storage...";
-const {data:uploadData,error:uploadError}=await db.storage
-.from(DOOR_BUCKET)
-.upload(path,file,{upsert:true,cacheControl:"3600",contentType:type});
+const {data:uploadData,error:uploadError}=await db.storage.from(DOOR_BUCKET).upload(path,file,{upsert:true,cacheControl:"3600",contentType:type});
 if(uploadError)throw uploadError;
 const {data:publicData}=db.storage.from(DOOR_BUCKET).getPublicUrl(uploadData.path);
-if(!publicData||!publicData.publicUrl)throw new Error("تعذر إنشاء رابط عام للملف.");
+if(!publicData?.publicUrl)throw new Error("تعذر إنشاء رابط عام للملف.");
 const mediaUrl=publicData.publicUrl;
 $("doorImageStatus").textContent="جارٍ حفظ إعدادات القالب...";
-const {error:saveError}=await db.from("template_doors").upsert({
-template_id:id,
-image_url:mediaUrl,
-updated_at:new Date().toISOString()
-},{onConflict:"template_id"});
+const {error:saveError}=await db.from("template_doors").upsert({template_id:id,image_url:mediaUrl,updated_at:new Date().toISOString()},{onConflict:"template_id"});
 if(saveError)throw saveError;
 currentDoorImageUrl=mediaUrl;
 currentDoorMediaType=type;
 showDoorPreview(mediaUrl+"?v="+Date.now(),type);
 $("doorImageFile").value="";
 if(doorPreviewObjectUrl){URL.revokeObjectURL(doorPreviewObjectUrl);doorPreviewObjectUrl=""}
-$("doorImageStatus").textContent="تم حفظ "+(type==="video/mp4"?"فيديو MP4":type==="image/gif"?"ملف GIF متحرك":"الصورة")+" للقالب "+id+" بنجاح.";
+$("doorImageStatus").textContent="تم حفظ الملف للقالب "+id+" بنجاح.";
 status("تم رفع ملف الباب وحفظه للقالب "+id+".");
 }catch(error){
 console.error("Save door media:",error);
 status("تعذر حفظ ملف الباب: "+(error.message||"خطأ غير معروف"));
-$("doorImageStatus").textContent="لم يكتمل الحفظ. تحقق من وجود bucket باسم template-doors، ومن صلاحيات التخزين وجدول template_doors.";
+$("doorImageStatus").textContent="تحقق من وجود bucket باسم template-doors وصلاحيات التخزين وجدول template_doors.";
 }finally{
 doorImageBusy=false;
 $("saveDoorImageBtn").disabled=false;
@@ -462,8 +673,40 @@ $("audioFileStatus").textContent="الملف أكبر من الحجم المسم
 return;
 }
 $("audioType").value="song";
+currentLibrarySongId=null;
+$("audioLibrary").value="";
 $("audioFileStatus").textContent="الملف المختار: "+file.name+" — الحجم: "+(file.size/1024/1024).toFixed(2)+" ميغابايت";
 status("تم اختيار الأغنية. اضغط حفظ الدعوة لرفعها.");
+});
+
+$("audioType").addEventListener("change",()=>{
+if($("audioType").value==="none"){
+currentAudioUrl="";
+currentLibrarySongId=null;
+$("audioLibrary").value="";
+$("audioFile").value="";
+$("currentSongStatus").textContent="تم اختيار عدم تشغيل صوت.";
+}else if($("audioType").value==="quran"){
+currentAudioUrl="";
+currentLibrarySongId=null;
+$("audioLibrary").value="";
+$("audioFile").value="";
+$("currentSongStatus").textContent="تم اختيار القرآن الكريم.";
+}
+renderLibraryList();
+});
+
+$("clearSongBtn").addEventListener("click",()=>{
+currentAudioUrl="";
+currentAudioType="none";
+currentLibrarySongId=null;
+$("audioType").value="none";
+$("audioFile").value="";
+$("audioLibrary").value="";
+$("audioFileStatus").textContent="لم يتم اختيار ملف جديد.";
+$("currentSongStatus").textContent="لن تحتوي الدعوة على أغنية مخصصة بعد حفظ التغييرات.";
+renderLibraryList();
+status("تمت إزالة الأغنية من إعدادات الدعوة الحالية. اضغط حفظ الدعوة لتطبيق التغيير.");
 });
 
 function showSession(session){
@@ -472,7 +715,7 @@ $("login").classList.toggle("hidden",signedIn);
 $("panel").classList.toggle("hidden",!signedIn);
 if(signedIn&&!loading){
 loading=true;
-Promise.all([loadInvitations(),loadBookings(),loadDoorImage($("template").value)]).finally(()=>loading=false);
+Promise.all([loadInvitations(),loadBookings(),loadDoorImage($("template").value),loadAudioLibrary()]).finally(()=>loading=false);
 }
 }
 
@@ -587,8 +830,14 @@ $("notes").value=item.notes||"";
 $("expiresAt").value=toLocalDateTime(item.expires_at);
 $("audioType").value=item.audio_type||"none";
 currentAudioUrl=item.audio_url||"";
+currentAudioType=item.audio_type||"none";
+currentLibrarySongId=null;
+const match=librarySongs.find(song=>song.audio_url===currentAudioUrl);
+if(match)currentLibrarySongId=match.id;
+renderLibrarySelect();
 $("audioFile").value="";
-$("audioFileStatus").textContent=currentAudioUrl?"توجد أغنية محفوظة لهذه الدعوة. اختيار ملف جديد سيستبدل رابط الأغنية.":"لا توجد أغنية مرفوعة لهذه الدعوة.";
+$("audioFileStatus").textContent=currentAudioUrl?"توجد أغنية محفوظة لهذه الدعوة. اختر أغنية من المكتبة أو ارفع ملفاً جديداً لتغييرها.":"لا توجد أغنية مرفوعة لهذه الدعوة.";
+$("currentSongStatus").textContent=currentAudioUrl?"رابط الأغنية الحالية محفوظ. يمكنك تغييره من قائمة الأغاني.":"لا توجد أغنية مخصصة حالياً.";
 $("published").checked=!!item.is_published;
 selectDoor(item.template_id||1);
 loadDoorImage(item.template_id||1);
@@ -596,7 +845,8 @@ $("doorPicker").open=false;
 $("deleteCurrentBtn").classList.remove("hidden");
 $("cancelEditBtn").classList.remove("hidden");
 $("saveBtn").textContent="حفظ التعديلات";
-status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه.");
+renderLibraryList();
+status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه، ويمكنك تغيير الأغنية وحفظها.");
 }
 
 async function deleteInvitation(item){
@@ -633,6 +883,8 @@ if(Number.isNaN(expiryDate.getTime())){status("تاريخ انتهاء الرا�
 if(expiryDate.getTime()<=Date.now()){status("اختَر وقت انتهاء في المستقبل.");return}
 expiresAt=expiryDate.toISOString();
 }
+
+const selectedType=$("audioType").value;
 const record={
 slug:$("slug").value.trim(),
 groom_name:$("groom").value.trim(),
@@ -644,69 +896,125 @@ venue_name:$("venue").value.trim(),
 map_url:$("map").value.trim()||null,
 contact_phone:$("phone").value.trim(),
 notes:$("notes").value.trim(),
-audio_type:$("audioType").value,
-audio_url:currentAudioUrl||null,
+audio_type:selectedType,
+audio_url:selectedType==="song"?(currentAudioUrl||null):null,
 template_id:Number($("template").value),
 is_published:$("published").checked,
 expires_at:expiresAt
 };
+
 if(!record.slug)return status("تعذر إنشاء رابط الدعوة. اضغط دعوة جديدة.");
 if(!record.groom_name||!record.bride_name)return status("اكتب اسم العريس واسم العروس.");
 if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>14)return status("اختَر قالباً من القوالب الأربعة عشر.");
+
 const file=$("audioFile").files[0];
+if(selectedType==="song"&&!currentAudioUrl&&!file){
+status("اختر أغنية من المكتبة أو ارفع ملف MP3.");
+return;
+}
 if(file){
-if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){status("اختر ملف MP3 صحيحاً.");return}
+if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
+status("اختر ملف MP3 صحيحاً.");return;
+}
 if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
 }
-busy=true;$("saveBtn").disabled=true;
+
+busy=true;
+$("saveBtn").disabled=true;
 let result;
 try{
 if(file){
 status("جارٍ رفع الأغنية إلى التخزين...");
-const safeName=file.name.normalize("NFKD").replace(/[^\w.-]+/g,"_").replace(/^\.+/,"").slice(-100)||"wedding-song.mp3";
-const path=record.slug+"/"+Date.now()+"-"+safeName;
-const {data:uploadData,error:uploadError}=await db.storage.from("invitation-audio").upload(path,file,{cacheControl:"3600",upsert:false,contentType:"audio/mpeg"});
+const path=(editingId?"library/":"library/")+Date.now()+"-"+crypto.randomUUID()+"-"+safeAudioName(file);
+const {data:uploadData,error:uploadError}=await db.storage.from(AUDIO_BUCKET).upload(path,file,{
+cacheControl:"3600",upsert:false,contentType:"audio/mpeg"
+});
 if(uploadError)throw uploadError;
-const {data:publicData}=db.storage.from("invitation-audio").getPublicUrl(uploadData.path);
-if(!publicData||!publicData.publicUrl)throw new Error("تعذر الحصول على رابط الأغنية.");
+const {data:publicData}=db.storage.from(AUDIO_BUCKET).getPublicUrl(uploadData.path);
+if(!publicData?.publicUrl)throw new Error("تعذر الحصول على رابط الأغنية.");
 currentAudioUrl=publicData.publicUrl;
-record.audio_url=currentAudioUrl;record.audio_type="song";$("audioType").value="song";
+record.audio_url=currentAudioUrl;
+record.audio_type="song";
+
+/* محاولة حفظ الأغنية في المكتبة المشتركة كذلك. */
+const libraryName=$("librarySongName").value.trim()||file.name.replace(/\.mp3$/i,"")||"أغنية زفاف";
+const {data:libraryRow,error:libraryError}=await db.from(AUDIO_LIBRARY_TABLE).insert({
+name:libraryName,
+audio_url:currentAudioUrl,
+storage_path:uploadData.path,
+file_name:file.name,
+created_at:new Date().toISOString()
+}).select("*").single();
+
+if(libraryError){
+console.warn("The song works for this invitation, but library insertion failed:",libraryError);
+$("librarySongStatus").textContent="تم رفع الأغنية للدعوة، لكن تعذرت إضافتها للمكتبة. تحقق من جدول audio_library وصلاحياته.";
+}else{
+const newSong=normalizeLibrarySong(libraryRow);
+librarySongs=[newSong,...librarySongs.filter(s=>s.audio_url!==newSong.audio_url)];
+renderLibrarySelect();
+renderLibraryList();
+currentLibrarySongId=newSong.id;
+}
+$("audioType").value="song";
 $("audioFileStatus").textContent="تم رفع الأغنية بنجاح: "+file.name;
 }
+
 status("جارٍ حفظ بيانات الدعوة...");
 if(editingId)result=await db.from("invitations").update(record).eq("id",editingId);
 else result=await db.from("invitations").insert(record);
+
 }catch(e){
 console.error("Save invitation error:",e);
 status("تعذر حفظ الدعوة أو رفع الأغنية: "+(e.message||"خطأ غير معروف"));
-busy=false;$("saveBtn").disabled=false;return;
+busy=false;
+$("saveBtn").disabled=false;
+return;
 }
-busy=false;$("saveBtn").disabled=false;
+
+busy=false;
+$("saveBtn").disabled=false;
 if(result.error){
 if(!editingId&&/duplicate|unique/i.test(result.error.message)){
-newUniqueSlug();status("تعارض رمز الرابط؛ أنشأنا رمزاً جديداً. اضغط حفظ الدعوة مرة أخرى.");return;
+newUniqueSlug();
+status("تعارض رمز الرابط؛ أنشأنا رمزاً جديداً. اضغط حفظ الدعوة مرة أخرى.");
+return;
 }
-status("لم يتم الحفظ: "+result.error.message);return;
+status("لم يتم الحفظ: "+result.error.message);
+return;
 }
+
 const savedUrl=invitationUrl(record.slug);
 resetForm();
 status("تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+savedUrl);
-await loadInvitations();
+await Promise.all([loadInvitations(),loadAudioLibrary()]);
 };
 
 function resetForm(){
 $("inviteForm").reset();
-editingId=null;currentAudioUrl="";
+editingId=null;
+currentAudioUrl="";
+currentAudioType="none";
+currentLibrarySongId=null;
 $("audioFile").value="";
 $("audioFileStatus").textContent="لم يتم اختيار ملف جديد.";
+$("currentSongStatus").textContent="";
+$("librarySongName").value="";
 $("formTitle").textContent="إضافة دعوة جديدة";
 $("saveBtn").textContent="حفظ الدعوة";
 $("deleteCurrentBtn").classList.add("hidden");
 $("cancelEditBtn").classList.add("hidden");
-newUniqueSlug();selectDoor(1);loadDoorImage(1);
+newUniqueSlug();
+selectDoor(1);
+loadDoorImage(1);
 $("doorPicker").open=false;
-$("audioType").value="none";$("expiresAt").value="";$("published").checked=false;
+$("audioType").value="none";
+$("expiresAt").value="";
+$("published").checked=false;
+renderLibrarySelect();
+renderLibraryList();
 }
+
 $("newBtn").onclick=()=>{
 resetForm();
 status("تم إنشاء رابط جديد. أدخل بيانات الدعوة ثم اضغط حفظ الدعوة.");
@@ -716,7 +1024,8 @@ $("refreshBtn").onclick=loadInvitations;
 
 async function loadBookings(){
 const box=$("bookingsList");
-box.replaceChildren();addText(box,"p","جارٍ تحميل الحجوزات...");
+box.replaceChildren();
+addText(box,"p","جارٍ تحميل الحجوزات...");
 try{
 const {data,error}=await db.from("bookings").select("*").order("created_at",{ascending:false});
 if(error){box.replaceChildren();addText(box,"p","تعذر عرض الحجوزات: "+error.message);return}
@@ -756,11 +1065,13 @@ $("loginBtn").onclick=async()=>{
 const email=$("email").value.trim();
 const password=$("password").value;
 if(!email||!password){status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");return}
-$("loginBtn").disabled=true;status("جارٍ تسجيل الدخول...");
+$("loginBtn").disabled=true;
+status("جارٍ تسجيل الدخول...");
 try{
 const {data,error}=await db.auth.signInWithPassword({email,password});
 if(error){status("تعذر الدخول: "+error.message);return}
-status("تم تسجيل الدخول بنجاح.");showSession(data.session);
+status("تم تسجيل الدخول بنجاح.");
+showSession(data.session);
 }catch(e){status("تعذر الاتصال بـ Supabase. تحقق من الإنترنت وحاول مرة أخرى.")}
 finally{$("loginBtn").disabled=false}
 };
@@ -769,7 +1080,10 @@ $("password").addEventListener("keydown",event=>{if(event.key==="Enter")$("login
 $("logoutBtn").onclick=async()=>{
 const {error}=await db.auth.signOut();
 if(error){status("تعذر تسجيل الخروج: "+error.message);return}
-resetForm();$("list").replaceChildren();$("bookingsList").replaceChildren();status("تم تسجيل الخروج.");
+resetForm();
+$("list").replaceChildren();
+$("bookingsList").replaceChildren();
+status("تم تسجيل الخروج.");
 };
 
 selectDoor(1);
