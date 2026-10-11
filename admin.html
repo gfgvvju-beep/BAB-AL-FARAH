@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -63,28 +63,20 @@ button:disabled{opacity:.5}
 
 <label for="groom">اسم العريس</label>
 <input id="groom" required placeholder="اسم العريس">
-
 <label for="bride">اسم العروس</label>
 <input id="bride" required placeholder="اسم العروس">
-
 <label for="date">تاريخ الحفل</label>
 <input id="date" type="date">
-
 <label for="day">يوم الحفل</label>
 <input id="day" placeholder="مثال: الخميس">
-
 <label for="time">وقت الحفل</label>
 <input id="time" placeholder="مثال: الثامنة مساءً">
-
 <label for="venue">اسم القاعة</label>
 <input id="venue" placeholder="اسم قاعة الأفراح">
-
 <label for="map">رابط موقع القاعة على الخريطة</label>
 <input id="map" type="url" placeholder="https://maps.google.com/...">
-
 <label for="phone">رقم التواصل</label>
 <input id="phone" type="tel" placeholder="رقم الهاتف">
-
 <label for="notes">ملاحظات الدعوة (اختياري)</label>
 <textarea id="notes" rows="3" placeholder="اكتب الملاحظات التي تريد إضافتها للدعوة..."></textarea>
 
@@ -95,7 +87,7 @@ button:disabled{opacity:.5}
 <option value="song">🎵 أغنية زفاف رومانسية</option>
 <option value="quran">📖 القرآن الكريم — سورة الروم، الآية 21</option>
 </select>
-<p class="help">اختار صوتاً واحداً لكل دعوة. سيحاول الموقع تشغيله عند فتح الباب، حسب سماح المتصفح بالتشغيل التلقائي.</p>
+<p class="help">اختار صوتاً واحداً لكل دعوة. قد يحتاج تشغيل الصوت إلى تفاعل من الزائر حسب إعدادات المتصفح.</p>
 </div>
 
 <div class="door-panel">
@@ -110,6 +102,12 @@ button:disabled{opacity:.5}
 <button type="button" class="door-option" data-id="6"><span class="number">06</span>الوردي الرومانسي</button>
 <button type="button" class="door-option" data-id="7"><span class="number">07</span>الأزرق الليلي</button>
 <button type="button" class="door-option" data-id="8"><span class="number">08</span>الرخام الفخم</button>
+<button type="button" class="door-option" data-id="9"><span class="number">09</span>العنابي الملكي</button>
+<button type="button" class="door-option" data-id="10"><span class="number">10</span>الفضي العصري</button>
+<button type="button" class="door-option" data-id="11"><span class="number">11</span>الخشب الطبيعي</button>
+<button type="button" class="door-option" data-id="12"><span class="number">12</span>البنفسجي الفاخر</button>
+<button type="button" class="door-option" data-id="13"><span class="number">13</span>اللؤلؤي الوردي</button>
+<button type="button" class="door-option" data-id="14"><span class="number">14</span>الزمردي الذهبي</button>
 </div>
 <p id="doorDescription" class="door-description"></p>
 </div>
@@ -145,7 +143,13 @@ const doorNames={
 5:"الأخضر الملكي",
 6:"الوردي الرومانسي",
 7:"الأزرق الليلي",
-8:"الرخام الفخم"
+8:"الرخام الفخم",
+9:"العنابي الملكي",
+10:"الفضي العصري",
+11:"الخشب الطبيعي",
+12:"البنفسجي الفاخر",
+13:"اللؤلؤي الوردي",
+14:"الزمردي الذهبي"
 };
 
 const doorDescriptions={
@@ -156,7 +160,13 @@ const doorDescriptions={
 5:"أخضر زمردي بتفاصيل نحاسية.",
 6:"وردي لؤلؤي رومانسي.",
 7:"أزرق ليلي بزخارف فضية.",
-8:"رخام عاجي بخطوط برونزية."
+8:"رخام عاجي بخطوط برونزية.",
+9:"عنابي عميق مع لمسات ذهبية.",
+10:"فضي ورمادي بتصميم عصري.",
+11:"خشب طبيعي دافئ بتفاصيل نحاسية.",
+12:"بنفسجي فاخر بإطار ذهبي.",
+13:"وردي لؤلؤي بتفاصيل ناعمة.",
+14:"زمردي غني مع زخارف ذهبية."
 };
 
 const audioNames={
@@ -185,7 +195,7 @@ function selectDoor(id){
  if(!doorNames[id])id=1;
  $("template").value=String(id);
  $("doorDescription").textContent=
-  "الباب "+id+" — "+doorNames[id]+": "+doorDescriptions[id];
+  "القالب "+id+" — "+doorNames[id]+": "+doorDescriptions[id];
 
  document.querySelectorAll(".door-option").forEach(button=>{
   const selected=Number(button.dataset.id)===id;
@@ -213,7 +223,6 @@ $("loginBtn").onclick=async()=>{
  }
 
  $("loginBtn").disabled=true;
-
  try{
   const {error}=await db.auth.signInWithPassword({email,password});
   if(error)return status("تعذر الدخول: "+error.message);
@@ -239,7 +248,6 @@ async function copyText(text){
   await navigator.clipboard.writeText(text);
   return;
  }
-
  const field=document.createElement("textarea");
  field.value=text;
  field.style.position="fixed";
@@ -248,7 +256,6 @@ async function copyText(text){
  field.select();
  const ok=document.execCommand("copy");
  field.remove();
-
  if(!ok)throw new Error("copy failed");
 }
 
@@ -257,7 +264,6 @@ async function loadInvitations(){
   .select("*").order("created_at",{ascending:false});
 
  if(error)return status("تعذر تحميل الدعوات: "+error.message);
-
  $("list").replaceChildren();
 
  for(const item of data||[]){
@@ -271,7 +277,7 @@ async function loadInvitations(){
   details.style.whiteSpace="pre-line";
   details.textContent=
    "رمز الدعوة: "+item.slug+
-   "\nالباب: "+(item.template_id||1)+" — "+(doorNames[item.template_id]||doorNames[1])+
+   "\nالقالب: "+(item.template_id||1)+" — "+(doorNames[item.template_id]||doorNames[1])+
    "\nالتاريخ: "+(item.wedding_date||"غير محدد")+
    "\nالوقت: "+(item.wedding_time||"غير محدد")+
    "\nالمكان: "+(item.venue_name||"غير محدد")+
@@ -288,7 +294,6 @@ async function loadInvitations(){
   const copyButton=document.createElement("button");
   copyButton.type="button";
   copyButton.textContent="نسخ رابط الدعوة 📋";
-
   copyButton.onclick=async()=>{
    try{
     await copyText(url);
@@ -311,14 +316,12 @@ async function loadInvitations(){
   card.append(title,details,link,copyButton,publication,edit);
   $("list").appendChild(card);
  }
-
  status("تم تحديث قائمة الدعوات.");
 }
 
 function fillForm(item){
  editingId=item.id;
  $("formTitle").textContent="تعديل الدعوة";
-
  $("slug").value=item.slug||"";
  $("groom").value=item.groom_name||"";
  $("bride").value=item.bride_name||"";
@@ -331,9 +334,7 @@ function fillForm(item){
  $("notes").value=item.notes||"";
  $("audioType").value=item.audio_type||"none";
  $("published").checked=!!item.is_published;
-
  selectDoor(item.template_id||1);
-
  status("عدّل البيانات ثم اضغط حفظ الدعوة. رابط الدعوة سيبقى نفسه.");
  window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -362,19 +363,16 @@ $("inviteForm").onsubmit=async event=>{
  if(!record.slug){
   return status("تعذر إنشاء رمز الدعوة. اضغط دعوة جديدة وحاول مرة أخرى.");
  }
-
  if(!record.groom_name||!record.bride_name){
   return status("اكتب اسم العريس واسم العروس.");
  }
-
- if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>8){
-  return status("اختار باباً من الأبواب الثمانية.");
+ if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>14){
+  return status("اختار قالباً من القوالب الأربعة عشر.");
  }
 
  busy=true;
  $("saveBtn").disabled=true;
  status("جارٍ حفظ الدعوة...");
-
  let result;
 
  try{
@@ -402,7 +400,6 @@ $("inviteForm").onsubmit=async event=>{
 
  const savedUrl=invitationUrl(record.slug);
  status("تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+savedUrl);
-
  resetForm();
  await loadInvitations();
 };
@@ -441,4 +438,3 @@ db.auth.getSession().then(({data,error})=>{
 </script>
 </body>
 </html>
-```
