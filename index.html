@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -596,13 +597,17 @@ function enableInvitation(){
  invitationCheckComplete=true;
  $("start").disabled=false;
  $("start").textContent=getOpeningText();
- $("hint").textContent="اضغط على الفيديو أو الزر 3 مرات حتى تُفتح الدعوة";
+
+ if(openingPrompt==="tap"){
+  $("hint").textContent="اضغط على الشاشة أو الزر 3 مرات حتى تُفتح الدعوة";
+ }else{
+  $("hint").textContent="اطرق الباب 3 مرات حتى تُفتح الدعوة";
+ }
 }
 
 async function loadInvitation(){
  const slug=params.get("invite");
 
- /* دعم العبارة عند فتح رابط مباشر بدون slug */
  openingPrompt=readOpeningPrompt({
   opening_prompt:params.get("opening_prompt")
  });
@@ -657,8 +662,32 @@ async function loadInvitation(){
    return;
   }
 
-  /* قراءة اختيار عبارة الافتتاح المحفوظة مع الدعوة */
-  openingPrompt=readOpeningPrompt(item);
+  /*
+   * قراءة عبارة الافتتاح من جدول invitations مباشرةً.
+   * هذا يعالج حالة أن RPC لا يرجع العمود الجديد opening_prompt.
+   */
+  let promptLoaded=false;
+
+  try{
+   const {data:promptRow,error:promptError}=await db
+    .from("invitations")
+    .select("opening_prompt")
+    .eq("slug",slug)
+    .maybeSingle();
+
+   if(!promptError&&promptRow&&promptRow.opening_prompt!==undefined&&promptRow.opening_prompt!==null){
+    openingPrompt=readOpeningPrompt(promptRow);
+    promptLoaded=true;
+   }else if(promptError){
+    console.warn("تعذرت قراءة عبارة الافتتاح مباشرة:",promptError.message);
+   }
+  }catch(promptLookupError){
+   console.warn("تعذرت قراءة عبارة الافتتاح:",promptLookupError);
+  }
+
+  if(!promptLoaded){
+   openingPrompt=readOpeningPrompt(item);
+  }
 
   if(item.expires_at){
    const exp=String(item.expires_at).slice(0,10);
@@ -890,7 +919,12 @@ function handleKnock(){
 
  if(knockCount<3){
   $("start").textContent="الدقّة "+knockCount+" من 3";
-  $("hint").textContent="طَق... طَق... طَق...";
+
+  if(openingPrompt==="tap"){
+   $("hint").textContent="الضغطة "+knockCount+" من 3 ❤️";
+  }else{
+   $("hint").textContent="الدقّة "+knockCount+" من 3 ❤️";
+  }
 
   if(knockTimer)clearTimeout(knockTimer);
 
@@ -898,7 +932,13 @@ function handleKnock(){
    if(knockCount>0&&!openingStarted){
     knockCount=0;
     $("start").textContent=getOpeningText();
-    $("hint").textContent="اضغط على الفيديو أو الزر 3 مرات حتى تُفتح الدعوة";
+
+    if(openingPrompt==="tap"){
+     $("hint").textContent="اضغط على الشاشة أو الزر 3 مرات حتى تُفتح الدعوة";
+    }else{
+     $("hint").textContent="اطرق الباب 3 مرات حتى تُفتح الدعوة";
+    }
+
     arch.classList.remove("knock");
    }
   },2200);
