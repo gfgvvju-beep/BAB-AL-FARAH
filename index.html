@@ -41,25 +41,25 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .ref{font-size:15px;color:var(--design-accent,#96846a)}
 .title{color:var(--design-accent,#b18b49);font-size:30px;margin:22px 0;padding:13px 0;border-top:1px solid var(--design-border,#ddc58f);border-bottom:1px solid var(--design-border,#ddc58f)}
 
-/* عبارة الدعوة المزخرفة بخط أكبر */
+/* عبارة الدعوة: خط أصغر وسطر واحد */
 .wedding-intro{
-  font-size:27px;
-  font-weight:bold;
-  line-height:2;
-  text-align:center;
-  color:var(--design-accent,#a27b3f);
-  margin:28px auto;
-  padding:12px 5px;
-  text-shadow:0 1px 1px #00000010;
-  overflow-wrap:anywhere;
+ display:block;
+ width:100%;
+ margin:18px auto;
+ padding:8px 0;
+ color:var(--design-accent,#a27b3f);
+ font-size:17px;
+ font-weight:bold;
+ line-height:1.8;
+ text-align:center;
+ white-space:nowrap;
+ text-shadow:0 1px 1px #00000010;
 }
-
 .wedding-intro .intro-decoration{
-  display:block;
-  font-size:23px;
-  line-height:1.8;
-  margin:3px 0;
-  color:var(--design-accent,#a27b3f);
+ display:inline;
+ font-size:15px;
+ margin:0 3px;
+ color:var(--design-accent,#a27b3f);
 }
 
 .names{font-size:34px;color:var(--design-accent,#8d6833);line-height:1.8;padding:10px 0}
@@ -112,6 +112,19 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .invite.design-12{--design-bg:#f2eafa;--design-card:#fcf8ff;--design-text:#4c315d;--design-accent:#76499a;--design-border:#c5a5df;--heart-color:#ad7bc4}
 .invite.design-13{--design-bg:#fff0f5;--design-card:#fff9fb;--design-text:#78465b;--design-accent:#bf7595;--design-border:#edc5d5;--heart-color:#dc78a1}
 .invite.design-14{--design-bg:#eaf4ed;--design-card:#f7fcf8;--design-text:#204b3b;--design-accent:#187052;--design-border:#d6b765;--heart-color:#3d9b77}
+@media(max-width:600px){
+ .wedding-intro{
+  font-size:clamp(10px,3.25vw,14px);
+  white-space:nowrap;
+  margin:15px auto;
+  padding:6px 0;
+  letter-spacing:-.35px;
+ }
+ .wedding-intro .intro-decoration{
+  font-size:clamp(10px,3vw,13px);
+  margin:0 1px;
+ }
+}
 @media(max-width:480px){
  #start{bottom:calc(72px + env(safe-area-inset-bottom,0px));font-size:16px;padding:14px 18px}
  .hint{bottom:calc(18px + env(safe-area-inset-bottom,0px));font-size:14px}
@@ -121,8 +134,6 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
  .invite{padding:29px 13px 32px}
  .names{font-size:30px}
  .verse{font-size:18px}
- .wedding-intro{font-size:23px;line-height:1.9;margin:22px auto;padding:10px 3px}
- .wedding-intro .intro-decoration{font-size:20px}
 }
 @media(prefers-reduced-motion:reduce){.leaf,.frame,.invite.show{transition:none;animation:none}}
 </style>
@@ -150,15 +161,7 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
   <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
   <div class="verse">﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ﴾<div class="ref">سورة الروم — الآية ٢١</div></div>
   <div class="title">دعوة زفاف</div>
-
-  <p class="wedding-intro">
-   <span class="intro-decoration">❀༺</span>
-   بكل الحب والسرور
-   <span class="intro-decoration">༻❀</span>
-   نتشرّف بدعوتكم لحضور حفل زفاف
-   <span class="intro-decoration">❦ ♡ ❦</span>
-  </p>
-
+  <p class="wedding-intro"><span class="intro-decoration">❀༺</span> بكل الحب والسرور، نتشرّف بدعوتكم لحضور حفل زفاف <span class="intro-decoration">༻❀</span></p>
   <div class="names"><span id="groom">محمد</span><br><span class="heart">♥</span><br><span id="bride">نور</span></div>
   <div class="details">
    <div class="detail">📅 التاريخ: <span id="date">يحدد لاحقاً</span></div>
