@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -42,6 +43,9 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .details{margin:24px auto;padding:20px 15px;max-width:420px;background:#fffaf0;border:1px solid #ead9b4;border-radius:15px;line-height:2.4;font-size:19px}
 .detail{border-bottom:1px solid #eee3ce;padding:5px}
 .detail:last-child{border:0}
+.notes-box{display:none;margin:18px auto;padding:18px 16px;max-width:420px;text-align:right;background:linear-gradient(145deg,#fffaf0,#f7eddb);border:1px solid #ddc58f;border-radius:15px;box-shadow:0 5px 18px #8e713510;line-height:2}
+.notes-title{color:#98733c;font-weight:bold;font-size:19px;margin-bottom:7px}
+.notes-text{white-space:pre-wrap;overflow-wrap:anywhere;color:#574632;font-size:17px}
 .groom-contact{margin:18px auto;padding:16px 14px;max-width:420px;border:1px solid #e5d3ae;border-radius:14px;background:#fffaf0;line-height:2}
 .groom-contact[hidden]{display:none}
 .groom-contact-title{color:#98733c;font-weight:bold;font-size:19px}
@@ -135,6 +139,11 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
    <div class="detail">📍 المكان: <span id="place">قاعة الأفراح</span></div>
   </div>
 
+  <section class="notes-box" id="notesBox">
+   <div class="notes-title">📝 ملاحظات خاصة</div>
+   <div class="notes-text" id="inviteNotes"></div>
+  </section>
+
   <section class="groom-contact" id="groomContact" hidden>
    <div class="groom-contact-title">📞 للتواصل مع العريس</div>
    <a class="groom-phone" id="groomPhone" href="#" dir="ltr"></a>
@@ -206,6 +215,12 @@ function applyTemplate(value){
  const arch=$("arch");
  for(let i=1;i<=8;i++)arch.classList.remove("template-"+i);
  arch.classList.add("template-"+n);
+}
+
+function showNotes(value){
+ const notes=String(value||"").trim();
+ $("inviteNotes").textContent=notes;
+ $("notesBox").style.display=notes?"block":"none";
 }
 
 function showGroomContact(value){
@@ -316,6 +331,7 @@ async function loadInvitation(){
    showField(key,params.get(key),defaults[key]);
   }
 
+  showNotes(params.get("notes")||"");
   showGroomContact(params.get("contact_phone")||params.get("phone"));
   applyTemplate(params.get("template"));
   configureAudio(params.get("audio_type")||"song",params.get("audio_url")||"");
@@ -343,6 +359,7 @@ async function loadInvitation(){
   showField("time",item.wedding_time,defaults.time);
   showField("place",item.venue_name,defaults.place);
 
+  showNotes(item.notes);
   showGroomContact(item.contact_phone);
   applyTemplate(item.template_id);
   configureAudio(item.audio_type||"song",item.audio_url||"");
@@ -468,3 +485,4 @@ loadInvitation();
 </script>
 </body>
 </html>
+```
