@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>باب الفرح | دعوة زفاف إلكترونية</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-serif;text-align:center}
@@ -25,8 +26,8 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .knock .leaf{animation:shake .16s 2}
 @keyframes shake{0%,100%{translate:0 0}40%{translate:2px 0}70%{translate:-2px 0}}
 .handle{position:absolute;top:52%;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px var(--gold-shadow),0 0 12px var(--gold);z-index:1}
-.left .handle{right:13px}.right .handle{left:13px}
-.center-glow{display:none!important}
+.left .handle{right:13px}
+.right .handle{left:13px}
 #start{border:0;border-radius:30px;padding:17px 30px;color:white;background:linear-gradient(135deg,#c6a15c,#96703a);font-size:23px;cursor:pointer;box-shadow:0 6px 18px #aa874444}
 #start:disabled{opacity:.65}
 .hint{font-size:19px;color:#948675;margin:14px}
@@ -73,7 +74,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .petal{position:fixed;top:-30px;z-index:10;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(var(--drift)) rotate(720deg);opacity:0}}
 
-/* القوالب القديمة 1–8 */
+/* القوالب 1 إلى 8 */
 .arch.template-1{--wood:repeating-linear-gradient(90deg,#211b18 0 25px,#342820 26px 29px,#171310 30px 50px);--gold:#d8b05b;--gold-shadow:#9c702b;background:#191512;border-color:#e2c477}
 .arch.template-2{--wood:linear-gradient(90deg,#e9dfcb,#fffaf0 48%,#ded0b7);--gold:#c8a45e;--gold-shadow:#9f8046;background:#fff9ec;border-color:#ddc48b}
 .arch.template-2 .leaf{box-shadow:inset 0 0 20px #9b825033}
@@ -90,7 +91,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .arch.template-8 .leaf:before{border-radius:2px;border-width:4px;inset:20px 12px}
 .arch.template-8 .leaf:after{border-radius:2px}
 
-/* القوالب الجديدة 9–14 */
+/* القوالب الجديدة 9 إلى 14 */
 .arch.template-9{--wood:repeating-linear-gradient(90deg,#4a1025 0 20px,#741d39 21px 25px,#350b1b 26px 43px);--gold:#e2bd77;--gold-shadow:#a56b36;background:linear-gradient(145deg,#360b1b,#7c2440,#3e0b1e);border-color:#e2bd77}
 .arch.template-9 .leaf:before{inset:18px 10px;border-radius:75px 75px 4px 4px;border-width:4px}
 .arch.template-9 .leaf:after{background:repeating-linear-gradient(45deg,transparent 0 14px,#e5c17b18 15px 17px),repeating-linear-gradient(-45deg,transparent 0 14px,#e5c17b18 15px 17px)}
@@ -121,6 +122,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 }
 </style>
 </head>
+
 <body>
 <header class="hero">
  <div class="brand">باب الفرح</div>
@@ -134,7 +136,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
     <div class="leaf left"><span class="handle"></span></div>
     <div class="leaf right"><span class="handle"></span></div>
    </div>
- </div>
+  </div>
  </div>
 
  <button id="start">أطرق الباب وأكتشف دعوتك الخاصة ❤️</button>
@@ -145,6 +147,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 
  <section class="invite" id="invite">
   <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
+
   <div class="verse">
    ﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ﴾
    <div class="ref">سورة الروم — الآية ٢١</div>
@@ -152,6 +155,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 
   <div class="title">دعوة زفاف</div>
   <p>بكل الحب والسرور، نتشرف بدعوتكم لحضور حفل زفاف</p>
+
   <div class="names">
    <span id="groom">محمد</span><br>
    <span class="heart">♥</span><br>
@@ -181,8 +185,11 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
   </section>
 
   <div class="footer">حضوركم يكتمل به فرحنا ❤️</div>
+
   <div class="share-area">
-   <a class="whatsapp-share" id="whatsappShare" href="#" target="_blank" rel="noopener noreferrer"><span>💚</span><span>شارك دعوتك بالواتساب</span></a>
+   <a class="whatsapp-share" id="whatsappShare" href="#" target="_blank" rel="noopener noreferrer">
+    <span>💚</span><span>شارك دعوتك بالواتساب</span>
+   </a>
    <div class="share-note">أرسل دعوتك للأهل والأصدقاء بكل سهولة ❤️</div>
   </div>
 
@@ -212,7 +219,13 @@ const QURAN_URL="https://everyayah.com/data/Alafasy_128kbps/030021.mp3";
 const params=new URLSearchParams(location.search);
 const $=id=>document.getElementById(id);
 
-const defaults={groom:"محمد",bride:"نور",date:"يحدد لاحقاً",time:"الثامنة مساءً",place:"قاعة الأفراح"};
+const defaults={
+ groom:"محمد",
+ bride:"نور",
+ date:"يحدد لاحقاً",
+ time:"الثامنة مساءً",
+ place:"قاعة الأفراح"
+};
 
 let selectedAudioType="song";
 let selectedAudioUrl="";
@@ -228,12 +241,20 @@ function formatDate(value){
  return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
+/* دعم القوالب من 1 إلى 14 */
 function applyTemplate(value){
- let n=Number(value);
- if(!Number.isInteger(n)||n<1||n>14)n=1;
+ const n=Number(value);
  const arch=$("arch");
- for(let i=1;i<=14;i++)arch.classList.remove("template-"+i);
- arch.classList.add("template-"+n);
+
+ for(let i=1;i<=14;i++){
+  arch.classList.remove("template-"+i);
+ }
+
+ if(Number.isInteger(n)&&n>=1&&n<=14){
+  arch.classList.add("template-"+n);
+ }else{
+  arch.classList.add("template-1");
+ }
 }
 
 function showNotes(value){
@@ -246,18 +267,22 @@ function showMapLink(value){
  const raw=String(value||"").trim();
  const section=$("mapSection");
  const button=$("mapButton");
+
  if(!raw){
   section.hidden=true;
   button.removeAttribute("href");
   return;
  }
+
  try{
   const url=new URL(raw);
+
   if(url.protocol!=="https:"&&url.protocol!=="http:"){
    section.hidden=true;
    button.removeAttribute("href");
    return;
   }
+
   button.href=url.href;
   section.hidden=false;
  }catch(error){
@@ -269,6 +294,7 @@ function showMapLink(value){
 function showGroomContact(value){
  const phone=String(value||"").trim();
  const section=$("groomContact");
+
  if(!phone){
   section.hidden=true;
   $("groomPhone").textContent="";
@@ -276,8 +302,14 @@ function showGroomContact(value){
   $("groomCall").removeAttribute("href");
   return;
  }
+
  const tel=phone.replace(/[^\d+]/g,"");
- if(!tel){section.hidden=true;return;}
+
+ if(!tel){
+  section.hidden=true;
+  return;
+ }
+
  $("groomPhone").textContent=phone;
  $("groomPhone").href="tel:"+tel;
  $("groomCall").href="tel:"+tel;
@@ -286,18 +318,25 @@ function showGroomContact(value){
 
 function setupWhatsAppShare(){
  const button=$("whatsappShare");
- const message="💍❤️ دعوة زفاف "+$("groom").textContent.trim()+
+
+ const message=
+  "💍❤️ دعوة زفاف "+
+  $("groom").textContent.trim()+
   " و"+$("bride").textContent.trim()+"\n"+
   "بكل الحب والسرور نتشرف بدعوتكم لمشاركتنا فرحتنا.\n"+
-  "افتحوا دعوتنا الإلكترونية من الرابط التالي:\n"+window.location.href;
+  "افتحوا دعوتنا الإلكترونية من الرابط التالي:\n"+
+  window.location.href;
+
  button.href="https://wa.me/?text="+encodeURIComponent(message);
 }
 
 function configureAudio(type,url){
  selectedAudioType=String(type||"song").toLowerCase();
  selectedAudioUrl=String(url||"").trim();
+
  const audio=$("invitationAudio");
  const button=$("audioControl");
+
  audio.pause();
  audio.removeAttribute("src");
  audio.load();
@@ -306,20 +345,31 @@ function configureAudio(type,url){
   button.classList.remove("show");
   return;
  }
+
  let source="";
- if(selectedAudioType==="quran")source=selectedAudioUrl||QURAN_URL;
- else if(selectedAudioType==="song")source=selectedAudioUrl||SONG_URL;
- else source=selectedAudioUrl||SONG_URL;
+
+ if(selectedAudioType==="quran"){
+  source=selectedAudioUrl||QURAN_URL;
+ }else if(selectedAudioType==="song"){
+  source=selectedAudioUrl||SONG_URL;
+ }else{
+  source=selectedAudioUrl||SONG_URL;
+ }
 
  audio.src=source;
- button.textContent="🔊 إيقاف الأغنية";
+ button.textContent="🔊 تشغيل الصوت";
  button.classList.add("show");
 }
 
 async function playInvitationAudio(){
  if(selectedAudioType==="none")return;
+
  const audio=$("invitationAudio");
- if(!audio.src)configureAudio(selectedAudioType,selectedAudioUrl);
+
+ if(!audio.src){
+  configureAudio(selectedAudioType,selectedAudioUrl);
+ }
+
  try{
   await audio.play();
   $("audioControl").textContent="🔇 إيقاف الصوت";
@@ -331,8 +381,10 @@ async function playInvitationAudio(){
 
 $("audioControl").addEventListener("click",async()=>{
  const audio=$("invitationAudio");
- if(audio.paused)await playInvitationAudio();
- else{
+
+ if(audio.paused){
+  await playInvitationAudio();
+ }else{
   audio.pause();
   $("audioControl").textContent="🔊 تشغيل الصوت";
  }
@@ -341,6 +393,7 @@ $("audioControl").addEventListener("click",async()=>{
 $("invitationAudio").addEventListener("play",()=>{
  $("audioControl").textContent="🔇 إيقاف الصوت";
 });
+
 $("invitationAudio").addEventListener("pause",()=>{
  $("audioControl").textContent="🔊 تشغيل الصوت";
 });
@@ -349,8 +402,9 @@ async function loadInvitation(){
  const slug=params.get("invite");
 
  if(!slug){
-  for(const key of ["groom","bride","date","time","place"])
+  for(const key of ["groom","bride","date","time","place"]){
    showField(key,params.get(key),defaults[key]);
+  }
 
   showNotes(params.get("notes")||"");
   showMapLink(params.get("map_url")||"");
@@ -362,9 +416,15 @@ async function loadInvitation(){
  }
 
  $("hint").textContent="جارٍ تحميل تفاصيل الدعوة...";
+
  try{
-  const {data,error}=await db.rpc("get_invitation_by_slug",{p_slug:slug});
+  const {data,error}=await db.rpc(
+   "get_invitation_by_slug",
+   {p_slug:slug}
+  );
+
   if(error)throw error;
+
   const item=Array.isArray(data)?data[0]:data;
 
   if(!item){
@@ -378,15 +438,20 @@ async function loadInvitation(){
   showField("date",formatDate(item.wedding_date),defaults.date);
   showField("time",item.wedding_time,defaults.time);
   showField("place",item.venue_name,defaults.place);
+
   showNotes(item.notes);
   showMapLink(item.map_url);
   showGroomContact(item.contact_phone);
   applyTemplate(item.template_id);
   configureAudio(item.audio_type||"song",item.audio_url||"");
 
-  if(item.day_name)$("date").textContent+=" — "+item.day_name;
+  if(item.day_name){
+   $("date").textContent+=" — "+item.day_name;
+  }
+
   setupWhatsAppShare();
   $("hint").textContent="انتظر 3 دقات حتى تُفتح الدعوة";
+
  }catch(error){
   console.error("Invitation loading error:",error);
   $("hint").textContent="تعذر تحميل معلومات الدعوة. تحقق من إعدادات الاتصال.";
@@ -397,6 +462,7 @@ async function loadInvitation(){
 
 $("copyPhone").addEventListener("click",async()=>{
  const phone="07867430232";
+
  try{
   if(navigator.clipboard&&window.isSecureContext){
    await navigator.clipboard.writeText(phone);
@@ -407,11 +473,15 @@ $("copyPhone").addEventListener("click",async()=>{
    field.style.opacity="0";
    document.body.appendChild(field);
    field.select();
+
    const copied=document.execCommand("copy");
    field.remove();
+
    if(!copied)throw new Error("copy failed");
   }
+
   $("copyStatus").textContent="تم نسخ رقم التواصل ✓";
+
  }catch(error){
   $("copyStatus").textContent="رقم التواصل: 07867430232";
  }
@@ -419,17 +489,21 @@ $("copyPhone").addEventListener("click",async()=>{
 
 function petals(){
  const symbols=["🌸","🌹","✿","❀"];
+
  for(let i=0;i<55;i++){
   setTimeout(()=>{
    const p=document.createElement("span");
+
    p.className="petal";
    p.textContent=symbols[Math.floor(Math.random()*symbols.length)];
    p.style.left=Math.random()*100+"vw";
    p.style.fontSize=(14+Math.random()*15)+"px";
    p.style.setProperty("--drift",(Math.random()*180-90)+"px");
    p.style.animationDuration=(4+Math.random()*5)+"s";
+
    document.body.appendChild(p);
    setTimeout(()=>p.remove(),10000);
+
   },i*65);
  }
 }
@@ -438,19 +512,25 @@ function knockSound(){
  try{
   const AudioContext=window.AudioContext||window.webkitAudioContext;
   if(!AudioContext)return;
+
   const ctx=new AudioContext();
   const osc=ctx.createOscillator();
   const gain=ctx.createGain();
+
   osc.type="sine";
   osc.frequency.setValueAtTime(100,ctx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(45,ctx.currentTime+.12);
+
   gain.gain.setValueAtTime(.35,ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.14);
+
   osc.connect(gain);
   gain.connect(ctx.destination);
+
   osc.start();
   osc.stop(ctx.currentTime+.15);
   osc.onended=()=>ctx.close();
+
  }catch(e){}
 }
 
@@ -461,14 +541,17 @@ const invite=$("invite");
 start.addEventListener("click",()=>{
  start.disabled=true;
  hint.textContent="طَق... طَق... طَق...";
- let count=0;
+
  const arch=$("arch");
+ let count=0;
 
  function nextKnock(){
   count++;
+
   arch.classList.remove("knock");
   void arch.offsetWidth;
   arch.classList.add("knock");
+
   knockSound();
 
   if(count<3){
@@ -477,14 +560,22 @@ start.addEventListener("click",()=>{
    setTimeout(()=>{
     arch.classList.remove("knock");
     arch.classList.add("open");
+
     petals();
+
     hint.textContent="تم فتح الدعوة ♥";
     invite.classList.add("show");
+
     playInvitationAudio();
-    setTimeout(()=>invite.scrollIntoView({behavior:"smooth",block:"start"}),500);
+
+    setTimeout(()=>{
+     invite.scrollIntoView({behavior:"smooth",block:"start"});
+    },500);
+
    },650);
   }
  }
+
  nextKnock();
 });
 
