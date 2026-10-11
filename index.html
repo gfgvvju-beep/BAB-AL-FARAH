@@ -60,6 +60,8 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .call-btn{background:#aa8950;color:white;border:1px solid #aa8950}
 .copy-btn{background:white;color:#80602e;border:1px solid #aa8950}
 .contact-note{font-size:12px;color:#897a69;margin-top:12px}
+.audio-control{display:none;margin:18px auto;padding:11px 20px;border-radius:25px;border:1px solid #d4b875;background:#fff8e9;color:#8c6831;font:inherit;font-size:16px;cursor:pointer}
+.audio-control.show{display:inline-block}
 .petal{position:fixed;top:-30px;z-index:10;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(var(--drift)) rotate(720deg);opacity:0}}
 
@@ -106,6 +108,9 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 
  <button id="start">أطرق الباب وأكتشف دعوتك الخاصة ❤️</button>
  <div class="hint" id="hint">انتظر 3 دقات حتى تُفتح الدعوة</div>
+
+ <audio id="invitationAudio" loop preload="none"></audio>
+ <button class="audio-control" id="audioControl" type="button">🔊 إيقاف الأغنية</button>
 
  <section class="invite" id="invite">
   <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
@@ -166,6 +171,10 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const SONG_URL="https://gfgvvju-beep.github.io/BAB-AL-FARAH/wedding-song.mp3";
+const QURAN_URL="https://everyayah.com/data/Alafasy_128kbps/030021.mp3";
+
 const params=new URLSearchParams(location.search);
 const $=id=>document.getElementById(id);
 
@@ -176,6 +185,9 @@ const defaults={
  time:"الثامنة مساءً",
  place:"قاعة الأفراح"
 };
+
+let selectedAudioType="song";
+let selectedAudioUrl="";
 
 function showField(id,value,fallback){
  $(id).textContent=value||fallback;
@@ -209,10 +221,7 @@ function showGroomContact(value){
  }
 
  const tel=phone.replace(/[^\d+]/g,"");
- if(!tel){
-  section.hidden=true;
-  return;
- }
+ if(!tel){section.hidden=true;return;}
 
  $("groomPhone").textContent=phone;
  $("groomPhone").href="tel:"+tel;
@@ -222,20 +231,82 @@ function showGroomContact(value){
 
 function setupWhatsAppShare(){
  const button=$("whatsappShare");
- if(!button)return;
-
- const invitationUrl=window.location.href;
- const groom=$("groom").textContent.trim();
- const bride=$("bride").textContent.trim();
-
  const message=
-  "💍❤️ دعوة زفاف "+groom+" و"+bride+"\n"+
+  "💍❤️ دعوة زفاف "+$("groom").textContent.trim()+
+  " و"+$("bride").textContent.trim()+"\n"+
   "بكل الحب والسرور نتشرف بدعوتكم لمشاركتنا فرحتنا.\n"+
   "افتحوا دعوتنا الإلكترونية من الرابط التالي:\n"+
-  invitationUrl;
+  window.location.href;
 
  button.href="https://wa.me/?text="+encodeURIComponent(message);
 }
+
+function configureAudio(type,url){
+ selectedAudioType=String(type||"song").toLowerCase();
+ selectedAudioUrl=String(url||"").trim();
+
+ const audio=$("invitationAudio");
+ const button=$("audioControl");
+
+ audio.pause();
+ audio.removeAttribute("src");
+ audio.load();
+
+ if(selectedAudioType==="none"){
+  button.classList.remove("show");
+  return;
+ }
+
+ let source="";
+
+ if(selectedAudioType==="quran"){
+  source=selectedAudioUrl||QURAN_URL;
+ }else if(selectedAudioType==="song"){
+  source=selectedAudioUrl||SONG_URL;
+ }else{
+  source=selectedAudioUrl||SONG_URL;
+ }
+
+ audio.src=source;
+ button.textContent="🔊 إيقاف الأغنية";
+ button.classList.add("show");
+}
+
+async function playInvitationAudio(){
+ if(selectedAudioType==="none")return;
+
+ const audio=$("invitationAudio");
+ if(!audio.src){
+  configureAudio(selectedAudioType,selectedAudioUrl);
+ }
+
+ try{
+  await audio.play();
+  $("audioControl").textContent="🔇 إيقاف الصوت";
+ }catch(error){
+  $("audioControl").textContent="▶️ تشغيل الصوت";
+  $("audioControl").classList.add("show");
+ }
+}
+
+$("audioControl").addEventListener("click",async()=>{
+ const audio=$("invitationAudio");
+
+ if(audio.paused){
+  await playInvitationAudio();
+ }else{
+  audio.pause();
+  $("audioControl").textContent="🔊 تشغيل الصوت";
+ }
+});
+
+$("invitationAudio").addEventListener("play",()=>{
+ $("audioControl").textContent="🔇 إيقاف الصوت";
+});
+
+$("invitationAudio").addEventListener("pause",()=>{
+ $("audioControl").textContent="🔊 تشغيل الصوت";
+});
 
 async function loadInvitation(){
  const slug=params.get("invite");
@@ -244,8 +315,10 @@ async function loadInvitation(){
   for(const key of ["groom","bride","date","time","place"]){
    showField(key,params.get(key),defaults[key]);
   }
+
   showGroomContact(params.get("contact_phone")||params.get("phone"));
   applyTemplate(params.get("template"));
+  configureAudio(params.get("audio_type")||"song",params.get("audio_url")||"");
   setupWhatsAppShare();
   return;
  }
@@ -257,8 +330,10 @@ async function loadInvitation(){
   if(error)throw error;
 
   const item=Array.isArray(data)?data[0]:data;
+
   if(!item){
    $("hint").textContent="لم يتم العثور على الدعوة المنشورة.";
+   configureAudio("none","");
    return;
   }
 
@@ -270,6 +345,7 @@ async function loadInvitation(){
 
   showGroomContact(item.contact_phone);
   applyTemplate(item.template_id);
+  configureAudio(item.audio_type||"song",item.audio_url||"");
 
   if(item.day_name)$("date").textContent+=" — "+item.day_name;
 
@@ -279,6 +355,7 @@ async function loadInvitation(){
  }catch(error){
   console.error("Invitation loading error:",error);
   $("hint").textContent="تعذر تحميل معلومات الدعوة. تحقق من إعدادات الاتصال.";
+  configureAudio("song","");
   setupWhatsAppShare();
  }
 }
@@ -374,7 +451,12 @@ start.addEventListener("click",()=>{
     petals();
     hint.textContent="تم فتح الدعوة ♥";
     invite.classList.add("show");
-    setTimeout(()=>invite.scrollIntoView({behavior:"smooth",block:"start"}),500);
+
+    playInvitationAudio();
+
+    setTimeout(()=>{
+     invite.scrollIntoView({behavior:"smooth",block:"start"});
+    },500);
    },650);
   }
  }
