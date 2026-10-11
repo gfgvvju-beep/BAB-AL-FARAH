@@ -5,105 +5,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>باب الفرح | دعوة زفاف إلكترونية</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:#fffdf9;color:#42352d;
- font-family:Tahoma,Arial,sans-serif;text-align:center
-}
+body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-serif;text-align:center}
 .hero{padding:28px 15px 18px}
 .brand{color:#ad8748;font-size:30px;font-weight:bold}
 .sub{color:#897a69;margin-top:9px;font-size:14px}
-.frame{
- position:relative;width:min(340px,88vw);height:420px;
- margin:22px auto 18px;padding:9px;
- background:linear-gradient(135deg,#d7b979,#fff1c9,#aa803e);
- border-radius:170px 170px 5px 5px;
- box-shadow:0 12px 35px #8e713526
-}
-.arch{
- width:100%;height:100%;position:relative;overflow:hidden;
- border:3px solid #f9e7bb;border-radius:160px 160px 2px 2px;
- background:#f7eddb
-}
-.door{
- position:absolute;inset:0;display:flex;z-index:2;
- perspective:1000px
-}
-.leaf{
- position:relative;width:50%;height:100%;
- background:
- repeating-linear-gradient(90deg,transparent 0 35px,#0000000a 36px 38px),
- linear-gradient(90deg,#6d4227,#a87548 45%,#71452b);
- border:2px solid #d7b66d;
- transition:transform 2s cubic-bezier(.2,.7,.2,1);
- box-shadow:inset 0 0 20px #39201466
-}
-.leaf:before{
- content:"";position:absolute;inset:16px 9px;
- border:2px solid #d5b16a;border-radius:90px 90px 3px 3px
-}
-.leaf:after{
- content:"";position:absolute;inset:29px 19px;
- border:1px solid #dfc58b;border-radius:80px 80px 2px 2px
-}
+.frame{position:relative;width:min(340px,88vw);height:420px;margin:22px auto 18px;padding:9px;background:linear-gradient(135deg,#d7b979,#fff1c9,#aa803e);border-radius:170px 170px 5px 5px;box-shadow:0 12px 35px #8e713526}
+.arch{width:100%;height:100%;position:relative;overflow:hidden;border:3px solid #f9e7bb;border-radius:160px 160px 2px 2px;background:#f7eddb}
+.door{position:absolute;inset:0;display:flex;z-index:2;perspective:1000px}
+.leaf{position:relative;width:50%;height:100%;background:repeating-linear-gradient(90deg,transparent 0 35px,#0000000a 36px 38px),linear-gradient(90deg,#6d4227,#a87548 45%,#71452b);border:2px solid #d7b66d;transition:transform 2s cubic-bezier(.2,.7,.2,1);box-shadow:inset 0 0 20px #39201466}
+.leaf:before{content:"";position:absolute;inset:16px 9px;border:2px solid #d5b16a;border-radius:90px 90px 3px 3px}
+.leaf:after{content:"";position:absolute;inset:29px 19px;border:1px solid #dfc58b;border-radius:80px 80px 2px 2px}
 .left{transform-origin:left center}
 .right{transform-origin:right center}
 .open .left{transform:rotateY(-108deg)}
 .open .right{transform:rotateY(108deg)}
 .knock .leaf{animation:shake .16s 2}
-@keyframes shake{
- 0%,100%{translate:0 0}
- 40%{translate:2px 0}
- 70%{translate:-2px 0}
-}
-.handle{
- position:absolute;top:52%;width:9px;height:9px;border-radius:50%;
- background:#f8df91;box-shadow:0 0 0 4px #b58a42,0 0 12px #ffe7a3;
- z-index:1
-}
+@keyframes shake{0%,100%{translate:0 0}40%{translate:2px 0}70%{translate:-2px 0}}
+.handle{position:absolute;top:52%;width:9px;height:9px;border-radius:50%;background:#f8df91;box-shadow:0 0 0 4px #b58a42,0 0 12px #ffe7a3;z-index:1}
 .left .handle{right:13px}.right .handle{left:13px}
-.center-glow{
- position:absolute;inset:0;display:grid;place-items:center;
- color:#ad8748;font-size:34px
-}
-#start{
- border:0;border-radius:30px;padding:14px 27px;
- color:white;background:linear-gradient(135deg,#c6a15c,#96703a);
- font-size:16px;cursor:pointer;box-shadow:0 6px 18px #aa874444
-}
+.center-glow{position:absolute;inset:0;display:grid;place-items:center;color:#ad8748;font-size:34px}
+#start{border:0;border-radius:30px;padding:14px 27px;color:white;background:linear-gradient(135deg,#c6a15c,#96703a);font-size:16px;cursor:pointer;box-shadow:0 6px 18px #aa874444}
 #start:disabled{opacity:.65}
 .hint{font-size:13px;color:#948675;margin:12px}
 .invite{display:none;padding:15px 20px 50px;max-width:600px;margin:auto}
 .invite.show{display:block;animation:rise 1.3s ease}
 @keyframes rise{from{opacity:0;transform:translateY(45px)}to{opacity:1;transform:translateY(0)}}
 .bismillah{color:#a27b3f;font-size:19px;margin:10px}
-.verse{
- margin:24px auto;padding:20px 16px;line-height:2.2;
- border-top:1px solid #ddc58f;border-bottom:1px solid #ddc58f;
- color:#70562d;font-size:19px
-}
+.verse{margin:24px auto;padding:20px 16px;line-height:2.2;border-top:1px solid #ddc58f;border-bottom:1px solid #ddc58f;color:#70562d;font-size:19px}
 .ref{font-size:13px;color:#96846a}
 .title{color:#b18b49;font-size:26px;margin:22px 0}
 .names{font-size:30px;color:#8d6833;line-height:1.8}
 .heart{color:#c58b93;font-size:24px}
-.details{
- margin:24px auto;padding:20px 15px;max-width:420px;
- background:#fffaf0;border:1px solid #ead9b4;border-radius:15px;
- line-height:2.4
-}
+.details{margin:24px auto;padding:20px 15px;max-width:420px;background:#fffaf0;border:1px solid #ead9b4;border-radius:15px;line-height:2.4}
 .detail{border-bottom:1px solid #eee3ce;padding:5px}
 .detail:last-child{border:0}
 .footer{color:#a08049;margin:25px 0}
-.petal{
- position:fixed;top:-30px;z-index:10;pointer-events:none;
- animation:fall linear forwards
-}
-@keyframes fall{
- 0%{transform:translateY(-20px) rotate(0deg);opacity:0}
- 10%{opacity:1}
- 100%{transform:translateY(110vh) translateX(var(--drift)) rotate(720deg);opacity:0}
-}
+.petal{position:fixed;top:-30px;z-index:10;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(var(--drift)) rotate(720deg);opacity:0}}
 @media(max-width:400px){.frame{height:370px}.brand{font-size:26px}}
 </style>
 </head>
@@ -112,7 +53,6 @@ body{
  <div class="brand">باب الفرح</div>
  <div class="sub">BAB AL FARAH · دعوات زفاف إلكترونية</div>
 </header>
-
 <main>
  <div class="frame">
   <div class="arch" id="arch">
@@ -125,12 +65,10 @@ body{
  </div>
  <button id="start">طرق الباب واكتشف دعوتك ♥</button>
  <div class="hint" id="hint">انتظر 3 دقات حتى تُفتح الدعوة</div>
-
  <section class="invite" id="invite">
   <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
   <div class="verse">
-   ﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنْفُسِكُمْ أَزْوَاجًا
-   لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ﴾
+   ﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنْفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ﴾
    <div class="ref">سورة الروم — الآية ٢١</div>
   </div>
   <div class="title">دعوة زفاف</div>
@@ -149,35 +87,54 @@ body{
   <div class="sub">باب الفرح — نصنع لحظاتكم الجميلة</div>
  </section>
 </main>
-
 <script>
-const params = new URLSearchParams(location.search);
-const fields = {
- groom: "groom",
- bride: "bride",
- date: "date",
- time: "time",
- place: "place"
-};
-const defaults = {
- groom: "محمد",
- bride: "نور",
- date: "يحدد لاحقاً",
- time: "الثامنة مساءً",
- place: "قاعة الأفراح"
-};
-for (const key in fields) {
- document.getElementById(key).textContent =
-  params.get(key) || defaults[key];
+const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
+const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const params=new URLSearchParams(location.search);
+const $=id=>document.getElementById(id);
+const defaults={groom:"محمد",bride:"نور",date:"يحدد لاحقاً",time:"الثامنة مساءً",place:"قاعة الأفراح"};
+
+function showField(id,value,fallback){$(id).textContent=value||fallback}
+function formatDate(value){
+ if(!value)return "";
+ const parts=value.split("-");
+ if(parts.length!==3)return value;
+ return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
-const door = document.getElementById("door");
-const start = document.getElementById("start");
-const hint = document.getElementById("hint");
-const invite = document.getElementById("invite");
+async function loadInvitation(){
+ const slug=params.get("invite");
+ if(!slug){
+  for(const key of ["groom","bride","date","time","place"]){
+   showField(key,params.get(key),defaults[key]);
+  }
+  return;
+ }
+ $("hint").textContent="جارٍ تحميل تفاصيل الدعوة...";
+ try{
+  const {data,error}=await db.rpc("get_invitation_by_slug",{p_slug:slug});
+  if(error)throw error;
+  const item=Array.isArray(data)?data[0]:data;
+  if(!item){
+   $("hint").textContent="لم يتم العثور على الدعوة المنشورة.";
+   return;
+  }
+  showField("groom",item.groom_name,defaults.groom);
+  showField("bride",item.bride_name,defaults.bride);
+  showField("date",formatDate(item.wedding_date),defaults.date);
+  showField("time",item.wedding_time,defaults.time);
+  showField("place",item.venue_name,defaults.place);
+  if(item.day_name)$("date").textContent+=" — "+item.day_name;
+  $("hint").textContent="انتظر 3 دقات حتى تُفتح الدعوة";
+ }catch(error){
+  console.error("Invitation loading error:",error);
+  $("hint").textContent="تعذر تحميل معلومات الدعوة. تحقق من إعدادات الاتصال.";
+ }
+}
 
 function petals(){
- const symbols = ["🌸","🌹","✿","❀"];
+ const symbols=["🌸","🌹","✿","❀"];
  for(let i=0;i<55;i++){
   setTimeout(()=>{
    const p=document.createElement("span");
@@ -211,11 +168,16 @@ function knockSound(){
  }catch(e){}
 }
 
+const door=$("door");
+const start=$("start");
+const hint=$("hint");
+const invite=$("invite");
+
 start.addEventListener("click",()=>{
  start.disabled=true;
  hint.textContent="طَق... طَق... طَق...";
  let count=0;
- const arch=document.getElementById("arch");
+ const arch=$("arch");
  function nextKnock(){
   count++;
   arch.classList.remove("knock");
@@ -231,14 +193,14 @@ start.addEventListener("click",()=>{
     petals();
     hint.textContent="تم فتح الدعوة ♥";
     invite.classList.add("show");
-    setTimeout(()=>{
-     invite.scrollIntoView({behavior:"smooth",block:"start"});
-    },500);
+    setTimeout(()=>invite.scrollIntoView({behavior:"smooth",block:"start"}),500);
    },650);
   }
  }
  nextKnock();
 });
+
+loadInvitation();
 </script>
 </body>
 </html>
