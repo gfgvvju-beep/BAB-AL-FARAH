@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -48,6 +47,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #status{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
 .row-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .door-image-preview{display:block;width:100%;max-width:320px;max-height:350px;object-fit:contain;margin:12px auto;border:1px solid #e5d6b7;border-radius:12px;background:#fff}
+.door-video-preview{display:block;width:100%;max-width:320px;max-height:450px;object-fit:contain;margin:12px auto;border:1px solid #e5d6b7;border-radius:12px;background:#222}
 hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 @media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}.door-grid{grid-template-columns:1fr}.row-buttons{grid-template-columns:1fr}}
 </style>
@@ -107,7 +107,6 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <option value="song">🎵 أغنية زفاف من جهازك</option>
 <option value="quran">📖 القرآن الكريم — سورة الروم، الآية 21</option>
 </select>
-
 <label for="audioFile">🎵 اختيار أغنية MP3 من الجهاز</label>
 <input id="audioFile" type="file" accept=".mp3,audio/mpeg">
 <p class="help">اختر أغنية بصيغة MP3، بحد أقصى 10 ميغابايت. عند تعديل دعوة واختيار أغنية جديدة، سيُستبدل رابط الأغنية الخاص بالدعوة.</p>
@@ -123,7 +122,6 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 </summary>
 <div class="door-content">
 <input id="template" type="hidden" value="1">
-
 <div class="door-grid">
 <button type="button" class="door-option selected" data-id="1"><span class="number">01</span>الملكي الذهبي</button>
 <button type="button" class="door-option" data-id="2"><span class="number">02</span>الأبيض الملكي</button>
@@ -140,22 +138,22 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <button type="button" class="door-option" data-id="13"><span class="number">13</span>القالب الثالث عشر</button>
 <button type="button" class="door-option" data-id="14"><span class="number">14</span>القالب الرابع عشر</button>
 </div>
-
 <p id="doorDescription" class="door-description"></p>
 
 <hr>
-<h3>🖼️ تعديل صورة الباب لهذا القالب</h3>
-<p class="help">ارفع صورة ثابتة أو متحركة GIF من جهازك. كل قالب له صورة مستقلة، ويمكن استبدالها بأي وقت.</p>
-<label for="doorImageFile">اختيار صورة الباب</label>
-<input id="doorImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+<h3>🚪 ملف الباب المتحرك لهذا القالب</h3>
+<p class="help">يمكنك رفع صورة JPG أو PNG أو WEBP أو GIF متحرك أو فيديو MP4. بعد الدقات الثلاث، يجب أن يشغّل ملف index.html الفيديو أو الحركة. كل قالب له ملف مستقل.</p>
+<label for="doorImageFile">اختيار صورة أو GIF أو فيديو MP4</label>
+<input id="doorImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,.mp4">
 <div id="doorImagePreviewBox" class="hidden">
-<p class="help">معاينة الصورة:</p>
-<img id="doorImagePreview" class="door-image-preview" alt="معاينة صورة الباب">
+<p class="help">معاينة الملف المختار أو المحفوظ:</p>
+<img id="doorImagePreview" class="door-image-preview hidden" alt="معاينة صورة الباب">
+<video id="doorVideoPreview" class="door-video-preview hidden" controls muted playsinline preload="metadata"></video>
 </div>
-<p id="doorImageStatus" class="help">جارٍ تحميل إعدادات صورة الباب...</p>
-<button type="button" id="saveDoorImageBtn">رفع وحفظ صورة الباب لهذا القالب</button>
-<button type="button" id="deleteDoorImageBtn" class="danger">إزالة الصورة المخصصة لهذا القالب</button>
-<p class="help">تظهر الصورة في الدعوة بعد إضافة دعم صور القوالب إلى ملف index.html.</p>
+<p id="doorImageStatus" class="help">جارٍ تحميل إعدادات ملف الباب...</p>
+<button type="button" id="saveDoorImageBtn">رفع وحفظ ملف الباب لهذا القالب</button>
+<button type="button" id="deleteDoorImageBtn" class="danger">إزالة الملف المخصص لهذا القالب</button>
+<p class="help">يدعم هذا الحقل الملفات المرفوعة إلى مخزن template-doors. يجب أن يكون جدول template_doors موجوداً وأن تسمح سياسات Supabase بالرفع والتعديل.</p>
 </div>
 </details>
 
@@ -189,7 +187,6 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <h3>الحساب</h3>
 <button id="logoutBtn" type="button" class="secondary">تسجيل الخروج</button>
 </section>
-
 <p id="status" role="status" aria-live="polite"></p>
 </main>
 
@@ -207,12 +204,13 @@ let loading=false;
 let currentAudioUrl="";
 let doorImageBusy=false;
 let currentDoorImageUrl="";
+let currentDoorMediaType="";
 let doorPreviewObjectUrl="";
 
 const MAX_AUDIO_SIZE=10*1024*1024;
-const MAX_DOOR_IMAGE_SIZE=10*1024*1024;
+const MAX_DOOR_IMAGE_SIZE=50*1024*1024;
 const DOOR_BUCKET="template-doors";
-const allowedDoorImageTypes=["image/jpeg","image/png","image/webp","image/gif"];
+const allowedDoorImageTypes=["image/jpeg","image/png","image/webp","image/gif","video/mp4"];
 
 const doorNames={
 1:"الملكي الذهبي",2:"الأبيض الملكي",3:"التراثي الشرقي",4:"الزجاجي الحديث",
@@ -226,12 +224,12 @@ const doorDescriptions={
 3:"خشب داكن بنقوش شرقية.",4:"زجاج حديث بإطار معدني.",
 5:"أخضر زمردي بتفاصيل نحاسية.",6:"وردي لؤلؤي رومانسي.",
 7:"أزرق ليلي بزخارف فضية.",8:"رخام عاجي بخطوط برونزية.",
-9:"قالب جديد — يمكنك إضافة صورة خاصة به.",
-10:"قالب جديد — يمكنك إضافة صورة خاصة به.",
-11:"قالب جديد — يمكنك إضافة صورة خاصة به.",
-12:"قالب جديد — يمكنك إضافة صورة خاصة به.",
-13:"قالب جديد — يمكنك إضافة صورة خاصة به.",
-14:"قالب جديد — يمكنك إضافة صورة خاصة به."
+9:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",
+10:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",
+11:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",
+12:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",
+13:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",
+14:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به."
 };
 
 const audioNames={
@@ -247,7 +245,6 @@ const bytes=new Uint8Array(8);
 crypto.getRandomValues(bytes);
 return "wedding-"+Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
 }
-
 function newUniqueSlug(){$("slug").value=makeSlug()}
 
 function toLocalDateTime(value){
@@ -257,15 +254,11 @@ if(Number.isNaN(date.getTime()))return "";
 const local=new Date(date.getTime()-date.getTimezoneOffset()*60000);
 return local.toISOString().slice(0,16);
 }
-
 function formatExpiry(value){
 if(!value)return "بدون انتهاء";
 const date=new Date(value);
 if(Number.isNaN(date.getTime()))return "تاريخ غير صالح";
-return date.toLocaleString("ar-IQ",{
-year:"numeric",month:"2-digit",day:"2-digit",
-hour:"2-digit",minute:"2-digit"
-});
+return date.toLocaleString("ar-IQ",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
 }
 
 function selectDoor(id){
@@ -281,36 +274,62 @@ button.setAttribute("aria-pressed",String(selected));
 });
 }
 
+function clearDoorPreview(){
+$("doorImagePreview").removeAttribute("src");
+$("doorVideoPreview").removeAttribute("src");
+$("doorImagePreview").classList.add("hidden");
+$("doorVideoPreview").classList.add("hidden");
+$("doorImagePreviewBox").classList.add("hidden");
+$("doorVideoPreview").load();
+}
+
+function showDoorPreview(url,type){
+clearDoorPreview();
+if(!url)return;
+$("doorImagePreviewBox").classList.remove("hidden");
+if(type==="video/mp4"||type==="video"){
+$("doorVideoPreview").src=url;
+$("doorVideoPreview").classList.remove("hidden");
+$("doorVideoPreview").load();
+}else{
+$("doorImagePreview").src=url;
+$("doorImagePreview").classList.remove("hidden");
+}
+}
+
+function mediaTypeFromFile(file){
+if(file.type==="video/mp4"||file.name.toLowerCase().endsWith(".mp4"))return "video/mp4";
+if(file.type==="image/gif"||file.name.toLowerCase().endsWith(".gif"))return "image/gif";
+if(file.type==="image/png"||file.name.toLowerCase().endsWith(".png"))return "image/png";
+if(file.type==="image/webp"||file.name.toLowerCase().endsWith(".webp"))return "image/webp";
+if(file.type==="image/jpeg"||/\.(jpg|jpeg)$/i.test(file.name))return "image/jpeg";
+return file.type||"application/octet-stream";
+}
+
 async function loadDoorImage(templateId){
 const id=Number(templateId);
 currentDoorImageUrl="";
+currentDoorMediaType="";
 $("doorImageFile").value="";
-$("doorImagePreviewBox").classList.add("hidden");
-$("doorImageStatus").textContent="جارٍ تحميل صورة القالب "+id+"...";
-
+clearDoorPreview();
+$("doorImageStatus").textContent="جارٍ تحميل ملف القالب "+id+"...";
 try{
 const {data,error}=await db.from("template_doors")
 .select("image_url")
 .eq("template_id",id)
 .maybeSingle();
-
 if(error)throw error;
-
 if(data&&data.image_url){
 currentDoorImageUrl=data.image_url;
-$("doorImagePreview").src=data.image_url;
-$("doorImagePreviewBox").classList.remove("hidden");
-$("doorImageStatus").textContent=
-"توجد صورة محفوظة للقالب "+id+". يمكنك اختيار صورة جديدة لاستبدالها.";
+currentDoorMediaType=/\.mp4(?:$|\?)/i.test(data.image_url)?"video/mp4":"image";
+showDoorPreview(data.image_url,currentDoorMediaType);
+$("doorImageStatus").textContent="يوجد ملف محفوظ للقالب "+id+". يمكنك اختيار ملف جديد لاستبداله.";
 }else{
-$("doorImagePreview").removeAttribute("src");
-$("doorImageStatus").textContent=
-"لا توجد صورة مخصصة لهذا القالب. سيُستخدم الباب الافتراضي.";
+$("doorImageStatus").textContent="لا يوجد ملف مخصص لهذا القالب. سيُستخدم الباب الافتراضي.";
 }
 }catch(error){
-console.error("Load door image:",error);
-$("doorImageStatus").textContent=
-"تعذر تحميل صورة القالب: "+(error.message||"خطأ غير معروف");
+console.error("Load door media:",error);
+$("doorImageStatus").textContent="تعذر تحميل ملف القالب: "+(error.message||"خطأ غير معروف");
 }
 }
 
@@ -323,125 +342,73 @@ loadDoorImage(button.dataset.id);
 
 $("doorImageFile").addEventListener("change",()=>{
 const file=$("doorImageFile").files[0];
-
 if(!file){
 loadDoorImage($("template").value);
 return;
 }
-
-if(!allowedDoorImageTypes.includes(file.type)){
+const type=mediaTypeFromFile(file);
+const valid=allowedDoorImageTypes.includes(type);
+if(!valid){
 $("doorImageFile").value="";
-status("اختر صورة JPG أو PNG أو WEBP أو GIF صحيحة.");
+status("اختر صورة JPG أو PNG أو WEBP أو GIF أو فيديو MP4 صحيحاً.");
 return;
 }
-
 if(file.size>MAX_DOOR_IMAGE_SIZE){
 $("doorImageFile").value="";
-status("حجم الصورة يجب ألا يتجاوز 10 ميغابايت.");
+status("حجم الملف يجب ألا يتجاوز 50 ميغابايت.");
 return;
 }
-
-if(doorPreviewObjectUrl){
-URL.revokeObjectURL(doorPreviewObjectUrl);
-}
+if(doorPreviewObjectUrl)URL.revokeObjectURL(doorPreviewObjectUrl);
 doorPreviewObjectUrl=URL.createObjectURL(file);
-$("doorImagePreview").src=doorPreviewObjectUrl;
-$("doorImagePreviewBox").classList.remove("hidden");
-$("doorImageStatus").textContent=
-"الصورة المختارة: "+file.name+
-" — الحجم: "+(file.size/1024/1024).toFixed(2)+" ميغابايت";
+showDoorPreview(doorPreviewObjectUrl,type);
+$("doorImageStatus").textContent="الملف المختار: "+file.name+" — النوع: "+type+" — الحجم: "+(file.size/1024/1024).toFixed(2)+" ميغابايت";
 });
 
 $("saveDoorImageBtn").addEventListener("click",async()=>{
 if(doorImageBusy)return;
-
 const id=Number($("template").value);
 const file=$("doorImageFile").files[0];
-
-if(!Number.isInteger(id)||id<1||id>14){
-status("اختر قالباً صحيحاً أولاً.");
-return;
-}
-
-if(!file){
-status("اختر صورة جديدة من جهازك أولاً.");
-return;
-}
-
-if(!allowedDoorImageTypes.includes(file.type)){
-status("نوع الصورة غير مدعوم.");
-return;
-}
-
-if(file.size>MAX_DOOR_IMAGE_SIZE){
-status("حجم الصورة أكبر من 10 ميغابايت.");
-return;
-}
+if(!Number.isInteger(id)||id<1||id>14){status("اختر قالباً صحيحاً أولاً.");return}
+if(!file){status("اختر صورة أو GIF أو فيديو MP4 من جهازك أولاً.");return}
+const type=mediaTypeFromFile(file);
+if(!allowedDoorImageTypes.includes(type)){status("نوع الملف غير مدعوم.");return}
+if(file.size>MAX_DOOR_IMAGE_SIZE){status("حجم الملف أكبر من 50 ميغابايت.");return}
 
 doorImageBusy=true;
 $("saveDoorImageBtn").disabled=true;
 $("deleteDoorImageBtn").disabled=true;
-
 try{
 const extension={
-"image/jpeg":"jpg",
-"image/png":"png",
-"image/webp":"webp",
-"image/gif":"gif"
-}[file.type];
-
+"image/jpeg":"jpg","image/png":"png","image/webp":"webp",
+"image/gif":"gif","video/mp4":"mp4"
+}[type];
 const path=id+"/door."+extension;
-
-$("doorImageStatus").textContent="جارٍ رفع صورة الباب...";
-
+$("doorImageStatus").textContent="جارٍ رفع الملف إلى Supabase Storage...";
 const {data:uploadData,error:uploadError}=await db.storage
 .from(DOOR_BUCKET)
-.upload(path,file,{
-upsert:true,
-cacheControl:"3600",
-contentType:file.type
-});
-
+.upload(path,file,{upsert:true,cacheControl:"3600",contentType:type});
 if(uploadError)throw uploadError;
-
-const {data:publicData}=db.storage
-.from(DOOR_BUCKET)
-.getPublicUrl(uploadData.path);
-
-if(!publicData||!publicData.publicUrl){
-throw new Error("تعذر إنشاء رابط عام للصورة.");
-}
-
-const imageUrl=publicData.publicUrl;
-
+const {data:publicData}=db.storage.from(DOOR_BUCKET).getPublicUrl(uploadData.path);
+if(!publicData||!publicData.publicUrl)throw new Error("تعذر إنشاء رابط عام للملف.");
+const mediaUrl=publicData.publicUrl;
 $("doorImageStatus").textContent="جارٍ حفظ إعدادات القالب...";
-
-const {error:saveError}=await db.from("template_doors")
-.upsert({
+const {error:saveError}=await db.from("template_doors").upsert({
 template_id:id,
-image_url:imageUrl,
+image_url:mediaUrl,
 updated_at:new Date().toISOString()
 },{onConflict:"template_id"});
-
 if(saveError)throw saveError;
-
-currentDoorImageUrl=imageUrl;
-$("doorImagePreview").src=imageUrl+"?v="+Date.now();
-$("doorImagePreviewBox").classList.remove("hidden");
+currentDoorImageUrl=mediaUrl;
+currentDoorMediaType=type;
+showDoorPreview(mediaUrl+"?v="+Date.now(),type);
 $("doorImageFile").value="";
-
-if(doorPreviewObjectUrl){
-URL.revokeObjectURL(doorPreviewObjectUrl);
-doorPreviewObjectUrl="";
-}
-
-$("doorImageStatus").textContent="تم حفظ صورة القالب "+id+" بنجاح.";
-status("تم رفع صورة الباب وحفظها للقالب "+id+".");
+if(doorPreviewObjectUrl){URL.revokeObjectURL(doorPreviewObjectUrl);doorPreviewObjectUrl=""}
+$("doorImageStatus").textContent="تم حفظ "+(type==="video/mp4"?"فيديو MP4":type==="image/gif"?"ملف GIF متحرك":"الصورة")+" للقالب "+id+" بنجاح.";
+status("تم رفع ملف الباب وحفظه للقالب "+id+".");
 }catch(error){
-console.error("Save door image:",error);
-status("تعذر حفظ صورة الباب: "+(error.message||"خطأ غير معروف"));
-$("doorImageStatus").textContent=
-"لم يكتمل الحفظ. تحقق من تسجيل الدخول وصلاحيات التخزين.";
+console.error("Save door media:",error);
+status("تعذر حفظ ملف الباب: "+(error.message||"خطأ غير معروف"));
+$("doorImageStatus").textContent="لم يكتمل الحفظ. تحقق من وجود bucket باسم template-doors، ومن صلاحيات التخزين وجدول template_doors.";
 }finally{
 doorImageBusy=false;
 $("saveDoorImageBtn").disabled=false;
@@ -451,38 +418,24 @@ $("deleteDoorImageBtn").disabled=false;
 
 $("deleteDoorImageBtn").addEventListener("click",async()=>{
 if(doorImageBusy)return;
-
 const id=Number($("template").value);
-
-if(!confirm("متأكد تريد إزالة الصورة المخصصة للقالب "+id+"؟"))return;
-
+if(!confirm("متأكد تريد إزالة الملف المخصص للقالب "+id+"؟"))return;
 doorImageBusy=true;
 $("deleteDoorImageBtn").disabled=true;
 $("saveDoorImageBtn").disabled=true;
-
 try{
-const {error}=await db.from("template_doors")
-.delete()
-.eq("template_id",id);
-
+const {error}=await db.from("template_doors").delete().eq("template_id",id);
 if(error)throw error;
-
 currentDoorImageUrl="";
+currentDoorMediaType="";
 $("doorImageFile").value="";
-$("doorImagePreview").removeAttribute("src");
-$("doorImagePreviewBox").classList.add("hidden");
-$("doorImageStatus").textContent=
-"تمت إزالة إعداد الصورة للقالب "+id+".";
-
-if(doorPreviewObjectUrl){
-URL.revokeObjectURL(doorPreviewObjectUrl);
-doorPreviewObjectUrl="";
-}
-
-status("تمت إزالة إعداد الصورة للقالب "+id+".");
+clearDoorPreview();
+$("doorImageStatus").textContent="تمت إزالة إعداد الملف للقالب "+id+".";
+if(doorPreviewObjectUrl){URL.revokeObjectURL(doorPreviewObjectUrl);doorPreviewObjectUrl=""}
+status("تمت إزالة إعداد الملف للقالب "+id+".");
 }catch(error){
-console.error("Delete door image:",error);
-status("تعذرت إزالة الصورة: "+(error.message||"خطأ غير معروف"));
+console.error("Delete door media:",error);
+status("تعذرت إزالة الملف: "+(error.message||"خطأ غير معروف"));
 }finally{
 doorImageBusy=false;
 $("deleteDoorImageBtn").disabled=false;
@@ -492,32 +445,24 @@ $("saveDoorImageBtn").disabled=false;
 
 $("audioFile").addEventListener("change",()=>{
 const file=$("audioFile").files[0];
-
 if(!file){
-$("audioFileStatus").textContent=currentAudioUrl
-?"توجد أغنية محفوظة لهذه الدعوة. لن يتغير الرابط ما لم تختر ملفاً جديداً."
-:"لم يتم اختيار ملف جديد.";
+$("audioFileStatus").textContent=currentAudioUrl?"توجد أغنية محفوظة لهذه الدعوة. لن يتغير الرابط ما لم تختر ملفاً جديداً.":"لم يتم اختيار ملف جديد.";
 return;
 }
-
-if(!file.name.toLowerCase().endsWith(".mp3")||
-(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
+if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
 $("audioFile").value="";
 status("اختر ملف MP3 صحيحاً.");
 $("audioFileStatus").textContent="لم يتم اختيار ملف صالح.";
 return;
 }
-
 if(file.size>MAX_AUDIO_SIZE){
 $("audioFile").value="";
 status("حجم الأغنية أكبر من 10 ميغابايت.");
 $("audioFileStatus").textContent="الملف أكبر من الحجم المسموح.";
 return;
 }
-
 $("audioType").value="song";
-$("audioFileStatus").textContent="الملف المختار: "+file.name+
-" — الحجم: "+(file.size/1024/1024).toFixed(2)+" ميغابايت";
+$("audioFileStatus").textContent="الملف المختار: "+file.name+" — الحجم: "+(file.size/1024/1024).toFixed(2)+" ميغابايت";
 status("تم اختيار الأغنية. اضغط حفظ الدعوة لرفعها.");
 });
 
@@ -527,8 +472,7 @@ $("login").classList.toggle("hidden",signedIn);
 $("panel").classList.toggle("hidden",!signedIn);
 if(signedIn&&!loading){
 loading=true;
-Promise.all([loadInvitations(),loadBookings(),loadDoorImage($("template").value)])
-.finally(()=>loading=false);
+Promise.all([loadInvitations(),loadBookings(),loadDoorImage($("template").value)]).finally(()=>loading=false);
 }
 }
 
@@ -540,10 +484,7 @@ return url.href;
 }
 
 async function copyText(text){
-if(navigator.clipboard&&window.isSecureContext){
-await navigator.clipboard.writeText(text);
-return;
-}
+if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return}
 const field=document.createElement("textarea");
 field.value=text;
 field.style.position="fixed";
@@ -567,36 +508,27 @@ async function loadInvitations(){
 $("refreshBtn").disabled=true;
 $("list").replaceChildren();
 addText($("list"),"p","جارٍ تحميل دعواتي...");
-
 try{
-const {data,error}=await db.from("invitations")
-.select("*").order("created_at",{ascending:false});
-
+const {data,error}=await db.from("invitations").select("*").order("created_at",{ascending:false});
 if(error){
 $("list").replaceChildren();
 addText($("list"),"p","تعذر تحميل الدعوات: "+error.message);
 status("تعذر تحميل دعواتي. تحقق من صلاحيات جدول invitations في Supabase.");
 return;
 }
-
 $("list").replaceChildren();
-
 if(!data||data.length===0){
 addText($("list"),"p","ما عندك دعوات محفوظة حالياً. أضف دعوة جديدة من النموذج أعلاه.");
 status("لا توجد دعوات محفوظة حالياً.");
 return;
 }
-
 for(const item of data){
 const card=document.createElement("article");
 card.className="item";
-
 addText(card,"strong",(item.groom_name||"بدون اسم")+" و "+(item.bride_name||"بدون اسم"));
-
 const details=document.createElement("p");
 details.style.whiteSpace="pre-line";
-details.textContent=
-"رمز الدعوة: "+(item.slug||"—")+
+details.textContent="رمز الدعوة: "+(item.slug||"—")+
 "\nالباب: "+(item.template_id||1)+" — "+(doorNames[Number(item.template_id)]||"قالب غير معروف")+
 "\nالتاريخ: "+(item.wedding_date||"غير محدد")+
 "\nاليوم: "+(item.day_name||"غير محدد")+
@@ -608,57 +540,35 @@ details.textContent=
 "\nالأغنية: "+(item.audio_url?"مرفوعة ومحفوظة":"لا يوجد رابط أغنية مخصص")+
 "\nانتهاء الرابط: "+formatExpiry(item.expires_at);
 card.appendChild(details);
-
 if(item.expires_at){
 const expired=new Date(item.expires_at).getTime()<=Date.now();
 addText(card,"p",expired?"انتهت مدة الرابط المحددة":"الرابط محدد بموعد انتهاء",expired?"expired":"active-expiry");
 }
-
 const url=invitationUrl(item.slug||"");
 const link=document.createElement("a");
-link.href=url;
-link.target="_blank";
-link.rel="noopener noreferrer";
-link.textContent="فتح رابط الدعوة";
+link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="فتح رابط الدعوة";
 card.appendChild(link);
-
 addText(card,"p",item.is_published?"منشورة":"غير منشورة",item.is_published?"published":"unpublished");
-
 const copyButton=addText(card,"button","نسخ رابط الدعوة 📋");
 copyButton.type="button";
 copyButton.onclick=async()=>{
-try{
-await copyText(url);
-status("تم نسخ رابط الدعوة:\n"+url);
-copyButton.textContent="تم النسخ ✓";
-}catch(e){
-status("تعذر النسخ. يمكنك نسخ الرابط التالي:\n"+url);
-}
+try{await copyText(url);status("تم نسخ رابط الدعوة:\n"+url);copyButton.textContent="تم النسخ ✓"}
+catch(e){status("تعذر النسخ. يمكنك نسخ الرابط التالي:\n"+url)}
 };
-
 const editButton=addText(card,"button","تعديل الدعوة");
 editButton.type="button";
-editButton.onclick=()=>{
-fillForm(item);
-window.scrollTo({top:0,behavior:"smooth"});
-};
-
+editButton.onclick=()=>{fillForm(item);window.scrollTo({top:0,behavior:"smooth"})};
 const deleteButton=addText(card,"button","حذف الدعوة");
-deleteButton.type="button";
-deleteButton.className="danger";
+deleteButton.type="button";deleteButton.className="danger";
 deleteButton.onclick=()=>deleteInvitation(item);
-
 $("list").appendChild(card);
 }
-
 status("تم تحميل "+data.length+" دعوة في قسم دعواتي.");
 }catch(e){
 $("list").replaceChildren();
 addText($("list"),"p","حدث خطأ أثناء تحميل الدعوات. تحقق من اتصال الإنترنت.");
 status("حدث خطأ غير متوقع أثناء تحميل الدعوات.");
-}finally{
-$("refreshBtn").disabled=false;
-}
+}finally{$("refreshBtn").disabled=false}
 }
 
 function fillForm(item){
@@ -676,13 +586,9 @@ $("phone").value=item.contact_phone||"";
 $("notes").value=item.notes||"";
 $("expiresAt").value=toLocalDateTime(item.expires_at);
 $("audioType").value=item.audio_type||"none";
-
 currentAudioUrl=item.audio_url||"";
 $("audioFile").value="";
-$("audioFileStatus").textContent=currentAudioUrl
-?"توجد أغنية محفوظة لهذه الدعوة. اختيار ملف جديد سيستبدل رابط الأغنية."
-:"لا توجد أغنية مرفوعة لهذه الدعوة.";
-
+$("audioFileStatus").textContent=currentAudioUrl?"توجد أغنية محفوظة لهذه الدعوة. اختيار ملف جديد سيستبدل رابط الأغنية.":"لا توجد أغنية مرفوعة لهذه الدعوة.";
 $("published").checked=!!item.is_published;
 selectDoor(item.template_id||1);
 loadDoorImage(item.template_id||1);
@@ -697,58 +603,36 @@ async function deleteInvitation(item){
 const name=(item.groom_name||"")+" و "+(item.bride_name||"");
 if(!confirm("متأكد تريد حذف دعوة "+name+"؟\nلا يمكن التراجع عن الحذف."))return;
 status("جارٍ حذف الدعوة...");
-
 try{
 const {error}=await db.from("invitations").delete().eq("id",item.id);
 if(error){status("تعذر حذف الدعوة: "+error.message);return}
 if(editingId===item.id)resetForm();
 status("تم حذف الدعوة بنجاح.");
 await loadInvitations();
-}catch(e){
-status("حدث خطأ أثناء حذف الدعوة.");
-}
+}catch(e){status("حدث خطأ أثناء حذف الدعوة.")}
 }
 
 $("deleteCurrentBtn").onclick=async()=>{
 if(!editingId)return;
 const itemId=editingId;
 const {data,error}=await db.from("invitations").select("*").eq("id",itemId).maybeSingle();
-
 if(error){status("تعذر جلب الدعوة للحذف: "+error.message);return}
-if(!data){
-status("الدعوة غير موجودة أو تم حذفها مسبقاً.");
-resetForm();
-await loadInvitations();
-return;
-}
+if(!data){status("الدعوة غير موجودة أو تم حذفها مسبقاً.");resetForm();await loadInvitations();return}
 await deleteInvitation(data);
 };
-
-$("cancelEditBtn").onclick=()=>{
-resetForm();
-status("تم إلغاء التعديل.");
-};
+$("cancelEditBtn").onclick=()=>{resetForm();status("تم إلغاء التعديل.")};
 
 $("inviteForm").onsubmit=async event=>{
 event.preventDefault();
 if(busy)return;
-
 const expiryValue=$("expiresAt").value;
 let expiresAt=null;
-
 if(expiryValue){
 const expiryDate=new Date(expiryValue);
-if(Number.isNaN(expiryDate.getTime())){
-status("تاريخ انتهاء الرابط غير صالح.");
-return;
-}
-if(expiryDate.getTime()<=Date.now()){
-status("اختَر وقت انتهاء في المستقبل.");
-return;
-}
+if(Number.isNaN(expiryDate.getTime())){status("تاريخ انتهاء الرابط غير صالح.");return}
+if(expiryDate.getTime()<=Date.now()){status("اختَر وقت انتهاء في المستقبل.");return}
 expiresAt=expiryDate.toISOString();
 }
-
 const record={
 slug:$("slug").value.trim(),
 groom_name:$("groom").value.trim(),
@@ -766,93 +650,44 @@ template_id:Number($("template").value),
 is_published:$("published").checked,
 expires_at:expiresAt
 };
-
 if(!record.slug)return status("تعذر إنشاء رابط الدعوة. اضغط دعوة جديدة.");
 if(!record.groom_name||!record.bride_name)return status("اكتب اسم العريس واسم العروس.");
 if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>14)return status("اختَر قالباً من القوالب الأربعة عشر.");
-
 const file=$("audioFile").files[0];
-
 if(file){
-if(!file.name.toLowerCase().endsWith(".mp3")||
-(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
-status("اختر ملف MP3 صحيحاً.");
-return;
+if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){status("اختر ملف MP3 صحيحاً.");return}
+if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
 }
-if(file.size>MAX_AUDIO_SIZE){
-status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");
-return;
-}
-}
-
-busy=true;
-$("saveBtn").disabled=true;
+busy=true;$("saveBtn").disabled=true;
 let result;
-
 try{
 if(file){
 status("جارٍ رفع الأغنية إلى التخزين...");
-
-const safeName=file.name.normalize("NFKD")
-.replace(/[^\w.-]+/g,"_")
-.replace(/^\.+/,"")
-.slice(-100)||"wedding-song.mp3";
-
+const safeName=file.name.normalize("NFKD").replace(/[^\w.-]+/g,"_").replace(/^\.+/,"").slice(-100)||"wedding-song.mp3";
 const path=record.slug+"/"+Date.now()+"-"+safeName;
-
-const {data:uploadData,error:uploadError}=await db.storage
-.from("invitation-audio")
-.upload(path,file,{
-cacheControl:"3600",
-upsert:false,
-contentType:"audio/mpeg"
-});
-
+const {data:uploadData,error:uploadError}=await db.storage.from("invitation-audio").upload(path,file,{cacheControl:"3600",upsert:false,contentType:"audio/mpeg"});
 if(uploadError)throw uploadError;
-
-const {data:publicData}=db.storage
-.from("invitation-audio")
-.getPublicUrl(uploadData.path);
-
-if(!publicData||!publicData.publicUrl){
-throw new Error("تعذر الحصول على رابط الأغنية.");
-}
-
+const {data:publicData}=db.storage.from("invitation-audio").getPublicUrl(uploadData.path);
+if(!publicData||!publicData.publicUrl)throw new Error("تعذر الحصول على رابط الأغنية.");
 currentAudioUrl=publicData.publicUrl;
-record.audio_url=currentAudioUrl;
-record.audio_type="song";
-$("audioType").value="song";
+record.audio_url=currentAudioUrl;record.audio_type="song";$("audioType").value="song";
 $("audioFileStatus").textContent="تم رفع الأغنية بنجاح: "+file.name;
 }
-
 status("جارٍ حفظ بيانات الدعوة...");
-
-if(editingId){
-result=await db.from("invitations").update(record).eq("id",editingId);
-}else{
-result=await db.from("invitations").insert(record);
-}
+if(editingId)result=await db.from("invitations").update(record).eq("id",editingId);
+else result=await db.from("invitations").insert(record);
 }catch(e){
 console.error("Save invitation error:",e);
 status("تعذر حفظ الدعوة أو رفع الأغنية: "+(e.message||"خطأ غير معروف"));
-busy=false;
-$("saveBtn").disabled=false;
-return;
+busy=false;$("saveBtn").disabled=false;return;
 }
-
-busy=false;
-$("saveBtn").disabled=false;
-
+busy=false;$("saveBtn").disabled=false;
 if(result.error){
 if(!editingId&&/duplicate|unique/i.test(result.error.message)){
-newUniqueSlug();
-status("تعارض رمز الرابط؛ أنشأنا رمزاً جديداً. اضغط حفظ الدعوة مرة أخرى.");
-return;
+newUniqueSlug();status("تعارض رمز الرابط؛ أنشأنا رمزاً جديداً. اضغط حفظ الدعوة مرة أخرى.");return;
 }
-status("لم يتم الحفظ: "+result.error.message);
-return;
+status("لم يتم الحفظ: "+result.error.message);return;
 }
-
 const savedUrl=invitationUrl(record.slug);
 resetForm();
 status("تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+savedUrl);
@@ -861,163 +696,91 @@ await loadInvitations();
 
 function resetForm(){
 $("inviteForm").reset();
-editingId=null;
-currentAudioUrl="";
+editingId=null;currentAudioUrl="";
 $("audioFile").value="";
 $("audioFileStatus").textContent="لم يتم اختيار ملف جديد.";
 $("formTitle").textContent="إضافة دعوة جديدة";
 $("saveBtn").textContent="حفظ الدعوة";
 $("deleteCurrentBtn").classList.add("hidden");
 $("cancelEditBtn").classList.add("hidden");
-newUniqueSlug();
-selectDoor(1);
-loadDoorImage(1);
+newUniqueSlug();selectDoor(1);loadDoorImage(1);
 $("doorPicker").open=false;
-$("audioType").value="none";
-$("expiresAt").value="";
-$("published").checked=false;
+$("audioType").value="none";$("expiresAt").value="";$("published").checked=false;
 }
-
 $("newBtn").onclick=()=>{
 resetForm();
 status("تم إنشاء رابط جديد. أدخل بيانات الدعوة ثم اضغط حفظ الدعوة.");
 window.scrollTo({top:0,behavior:"smooth"});
 };
-
 $("refreshBtn").onclick=loadInvitations;
 
 async function loadBookings(){
 const box=$("bookingsList");
-box.replaceChildren();
-addText(box,"p","جارٍ تحميل الحجوزات...");
-
+box.replaceChildren();addText(box,"p","جارٍ تحميل الحجوزات...");
 try{
-const {data,error}=await db.from("bookings")
-.select("*").order("created_at",{ascending:false});
-
-if(error){
+const {data,error}=await db.from("bookings").select("*").order("created_at",{ascending:false});
+if(error){box.replaceChildren();addText(box,"p","تعذر عرض الحجوزات: "+error.message);return}
 box.replaceChildren();
-addText(box,"p","تعذر عرض الحجوزات: "+error.message);
-return;
-}
-
-box.replaceChildren();
-
-if(!data||data.length===0){
-addText(box,"p","لا توجد حجوزات مسجلة حالياً.");
-return;
-}
-
+if(!data||data.length===0){addText(box,"p","لا توجد حجوزات مسجلة حالياً.");return}
 for(const item of data){
-const card=document.createElement("article");
-card.className="item";
+const card=document.createElement("article");card.className="item";
 addText(card,"strong",item.customer_name||item.name||"حجز بدون اسم");
-
-const info=document.createElement("p");
-info.style.whiteSpace="pre-line";
-info.textContent=
-"رقم الهاتف: "+(item.phone||item.customer_phone||"—")+
-"\nالتاريخ: "+(item.wedding_date||item.booking_date||"—")+
-"\nنوع الحجز: "+(item.booking_type||item.type||"—")+
-"\nالملاحظات: "+(item.notes||"—")+
-"\nالحالة: "+(item.status||"جديد");
+const info=document.createElement("p");info.style.whiteSpace="pre-line";
+info.textContent="رقم الهاتف: "+(item.phone||item.customer_phone||"—")+"\nالتاريخ: "+(item.wedding_date||item.booking_date||"—")+"\nنوع الحجز: "+(item.booking_type||item.type||"—")+"\nالملاحظات: "+(item.notes||"—")+"\nالحالة: "+(item.status||"جديد");
 card.appendChild(info);
-
 const statusSelect=document.createElement("select");
-["جديد","قيد التواصل","مؤكد","مكتمل","ملغي"].forEach(value=>{
-const option=document.createElement("option");
-option.value=value;
-option.textContent=value;
-statusSelect.appendChild(option);
-});
-statusSelect.value=item.status||"جديد";
-card.appendChild(statusSelect);
-
-const saveStatus=addText(card,"button","حفظ حالة الحجز");
-saveStatus.type="button";
+["جديد","قيد التواصل","مؤكد","مكتمل","ملغي"].forEach(value=>{const option=document.createElement("option");option.value=value;option.textContent=value;statusSelect.appendChild(option)});
+statusSelect.value=item.status||"جديد";card.appendChild(statusSelect);
+const saveStatus=addText(card,"button","حفظ حالة الحجز");saveStatus.type="button";
 saveStatus.onclick=async()=>{
 saveStatus.disabled=true;
-const {error:updateError}=await db.from("bookings")
-.update({status:statusSelect.value}).eq("id",item.id);
+const {error:updateError}=await db.from("bookings").update({status:statusSelect.value}).eq("id",item.id);
 saveStatus.disabled=false;
 if(updateError){status("تعذر تحديث حالة الحجز: "+updateError.message);return}
-status("تم تحديث حالة الحجز.");
-await loadBookings();
+status("تم تحديث حالة الحجز.");await loadBookings();
 };
-
-const remove=addText(card,"button","حذف الحجز");
-remove.type="button";
-remove.className="danger";
+const remove=addText(card,"button","حذف الحجز");remove.type="button";remove.className="danger";
 remove.onclick=async()=>{
 if(!confirm("متأكد تريد حذف هذا الحجز؟"))return;
 const {error:deleteError}=await db.from("bookings").delete().eq("id",item.id);
 if(deleteError){status("تعذر حذف الحجز: "+deleteError.message);return}
-status("تم حذف الحجز.");
-await loadBookings();
+status("تم حذف الحجز.");await loadBookings();
 };
-
 box.appendChild(card);
 }
-}catch(e){
-box.replaceChildren();
-addText(box,"p","حدث خطأ أثناء تحميل الحجوزات.");
+}catch(e){box.replaceChildren();addText(box,"p","حدث خطأ أثناء تحميل الحجوزات.")}
 }
-}
-
 $("refreshBookingsBtn").onclick=loadBookings;
 
 $("loginBtn").onclick=async()=>{
 const email=$("email").value.trim();
 const password=$("password").value;
-
-if(!email||!password){
-status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");
-return;
-}
-
-$("loginBtn").disabled=true;
-status("جارٍ تسجيل الدخول...");
-
+if(!email||!password){status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");return}
+$("loginBtn").disabled=true;status("جارٍ تسجيل الدخول...");
 try{
 const {data,error}=await db.auth.signInWithPassword({email,password});
 if(error){status("تعذر الدخول: "+error.message);return}
-status("تم تسجيل الدخول بنجاح.");
-showSession(data.session);
-}catch(e){
-status("تعذر الاتصال بـ Supabase. تحقق من الإنترنت وحاول مرة أخرى.");
-}finally{
-$("loginBtn").disabled=false;
-}
+status("تم تسجيل الدخول بنجاح.");showSession(data.session);
+}catch(e){status("تعذر الاتصال بـ Supabase. تحقق من الإنترنت وحاول مرة أخرى.")}
+finally{$("loginBtn").disabled=false}
 };
-
-$("password").addEventListener("keydown",event=>{
-if(event.key==="Enter")$("loginBtn").click();
-});
+$("password").addEventListener("keydown",event=>{if(event.key==="Enter")$("loginBtn").click()});
 
 $("logoutBtn").onclick=async()=>{
 const {error}=await db.auth.signOut();
 if(error){status("تعذر تسجيل الخروج: "+error.message);return}
-resetForm();
-$("list").replaceChildren();
-$("bookingsList").replaceChildren();
-status("تم تسجيل الخروج.");
+resetForm();$("list").replaceChildren();$("bookingsList").replaceChildren();status("تم تسجيل الخروج.");
 };
 
 selectDoor(1);
 newUniqueSlug();
-
-db.auth.onAuthStateChange((_event,session)=>{
-showSession(session);
-});
-
+db.auth.onAuthStateChange((_event,session)=>{showSession(session)});
 (async()=>{
 try{
 const {data,error}=await db.auth.getSession();
 if(error){status("تعذر التحقق من جلسة الدخول: "+error.message);return}
 showSession(data.session);
-}catch(e){
-status("تعذر الاتصال بـ Supabase. تحقق من اتصال الإنترنت.");
-}
+}catch(e){status("تعذر الاتصال بـ Supabase. تحقق من اتصال الإنترنت.")}
 })();
 </script>
 </body>
