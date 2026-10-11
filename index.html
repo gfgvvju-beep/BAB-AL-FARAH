@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -171,8 +172,8 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
  <button id="start" disabled>جارٍ التحقق من الدعوة...</button>
  <div class="hint" id="hint">يرجى الانتظار لحظة</div>
 
- <audio id="invitationAudio" loop preload="none"></audio>
- <button class="audio-control" id="audioControl" type="button">🔊 إيقاف الأغنية</button>
+ <audio id="invitationAudio" loop preload="none" playsinline></audio>
+ <button class="audio-control" id="audioControl" type="button">🔊 تشغيل الصوت</button>
 
  <section class="invite design-1" id="invite">
   <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
@@ -264,6 +265,7 @@ let selectedAudioType="song";
 let selectedAudioUrl="";
 let invitationExpired=false;
 let invitationCheckComplete=false;
+let openingStarted=false;
 
 function showField(id,value,fallback){
  $(id).textContent=value||fallback;
@@ -359,8 +361,9 @@ function setupWhatsAppShare(){
  $("whatsappShare").href="https://wa.me/?text="+encodeURIComponent(message);
 }
 
+/* إعداد الصوت: يستخدم رابط MP3 المحفوظ في Supabase عند توفره */
 function configureAudio(type,url){
- selectedAudioType=String(type||"song").toLowerCase();
+ selectedAudioType=String(type||"song").toLowerCase().trim();
  selectedAudioUrl=String(url||"").trim();
 
  const audio=$("invitationAudio");
@@ -376,24 +379,42 @@ function configureAudio(type,url){
  }
 
  let source="";
- if(selectedAudioType==="quran"){
-  source=selectedAudioUrl||QURAN_URL;
+
+ if(selectedAudioUrl){
+  source=selectedAudioUrl;
+ }else if(selectedAudioType==="quran"){
+  source=QURAN_URL;
  }else if(selectedAudioType==="song"){
-  source=selectedAudioUrl||SONG_URL;
+  source=SONG_URL;
  }else{
-  source=selectedAudioUrl||SONG_URL;
+  button.classList.remove("show");
+  return;
+ }
+
+ try{
+  const parsed=new URL(source);
+  if(parsed.protocol!=="https:"&&parsed.protocol!=="http:"){
+   button.classList.remove("show");
+   return;
+  }
+ }catch(error){
+  button.classList.remove("show");
+  return;
  }
 
  audio.src=source;
+ audio.load();
  button.textContent="🔊 تشغيل الصوت";
  button.classList.add("show");
 }
 
 async function playInvitationAudio(){
  if(selectedAudioType==="none"||invitationExpired||!invitationCheckComplete)return;
- const audio=$("invitationAudio");
 
- if(!audio.src)configureAudio(selectedAudioType,selectedAudioUrl);
+ const audio=$("invitationAudio");
+ if(!audio.src){
+  configureAudio(selectedAudioType,selectedAudioUrl);
+ }
 
  try{
   await audio.play();
@@ -406,7 +427,9 @@ async function playInvitationAudio(){
 
 $("audioControl").addEventListener("click",async()=>{
  if(invitationExpired||!invitationCheckComplete)return;
+
  const audio=$("invitationAudio");
+
  if(audio.paused){
   await playInvitationAudio();
  }else{
@@ -418,8 +441,16 @@ $("audioControl").addEventListener("click",async()=>{
 $("invitationAudio").addEventListener("play",()=>{
  $("audioControl").textContent="🔇 إيقاف الصوت";
 });
+
 $("invitationAudio").addEventListener("pause",()=>{
  $("audioControl").textContent="🔊 تشغيل الصوت";
+});
+
+$("invitationAudio").addEventListener("error",()=>{
+ if(selectedAudioType!=="none"){
+  $("audioControl").textContent="⚠️ تعذر تشغيل الصوت — اضغط للمحاولة";
+  $("audioControl").classList.add("show");
+ }
 });
 
 /* إظهار رسالة انتهاء الصلاحية دون كشف تاريخ الانتهاء */
@@ -468,10 +499,6 @@ async function loadInvitation(){
  configureAudio("none","");
 
  try{
-  /*
-   * فحص قاعدة البيانات أولاً.
-   * إذا انتهت الدعوة، لا نجلب تفاصيلها ولا نعرضها.
-   */
   const expiryCheck=await db.rpc("is_invitation_expired",{p_slug:slug});
 
   if(expiryCheck.error){
@@ -498,17 +525,16 @@ async function loadInvitation(){
    return;
   }
 
-  /*
-   * فحص إضافي عند توفر expires_at ضمن بيانات الدعوة.
-   */
+  /* التحقق الإضافي من تاريخ انتهاء الدعوة */
   if(item.expires_at){
-   const expiryTime=new Date(item.expires_at).getTime();
+   const expiryDate=String(item.expires_at).slice(0,10);
+   const now=new Date();
+   const today=
+    now.getFullYear()+"-"+
+    String(now.getMonth()+1).padStart(2,"0")+"-"+
+    String(now.getDate()).padStart(2,"0");
 
-   if(!Number.isFinite(expiryTime)){
-    throw new Error("تعذر التحقق من صلاحية الدعوة.");
-   }
-
-   if(expiryTime<=Date.now()){
+   if(expiryDate<today){
     showExpiredInvitation();
     return;
    }
@@ -524,6 +550,11 @@ async function loadInvitation(){
   showMapLink(item.map_url);
   showGroomContact(item.contact_phone);
   applyTemplate(item.template_id);
+
+  /*
+   * رابط الأغنية المرفوعة من لوحة الإدارة يُقرأ من audio_url.
+   * عند وجود الرابط، يُستخدم مباشرة بدلاً من الأغنية الافتراضية.
+   */
   configureAudio(item.audio_type||"song",item.audio_url||"");
 
   if(item.day_name){
@@ -595,9 +626,9 @@ const hint=$("hint");
 const invite=$("invite");
 
 start.addEventListener("click",()=>{
- /* لا تسمح بفتح الباب قبل اكتمال التحقق */
- if(!invitationCheckComplete||invitationExpired)return;
+ if(!invitationCheckComplete||invitationExpired||openingStarted)return;
 
+ openingStarted=true;
  start.disabled=true;
  hint.textContent="طَق... طَق... طَق...";
 
@@ -643,3 +674,4 @@ loadInvitation();
 </script>
 </body>
 </html>
+```
