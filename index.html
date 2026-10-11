@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -43,34 +42,8 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .verse:before,.verse:after{content:"✿";display:block;color:var(--design-accent,#a27b3f);font-size:22px;margin:3px}
 .ref{font-size:15px;color:var(--design-accent,#96846a)}
 .title{color:var(--design-accent,#b18b49);font-size:30px;margin:22px 0;padding:13px 0;border-top:1px solid var(--design-border,#ddc58f);border-bottom:1px solid var(--design-border,#ddc58f)}
-
-/* عبارة الدعوة المزخرفة بخط عربي كبير وواضح */
-.wedding-intro{
- display:block;
- width:100%;
- max-width:100%;
- margin:20px auto;
- padding:10px 5px;
- color:var(--design-accent,#a27b3f);
- font-family:"Amiri",Tahoma,Arial,serif;
- font-size:22px;
- font-weight:700;
- line-height:2;
- text-align:center;
- white-space:normal;
- overflow-wrap:break-word;
- letter-spacing:0;
- text-shadow:0 1px 1px #00000010;
-}
-.wedding-intro .intro-decoration{
- display:inline;
- font-family:"Amiri",Georgia,serif;
- font-size:25px;
- font-weight:700;
- margin:0 5px;
- color:var(--design-accent,#a27b3f);
-}
-
+.wedding-intro{display:block;width:100%;max-width:100%;margin:20px auto;padding:10px 5px;color:var(--design-accent,#a27b3f);font-family:"Amiri",Tahoma,Arial,serif;font-size:22px;font-weight:700;line-height:2;text-align:center;white-space:normal;overflow-wrap:break-word;letter-spacing:0;text-shadow:0 1px 1px #00000010}
+.wedding-intro .intro-decoration{display:inline;font-family:"Amiri",Georgia,serif;font-size:25px;font-weight:700;margin:0 5px;color:var(--design-accent,#a27b3f)}
 .names{font-size:34px;color:var(--design-accent,#8d6833);line-height:1.8;padding:10px 0}
 .names:before,.names:after{display:block;color:var(--design-accent,#a27b3f);font-size:22px;line-height:1.4}
 .names:before{content:"❀  ❦  ✿"}
@@ -121,19 +94,9 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .invite.design-12{--design-bg:#f2eafa;--design-card:#fcf8ff;--design-text:#4c315d;--design-accent:#76499a;--design-border:#c5a5df;--heart-color:#ad7bc4}
 .invite.design-13{--design-bg:#fff0f5;--design-card:#fff9fb;--design-text:#78465b;--design-accent:#bf7595;--design-border:#edc5d5;--heart-color:#dc78a1}
 .invite.design-14{--design-bg:#eaf4ed;--design-card:#f7fcf8;--design-text:#204b3b;--design-accent:#187052;--design-border:#d6b765;--heart-color:#3d9b77}
-
 @media(max-width:600px){
- .wedding-intro{
-  font-size:19px;
-  line-height:2;
-  margin:17px auto;
-  padding:8px 2px;
-  letter-spacing:0;
- }
- .wedding-intro .intro-decoration{
-  font-size:21px;
-  margin:0 3px;
- }
+ .wedding-intro{font-size:19px;line-height:2;margin:17px auto;padding:8px 2px;letter-spacing:0}
+ .wedding-intro .intro-decoration{font-size:21px;margin:0 3px}
 }
 @media(max-width:480px){
  #start{bottom:calc(72px + env(safe-area-inset-bottom,0px));font-size:16px;padding:14px 18px}
@@ -221,6 +184,56 @@ let knockCount=0;
 let knockTimer=null;
 let doorVideoActive=false;
 let doorVideoReady=false;
+
+/* عبارة الافتتاح المختارة لكل دعوة */
+let openingPrompt="knock";
+
+function getOpeningText(){
+ const value=String(openingPrompt||"").trim().toLowerCase();
+
+ if(
+  value==="tap"||
+  value==="click"||
+  value==="screen"||
+  value==="2"||
+  value.includes("اضغط")||
+  value.includes("الشاشة")||
+  value.includes("ثلاث مرات")||
+  value.includes("3 مرات")
+ ){
+  return "اضغط على الشاشة 3 مرات لفتح الدعوة ❤️";
+ }
+
+ return "أطرق الباب وأكتشف دعوتك الخاصة ❤️";
+}
+
+function readOpeningPrompt(item){
+ if(!item||typeof item!=="object")return "knock";
+
+ const value=
+  item.opening_prompt||
+  item.opening_mode||
+  item.opening_text||
+  item.opening_message||
+  "";
+
+ const normalized=String(value).trim().toLowerCase();
+
+ if(
+  normalized==="tap"||
+  normalized==="click"||
+  normalized==="screen"||
+  normalized==="2"||
+  normalized.includes("اضغط")||
+  normalized.includes("الشاشة")||
+  normalized.includes("ثلاث مرات")||
+  normalized.includes("3 مرات")
+ ){
+  return "tap";
+ }
+
+ return "knock";
+}
 
 function stopAllAudio(){
  const audio=$("invitationAudio");
@@ -582,12 +595,17 @@ function showExpiredInvitation(){
 function enableInvitation(){
  invitationCheckComplete=true;
  $("start").disabled=false;
- $("start").textContent="أطرق الباب وأكتشف دعوتك الخاصة ❤️";
+ $("start").textContent=getOpeningText();
  $("hint").textContent="اضغط على الفيديو أو الزر 3 مرات حتى تُفتح الدعوة";
 }
 
 async function loadInvitation(){
  const slug=params.get("invite");
+
+ /* دعم العبارة عند فتح رابط مباشر بدون slug */
+ openingPrompt=readOpeningPrompt({
+  opening_prompt:params.get("opening_prompt")
+ });
 
  if(!slug){
   for(const k of ["groom","bride","date","time","place"]){
@@ -638,6 +656,9 @@ async function loadInvitation(){
    $("hint").textContent="لم يتم العثور على الدعوة المنشورة.";
    return;
   }
+
+  /* قراءة اختيار عبارة الافتتاح المحفوظة مع الدعوة */
+  openingPrompt=readOpeningPrompt(item);
 
   if(item.expires_at){
    const exp=String(item.expires_at).slice(0,10);
@@ -876,7 +897,7 @@ function handleKnock(){
   knockTimer=setTimeout(()=>{
    if(knockCount>0&&!openingStarted){
     knockCount=0;
-    $("start").textContent="أطرق الباب وأكتشف دعوتك الخاصة ❤️";
+    $("start").textContent=getOpeningText();
     $("hint").textContent="اضغط على الفيديو أو الزر 3 مرات حتى تُفتح الدعوة";
     arch.classList.remove("knock");
    }
