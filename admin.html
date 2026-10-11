@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -14,8 +14,9 @@ h1{text-align:center;color:#aa8950}
 h3{color:#8d703e;margin-top:25px}
 .subtitle{text-align:center;color:#81715d}
 label{display:block;margin:12px 0 5px;font-weight:bold;font-size:14px}
-input,button,select{width:100%;padding:13px;margin:6px 0;border-radius:9px;font:inherit}
-input,select{border:1px solid #ddd2bf;background:white;color:#493b2b}
+input,button,select,textarea{width:100%;padding:13px;margin:6px 0;border-radius:9px;font:inherit}
+input,select,textarea{border:1px solid #ddd2bf;background:white;color:#493b2b}
+textarea{resize:vertical;min-height:90px}
 input[type=checkbox]{width:auto}
 button{border:0;background:#aa8950;color:white;cursor:pointer;font-weight:bold}
 button:disabled{opacity:.5}
@@ -83,6 +84,9 @@ button:disabled{opacity:.5}
 
 <label for="phone">رقم التواصل</label>
 <input id="phone" type="tel" placeholder="رقم الهاتف">
+
+<label for="notes">ملاحظات الدعوة (اختياري)</label>
+<textarea id="notes" rows="3" placeholder="اكتب الملاحظات التي تريد إضافتها للدعوة..."></textarea>
 
 <div class="door-panel">
 <label for="audioType">اختيار الصوت عند فتح الباب</label>
@@ -271,7 +275,8 @@ async function loadInvitations(){
    "\nالتاريخ: "+(item.wedding_date||"غير محدد")+
    "\nالوقت: "+(item.wedding_time||"غير محدد")+
    "\nالمكان: "+(item.venue_name||"غير محدد")+
-   "\nالصوت: "+(audioNames[item.audio_type]||audioNames.none);
+   "\nالصوت: "+(audioNames[item.audio_type]||audioNames.none)+
+   "\nالملاحظات: "+(item.notes||"لا توجد");
 
   const url=invitationUrl(item.slug);
   const link=document.createElement("a");
@@ -323,6 +328,7 @@ function fillForm(item){
  $("venue").value=item.venue_name||"";
  $("map").value=item.map_url||"";
  $("phone").value=item.contact_phone||"";
+ $("notes").value=item.notes||"";
  $("audioType").value=item.audio_type||"none";
  $("published").checked=!!item.is_published;
 
@@ -346,6 +352,7 @@ $("inviteForm").onsubmit=async event=>{
   venue_name:$("venue").value.trim(),
   map_url:$("map").value.trim(),
   contact_phone:$("phone").value.trim(),
+  notes:$("notes").value.trim(),
   audio_type:$("audioType").value,
   audio_url:null,
   template_id:Number($("template").value),
@@ -407,6 +414,7 @@ function resetForm(){
  newUniqueSlug();
  selectDoor(1);
  $("audioType").value="none";
+ $("notes").value="";
 }
 
 $("newBtn").onclick=()=>{
@@ -433,3 +441,4 @@ db.auth.getSession().then(({data,error})=>{
 </script>
 </body>
 </html>
+```
