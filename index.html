@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -43,6 +43,14 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .details{margin:24px auto;padding:20px 15px;max-width:420px;background:#fffaf0;border:1px solid #ead9b4;border-radius:15px;line-height:2.4;font-size:19px}
 .detail{border-bottom:1px solid #eee3ce;padding:5px}
 .detail:last-child{border:0}
+
+/* زر موقع القاعة */
+.map-section{margin:18px auto;max-width:420px}
+.map-section[hidden]{display:none!important}
+.map-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px 18px;border-radius:30px;background:linear-gradient(135deg,#328b5b,#176b40);color:#fff;text-decoration:none;font-size:18px;font-weight:bold;box-shadow:0 5px 16px #247b5330;transition:transform .2s}
+.map-button:hover{transform:translateY(-2px)}
+.map-note{font-size:13px;color:#897a69;margin-top:8px}
+
 .notes-box{display:none;margin:18px auto;padding:18px 16px;max-width:420px;text-align:right;background:linear-gradient(145deg,#fffaf0,#f7eddb);border:1px solid #ddc58f;border-radius:15px;box-shadow:0 5px 18px #8e713510;line-height:2}
 .notes-title{color:#98733c;font-weight:bold;font-size:19px;margin-bottom:7px}
 .notes-text{white-space:pre-wrap;overflow-wrap:anywhere;color:#574632;font-size:17px}
@@ -84,12 +92,14 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .arch.template-8{--wood:repeating-linear-gradient(115deg,#e6d8c0 0 30px,#f8f0e2 31px 49px,#d4c1a3 50px 53px,#f2e7d4 54px 85px);--gold:#b58a50;--gold-shadow:#876335;background:#e9ddca;border-color:#c3a06d}
 .arch.template-8 .leaf:before{border-radius:2px;border-width:4px;inset:20px 12px}
 .arch.template-8 .leaf:after{border-radius:2px}
+
 @media(max-width:400px){
 .frame{height:370px}
 .brand{font-size:26px}
 .contact-number{font-size:22px}
 .whatsapp-share{font-size:15px;padding:13px 18px}
 #start{font-size:21px;padding:15px 22px}
+.map-button{font-size:16px}
 }
 </style>
 </head>
@@ -138,6 +148,14 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
    <div class="detail">🕗 الوقت: <span id="time">الثامنة مساءً</span></div>
    <div class="detail">📍 المكان: <span id="place">قاعة الأفراح</span></div>
   </div>
+
+  <!-- زر موقع القاعة -->
+  <section class="map-section" id="mapSection" hidden>
+   <a class="map-button" id="mapButton" href="#" target="_blank" rel="noopener noreferrer">
+    📍 موقع قاعة الزفاف على الخريطة
+   </a>
+   <div class="map-note">اضغط هنا لفتح موقع القاعة على الخريطة</div>
+  </section>
 
   <section class="notes-box" id="notesBox">
    <div class="notes-title">📝 ملاحظات خاصة</div>
@@ -221,6 +239,35 @@ function showNotes(value){
  const notes=String(value||"").trim();
  $("inviteNotes").textContent=notes;
  $("notesBox").style.display=notes?"block":"none";
+}
+
+/* إظهار زر موقع القاعة عند وجود رابط صحيح */
+function showMapLink(value){
+ const raw=String(value||"").trim();
+ const section=$("mapSection");
+ const button=$("mapButton");
+
+ if(!raw){
+  section.hidden=true;
+  button.removeAttribute("href");
+  return;
+ }
+
+ try{
+  const url=new URL(raw);
+
+  if(url.protocol!=="https:"&&url.protocol!=="http:"){
+   section.hidden=true;
+   button.removeAttribute("href");
+   return;
+  }
+
+  button.href=url.href;
+  section.hidden=false;
+ }catch(error){
+  section.hidden=true;
+  button.removeAttribute("href");
+ }
 }
 
 function showGroomContact(value){
@@ -332,6 +379,7 @@ async function loadInvitation(){
   }
 
   showNotes(params.get("notes")||"");
+  showMapLink(params.get("map_url")||"");
   showGroomContact(params.get("contact_phone")||params.get("phone"));
   applyTemplate(params.get("template"));
   configureAudio(params.get("audio_type")||"song",params.get("audio_url")||"");
@@ -360,6 +408,7 @@ async function loadInvitation(){
   showField("place",item.venue_name,defaults.place);
 
   showNotes(item.notes);
+  showMapLink(item.map_url);
   showGroomContact(item.contact_phone);
   applyTemplate(item.template_id);
   configureAudio(item.audio_type||"song",item.audio_url||"");
@@ -485,4 +534,3 @@ loadInvitation();
 </script>
 </body>
 </html>
-```
