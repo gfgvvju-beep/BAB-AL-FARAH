@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>باب الفرح | دعوة زفاف إلكترونية</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-serif;text-align:center}
@@ -86,9 +87,11 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .arch.template-8{--wood:repeating-linear-gradient(115deg,#e6d8c0 0 30px,#f8f0e2 31px 49px,#d4c1a3 50px 53px,#f2e7d4 54px 85px);--gold:#b58a50;--gold-shadow:#876335;background:#e9ddca;border-color:#c3a06d}
 .arch.template-8 .leaf:before{border-radius:2px;border-width:4px;inset:20px 12px}
 .arch.template-8 .leaf:after{border-radius:2px}
+.audio-note{font-size:12px;color:#897a69;margin:12px auto}
 @media(max-width:400px){.frame{height:370px}.brand{font-size:26px}.contact-number{font-size:22px}.whatsapp-share{font-size:15px;padding:13px 18px}}
 </style>
 </head>
+
 <body>
 <header class="hero">
  <div class="brand">باب الفرح</div>
@@ -108,6 +111,10 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 
  <button id="start">طرق الباب واكتشف دعوتك ♥</button>
  <div class="hint" id="hint">انتظر 3 دقات حتى تُفتح الدعوة</div>
+ <div class="audio-note" id="audioNote"></div>
+
+ <!-- صوت الدعوة -->
+ <audio id="invitationAudio" preload="none" loop></audio>
 
  <section class="invite" id="invite">
   <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
@@ -118,7 +125,6 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 
   <div class="title">دعوة زفاف</div>
   <p>بكل الحب والسرور، نتشرف بدعوتكم لحضور حفل زفاف</p>
-
   <div class="names">
    <span id="groom">محمد</span><br>
    <span class="heart">♥</span><br>
@@ -131,7 +137,6 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
    <div class="detail">📍 المكان: <span id="place">قاعة الأفراح</span></div>
   </div>
 
-  <!-- رقم العريس -->
   <section class="groom-contact" id="groomContact" hidden>
    <div class="groom-contact-title">📞 للتواصل مع العريس</div>
    <a class="groom-phone" id="groomPhone" href="#" dir="ltr"></a>
@@ -140,7 +145,6 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 
   <div class="footer">حضوركم يكتمل به فرحنا ❤️</div>
 
-  <!-- زر مشاركة رابط الدعوة -->
   <div class="share-area">
    <a class="whatsapp-share" id="whatsappShare" href="#" target="_blank" rel="noopener noreferrer">
     <span>💚</span>
@@ -151,7 +155,6 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 
   <div class="sub">باب الفرح — نصنع لحظاتكم الجميلة</div>
 
-  <!-- معلومات التواصل مع صاحب الموقع الرئيسي -->
   <section class="contact" aria-label="التواصل مع باب الفرح">
    <div class="contact-brand">باب الفرح | BAB AL FARAH</div>
    <p>تريد تصمم دعوتك الإلكترونية الخاصة؟</p>
@@ -172,6 +175,18 @@ const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const params=new URLSearchParams(location.search);
 const $=id=>document.getElementById(id);
+
+/*
+  خيار الأغنية:
+  ارفع ملفاً صوتياً لديك إذن باستخدامه إلى مستودع الموقع
+  وسمّه wedding-song.mp3.
+*/
+const AUDIO_FILES={
+ song:"https://gfgvvju-beep.github.io/BAB-AL-FARAH/wedding-song.mp3",
+ quran:"https://everyayah.com/data/Alafasy_128kbps/030021.mp3"
+};
+
+let invitationAudioType="none";
 
 const defaults={
  groom:"محمد",
@@ -203,7 +218,6 @@ function applyTemplate(value){
 function showGroomContact(value){
  const phone=String(value||"").trim();
  const section=$("groomContact");
-
  if(!phone){
   section.hidden=true;
   $("groomPhone").textContent="";
@@ -224,11 +238,9 @@ function showGroomContact(value){
  section.hidden=false;
 }
 
-/* إعداد مشاركة رابط الدعوة الحالية */
 function setupWhatsAppShare(){
  const button=$("whatsappShare");
  if(!button)return;
-
  const invitationUrl=window.location.href;
  const groom=$("groom").textContent.trim();
  const bride=$("bride").textContent.trim();
@@ -242,6 +254,50 @@ function setupWhatsAppShare(){
  button.href="https://wa.me/?text="+encodeURIComponent(message);
 }
 
+/* تحديد الصوت حسب إعداد الدعوة */
+function setInvitationAudioType(value){
+ const allowed=["song","quran","none"];
+ invitationAudioType=allowed.includes(value)?value:"none";
+}
+
+/* تشغيل الصوت عند فتح الباب */
+async function playInvitationAudio(){
+ const audio=$("invitationAudio");
+ const note=$("audioNote");
+
+ audio.pause();
+ audio.removeAttribute("src");
+ audio.load();
+
+ if(invitationAudioType==="none"){
+  note.textContent="🔇 هذه الدعوة بدون موسيقى أو تلاوة.";
+  return;
+ }
+
+ const source=AUDIO_FILES[invitationAudioType];
+ if(!source){
+  note.textContent="تعذر العثور على ملف الصوت.";
+  return;
+ }
+
+ audio.src=source;
+ audio.loop=true;
+ audio.volume=0.8;
+ audio.load();
+
+ try{
+  await audio.play();
+  note.textContent=invitationAudioType==="quran"
+   ?"📖 تعمل تلاوة القرآن الكريم."
+   :"🎵 تعمل موسيقى الدعوة.";
+ }catch(error){
+  console.warn("Audio playback error:",error);
+  note.textContent=invitationAudioType==="song"
+   ?"تعذر تشغيل الأغنية. تأكد من رفع ملف wedding-song.mp3 إلى الموقع."
+   :"تعذر تشغيل التلاوة تلقائياً. تحقق من اتصال الإنترنت ورابط الصوت.";
+ }
+}
+
 async function loadInvitation(){
  const slug=params.get("invite");
 
@@ -251,6 +307,7 @@ async function loadInvitation(){
   }
   showGroomContact(params.get("contact_phone")||params.get("phone"));
   applyTemplate(params.get("template"));
+  setInvitationAudioType(params.get("audio_type")||"none");
   setupWhatsAppShare();
   return;
  }
@@ -262,7 +319,6 @@ async function loadInvitation(){
   if(error)throw error;
 
   const item=Array.isArray(data)?data[0]:data;
-
   if(!item){
    $("hint").textContent="لم يتم العثور على الدعوة المنشورة.";
    return;
@@ -277,8 +333,13 @@ async function loadInvitation(){
   showGroomContact(item.contact_phone);
   applyTemplate(item.template_id);
 
-  if(item.day_name)$("date").textContent+=" — "+item.day_name;
+  /*
+    يجب أن يعيد RPC الحقل audio_type.
+    القيمة المتوقعة: song أو quran أو none.
+  */
+  setInvitationAudioType(item.audio_type||"none");
 
+  if(item.day_name)$("date").textContent+=" — "+item.day_name;
   setupWhatsAppShare();
   $("hint").textContent="انتظر 3 دقات حتى تُفتح الدعوة";
 
@@ -291,7 +352,6 @@ async function loadInvitation(){
 
 $("copyPhone").addEventListener("click",async()=>{
  const phone="07867430232";
-
  try{
   if(navigator.clipboard&&window.isSecureContext){
    await navigator.clipboard.writeText(phone);
@@ -314,7 +374,6 @@ $("copyPhone").addEventListener("click",async()=>{
 
 function petals(){
  const symbols=["🌸","🌹","✿","❀"];
-
  for(let i=0;i<55;i++){
   setTimeout(()=>{
    const p=document.createElement("span");
@@ -344,7 +403,6 @@ function knockSound(){
   osc.frequency.exponentialRampToValueAtTime(45,ctx.currentTime+.12);
   gain.gain.setValueAtTime(.35,ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.14);
-
   osc.connect(gain);
   gain.connect(ctx.destination);
   osc.start();
@@ -374,12 +432,16 @@ start.addEventListener("click",()=>{
   if(count<3){
    setTimeout(nextKnock,750);
   }else{
-   setTimeout(()=>{
+   setTimeout(async()=>{
     arch.classList.remove("knock");
     arch.classList.add("open");
     petals();
     hint.textContent="تم فتح الدعوة ♥";
     invite.classList.add("show");
+
+    /* يبدأ الصوت بعد فتح الباب */
+    await playInvitationAudio();
+
     setTimeout(()=>invite.scrollIntoView({behavior:"smooth",block:"start"}),500);
    },650);
   }
