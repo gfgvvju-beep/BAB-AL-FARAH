@@ -28,12 +28,12 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .knock .leaf{animation:shake .16s 2}
 @keyframes shake{0%,100%{translate:0 0}40%{translate:2px 0}70%{translate:-2px 0}}
 #doorVideo{display:none;position:absolute;inset:0;z-index:5;width:100%;height:100%;object-fit:cover;background:#171310;pointer-events:none}
-#start{position:fixed;z-index:25;bottom:calc(72px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:max-content;max-width:92vw;border:1px solid #e4c47e;border-radius:30px;padding:15px 22px;color:white;background:linear-gradient(135deg,#c6a15c,#96703a);font-size:18px;cursor:pointer;box-shadow:0 6px 25px #0006;touch-action:manipulation}
+#start{position:fixed;z-index:25;bottom:calc(72px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:max-content;max-width:92vw;border:1px solid #e4c47e;border-radius:30px;padding:15px 22px;color:white;background:linear-gradient(135deg,#c6a15c,#96703a);font-size:18px;cursor:pointer;box-shadow:0 6px 25px #0006;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 #start:disabled{opacity:.8;cursor:not-allowed}
-.hint{position:fixed;z-index:25;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:0;right:0;width:fit-content;max-width:94vw;margin:0 auto;padding:8px 14px;border-radius:20px;background:#171310b8;color:#fff;font-size:15px;text-shadow:0 1px 4px #000;pointer-events:none}
-/* إخفاء زر الافتتاح والتعليمات بعد فتح الدعوة لمنع ظهور عبارتين */
-body.invitation-opened #start,
-body.invitation-opened #hint{display:none!important}
+
+/* إخفاء العبارة الثانية أسفل الزر */
+.hint{display:none!important}
+
 .invite{display:none;position:relative;isolation:isolate;overflow:hidden;padding:35px 23px 38px;max-width:600px;width:calc(100% - 24px);margin:24px auto;color:var(--design-text,#574632);background:var(--design-bg,#fffaf0);border:5px double var(--design-border,#ddc58f);border-radius:24px;box-shadow:0 12px 35px #00000012,inset 0 0 0 5px #ffffff66}
 .invite.show{display:block;animation:rise .7s ease both}
 @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -104,7 +104,6 @@ body.invitation-opened #hint{display:none!important}
 }
 @media(max-width:480px){
  #start{bottom:calc(72px + env(safe-area-inset-bottom,0px));font-size:16px;padding:14px 18px}
- .hint{bottom:calc(18px + env(safe-area-inset-bottom,0px));font-size:14px}
  .contact-number{font-size:22px}
  .whatsapp-share{font-size:15px;padding:13px 18px}
  .map-button{font-size:16px}
@@ -188,16 +187,20 @@ let knockCount=0;
 let knockTimer=null;
 let doorVideoActive=false;
 let doorVideoReady=false;
-
 let openingPrompt="knock";
 
 function getOpeningText(){
  const value=String(openingPrompt||"").trim().toLowerCase();
 
  if(
-  value==="tap"||value==="click"||value==="screen"||value==="2"||
-  value.includes("اضغط")||value.includes("الشاشة")||
-  value.includes("ثلاث مرات")||value.includes("3 مرات")
+  value==="tap"||
+  value==="click"||
+  value==="screen"||
+  value==="2"||
+  value.includes("اضغط")||
+  value.includes("الشاشة")||
+  value.includes("ثلاث مرات")||
+  value.includes("3 مرات")
  ){
   return "اضغط على الشاشة 3 مرات لفتح الدعوة ❤️";
  }
@@ -208,13 +211,24 @@ function getOpeningText(){
 function readOpeningPrompt(item){
  if(!item||typeof item!=="object")return "knock";
 
- const value=item.opening_prompt||item.opening_mode||item.opening_text||item.opening_message||"";
+ const value=
+  item.opening_prompt||
+  item.opening_mode||
+  item.opening_text||
+  item.opening_message||
+  "";
+
  const normalized=String(value).trim().toLowerCase();
 
  if(
-  normalized==="tap"||normalized==="click"||normalized==="screen"||normalized==="2"||
-  normalized.includes("اضغط")||normalized.includes("الشاشة")||
-  normalized.includes("ثلاث مرات")||normalized.includes("3 مرات")
+  normalized==="tap"||
+  normalized==="click"||
+  normalized==="screen"||
+  normalized==="2"||
+  normalized.includes("اضغط")||
+  normalized.includes("الشاشة")||
+  normalized.includes("ثلاث مرات")||
+  normalized.includes("3 مرات")
  ){
   return "tap";
  }
@@ -224,9 +238,16 @@ function readOpeningPrompt(item){
 
 function stopAllAudio(){
  const audio=$("invitationAudio");
- if(audio){audio.pause();try{audio.currentTime=0}catch(e){}}
+
+ if(audio){
+  audio.pause();
+  try{audio.currentTime=0}catch(e){}
+ }
+
  const button=$("audioControl");
- if(button)button.textContent="🔊 تشغيل الصوت";
+ if(button){
+  button.textContent="🔊 تشغيل الصوت";
+ }
 }
 
 document.addEventListener("visibilitychange",()=>{
@@ -247,7 +268,9 @@ function isVideoUrl(value){
  try{
   const u=new URL(String(value||""));
   return /\.mp4$/i.test(u.pathname);
- }catch(e){return false;}
+ }catch(e){
+  return false;
+ }
 }
 
 function clearDoorImage(){
@@ -337,6 +360,7 @@ function setDoorImage(imageUrl){
  image.src=url;
 
  if(image.complete&&image.naturalWidth)fitDoorImage();
+
  window.addEventListener("resize",fitDoorImage);
 }
 
@@ -344,6 +368,7 @@ function applyTemplate(value){
  const n=Number(value);
  const valid=Number.isInteger(n)&&n>=1&&n<=14?n:1;
  const invite=$("invite");
+
  for(let i=1;i<=14;i++)invite.classList.remove("design-"+i);
  invite.classList.add("design-"+valid);
 }
@@ -351,12 +376,17 @@ function applyTemplate(value){
 function extractDoorImage(row){
  if(!row||typeof row!=="object")return "";
 
- const keys=["door_media_url","door_image_url","template_door_url","door_url","door_image","template_image_url","image_url","gif_url","door_gif_url","custom_door_url","custom_door_image"];
+ const keys=[
+  "door_media_url","door_image_url","template_door_url","door_url",
+  "door_image","template_image_url","image_url","gif_url",
+  "door_gif_url","custom_door_url","custom_door_image"
+ ];
 
  for(const key of keys){
   const v=row[key];
   if(typeof v==="string"&&v.trim())return v.trim();
  }
+
  return "";
 }
 
@@ -365,11 +395,23 @@ async function loadTemplateDoor(templateId){
  if(!Number.isInteger(id)||id<1||id>14)return;
 
  try{
-  const {data,error}=await db.from("template_doors").select("image_url").eq("template_id",id).maybeSingle();
-  if(error){console.warn("تعذر تحميل ملف الباب",error.message);return;}
+  const {data,error}=await db
+   .from("template_doors")
+   .select("image_url")
+   .eq("template_id",id)
+   .maybeSingle();
+
+  if(error){
+   console.warn("تعذر تحميل ملف الباب",error.message);
+   return;
+  }
+
   const media=extractDoorImage(data);
   if(media)setDoorImage(media);
- }catch(e){console.warn(e);}
+
+ }catch(e){
+  console.warn(e);
+ }
 }
 
 function showField(id,value,fallback){
@@ -393,7 +435,11 @@ function showMapLink(value){
  const section=$("mapSection");
  const button=$("mapButton");
 
- if(!raw){section.hidden=true;button.removeAttribute("href");return;}
+ if(!raw){
+  section.hidden=true;
+  button.removeAttribute("href");
+  return;
+ }
 
  try{
   const u=new URL(raw);
@@ -410,10 +456,17 @@ function showGroomContact(value){
  const phone=String(value||"").trim();
  const section=$("groomContact");
 
- if(!phone){section.hidden=true;return;}
+ if(!phone){
+  section.hidden=true;
+  return;
+ }
 
  const tel=phone.replace(/[^\d+]/g,"");
- if(!tel){section.hidden=true;return;}
+
+ if(!tel){
+  section.hidden=true;
+  return;
+ }
 
  $("groomPhone").textContent=phone;
  $("groomPhone").href="tel:"+tel;
@@ -442,16 +495,29 @@ function configureAudio(type,url){
  audio.pause();
  audio.removeAttribute("src");
 
- if(selectedAudioType==="none"){audio.load();button.classList.remove("show");return;}
+ if(selectedAudioType==="none"){
+  audio.load();
+  button.classList.remove("show");
+  return;
+ }
 
- const source=selectedAudioUrl||(selectedAudioType==="quran"?QURAN_URL:selectedAudioType==="song"?SONG_URL:"");
+ const source=selectedAudioUrl||
+  (selectedAudioType==="quran"?QURAN_URL:
+   selectedAudioType==="song"?SONG_URL:"");
 
- if(!source){audio.load();button.classList.remove("show");return;}
+ if(!source){
+  audio.load();
+  button.classList.remove("show");
+  return;
+ }
 
  try{
   const u=new URL(source);
   if(!["https:","http:"].includes(u.protocol))throw Error();
- }catch(e){button.classList.remove("show");return;}
+ }catch(e){
+  button.classList.remove("show");
+  return;
+ }
 
  audio.src=source;
  audio.preload="auto";
@@ -461,6 +527,7 @@ function configureAudio(type,url){
 
 async function playInvitationAudio(){
  if(selectedAudioType==="none"||invitationExpired||!invitationCheckComplete)return;
+
  const audio=$("invitationAudio");
 
  try{
@@ -474,9 +541,15 @@ async function playInvitationAudio(){
 
 $("audioControl").addEventListener("click",async()=>{
  if(invitationExpired||!invitationCheckComplete)return;
+
  const audio=$("invitationAudio");
- if(audio.paused){await playInvitationAudio();}
- else{audio.pause();$("audioControl").textContent="🔊 تشغيل الصوت";}
+
+ if(audio.paused){
+  await playInvitationAudio();
+ }else{
+  audio.pause();
+  $("audioControl").textContent="🔊 تشغيل الصوت";
+ }
 });
 
 $("invitationAudio").addEventListener("play",()=>{
@@ -525,10 +598,14 @@ function enableInvitation(){
 async function loadInvitation(){
  const slug=params.get("invite");
 
- openingPrompt=readOpeningPrompt({opening_prompt:params.get("opening_prompt")});
+ openingPrompt=readOpeningPrompt({
+  opening_prompt:params.get("opening_prompt")
+ });
 
  if(!slug){
-  for(const k of ["groom","bride","date","time","place"])showField(k,params.get(k),defaults[k]);
+  for(const k of ["groom","bride","date","time","place"]){
+   showField(k,params.get(k),defaults[k]);
+  }
 
   showNotes(params.get("notes")||"");
   showMapLink(params.get("map_url")||"");
@@ -552,12 +629,17 @@ async function loadInvitation(){
  try{
   const expiryPromise=db.rpc("is_invitation_expired",{p_slug:slug});
   const invitationPromise=db.rpc("get_invitation_by_slug",{p_slug:slug});
+
   const expiry=await expiryPromise;
 
   if(expiry.error)throw expiry.error;
-  if(expiry.data===true){showExpiredInvitation();return;}
+  if(expiry.data===true){
+   showExpiredInvitation();
+   return;
+  }
 
   const {data,error}=await invitationPromise;
+
   if(error)throw error;
 
   const item=Array.isArray(data)?data[0]:data;
@@ -573,7 +655,11 @@ async function loadInvitation(){
   let promptLoaded=false;
 
   try{
-   const {data:promptRow,error:promptError}=await db.from("invitations").select("opening_prompt").eq("slug",slug).maybeSingle();
+   const {data:promptRow,error:promptError}=await db
+    .from("invitations")
+    .select("opening_prompt")
+    .eq("slug",slug)
+    .maybeSingle();
 
    if(!promptError&&promptRow&&promptRow.opening_prompt!==undefined&&promptRow.opening_prompt!==null){
     openingPrompt=readOpeningPrompt(promptRow);
@@ -585,14 +671,21 @@ async function loadInvitation(){
    console.warn("تعذرت قراءة عبارة الافتتاح:",promptLookupError);
   }
 
-  if(!promptLoaded)openingPrompt=readOpeningPrompt(item);
+  if(!promptLoaded){
+   openingPrompt=readOpeningPrompt(item);
+  }
 
   if(item.expires_at){
    const exp=String(item.expires_at).slice(0,10);
    const now=new Date();
-   const today=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
+   const today=now.getFullYear()+"-"+
+    String(now.getMonth()+1).padStart(2,"0")+"-"+
+    String(now.getDate()).padStart(2,"0");
 
-   if(exp<today){showExpiredInvitation();return;}
+   if(exp<today){
+    showExpiredInvitation();
+    return;
+   }
   }
 
   showField("groom",item.groom_name,defaults.groom);
@@ -609,22 +702,30 @@ async function loadInvitation(){
   applyTemplate(template);
 
   const direct=extractDoorImage(item);
-  if(direct)setDoorImage(direct);
-  else loadTemplateDoor(template);
+
+  if(direct){
+   setDoorImage(direct);
+  }else{
+   loadTemplateDoor(template);
+  }
 
   configureAudio(item.audio_type||"song",item.audio_url||"");
 
-  if(item.day_name)$("date").textContent+=" — "+item.day_name;
+  if(item.day_name){
+   $("date").textContent+=" — "+item.day_name;
+  }
 
   setupWhatsAppShare();
   enableInvitation();
 
  }catch(e){
   console.error("Invitation loading error:",e);
+
   invitationCheckComplete=false;
   $("start").disabled=true;
   $("start").textContent="تعذر التحقق من الدعوة";
   $("hint").textContent="تعذر التحقق من صلاحية الرابط. حدّث الصفحة وحاول لاحقاً.";
+
   configureAudio("none","");
  }
 }
@@ -641,6 +742,7 @@ function petals(){
    p.style.fontSize=14+Math.random()*15+"px";
    p.style.setProperty("--drift",Math.random()*180-90+"px");
    p.style.animationDuration=4+Math.random()*5+"s";
+
    document.body.appendChild(p);
    setTimeout(()=>p.remove(),10000);
   },i*45);
@@ -659,11 +761,13 @@ function knockSound(){
   osc.type="sine";
   osc.frequency.setValueAtTime(100,ctx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(45,ctx.currentTime+.12);
+
   gain.gain.setValueAtTime(.35,ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.14);
 
   osc.connect(gain);
   gain.connect(ctx.destination);
+
   osc.start();
   osc.stop(ctx.currentTime+.15);
   osc.onended=()=>ctx.close();
@@ -672,6 +776,7 @@ function knockSound(){
 
 function stopDoorVideo(){
  const video=$("doorVideo");
+
  doorVideoActive=false;
  doorVideoReady=false;
  video.pause();
@@ -683,7 +788,10 @@ function stopDoorVideo(){
 function startDoorVideo(){
  const video=$("doorVideo");
 
- if(!isVideoUrl(selectedDoorImageUrl)){finishOpening();return;}
+ if(!isVideoUrl(selectedDoorImageUrl)){
+  finishOpening();
+  return;
+ }
 
  doorVideoActive=true;
  video.style.display="block";
@@ -697,12 +805,16 @@ function startDoorVideo(){
 
  const beginPlayback=async()=>{
   if(!doorVideoActive||openingFinished)return;
-  try{video.currentTime=0}catch(e){}
+
+  try{
+   video.currentTime=0;
+  }catch(e){}
 
   try{
    await video.play();
   }catch(e){
    if(!doorVideoActive||openingFinished)return;
+
    try{
     video.muted=true;
     await video.play();
@@ -730,8 +842,9 @@ function startDoorVideo(){
   finishOpening();
  };
 
- if(video.readyState>=2)beginPlayback();
- else{
+ if(video.readyState>=2){
+  beginPlayback();
+ }else{
   video.addEventListener("canplay",beginPlayback,{once:true});
   video.load();
  }
@@ -748,25 +861,33 @@ function finishOpening(){
  video.style.display="none";
 
  const arch=$("arch");
+
  arch.classList.remove("knock");
  arch.classList.add("open");
 
- /* هذا هو الإصلاح: إزالة عبارتي الافتتاح بعد فتح الباب */
- document.body.classList.add("invitation-opened");
- $("start").hidden=true;
- $("hint").hidden=true;
- $("start").disabled=true;
-
  petals();
 
+ /* إخفاء الجملتين نهائياً بعد فتح الباب */
+ $("hint").style.setProperty("display","none","important");
+ $("start").style.display="none";
+ $("start").disabled=true;
+
  $("doorFrame").style.transform="scale(1.02)";
- setTimeout(()=>{$("doorFrame").style.opacity="0";},500);
- setTimeout(()=>{$("doorFrame").hidden=true;},1050);
+
+ setTimeout(()=>{
+  $("doorFrame").style.opacity="0";
+ },500);
+
+ setTimeout(()=>{
+  $("doorFrame").hidden=true;
+ },1050);
 
  $("invite").classList.add("show");
 
  setTimeout(()=>{
-  if(!invitationExpired)$("invite").scrollIntoView({behavior:"smooth",block:"start"});
+  if(!invitationExpired){
+   $("invite").scrollIntoView({behavior:"smooth",block:"start"});
+  }
  },250);
 }
 
@@ -776,6 +897,7 @@ function handleKnock(){
  knockCount++;
 
  const arch=$("arch");
+
  arch.classList.remove("knock");
  void arch.offsetWidth;
  arch.classList.add("knock");
@@ -785,8 +907,11 @@ function handleKnock(){
  if(knockCount<3){
   $("start").textContent="الدقّة "+knockCount+" من 3";
 
-  if(openingPrompt==="tap")$("hint").textContent="الضغطة "+knockCount+" من 3 ❤️";
-  else $("hint").textContent="الدقّة "+knockCount+" من 3 ❤️";
+  if(openingPrompt==="tap"){
+   $("hint").textContent="الضغطة "+knockCount+" من 3 ❤️";
+  }else{
+   $("hint").textContent="الدقّة "+knockCount+" من 3 ❤️";
+  }
 
   if(knockTimer)clearTimeout(knockTimer);
 
@@ -795,8 +920,11 @@ function handleKnock(){
     knockCount=0;
     $("start").textContent=getOpeningText();
 
-    if(openingPrompt==="tap")$("hint").textContent="اضغط على الشاشة أو الزر 3 مرات حتى تُفتح الدعوة";
-    else $("hint").textContent="اطرق الباب 3 مرات حتى تُفتح الدعوة";
+    if(openingPrompt==="tap"){
+     $("hint").textContent="اضغط على الشاشة أو الزر 3 مرات حتى تُفتح الدعوة";
+    }else{
+     $("hint").textContent="اطرق الباب 3 مرات حتى تُفتح الدعوة";
+    }
 
     arch.classList.remove("knock");
    }
@@ -804,6 +932,7 @@ function handleKnock(){
 
  }else{
   openingStarted=true;
+
   if(knockTimer)clearTimeout(knockTimer);
 
   $("start").disabled=true;
@@ -812,8 +941,11 @@ function handleKnock(){
 
   playInvitationAudio();
 
-  if(isVideoUrl(selectedDoorImageUrl))startDoorVideo();
-  else setTimeout(finishOpening,250);
+  if(isVideoUrl(selectedDoorImageUrl)){
+   startDoorVideo();
+  }else{
+   setTimeout(finishOpening,250);
+  }
  }
 }
 
