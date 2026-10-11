@@ -76,7 +76,7 @@ body{
 .left .handle{right:13px}
 .right .handle{left:13px}
 
-/* العبارة فوق الباب المغلق */
+/* العبارة في نفس مكانها على الباب، مع تكبير الخط */
 .center-glow{
  position:absolute;inset:0;display:grid;place-items:center;
  color:#f5d58a;z-index:3;pointer-events:none;
@@ -84,13 +84,13 @@ body{
 }
 .door-message{
  width:100%;padding:20px 8px;
- text-align:center;font-size:clamp(22px,6vw,29px);
- font-weight:bold;line-height:1.9;
+ text-align:center;font-size:clamp(28px,7vw,36px);
+ font-weight:bold;line-height:1.7;
  color:#ffe4a1;
  text-shadow:0 2px 5px #000,0 0 14px #d8b05b99;
 }
 .door-message .door-heart{
- color:#f1c0c5;font-size:34px;line-height:1.5;
+ color:#f1c0c5;font-size:38px;line-height:1.4;
  animation:heartBeat 1.2s infinite;
 }
 .door-message .door-small{
@@ -314,7 +314,8 @@ body{
  .detail{font-size:17px}
  .contact-number{font-size:24px}
  .whatsapp-share{font-size:16px;padding:14px 18px}
- .door-message{font-size:23px}
+ .door-message{font-size:28px}
+ .door-message .door-heart{font-size:36px}
 }
 @media(prefers-reduced-motion:reduce){
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
