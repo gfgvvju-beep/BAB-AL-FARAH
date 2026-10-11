@@ -2,555 +2,355 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>إدارة باب الفرح</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      padding: 18px;
-      background: #f5f0e7;
-      color: #493b2b;
-      font-family: Tahoma, Arial, sans-serif;
-    }
-
-    main {
-      max-width: 720px;
-      margin: 15px auto;
-      background: #fffdf9;
-      padding: 24px;
-      border: 1px solid #e5d6b7;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px #38240e12;
-    }
-
-    h1 {
-      color: #aa8950;
-      text-align: center;
-      margin: 5px 0 8px;
-    }
-
-    h3 {
-      color: #8d703e;
-      margin-top: 25px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #81715d;
-      margin-bottom: 25px;
-    }
-
-    label {
-      display: block;
-      margin: 12px 0 5px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    input, select, button {
-      width: 100%;
-      padding: 13px;
-      margin: 6px 0;
-      border-radius: 9px;
-      font: inherit;
-    }
-
-    input, select {
-      border: 1px solid #ddd2bf;
-      background: white;
-      color: #493b2b;
-    }
-
-    input:focus, select:focus {
-      outline: 2px solid #c6ab73;
-      border-color: #aa8950;
-    }
-
-    input[type="checkbox"] {
-      width: auto;
-      margin-left: 8px;
-    }
-
-    button {
-      border: 0;
-      background: #aa8950;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-      transition: opacity .2s;
-    }
-
-    button:hover { opacity: .88; }
-
-    .secondary { background: #6d6253; }
-    .danger { background: #8c4940; }
-
-    .hidden { display: none !important; }
-
-    .door-panel {
-      margin: 15px 0;
-      padding: 16px;
-      border: 1px solid #e5d6b7;
-      border-radius: 14px;
-      background: #fbf7ef;
-    }
-
-    .door-number {
-      color: #aa8950;
-      font-size: 19px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    .door-description {
-      color: #746550;
-      font-size: 13px;
-      line-height: 1.8;
-    }
-
-    .door-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 9px;
-      margin-top: 12px;
-    }
-
-    .door-option {
-      border: 1px solid #ded0b7;
-      border-radius: 10px;
-      padding: 12px 8px;
-      text-align: center;
-      background: white;
-      color: #493b2b;
-      cursor: pointer;
-      margin: 0;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .door-option.selected {
-      border: 2px solid #aa8950;
-      background: #f5ecd9;
-      color: #755821;
-    }
-
-    .door-option .number {
-      display: block;
-      font-size: 22px;
-      font-weight: bold;
-      color: #aa8950;
-    }
-
-    .item {
-      padding: 15px;
-      border: 1px solid #e6ddcf;
-      border-radius: 12px;
-      margin-top: 12px;
-      overflow-wrap: anywhere;
-      background: white;
-      line-height: 1.9;
-    }
-
-    .item strong { color: #8d703e; }
-
-    .item a {
-      color: #8d703e;
-      word-break: break-all;
-    }
-
-    .item button { margin-top: 8px; }
-
-    .published {
-      color: #28734b;
-      font-weight: bold;
-    }
-
-    .unpublished {
-      color: #956126;
-      font-weight: bold;
-    }
-
-    #status {
-      white-space: pre-wrap;
-      line-height: 1.8;
-      margin-top: 16px;
-      overflow-wrap: anywhere;
-    }
-
-    .help {
-      color: #81715d;
-      font-size: 12px;
-      line-height: 1.8;
-    }
-
-    @media (max-width: 480px) {
-      body { padding: 8px; }
-      main { padding: 15px; margin: 5px auto; }
-      .door-grid { gap: 7px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إدارة باب الفرح</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#f5f0e7;color:#493b2b;font-family:Tahoma,Arial,sans-serif}
+main{max-width:720px;margin:15px auto;background:#fffdf9;padding:22px;border:1px solid #e5d6b7;border-radius:20px;box-shadow:0 8px 30px #38240e12}
+h1{text-align:center;color:#aa8950}
+h3{color:#8d703e;margin-top:25px}
+.subtitle{text-align:center;color:#81715d}
+label{display:block;margin:12px 0 5px;font-weight:bold;font-size:14px}
+input,button{width:100%;padding:13px;margin:6px 0;border-radius:9px;font:inherit}
+input{border:1px solid #ddd2bf;background:white;color:#493b2b}
+input[type=checkbox]{width:auto}
+button{border:0;background:#aa8950;color:white;cursor:pointer;font-weight:bold}
+button:disabled{opacity:.5}
+.secondary{background:#6d6253}
+.hidden{display:none!important}
+.help{font-size:12px;color:#81715d;line-height:1.8}
+.door-panel{margin:15px 0;padding:14px;border:1px solid #e5d6b7;border-radius:14px;background:#fbf7ef}
+.door-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.door-option{margin:0;background:white;color:#493b2b;border:1px solid #ded0b7;font-size:13px;line-height:1.7}
+.door-option.selected{border:2px solid #aa8950;background:#f5ecd9;color:#755821}
+.number{display:block;font-size:22px;color:#aa8950;font-weight:bold}
+.door-description{font-size:13px;line-height:1.8;color:#746550}
+.item{padding:15px;border:1px solid #e6ddcf;border-radius:12px;margin-top:12px;background:white;line-height:1.9;overflow-wrap:anywhere}
+.item strong{color:#8d703e}
+.item a{display:block;color:#8d703e;overflow-wrap:anywhere}
+.item button{margin-top:8px}
+.published{color:#28734b;font-weight:bold}
+.unpublished{color:#956126;font-weight:bold}
+#status{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
+@media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}}
+</style>
 </head>
-
 <body>
 <main>
-  <h1>باب الفرح</h1>
-  <p class="subtitle">لوحة إدارة دعوات الزفاف الإلكترونية</p>
+<h1>باب الفرح</h1>
+<p class="subtitle">لوحة إدارة دعوات الزفاف الإلكترونية</p>
 
-  <section id="login">
-    <h3>تسجيل دخول الإدارة</h3>
-    <label for="email">البريد الإلكتروني</label>
-    <input id="email" type="email" autocomplete="username"
-      placeholder="البريد الإلكتروني" required>
+<section id="login">
+<h3>تسجيل دخول الإدارة</h3>
+<label for="email">البريد الإلكتروني</label>
+<input id="email" type="email" autocomplete="username" placeholder="البريد الإلكتروني">
+<label for="password">كلمة المرور</label>
+<input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور">
+<button id="loginBtn" type="button">تسجيل الدخول</button>
+</section>
 
-    <label for="password">كلمة المرور</label>
-    <input id="password" type="password" autocomplete="current-password"
-      placeholder="كلمة المرور" required>
+<section id="panel" class="hidden">
+<h3 id="formTitle">إضافة دعوة جديدة</h3>
+<form id="inviteForm">
+<label for="slug">رابط الدعوة (يتولد تلقائياً)</label>
+<input id="slug" readonly required>
+<p class="help">كل دعوة تحصل على رمز خاص تلقائياً. عند تعديل دعوة قديمة يبقى رابطها نفسه.</p>
 
-    <button id="loginBtn" type="button">تسجيل الدخول</button>
-  </section>
+<label for="groom">اسم العريس</label>
+<input id="groom" required placeholder="اسم العريس">
+<label for="bride">اسم العروس</label>
+<input id="bride" required placeholder="اسم العروس">
+<label for="date">تاريخ الحفل</label>
+<input id="date" type="date">
+<label for="day">يوم الحفل</label>
+<input id="day" placeholder="مثال: الخميس">
+<label for="time">وقت الحفل</label>
+<input id="time" placeholder="مثال: الثامنة مساءً">
+<label for="venue">اسم القاعة</label>
+<input id="venue" placeholder="اسم قاعة الأفراح">
+<label for="map">رابط موقع القاعة على الخريطة</label>
+<input id="map" type="url" placeholder="https://maps.google.com/...">
+<label for="phone">رقم التواصل</label>
+<input id="phone" type="tel" placeholder="رقم الهاتف">
 
-  <section id="panel" class="hidden">
-    <h3 id="formTitle">إضافة دعوة جديدة</h3>
+<div class="door-panel">
+<label>اختيار تصميم الباب</label>
+<input id="template" type="hidden" value="1">
+<div class="door-grid">
+<button type="button" class="door-option selected" data-id="1"><span class="number">01</span>الملكي الذهبي</button>
+<button type="button" class="door-option" data-id="2"><span class="number">02</span>الأبيض الملكي</button>
+<button type="button" class="door-option" data-id="3"><span class="number">03</span>التراثي الشرقي</button>
+<button type="button" class="door-option" data-id="4"><span class="number">04</span>الزجاجي الحديث</button>
+<button type="button" class="door-option" data-id="5"><span class="number">05</span>الأخضر الملكي</button>
+<button type="button" class="door-option" data-id="6"><span class="number">06</span>الوردي الرومانسي</button>
+<button type="button" class="door-option" data-id="7"><span class="number">07</span>الأزرق الليلي</button>
+<button type="button" class="door-option" data-id="8"><span class="number">08</span>الرخام الفخم</button>
+</div>
+<p id="doorDescription" class="door-description"></p>
+</div>
 
-    <form id="inviteForm">
-      <label for="slug">رمز رابط الدعوة</label>
-      <input id="slug" required pattern="[a-zA-Z0-9-]+"
-        placeholder="مثال: wedding-002">
-      <p class="help">استخدم حروفاً إنجليزية وأرقاماً وشرطة فقط، واجعل لكل دعوة رمزاً مختلفاً.</p>
+<label><input id="published" type="checkbox"> نشر الدعوة لتكون متاحة عبر رابطها</label>
+<button type="submit" id="saveBtn">حفظ الدعوة</button>
+<button type="button" class="secondary" id="newBtn">دعوة جديدة</button>
+</form>
 
-      <label for="groom">اسم العريس</label>
-      <input id="groom" required placeholder="اسم العريس">
-
-      <label for="bride">اسم العروس</label>
-      <input id="bride" required placeholder="اسم العروس">
-
-      <label for="date">تاريخ الحفل</label>
-      <input id="date" type="date">
-
-      <label for="day">يوم الحفل</label>
-      <input id="day" placeholder="مثال: الخميس">
-
-      <label for="time">وقت الحفل</label>
-      <input id="time" placeholder="مثال: الثامنة مساءً">
-
-      <label for="venue">اسم القاعة</label>
-      <input id="venue" placeholder="اسم قاعة الأفراح">
-
-      <label for="map">رابط موقع القاعة على الخريطة</label>
-      <input id="map" type="url" placeholder="https://maps.google.com/...">
-
-      <label for="phone">رقم التواصل</label>
-      <input id="phone" type="tel" placeholder="رقم الهاتف">
-
-      <div class="door-panel">
-        <label for="template">اختيار تصميم الباب</label>
-        <input id="template" type="hidden" value="1" required>
-
-        <div class="door-grid" id="doorGrid">
-          <button type="button" class="door-option selected" data-id="1">
-            <span class="number">01</span>
-            الملكي الذهبي
-          </button>
-          <button type="button" class="door-option" data-id="2">
-            <span class="number">02</span>
-            الأبيض الملكي
-          </button>
-          <button type="button" class="door-option" data-id="3">
-            <span class="number">03</span>
-            التراثي الشرقي
-          </button>
-          <button type="button" class="door-option" data-id="4">
-            <span class="number">04</span>
-            الزجاجي الحديث
-          </button>
-          <button type="button" class="door-option" data-id="5">
-            <span class="number">05</span>
-            الأخضر الملكي
-          </button>
-          <button type="button" class="door-option" data-id="6">
-            <span class="number">06</span>
-            الوردي الرومانسي
-          </button>
-          <button type="button" class="door-option" data-id="7">
-            <span class="number">07</span>
-            الأزرق الليلي
-          </button>
-          <button type="button" class="door-option" data-id="8">
-            <span class="number">08</span>
-            الرخام الفخم
-          </button>
-        </div>
-
-        <p id="doorDescription" class="door-description">
-          الباب 1: أسود ملكي مع تفاصيل ذهبية. اختيار الرقم يُحفظ مع الدعوة؛
-          ربط الصور والحركة الفعلية يأتي في الخطوة التالية.
-        </p>
-      </div>
-
-      <label>
-        <input id="published" type="checkbox">
-        نشر الدعوة لتكون متاحة عبر رابطها
-      </label>
-
-      <button type="submit" id="saveBtn">حفظ الدعوة</button>
-      <button type="button" class="secondary" id="newBtn">دعوة جديدة</button>
-    </form>
-
-    <h3>دعواتي</h3>
-    <button id="refreshBtn" type="button">تحديث القائمة</button>
-    <div id="list"></div>
-
-    <button id="logoutBtn" type="button" class="secondary">تسجيل الخروج</button>
-  </section>
-
-  <p id="status" role="status" aria-live="polite"></p>
+<h3>دعواتي</h3>
+<button id="refreshBtn" type="button">تحديث القائمة</button>
+<div id="list"></div>
+<button id="logoutBtn" type="button" class="secondary">تسجيل الخروج</button>
+</section>
+<p id="status" role="status" aria-live="polite"></p>
 </main>
 
 <script>
-  const SUPABASE_URL = "https://gnsnbretccdlwpmimuap.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
+const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
+const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+let editingId=null;
+let busy=false;
 
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  const $ = id => document.getElementById(id);
+const doorNames={
+1:"الملكي الذهبي",2:"الأبيض الملكي",3:"التراثي الشرقي",4:"الزجاجي الحديث",
+5:"الأخضر الملكي",6:"الوردي الرومانسي",7:"الأزرق الليلي",8:"الرخام الفخم"
+};
+const doorDescriptions={
+1:"أسود ملكي مع زخارف ذهبية.",2:"أبيض عاجي بلمسات ذهبية.",
+3:"خشب داكن بنقوش شرقية.",4:"زجاج حديث بإطار معدني.",
+5:"أخضر زمردي بتفاصيل نحاسية.",6:"وردي لؤلؤي رومانسي.",
+7:"أزرق ليلي بزخارف فضية.",8:"رخام عاجي بخطوط برونزية."
+};
 
-  let editingId = null;
-  let busy = false;
+function status(message){$("status").textContent=message}
 
-  const doorNames = {
-    1: "الملكي الذهبي",
-    2: "الأبيض الملكي",
-    3: "التراثي الشرقي",
-    4: "الزجاجي الحديث",
-    5: "الأخضر الملكي",
-    6: "الوردي الرومانسي",
-    7: "الأزرق الليلي",
-    8: "الرخام الفخم"
+function makeSlug(){
+ const bytes=new Uint8Array(7);
+ crypto.getRandomValues(bytes);
+ const token=Array.from(bytes,b=>b.toString(36).padStart(2,"0")).join("").slice(0,10);
+ return "wedding-"+token;
+}
+
+function newUniqueSlug(){
+ $("slug").value=makeSlug();
+}
+
+function selectDoor(id){
+ id=Number(id);
+ if(!doorNames[id])id=1;
+ $("template").value=String(id);
+ $("doorDescription").textContent="الباب "+id+" — "+doorNames[id]+": "+doorDescriptions[id];
+ document.querySelectorAll(".door-option").forEach(button=>{
+  const selected=Number(button.dataset.id)===id;
+  button.classList.toggle("selected",selected);
+  button.setAttribute("aria-pressed",String(selected));
+ });
+}
+
+document.querySelectorAll(".door-option").forEach(button=>{
+ button.addEventListener("click",()=>selectDoor(button.dataset.id));
+});
+
+function showSession(session){
+ $("login").classList.toggle("hidden",!!session);
+ $("panel").classList.toggle("hidden",!session);
+ if(session)loadInvitations();
+}
+
+$("loginBtn").onclick=async()=>{
+ const email=$("email").value.trim();
+ const password=$("password").value;
+ if(!email||!password)return status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");
+ $("loginBtn").disabled=true;
+ try{
+  const {error}=await db.auth.signInWithPassword({email,password});
+  if(error)return status("تعذر الدخول: "+error.message);
+  status("تم تسجيل الدخول.");
+ }catch(e){status("تعذر الاتصال. حاول مرة أخرى.");}
+ finally{$("loginBtn").disabled=false;}
+};
+
+db.auth.onAuthStateChange((_event,session)=>showSession(session));
+
+function invitationUrl(slug){
+ const base=location.origin+location.pathname.replace(/admin\.html$/,"");
+ const url=new URL(base);
+ url.searchParams.set("invite",slug);
+ return url.href;
+}
+
+async function copyText(text){
+ if(navigator.clipboard&&window.isSecureContext){
+  await navigator.clipboard.writeText(text);
+  return;
+ }
+ const field=document.createElement("textarea");
+ field.value=text;
+ field.style.position="fixed";
+ field.style.opacity="0";
+ document.body.appendChild(field);
+ field.select();
+ const ok=document.execCommand("copy");
+ field.remove();
+ if(!ok)throw new Error("copy failed");
+}
+
+async function loadInvitations(){
+ const {data,error}=await db.from("invitations").select("*").order("created_at",{ascending:false});
+ if(error)return status("تعذر تحميل الدعوات: "+error.message);
+ $("list").replaceChildren();
+
+ for(const item of data||[]){
+  const card=document.createElement("div");
+  card.className="item";
+  const title=document.createElement("strong");
+  title.textContent=(item.groom_name||"")+" و "+(item.bride_name||"");
+  const details=document.createElement("p");
+  details.style.whiteSpace="pre-line";
+  details.textContent=
+   "رمز الدعوة: "+item.slug+
+   "\nالباب: "+(item.template_id||1)+" — "+(doorNames[item.template_id]||doorNames[1])+
+   "\nالتاريخ: "+(item.wedding_date||"غير محدد")+
+   "\nالوقت: "+(item.wedding_time||"غير محدد")+
+   "\nالمكان: "+(item.venue_name||"غير محدد");
+
+  const url=invitationUrl(item.slug);
+  const link=document.createElement("a");
+  link.href=url;
+  link.target="_blank";
+  link.rel="noopener noreferrer";
+  link.textContent="فتح رابط الدعوة";
+
+  const copyButton=document.createElement("button");
+  copyButton.type="button";
+  copyButton.textContent="نسخ رابط الدعوة 📋";
+  copyButton.onclick=async()=>{
+   try{
+    await copyText(url);
+    status("تم نسخ رابط الدعوة:\n"+url);
+    copyButton.textContent="تم النسخ ✓";
+   }catch(e){status("تعذر النسخ. انسخ الرابط من هنا:\n"+url);}
   };
 
-  const doorDescriptions = {
-    1: "أسود ملكي مع زخارف ذهبية ومقابض فخمة.",
-    2: "أبيض عاجي بلمسات ذهبية ناعمة وأجواء رومانسية.",
-    3: "خشب داكن بنقوش شرقية وتفاصيل نحاسية.",
-    4: "زجاج دخاني بإطار معدني وإضاءة عصرية.",
-    5: "أخضر زمردي عميق مع تفاصيل نحاسية.",
-    6: "وردي لؤلؤي بلمسات ذهبية وردية.",
-    7: "أزرق ليلي داكن بزخارف فضية.",
-    8: "رخام عاجي بخطوط برونزية هندسية."
-  };
+  const publication=document.createElement("p");
+  publication.className=item.is_published?"published":"unpublished";
+  publication.textContent=item.is_published?"منشورة":"غير منشورة";
 
-  function status(message) {
-    $("status").textContent = message;
+  const edit=document.createElement("button");
+  edit.type="button";
+  edit.textContent="تعديل الدعوة";
+  edit.onclick=()=>fillForm(item);
+
+  card.append(title,details,link,copyButton,publication,edit);
+  $("list").appendChild(card);
+ }
+ status("تم تحديث قائمة الدعوات.");
+}
+
+function fillForm(item){
+ editingId=item.id;
+ $("formTitle").textContent="تعديل الدعوة";
+ $("slug").value=item.slug||"";
+ $("groom").value=item.groom_name||"";
+ $("bride").value=item.bride_name||"";
+ $("date").value=item.wedding_date||"";
+ $("day").value=item.day_name||"";
+ $("time").value=item.wedding_time||"";
+ $("venue").value=item.venue_name||"";
+ $("map").value=item.map_url||"";
+ $("phone").value=item.contact_phone||"";
+ $("published").checked=!!item.is_published;
+ selectDoor(item.template_id||1);
+ status("عدّل البيانات ثم اضغط حفظ الدعوة. رابط الدعوة سيبقى نفسه.");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("inviteForm").onsubmit=async event=>{
+ event.preventDefault();
+ if(busy)return;
+
+ const record={
+  slug:$("slug").value.trim(),
+  groom_name:$("groom").value.trim(),
+  bride_name:$("bride").value.trim(),
+  wedding_date:$("date").value||null,
+  day_name:$("day").value.trim(),
+  wedding_time:$("time").value.trim(),
+  venue_name:$("venue").value.trim(),
+  map_url:$("map").value.trim(),
+  contact_phone:$("phone").value.trim(),
+  template_id:Number($("template").value),
+  is_published:$("published").checked
+ };
+
+ if(!record.slug)return status("تعذر إنشاء رمز الدعوة. اضغط دعوة جديدة وحاول مرة أخرى.");
+ if(!record.groom_name||!record.bride_name)return status("اكتب اسم العريس واسم العروس.");
+ if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>8)
+  return status("اختار باباً من الأبواب الثمانية.");
+
+ busy=true;
+ $("saveBtn").disabled=true;
+ status("جارٍ حفظ الدعوة...");
+ let result;
+ try{
+  if(editingId){
+   result=await db.from("invitations").update(record).eq("id",editingId);
+  }else{
+   result=await db.from("invitations").insert(record);
   }
+ }catch(e){
+  busy=false;
+  $("saveBtn").disabled=false;
+  return status("حدث خطأ أثناء الحفظ. حاول مرة أخرى.");
+ }
+ busy=false;
+ $("saveBtn").disabled=false;
 
-  function showSession(session) {
-    $("login").classList.toggle("hidden", !!session);
-    $("panel").classList.toggle("hidden", !session);
-    if (session) loadInvitations();
+ if(result.error){
+  if(!editingId&&/duplicate|unique/i.test(result.error.message)){
+   newUniqueSlug();
+   return status("تعارض رمز الرابط، تم توليد رمز جديد. اضغط حفظ الدعوة مرة أخرى.");
   }
+  return status("لم يتم الحفظ: "+result.error.message);
+ }
 
-  function selectDoor(id) {
-    id = Number(id);
-    if (!doorNames[id]) id = 1;
+ const savedUrl=invitationUrl(record.slug);
+ status("تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+savedUrl);
+ resetForm();
+ await loadInvitations();
+};
 
-    $("template").value = String(id);
-    $("doorDescription").textContent =
-      "الباب " + id + " — " + doorNames[id] + ": " + doorDescriptions[id] +
-      " اختيار الرقم يُحفظ مع الدعوة؛ ربط الصور والحركة الفعلية يأتي في الخطوة التالية.";
+function resetForm(){
+ $("inviteForm").reset();
+ editingId=null;
+ $("formTitle").textContent="إضافة دعوة جديدة";
+ newUniqueSlug();
+ selectDoor(1);
+}
 
-    document.querySelectorAll(".door-option").forEach(button => {
-      const selected = Number(button.dataset.id) === id;
-      button.classList.toggle("selected", selected);
-      button.setAttribute("aria-pressed", String(selected));
-    });
-  }
+$("newBtn").onclick=()=>{
+ resetForm();
+ status("تم إنشاء رمز رابط جديد. أدخل بيانات الدعوة واحفظها.");
+ window.scrollTo({top:0,behavior:"smooth"});
+};
 
-  document.querySelectorAll(".door-option").forEach(button => {
-    button.addEventListener("click", () => selectDoor(button.dataset.id));
-  });
+$("refreshBtn").onclick=loadInvitations;
 
-  $("loginBtn").onclick = async () => {
-    const email = $("email").value.trim();
-    const password = $("password").value;
+$("logoutBtn").onclick=async()=>{
+ const {error}=await db.auth.signOut();
+ if(error)return status("تعذر تسجيل الخروج: "+error.message);
+ status("تم تسجيل الخروج.");
+};
 
-    if (!email || !password) {
-      return status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");
-    }
+selectDoor(1);
+newUniqueSlug();
 
-    $("loginBtn").disabled = true;
-    const { error } = await db.auth.signInWithPassword({ email, password });
-    $("loginBtn").disabled = false;
-
-    if (error) return status("تعذر الدخول: " + error.message);
-    status("تم تسجيل الدخول.");
-  };
-
-  db.auth.onAuthStateChange((_event, session) => {
-    showSession(session);
-  });
-
-  async function loadInvitations() {
-    const { data, error } = await db
-      .from("invitations")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) return status("تعذر تحميل الدعوات: " + error.message);
-
-    $("list").replaceChildren();
-
-    for (const item of data || []) {
-      const card = document.createElement("div");
-      card.className = "item";
-
-      const title = document.createElement("strong");
-      title.textContent = item.groom_name + " و " + item.bride_name;
-
-      const details = document.createElement("p");
-      details.textContent =
-        "الباب: " + (item.template_id || 1) + " — " +
-        (doorNames[item.template_id] || doorNames[1]) +
-        "\nالتاريخ: " + (item.wedding_date || "غير محدد") +
-        "\nالوقت: " + (item.wedding_time || "غير محدد") +
-        "\nالمكان: " + (item.venue_name || "غير محدد");
-
-      const url = new URL(
-        location.pathname.replace(/admin\.html$/, ""),
-        location.origin
-      );
-      url.searchParams.set("invite", item.slug);
-
-      const link = document.createElement("a");
-      link.href = url.href;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = "فتح رابط الدعوة";
-
-      const publication = document.createElement("p");
-      publication.className = item.is_published ? "published" : "unpublished";
-      publication.textContent = item.is_published ? "منشورة" : "غير منشورة";
-
-      const edit = document.createElement("button");
-      edit.type = "button";
-      edit.textContent = "تعديل الدعوة";
-      edit.onclick = () => fillForm(item);
-
-      card.append(title, details, link, publication, edit);
-      $("list").appendChild(card);
-    }
-
-    status("تم تحديث قائمة الدعوات.");
-  }
-
-  function fillForm(item) {
-    editingId = item.id;
-    $("formTitle").textContent = "تعديل الدعوة";
-
-    $("slug").value = item.slug || "";
-    $("groom").value = item.groom_name || "";
-    $("bride").value = item.bride_name || "";
-    $("date").value = item.wedding_date || "";
-    $("day").value = item.day_name || "";
-    $("time").value = item.wedding_time || "";
-    $("venue").value = item.venue_name || "";
-    $("map").value = item.map_url || "";
-    $("phone").value = item.contact_phone || "";
-    $("published").checked = !!item.is_published;
-
-    selectDoor(item.template_id || 1);
-    status("عدّل البيانات المطلوبة ثم اضغط حفظ الدعوة.");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  $("inviteForm").onsubmit = async event => {
-    event.preventDefault();
-    if (busy) return;
-
-    const record = {
-      slug: $("slug").value.trim(),
-      groom_name: $("groom").value.trim(),
-      bride_name: $("bride").value.trim(),
-      wedding_date: $("date").value || null,
-      day_name: $("day").value.trim(),
-      wedding_time: $("time").value.trim(),
-      venue_name: $("venue").value.trim(),
-      map_url: $("map").value.trim(),
-      contact_phone: $("phone").value.trim(),
-      template_id: Number($("template").value),
-      is_published: $("published").checked
-    };
-
-    if (!/^[a-zA-Z0-9-]+$/.test(record.slug)) {
-      return status("اكتب رمز الرابط بحروف إنجليزية أو أرقام أو شرطة فقط.");
-    }
-
-    if (!Number.isInteger(record.template_id) ||
-        record.template_id < 1 || record.template_id > 8) {
-      return status("اختار باباً من الأبواب الثمانية.");
-    }
-
-    busy = true;
-    $("saveBtn").disabled = true;
-    status("جارٍ حفظ الدعوة...");
-
-    let result;
-    try {
-      if (editingId) {
-        result = await db.from("invitations")
-          .update(record)
-          .eq("id", editingId);
-      } else {
-        result = await db.from("invitations").insert(record);
-      }
-    } catch (error) {
-      busy = false;
-      $("saveBtn").disabled = false;
-      return status("حدث خطأ أثناء الحفظ. حاول مرة أخرى.");
-    }
-
-    busy = false;
-    $("saveBtn").disabled = false;
-
-    if (result.error) {
-      return status("لم يتم الحفظ: " + result.error.message);
-    }
-
-    status("تم حفظ الدعوة بنجاح.");
-    resetForm();
-    await loadInvitations();
-  };
-
-  function resetForm() {
-    $("inviteForm").reset();
-    editingId = null;
-    $("formTitle").textContent = "إضافة دعوة جديدة";
-    selectDoor(1);
-  }
-
-  $("newBtn").onclick = () => {
-    resetForm();
-    status("جاهز لإضافة دعوة جديدة.");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  $("refreshBtn").onclick = loadInvitations;
-
-  $("logoutBtn").onclick = async () => {
-    const { error } = await db.auth.signOut();
-    if (error) return status("تعذر تسجيل الخروج: " + error.message);
-    status("تم تسجيل الخروج.");
-  };
-
-  selectDoor(1);
-
-  db.auth.getSession().then(({ data, error }) => {
-    if (error) return status("تعذر التحقق من جلسة الدخول.");
-    showSession(data.session);
-  });
+db.auth.getSession().then(({data,error})=>{
+ if(error)return status("تعذر التحقق من جلسة الدخول.");
+ showSession(data.session);
+});
 </script>
 </body>
 </html>
