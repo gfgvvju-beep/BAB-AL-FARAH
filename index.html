@@ -42,6 +42,10 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
 .details{margin:24px auto;padding:20px 15px;max-width:420px;background:#fffaf0;border:1px solid #ead9b4;border-radius:15px;line-height:2.4}
 .detail{border-bottom:1px solid #eee3ce;padding:5px}
 .detail:last-child{border:0}
+.groom-contact{margin:18px auto;padding:16px 14px;max-width:420px;border:1px solid #e5d3ae;border-radius:14px;background:#fffaf0;line-height:2}
+.groom-contact-title{color:#98733c;font-weight:bold;font-size:17px}
+.groom-phone{display:block;font-size:23px;font-weight:bold;color:#80602e;direction:ltr;margin:8px 0;text-decoration:none}
+.groom-call{display:inline-block;background:#aa8950;color:#fff;padding:9px 20px;border-radius:24px;text-decoration:none}
 .footer{color:#a08049;margin:25px 0}
 .contact{margin:20px auto 0;padding:22px 16px;max-width:440px;border:1px solid #ddc58f;border-radius:16px;background:linear-gradient(145deg,#fffaf0,#f7eddb);line-height:2}
 .contact-brand{font-size:22px;font-weight:bold;color:#ad8748}
@@ -97,6 +101,7 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
  </div>
  <button id="start">طرق الباب واكتشف دعوتك ♥</button>
  <div class="hint" id="hint">انتظر 3 دقات حتى تُفتح الدعوة</div>
+
  <section class="invite" id="invite">
   <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
   <div class="verse">
@@ -110,11 +115,20 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
    <span class="heart">♥</span><br>
    <span id="bride">نور</span>
   </div>
+
   <div class="details">
    <div class="detail">📅 التاريخ: <span id="date">يحدد لاحقاً</span></div>
    <div class="detail">🕗 الوقت: <span id="time">الثامنة مساءً</span></div>
    <div class="detail">📍 المكان: <span id="place">قاعة الأفراح</span></div>
   </div>
+
+  <!-- يظهر رقم العريس فقط إذا كان موجوداً -->
+  <section class="groom-contact" id="groomContact" hidden>
+   <div class="groom-contact-title">📞 للتواصل مع العريس</div>
+   <a class="groom-phone" id="groomPhone" href="#" dir="ltr"></a>
+   <a class="groom-call" id="groomCall" href="#">اتصال بالعريس</a>
+  </section>
+
   <div class="footer">حضوركم يكتمل به فرحنا ❤️</div>
   <div class="sub">باب الفرح — نصنع لحظاتكم الجميلة</div>
 
@@ -132,21 +146,33 @@ body{margin:0;background:#fffdf9;color:#42352d;font-family:Tahoma,Arial,sans-ser
   </section>
  </section>
 </main>
+
 <script>
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const params=new URLSearchParams(location.search);
 const $=id=>document.getElementById(id);
-const defaults={groom:"محمد",bride:"نور",date:"يحدد لاحقاً",time:"الثامنة مساءً",place:"قاعة الأفراح"};
 
-function showField(id,value,fallback){$(id).textContent=value||fallback}
+const defaults={
+ groom:"محمد",
+ bride:"نور",
+ date:"يحدد لاحقاً",
+ time:"الثامنة مساءً",
+ place:"قاعة الأفراح"
+};
+
+function showField(id,value,fallback){
+ $(id).textContent=value||fallback;
+}
+
 function formatDate(value){
  if(!value)return "";
  const parts=value.split("-");
  if(parts.length!==3)return value;
  return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
+
 function applyTemplate(value){
  let n=Number(value);
  if(!Number.isInteger(n)||n<1||n>8)n=1;
@@ -155,32 +181,71 @@ function applyTemplate(value){
  arch.classList.add("template-"+n);
 }
 
+/* عرض رقم العريس مع منع ظهور القسم إذا كان الرقم فارغاً */
+function showGroomContact(value){
+ const phone=String(value||"").trim();
+ const section=$("groomContact");
+
+ if(!phone){
+  section.hidden=true;
+  $("groomPhone").textContent="";
+  $("groomPhone").removeAttribute("href");
+  $("groomCall").removeAttribute("href");
+  return;
+ }
+
+ const tel=phone.replace(/[^\d+]/g,"");
+ if(!tel){
+  section.hidden=true;
+  return;
+ }
+
+ $("groomPhone").textContent=phone;
+ $("groomPhone").href="tel:"+tel;
+ $("groomCall").href="tel:"+tel;
+ section.hidden=false;
+}
+
 async function loadInvitation(){
  const slug=params.get("invite");
+
  if(!slug){
   for(const key of ["groom","bride","date","time","place"]){
    showField(key,params.get(key),defaults[key]);
   }
+  showGroomContact(params.get("contact_phone")||params.get("phone"));
   applyTemplate(params.get("template"));
   return;
  }
+
  $("hint").textContent="جارٍ تحميل تفاصيل الدعوة...";
+
  try{
   const {data,error}=await db.rpc("get_invitation_by_slug",{p_slug:slug});
   if(error)throw error;
+
   const item=Array.isArray(data)?data[0]:data;
+
   if(!item){
    $("hint").textContent="لم يتم العثور على الدعوة المنشورة.";
    return;
   }
+
   showField("groom",item.groom_name,defaults.groom);
   showField("bride",item.bride_name,defaults.bride);
   showField("date",formatDate(item.wedding_date),defaults.date);
   showField("time",item.wedding_time,defaults.time);
   showField("place",item.venue_name,defaults.place);
+
+  /* رقم التواصل المدخل من صفحة الإدارة */
+  showGroomContact(item.contact_phone);
+
   applyTemplate(item.template_id);
+
   if(item.day_name)$("date").textContent+=" — "+item.day_name;
+
   $("hint").textContent="انتظر 3 دقات حتى تُفتح الدعوة";
+
  }catch(error){
   console.error("Invitation loading error:",error);
   $("hint").textContent="تعذر تحميل معلومات الدعوة. تحقق من إعدادات الاتصال.";
@@ -189,6 +254,7 @@ async function loadInvitation(){
 
 $("copyPhone").addEventListener("click",async()=>{
  const phone="07867430232";
+
  try{
   if(navigator.clipboard&&window.isSecureContext){
    await navigator.clipboard.writeText(phone);
@@ -211,6 +277,7 @@ $("copyPhone").addEventListener("click",async()=>{
 
 function petals(){
  const symbols=["🌸","🌹","✿","❀"];
+
  for(let i=0;i<55;i++){
   setTimeout(()=>{
    const p=document.createElement("span");
@@ -230,16 +297,21 @@ function knockSound(){
  try{
   const AudioContext=window.AudioContext||window.webkitAudioContext;
   if(!AudioContext)return;
+
   const ctx=new AudioContext();
   const osc=ctx.createOscillator();
   const gain=ctx.createGain();
+
   osc.type="sine";
   osc.frequency.setValueAtTime(100,ctx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(45,ctx.currentTime+.12);
   gain.gain.setValueAtTime(.35,ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.14);
-  osc.connect(gain);gain.connect(ctx.destination);
-  osc.start();osc.stop(ctx.currentTime+.15);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime+.15);
   osc.onended=()=>ctx.close();
  }catch(e){}
 }
@@ -251,14 +323,17 @@ const invite=$("invite");
 start.addEventListener("click",()=>{
  start.disabled=true;
  hint.textContent="طَق... طَق... طَق...";
+
  let count=0;
  const arch=$("arch");
+
  function nextKnock(){
   count++;
   arch.classList.remove("knock");
   void arch.offsetWidth;
   arch.classList.add("knock");
   knockSound();
+
   if(count<3){
    setTimeout(nextKnock,750);
   }else{
@@ -272,6 +347,7 @@ start.addEventListener("click",()=>{
    },650);
   }
  }
+
  nextKnock();
 });
 
