@@ -1,4 +1,4 @@
-```
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -42,6 +42,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .item button{margin-top:8px}
 .published{color:#28734b;font-weight:bold}
 .unpublished{color:#956126;font-weight:bold}
+.expired{color:#a83232;font-weight:bold}
+.active-expiry{color:#28734b;font-weight:bold}
 #status{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
 .row-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
@@ -87,6 +89,12 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <input id="phone" type="tel" placeholder="رقم الهاتف">
 <label for="notes">ملاحظات إضافية</label>
 <textarea id="notes" placeholder="اكتب الملاحظات التي تريد إضافتها للدعوة"></textarea>
+
+<hr>
+<h3>⏳ مدة صلاحية الرابط</h3>
+<label for="expiresAt">تاريخ ووقت إيقاف رابط الدعوة</label>
+<input id="expiresAt" type="datetime-local">
+<p class="help">هذا الإعداد خاص بلوحة الإدارة ولا يظهر للضيوف. عند حلول الوقت المحدد، يتوقف الرابط بعد تفعيل فحص الصلاحية في صفحة الدعوة. اترك الحقل فارغاً إذا أردت أن يبقى الرابط بلا انتهاء.</p>
 
 <details class="door-panel">
 <summary>🔊 إعدادات صوت فتح الباب</summary>
@@ -141,10 +149,15 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 </form>
 
 <hr>
-<h3>دعواتي — الدعوات المحفوظة</h3>
-<p class="help">تظهر هنا الدعوات المحفوظة في قاعدة البيانات. يمكنك فتح رابطها أو نسخ الرابط أو تعديلها أو حذفها.</p>
+
+<details class="door-panel" id="myInvitationsPanel">
+<summary>📨 دعواتي — الدعوات المحفوظة</summary>
+<div class="door-content">
+<p class="help">افتح هذا القسم لعرض الدعوات المحفوظة. يمكنك فتح الرابط أو نسخه أو تعديل الدعوة أو حذفها.</p>
 <button id="refreshBtn" type="button">تحديث قائمة دعواتي</button>
 <div id="list"></div>
+</div>
+</details>
 
 <hr>
 <h3>إدارة الحجوزات</h3>
@@ -206,6 +219,26 @@ return "wedding-"+Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
 }
 
 function newUniqueSlug(){$("slug").value=makeSlug()}
+
+/* تحويل تاريخ قاعدة البيانات إلى توقيت الجهاز لعرضه في الحقل */
+function toLocalDateTime(value){
+if(!value)return "";
+const date=new Date(value);
+if(Number.isNaN(date.getTime()))return "";
+const local=new Date(date.getTime()-date.getTimezoneOffset()*60000);
+return local.toISOString().slice(0,16);
+}
+
+/* عرض تاريخ الانتهاء داخل لوحة الإدارة فقط */
+function formatExpiry(value){
+if(!value)return "بدون انتهاء";
+const date=new Date(value);
+if(Number.isNaN(date.getTime()))return "تاريخ غير صالح";
+return date.toLocaleString("ar-IQ",{
+year:"numeric",month:"2-digit",day:"2-digit",
+hour:"2-digit",minute:"2-digit"
+});
+}
 
 function selectDoor(id){
 id=Number(id);
@@ -281,13 +314,16 @@ return;
 $("list").replaceChildren();
 if(!data||data.length===0){
 addText($("list"),"p","ما عندك دعوات محفوظة حالياً. أضف دعوة جديدة من النموذج أعلاه.");
-status("تم فتح دعواتي؛ لا توجد دعوات محفوظة حالياً.");
+status("لا توجد دعوات محفوظة حالياً.");
 return;
 }
+
 for(const item of data){
 const card=document.createElement("article");
 card.className="item";
+
 addText(card,"strong",(item.groom_name||"بدون اسم")+" و "+(item.bride_name||"بدون اسم"));
+
 const details=document.createElement("p");
 details.style.whiteSpace="pre-line";
 details.textContent=
@@ -299,8 +335,18 @@ details.textContent=
 "\nالمكان: "+(item.venue_name||"غير محدد")+
 "\nرقم التواصل: "+(item.contact_phone||"غير محدد")+
 "\nالملاحظات: "+(item.notes||"لا توجد")+
-"\nالصوت: "+(audioNames[item.audio_type]||audioNames.none);
+"\nالصوت: "+(audioNames[item.audio_type]||audioNames.none)+
+"\nانتهاء الرابط: "+formatExpiry(item.expires_at);
 card.appendChild(details);
+
+if(item.expires_at){
+const expired=new Date(item.expires_at).getTime()<=Date.now();
+addText(
+card,"p",
+expired?"انتهت مدة الرابط المحددة":"الرابط محدد بموعد انتهاء",
+expired?"expired":"active-expiry"
+);
+}
 
 const url=invitationUrl(item.slug||"");
 const link=document.createElement("a");
@@ -310,18 +356,26 @@ link.rel="noopener noreferrer";
 link.textContent="فتح رابط الدعوة";
 card.appendChild(link);
 
-const publication=addText(card,"p",item.is_published?"منشورة":"غير منشورة",item.is_published?"published":"unpublished");
+addText(card,"p",item.is_published?"منشورة":"غير منشورة",item.is_published?"published":"unpublished");
 
 const copyButton=addText(card,"button","نسخ رابط الدعوة 📋");
 copyButton.type="button";
 copyButton.onclick=async()=>{
-try{await copyText(url);status("تم نسخ رابط الدعوة:\n"+url);copyButton.textContent="تم النسخ ✓"}
-catch(e){status("تعذر النسخ. يمكنك نسخ الرابط التالي:\n"+url)}
+try{
+await copyText(url);
+status("تم نسخ رابط الدعوة:\n"+url);
+copyButton.textContent="تم النسخ ✓";
+}catch(e){
+status("تعذر النسخ. يمكنك نسخ الرابط التالي:\n"+url);
+}
 };
 
 const editButton=addText(card,"button","تعديل الدعوة");
 editButton.type="button";
-editButton.onclick=()=>fillForm(item);
+editButton.onclick=()=>{
+fillForm(item);
+window.scrollTo({top:0,behavior:"smooth"});
+};
 
 const deleteButton=addText(card,"button","حذف الدعوة");
 deleteButton.type="button";
@@ -335,7 +389,9 @@ status("تم تحميل "+data.length+" دعوة في قسم دعواتي.");
 $("list").replaceChildren();
 addText($("list"),"p","حدث خطأ أثناء تحميل الدعوات. تحقق من اتصال الإنترنت.");
 status("حدث خطأ غير متوقع أثناء تحميل الدعوات.");
-}finally{$("refreshBtn").disabled=false}
+}finally{
+$("refreshBtn").disabled=false;
+}
 }
 
 function fillForm(item){
@@ -351,6 +407,7 @@ $("venue").value=item.venue_name||"";
 $("map").value=item.map_url||"";
 $("phone").value=item.contact_phone||"";
 $("notes").value=item.notes||"";
+$("expiresAt").value=toLocalDateTime(item.expires_at);
 $("audioType").value=item.audio_type||"none";
 $("published").checked=!!item.is_published;
 selectDoor(item.template_id||1);
@@ -359,7 +416,6 @@ $("deleteCurrentBtn").classList.remove("hidden");
 $("cancelEditBtn").classList.remove("hidden");
 $("saveBtn").textContent="حفظ التعديلات";
 status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه.");
-window.scrollTo({top:0,behavior:"smooth"});
 }
 
 async function deleteInvitation(item){
@@ -372,7 +428,9 @@ if(error){status("تعذر حذف الدعوة: "+error.message);return}
 if(editingId===item.id)resetForm();
 status("تم حذف الدعوة بنجاح.");
 await loadInvitations();
-}catch(e){status("حدث خطأ أثناء حذف الدعوة.")}
+}catch(e){
+status("حدث خطأ أثناء حذف الدعوة.");
+}
 }
 
 $("deleteCurrentBtn").onclick=async()=>{
@@ -380,7 +438,12 @@ if(!editingId)return;
 const itemId=editingId;
 const {data,error}=await db.from("invitations").select("*").eq("id",itemId).maybeSingle();
 if(error){status("تعذر جلب الدعوة للحذف: "+error.message);return}
-if(!data){status("الدعوة غير موجودة أو تم حذفها مسبقاً.");resetForm();await loadInvitations();return}
+if(!data){
+status("الدعوة غير موجودة أو تم حذفها مسبقاً.");
+resetForm();
+await loadInvitations();
+return;
+}
 await deleteInvitation(data);
 };
 
@@ -392,6 +455,23 @@ status("تم إلغاء التعديل.");
 $("inviteForm").onsubmit=async event=>{
 event.preventDefault();
 if(busy)return;
+
+const expiryValue=$("expiresAt").value;
+let expiresAt=null;
+
+if(expiryValue){
+const expiryDate=new Date(expiryValue);
+if(Number.isNaN(expiryDate.getTime())){
+status("تاريخ انتهاء الرابط غير صالح.");
+return;
+}
+if(expiryDate.getTime()<=Date.now()){
+status("اختَر وقت انتهاء في المستقبل.");
+return;
+}
+expiresAt=expiryDate.toISOString();
+}
+
 const record={
 slug:$("slug").value.trim(),
 groom_name:$("groom").value.trim(),
@@ -405,8 +485,10 @@ contact_phone:$("phone").value.trim(),
 notes:$("notes").value.trim(),
 audio_type:$("audioType").value,
 template_id:Number($("template").value),
-is_published:$("published").checked
+is_published:$("published").checked,
+expires_at:expiresAt
 };
+
 if(!record.slug)return status("تعذر إنشاء رابط الدعوة. اضغط دعوة جديدة.");
 if(!record.groom_name||!record.bride_name)return status("اكتب اسم العريس واسم العروس.");
 if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>14)return status("اختَر قالباً من القوالب الأربعة عشر.");
@@ -414,6 +496,7 @@ if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_
 busy=true;
 $("saveBtn").disabled=true;
 status("جارٍ حفظ الدعوة...");
+
 let result;
 try{
 if(editingId){
@@ -427,8 +510,10 @@ busy=false;
 $("saveBtn").disabled=false;
 return;
 }
+
 busy=false;
 $("saveBtn").disabled=false;
+
 if(result.error){
 if(!editingId&&/duplicate|unique/i.test(result.error.message)){
 newUniqueSlug();
@@ -438,6 +523,7 @@ return;
 status("لم يتم الحفظ: "+result.error.message);
 return;
 }
+
 const savedUrl=invitationUrl(record.slug);
 resetForm();
 status("تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+savedUrl);
@@ -455,6 +541,7 @@ newUniqueSlug();
 selectDoor(1);
 $("doorPicker").open=false;
 $("audioType").value="none";
+$("expiresAt").value="";
 $("published").checked=false;
 }
 
@@ -463,6 +550,7 @@ resetForm();
 status("تم إنشاء رابط جديد. أدخل بيانات الدعوة ثم اضغط حفظ الدعوة.");
 window.scrollTo({top:0,behavior:"smooth"});
 };
+
 $("refreshBtn").onclick=loadInvitations;
 
 async function loadBookings(){
@@ -494,6 +582,7 @@ info.textContent=
 "\nالملاحظات: "+(item.notes||"—")+
 "\nالحالة: "+(item.status||"جديد");
 card.appendChild(info);
+
 const statusSelect=document.createElement("select");
 ["جديد","قيد التواصل","مؤكد","مكتمل","ملغي"].forEach(value=>{
 const option=document.createElement("option");
@@ -503,6 +592,7 @@ statusSelect.appendChild(option);
 });
 statusSelect.value=item.status||"جديد";
 card.appendChild(statusSelect);
+
 const saveStatus=addText(card,"button","حفظ حالة الحجز");
 saveStatus.type="button";
 saveStatus.onclick=async()=>{
@@ -513,6 +603,7 @@ if(updateError){status("تعذر تحديث حالة الحجز: "+updateError.m
 status("تم تحديث حالة الحجز.");
 await loadBookings();
 };
+
 const remove=addText(card,"button","حذف الحجز");
 remove.type="button";
 remove.className="danger";
@@ -543,8 +634,11 @@ const {data,error}=await db.auth.signInWithPassword({email,password});
 if(error){status("تعذر الدخول: "+error.message);return}
 status("تم تسجيل الدخول بنجاح.");
 showSession(data.session);
-}catch(e){status("تعذر الاتصال بـ Supabase. تحقق من الإنترنت وحاول مرة أخرى.")}
-finally{$("loginBtn").disabled=false}
+}catch(e){
+status("تعذر الاتصال بـ Supabase. تحقق من الإنترنت وحاول مرة أخرى.");
+}finally{
+$("loginBtn").disabled=false;
+}
 };
 
 $("password").addEventListener("keydown",event=>{
@@ -579,4 +673,3 @@ status("تعذر الاتصال بـ Supabase. تحقق من اتصال الإن
 </script>
 </body>
 </html>
-```
