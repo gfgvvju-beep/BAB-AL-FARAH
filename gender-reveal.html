@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -8,6 +7,7 @@
 <title>اختبار جنس الجنين | باب الفرح</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root{--pink:#ef8eaf;--blue:#83c8f5;--gold:#c6a15e;--ink:#493443;--cream:#fffaf4}
 *{box-sizing:border-box}
@@ -36,13 +36,13 @@ p{line-height:2;margin:8px 0;color:#795e6f}
 #opening,#game,#result{width:100%}
 #openingMedia,#gameMedia{width:100%;min-height:0}
 
-/* شاشة المقدمة واللعبة: وسائط بكامل الشاشة مع النصوص فوقها */
+/* المقدمة واللعبة */
 body.stage-active .app{width:100%;min-height:100svh;padding:0}
 body.stage-active .brand,body.stage-active .footer{display:none}
-body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-radius:0;box-shadow:none;background:transparent;backdrop-filter:none}
-#opening,#game{position:relative;isolation:isolate;min-height:100svh;min-height:100dvh;width:100%;padding:max(28px,env(safe-area-inset-top)) 18px max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(145deg,#fff4f8,#eef8ff)}
-#opening::before,#game::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(24,15,26,.52),rgba(24,15,26,.3) 45%,rgba(24,15,26,.7));pointer-events:none}
-#openingMedia,#gameMedia{position:absolute;inset:0;z-index:-2;width:100%;height:100%;max-width:none;max-height:none;margin:0;border-radius:0;background:#201923;overflow:hidden}
+body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-radius:0;box-shadow:none;background:transparent;backdrop-filter:none;overflow:visible}
+#opening,#game{position:relative;isolation:isolate;min-height:100svh;min-height:100dvh;width:100%;padding:max(28px,env(safe-area-inset-top)) 18px max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:visible;background:linear-gradient(145deg,#fff4f8,#eef8ff)}
+#opening::before,#game::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(24,15,26,.48),rgba(24,15,26,.26) 45%,rgba(24,15,26,.65));pointer-events:none}
+#openingMedia,#gameMedia{position:fixed;inset:0;z-index:-2;width:100%;height:100%;max-width:none;max-height:none;margin:0;border-radius:0;background:#201923;overflow:hidden}
 #openingMedia img,#openingMedia video,#gameMedia img,#gameMedia video{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;border-radius:0}
 #opening>*:not(#openingMedia),#game>*:not(#gameMedia){position:relative;z-index:1;flex-shrink:0}
 #opening h1,#game h2{color:#fff;text-shadow:0 2px 12px #0008}
@@ -52,16 +52,48 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 #opening .heart{font-size:clamp(70px,18vw,115px);filter:drop-shadow(0 8px 18px #0003)}
 #opening .sparkle{color:#ffe1a0}
 #opening .btn{margin-top:12px;min-height:52px;padding:14px 27px;background:linear-gradient(135deg,#b36b8e,#e2a2bd);box-shadow:0 8px 28px #0004}
+
+/* البالونات الكبيرة */
 #game .game-art{margin:0 auto 6px;min-height:60px}
 #game .game-art span{filter:drop-shadow(0 3px 8px #0004)}
-#game .balloons{width:min(100%,380px);margin:20px auto 18px;gap:20px}
-#game .balloon{min-height:clamp(105px,18vh,145px)}
-#game .balloon-shape{width:clamp(67px,19vw,100px);height:clamp(84px,15vh,125px)}
-#game .game-status{color:#fff;min-height:48px;text-shadow:0 2px 8px #0009}
+#game .balloons{width:min(100%,420px);display:flex;justify-content:center;align-items:center;gap:clamp(24px,8vw,60px);margin:25px auto 22px}
+#game .balloon{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:clamp(115px,36vw,175px);height:clamp(150px,25vh,210px);min-height:150px;padding:0;border:0;background:transparent;cursor:pointer;animation:balloonFloat 2.8s ease-in-out infinite;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#game .balloon:nth-child(even){animation-delay:.45s}
+#game .balloon-shape{position:relative;display:block;width:clamp(94px,29vw,145px);height:clamp(120px,20vh,175px);border-radius:50% 50% 47% 47%;box-shadow:inset -12px -12px 20px #00000016,inset 10px 10px 20px #ffffff55,0 12px 25px #0002}
+#game .balloon-shape::before{content:"";position:absolute;top:15%;left:20%;width:18%;height:35%;border-radius:50%;background:linear-gradient(90deg,#ffffffaa,#ffffff00);transform:rotate(22deg)}
+#game .balloon-shape::after{content:"";position:absolute;bottom:-9px;left:calc(50% - 7px);width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:13px solid var(--balloon-color)}
+#game .balloon.boy .balloon-shape{background:radial-gradient(ellipse at 30% 23%,#d8f4ff 0%,#91d7ff 25%,#4bafe9 65%,#2886c9 100%);--balloon-color:#3d9cda}
+#game .balloon.girl .balloon-shape{background:radial-gradient(ellipse at 30% 23%,#fff0f6 0%,#ffbfd7 25%,#f18cb8 65%,#d95d91 100%);--balloon-color:#e77cac}
+#game .balloon::after{content:"";position:absolute;top:calc(50% + clamp(57px,10vh,85px));left:50%;width:2px;height:clamp(32px,7vh,55px);background:linear-gradient(#fff9,#fff2);transform-origin:top;transform:rotate(3deg)}
+#game .balloon:nth-child(even)::after{transform:rotate(-4deg)}
+#game .balloon:active{transform:scale(.94)}
+#game .balloon:focus-visible{outline:3px solid #ffe2a9;outline-offset:4px;border-radius:20px}
+#game .balloon.popped{animation:pop .32s forwards;pointer-events:none}
+#game .game-status{color:#fff;min-height:48px;text-shadow:0 2px 8px #0009;font-weight:800}
 #game #gameIntro{margin-top:2px}
-#game .balloon-shape:after{background:#fff9}
-#game .balloon:focus-visible,#opening .btn:focus-visible{outline:3px solid #ffe2a9;outline-offset:5px}
-#game .balloon.popped{animation:pop .32s forwards}
+
+/* النتيجة تبقى داخل نفس صفحة اللعبة وخلفيتها */
+#game.reveal-mode{justify-content:flex-start;min-height:100dvh;padding-top:max(25px,env(safe-area-inset-top));padding-bottom:35px}
+#game.reveal-mode>#gameMedia{position:fixed}
+#game.reveal-mode>#result{position:relative;z-index:3;width:min(850px,100%);margin:22px auto 0;padding:clamp(16px,4vw,30px);border-radius:24px;background:#fffaf4f2;border:1px solid #ffffffd9;box-shadow:0 15px 50px #0002;backdrop-filter:blur(10px);color:var(--ink)}
+#game.reveal-mode>#result h1{color:#8c4867;text-shadow:none}
+#game.reveal-mode>#result p{color:#795e6f;text-shadow:none}
+#game.reveal-mode>#result .eyebrow{color:#a37c51;text-shadow:none}
+#game.reveal-mode>#result .prayer{color:#8b5470}
+#game.reveal-mode>#result .contact-card p{color:#f5e9d6}
+#game.reveal-mode>#result .result-message{color:#795e6f}
+#game.reveal-mode>.eyebrow,
+#game.reveal-mode>.game-art,
+#game.reveal-mode>#gameMedia,
+#game.reveal-mode>h2,
+#game.reveal-mode>#gameIntro,
+#game.reveal-mode>#balloons,
+#game.reveal-mode>#gameStatus{flex-shrink:0}
+#game.reveal-mode>#gameMedia{position:fixed;z-index:-2}
+#game.reveal-mode>#gameMedia img,#game.reveal-mode>#gameMedia video{position:absolute}
+#game.reveal-mode>#result .btn{margin:10px 0}
+
+/* النتيجة */
 #loading{padding:24px}
 #result{padding:clamp(16px,4vw,36px)}
 .result-icon{font-size:clamp(60px,15vw,105px);animation:float 2.5s infinite}
@@ -80,30 +112,38 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 .contact-call{background:#e9d3a2;color:#342719}
 .contact-wa{background:#238d58;color:#fff}
 .contact-site{background:#fff7e9;color:#594024}
+
 @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+@keyframes balloonFloat{0%,100%{translate:0 0;rotate:-2deg}50%{translate:0 -9px;rotate:2deg}}
 @keyframes twinkle{from{opacity:.3;transform:scale(.7)}to{opacity:1;transform:scale(1.2)}}
 @keyframes pop{0%{transform:scale(1);opacity:1}60%{transform:scale(1.5);opacity:.8}100%{transform:scale(.05);opacity:0}}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
+
 @media(max-width:430px){
  .app{width:100%;padding:10px 0}
  .brand{margin-bottom:8px}
  .card{border-radius:18px;padding:16px 12px}
  #opening,#game{padding-left:14px;padding-right:14px}
- #game .balloons{gap:16px;margin:18px auto}
- #game .balloon{min-height:clamp(100px,16vh,125px)}
+ #game .balloons{gap:18px;margin:22px auto}
+ #game .balloon{width:clamp(120px,40vw,165px);height:clamp(155px,24vh,195px)}
+ #game .balloon-shape{width:clamp(100px,31vw,135px);height:clamp(125px,19vh,160px)}
+ #game.reveal-mode>#result{padding:16px 12px;margin-top:20px}
  .contact-card{padding:20px 12px}
  .contact-actions a{flex-basis:105px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 </style>
 </head>
+
 <body>
 <main class="app">
 <div class="brand">باب الفرح <span>♥</span></div>
 <section class="card">
+
 <div id="loading">
 <div class="default-art"><span class="heart">🎈</span></div>
-<h1>لحظات وتبدأ المفاجأة</h1><p>جارٍ تجهيز اختبار جنس الجنين…</p>
+<h1>لحظات وتبدأ المفاجأة</h1>
+<p>جارٍ تجهيز اختبار جنس الجنين…</p>
 </div>
 
 <div id="opening" class="hidden">
@@ -160,48 +200,82 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 
 <script>
 "use strict";
+
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const CONTACT_PHONE="07867430232";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+ auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}
+});
+
 const $=id=>document.getElementById(id);
 const params=new URLSearchParams(location.search);
 const token=params.get("token");
-let config=null,sessionId=null,music=null,completedResult=null,audioContext=null;
-let pageActive=true;
 
-function safeUrl(v){try{const u=new URL(String(v||""));return ["https:","http:"].includes(u.protocol)?u.href:""}catch{return""}}
+let config=null,sessionId=null,music=null,completedResult=null,audioContext=null;
+let musicStarted=false;
+
+function safeUrl(v){
+ try{
+  const u=new URL(String(v||""));
+  return ["https:","http:"].includes(u.protocol)?u.href:"";
+ }catch{return""}
+}
+
 function show(id){$(id).classList.remove("hidden")}
 function hide(id){$(id).classList.add("hidden")}
-function showError(msg){$("pageError").textContent=msg;show("pageError")}
-function mediaIsVideo(url,type){return type==="video"||/\.(mp4|webm|ogv|ogg|mov|m4v)(?:$|[?#])/i.test(url||"")}
+
+function showError(msg){
+ $("pageError").textContent=msg;
+ show("pageError");
+}
+
+function mediaIsVideo(url,type){
+ return type==="video"||/\.(mp4|webm|ogv|ogg|mov|m4v)(?:$|[?#])/i.test(url||"");
+}
 
 function setStageActive(active){
  document.body.classList.toggle("stage-active",!!active);
 }
+
+/* نوقف الصوت عند مغادرة الصفحة فعلياً، وليس عند ظهور النتيجة */
 function stopAudio(){
- pageActive=false;
- if(music){try{music.pause();music.currentTime=0;music.src=""}catch(e){}}
- music=null;
- if(audioContext){try{audioContext.close()}catch(e){}audioContext=null}
+ if(music){
+  try{music.pause();music.currentTime=0}catch(e){}
+ }
+ if(audioContext){
+  try{audioContext.close()}catch(e){}
+  audioContext=null;
+ }
  document.querySelectorAll("video,audio").forEach(a=>{
-  try{a.pause();a.currentTime=0}catch(e){}
+  try{a.pause()}catch(e){}
  });
 }
-function stopMusicOnly(){
- if(music){try{music.pause();music.currentTime=0;music.src=""}catch(e){}music=null}
-}
+
 window.addEventListener("pagehide",stopAudio);
 window.addEventListener("beforeunload",stopAudio);
-document.addEventListener("visibilitychange",()=>{if(document.hidden)stopAudio()});
-window.addEventListener("pageshow",()=>{pageActive=true});
+
+/* لا نوقف الموسيقى لمجرد انتقال التطبيق إلى الخلفية */
+window.addEventListener("pageshow",()=>{
+ if(musicStarted&&music&&music.paused){
+  music.play().catch(()=>{});
+ }
+});
 
 function renderMedia(containerId,defaultId,url,type){
  const box=$(containerId),fallback=$(defaultId),src=safeUrl(url);
  box.replaceChildren();
- if(!src){hide(containerId);show(defaultId);return}
+
+ if(!src){
+  hide(containerId);
+  show(defaultId);
+  return;
+ }
+
  const el=document.createElement(mediaIsVideo(src,type)?"video":"img");
  el.src=src;
+
  if(el.tagName==="VIDEO"){
   el.controls=false;
   el.playsInline=true;
@@ -214,66 +288,107 @@ function renderMedia(containerId,defaultId,url,type){
   el.loading="eager";
   el.decoding="async";
  }
- el.onerror=()=>{hide(containerId);show(defaultId)};
+
+ el.onerror=()=>{
+  hide(containerId);
+  show(defaultId);
+ };
+
  box.append(el);
  hide(defaultId);
  show(containerId);
- if(el.tagName==="VIDEO")el.play().catch(()=>{});
+
+ if(el.tagName==="VIDEO"){
+  el.play().catch(()=>{});
+ }
 }
 
 async function loadConfig(){
- if(!token){hide("loading");showError("رابط الاختبار غير مكتمل. افتح الرابط الذي أرسله لك صاحب المناسبة.");return}
- if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token)){hide("loading");showError("رابط الاختبار غير صالح.");return}
+ if(!token){
+  hide("loading");
+  showError("رابط الاختبار غير مكتمل. افتح الرابط الذي أرسله لك صاحب المناسبة.");
+  return;
+ }
+
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token)){
+  hide("loading");
+  showError("رابط الاختبار غير صالح.");
+  return;
+ }
+
  try{
   const {data,error}=await db.rpc("get_gender_reveal_public",{p_token:token});
   if(error)throw error;
   if(!data||!data.success)throw Error(data?.message||"هذا الاختبار غير متاح حالياً.");
+
   config=data;
   $("mainTitle").textContent=config.title||"اختبار جنس الجنين";
   document.title=(config.title||"اختبار جنس الجنين")+" | باب الفرح";
+
   renderMedia("openingMedia","openingDefault",config.opening_media_url,config.opening_media_type);
+
   hide("loading");
   show("opening");
   setStageActive(true);
- }catch(e){hide("loading");showError(e.message||"تعذر تحميل الاختبار. حاول مرة ثانية.")}
+ }catch(e){
+  hide("loading");
+  showError(e.message||"تعذر تحميل الاختبار. حاول مرة ثانية.");
+ }
 }
 
+/* تبدأ الموسيقى بعد تفاعل الزائر وتستمر خلال الاختبار والنتيجة */
 function startAudio(){
- pageActive=true;
+ if(musicStarted)return;
+ musicStarted=true;
+
  if(config?.music_url){
   try{
    const src=safeUrl(config.music_url);
-   if(src){music=new Audio(src);music.loop=true;music.volume=.5;music.play().catch(()=>{})}
+   if(src){
+    music=new Audio(src);
+    music.loop=true;
+    music.volume=.5;
+    music.preload="auto";
+    music.play().catch(()=>{});
+   }
   }catch(e){}
  }
 }
 
-/* صوت فرقعة ثابت مولّد داخل الصفحة، بدون ملف صوت أو خانة رفع */
+/* صوت فرقعة البالون مولّد داخل الصفحة */
 function playPop(){
  try{
   const AC=window.AudioContext||window.webkitAudioContext;
   if(!AC)return;
+
   if(!audioContext)audioContext=new AC();
   const ctx=audioContext;
+
   if(ctx.state==="suspended")ctx.resume();
+
   const now=ctx.currentTime;
   const duration=.14;
   const buffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*duration),ctx.sampleRate);
   const data=buffer.getChannelData(0);
+
   for(let i=0;i<data.length;i++){
    const decay=1-i/data.length;
    data[i]=(Math.random()*2-1)*decay*decay;
   }
+
   const noise=ctx.createBufferSource();
   noise.buffer=buffer;
+
   const filter=ctx.createBiquadFilter();
   filter.type="lowpass";
   filter.frequency.setValueAtTime(1700,now);
   filter.frequency.exponentialRampToValueAtTime(230,now+duration);
+
   const gain=ctx.createGain();
   gain.gain.setValueAtTime(.0001,now);
   gain.gain.exponentialRampToValueAtTime(.4,now+.006);
   gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+
   noise.connect(filter);
   filter.connect(gain);
   gain.connect(ctx.destination);
@@ -285,37 +400,44 @@ function playPop(){
 function createBalloons(){
  const box=$("balloons");
  box.replaceChildren();
+
  const twins=Number(config?.baby_count)===2;
- const total=twins?4:2;
  const colors=twins?["boy","girl","boy","girl"]:["boy","girl"];
- for(let i=0;i<total;i++){
-  const color=colors[i];
+
+ colors.forEach((color,i)=>{
   const b=document.createElement("button");
   b.type="button";
   b.className="balloon "+color;
   b.dataset.color=color;
   b.setAttribute("aria-label",color==="boy"?"بالون أزرق":"بالون وردي");
   b.style.animationDelay=(i%2)*.25+"s";
+
   const shape=document.createElement("span");
   shape.className="balloon-shape";
   b.append(shape);
+
   b.onclick=()=>chooseBalloon(b,color);
   box.append(b);
- }
+ });
 }
 
 async function beginGame(){
  $("startBtn").disabled=true;
  hide("pageError");
+
  try{
   startAudio();
+
   const {data,error}=await db.rpc("start_gender_reveal",{p_token:token});
   if(error)throw error;
   if(!data||!data.success)throw Error(data?.message||"تعذر بدء اللعبة.");
+
   sessionId=data.session_id;
   config={...config,...data};
+
   renderMedia("gameMedia","gameDefault",config.game_media_url,config.game_media_type);
   createBalloons();
+
   hide("opening");
   show("game");
   setStageActive(true);
@@ -324,20 +446,30 @@ async function beginGame(){
   $("startBtn").disabled=false;
  }
 }
+
 $("startBtn").addEventListener("click",beginGame);
 
 async function chooseBalloon(button,color){
  if(!sessionId||button.disabled)return;
+
  button.disabled=true;
  playPop();
  $("gameStatus").textContent="لحظة… نتحقق من اختيارك ✨";
+
  try{
-  const {data,error}=await db.rpc("choose_gender_reveal_balloon",{p_session_id:sessionId,p_color:color});
+  const {data,error}=await db.rpc("choose_gender_reveal_balloon",{
+   p_session_id:sessionId,
+   p_color:color
+  });
+
   if(error)throw error;
   if(!data||!data.success)throw Error(data?.message||"تعذر تسجيل الاختيار.");
+
   button.classList.add("popped");
+
   if(data.correct){
    setTimeout(()=>button.remove(),300);
+
    if(data.revealed){
     completedResult=data;
     $("gameStatus").textContent="انكشفت المفاجأة! 🎉";
@@ -355,39 +487,85 @@ async function chooseBalloon(button,color){
  }
 }
 
-function genderLabel(g){return g==="boy"?"ولد":"بنت"}
+function genderLabel(g){
+ return g==="boy"?"ولد":"بنت";
+}
 
 function revealResult(data){
- stopMusicOnly();
- hide("game");
- setStageActive(false);
+ /* لا نوقف الموسيقى ولا نخفي وسائط اللعبة */
+ $("game").classList.add("reveal-mode");
+
+ /* ننقل النتيجة إلى داخل اللعبة نفسها، أسفل منطقة الكشف */
+ $("game").appendChild($("result"));
  show("result");
+
  const twin=Number(data.baby_count)===2;
+
  if(twin){
   const bothBoys=data.baby1_gender==="boy"&&data.baby2_gender==="boy";
   const bothGirls=data.baby1_gender==="girl"&&data.baby2_gender==="girl";
-  $("resultTitle").textContent=bothBoys?"ألف مبارك التوأم الأولاد! 💙💙":bothGirls?"ألف مبارك التوأم البنات! 💗💗":"ألف مبارك التوأم! 💗💙";
-  $("resultIcon").textContent=bothBoys?"👶🏻💙👶🏻💙":bothGirls?"👶🏻💗👶🏻💗":"👶🏻💙👶🏻💗";
-  $("resultMessage").textContent=bothBoys?"رزقكم الله ولدين يملآن البيت فرحاً وسعادة.":bothGirls?"رزقكم الله بنتين يملأن البيت حباً ونوراً.":"ولد وبنت، فرحتان بوقت واحد! الله يحفظهما لكم.";
-  const n1=data.baby1_name?("الطفل الأول: "+data.baby1_name):("الطفل الأول: "+genderLabel(data.baby1_gender));
-  const n2=data.baby2_name?("الطفل الثاني: "+data.baby2_name):("الطفل الثاني: "+genderLabel(data.baby2_gender));
+
+  $("resultTitle").textContent=bothBoys
+   ?"ألف مبارك التوأم الأولاد! 💙💙"
+   :bothGirls
+    ?"ألف مبارك التوأم البنات! 💗💗"
+    :"ألف مبارك التوأم! 💗💙";
+
+  $("resultIcon").textContent=bothBoys
+   ?"👶🏻💙👶🏻💙"
+   :bothGirls
+    ?"👶🏻💗👶🏻💗"
+    :"👶🏻💙👶🏻💗";
+
+  $("resultMessage").textContent=bothBoys
+   ?"رزقكم الله ولدين يملآن البيت فرحاً وسعادة."
+   :bothGirls
+    ?"رزقكم الله بنتين يملأن البيت حباً ونوراً."
+    :"ولد وبنت، فرحتان بوقت واحد! الله يحفظهما لكم.";
+
+  const n1=data.baby1_name
+   ?("الطفل الأول: "+data.baby1_name)
+   :("الطفل الأول: "+genderLabel(data.baby1_gender));
+
+  const n2=data.baby2_name
+   ?("الطفل الثاني: "+data.baby2_name)
+   :("الطفل الثاني: "+genderLabel(data.baby2_gender));
+
   $("babyNames").textContent=n1+" · "+n2;
  }else{
   const boy=data.baby1_gender==="boy";
-  $("resultTitle").textContent=boy?"ألف مبارك المولود الولد! 💙":"ألف مبارك المولودة البنت! 💗";
+
+  $("resultTitle").textContent=boy
+   ?"ألف مبارك المولود الولد! 💙"
+   :"ألف مبارك المولودة البنت! 💗";
+
   $("resultIcon").textContent=boy?"👶🏻💙":"👶🏻💗";
-  $("resultMessage").textContent=boy?"نوّر البيت بقدوم الأمير الصغير، الله يجعله من مواليد السعادة.":"نوّرت الدنيا بقدوم الأميرة الصغيرة، الله يجعلها من مواليد السعادة.";
-  $("babyNames").textContent=data.baby1_name?"اسم المولود: "+data.baby1_name:"";
+
+  $("resultMessage").textContent=boy
+   ?"نوّر البيت بقدوم الأمير الصغير، الله يجعله من مواليد السعادة."
+   :"نوّرت الدنيا بقدوم الأميرة الصغيرة، الله يجعلها من مواليد السعادة.";
+
+  $("babyNames").textContent=data.baby1_name
+   ?"اسم المولود: "+data.baby1_name
+   :"";
  }
+
  const parents=[];
  if(data.father_name)parents.push("الأب: "+data.father_name);
  if(data.mother_name)parents.push("الأم: "+data.mother_name);
  $("parentsNames").textContent=parents.join(" · ");
+
  confetti();
+
+ /* تظهر النتيجة داخل الصفحة نفسها دون فتح صفحة جديدة */
+ setTimeout(()=>{
+  $("result").scrollIntoView({behavior:"smooth",block:"start"});
+ },150);
 }
 
 function confetti(){
  const chars=["✦","•","♥","✧"];
+
  for(let i=0;i<65;i++){
   const e=document.createElement("span");
   e.className="confetti";
@@ -407,12 +585,17 @@ function setupContactLinks(){
  $("contactCall").href="tel:"+phone;
  $("contactWhatsApp").href="https://wa.me/964"+phone.replace(/^0/,"");
 }
+
 $("replayBtn").onclick=()=>{
  if(completedResult){
   confetti();
-  $("result").animate([{opacity:.6,transform:"scale(.98)"},{opacity:1,transform:"scale(1)"}],{duration:400});
+  $("result").animate(
+   [{opacity:.6,transform:"scale(.98)"},{opacity:1,transform:"scale(1)"}],
+   {duration:400}
+  );
  }
 };
+
 setupContactLinks();
 loadConfig();
 </script>
