@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -37,514 +36,120 @@ a{color:inherit}
 button{font:inherit}
 .wrap{width:min(1160px,calc(100% - 36px));margin-inline:auto}
 
-.topbar{
-position:relative;
-padding:20px 0 15px;
-text-align:center
-}
+.topbar{position:relative;padding:20px 0 15px;text-align:center}
 .brand{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-gap:12px;
-color:var(--gold-light);
-font-family:'Amiri',serif;
-font-weight:700;
-font-size:clamp(34px,5vw,52px);
-line-height:1.2
+display:inline-flex;align-items:center;justify-content:center;gap:12px;
+color:var(--gold-light);font-family:'Amiri',serif;font-weight:700;
+font-size:clamp(34px,5vw,52px);line-height:1.2
 }
 .brand-heart{font-family:Arial,sans-serif;color:var(--gold);font-size:.68em}
-.brand-en{
-font-size:10px;
-letter-spacing:4px;
-color:#b8a56c;
-margin-top:5px;
-direction:ltr
-}
-.gold-rule{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:12px;
-color:var(--gold);
-margin:15px auto 0;
-font-size:12px
-}
-.gold-rule:before,.gold-rule:after{
-content:"";
-height:1px;
-width:74px;
-background:linear-gradient(90deg,transparent,var(--gold))
-}
+.brand-en{font-size:10px;letter-spacing:4px;color:#b8a56c;margin-top:5px;direction:ltr}
+.gold-rule{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--gold);margin:15px auto 0;font-size:12px}
+.gold-rule:before,.gold-rule:after{content:"";height:1px;width:74px;background:linear-gradient(90deg,transparent,var(--gold))}
 .gold-rule:after{transform:rotate(180deg)}
 
-/* شريط اللغات وواتساب */
-.top-actions{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:9px;
-flex-wrap:wrap;
-margin:0 auto 17px;
-direction:rtl
+.top-actions{display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;margin:0 auto 17px;direction:rtl}
+.lang-button,.top-whatsapp{
+display:inline-flex;justify-content:center;align-items:center;gap:6px;min-height:39px;
+padding:7px 13px;border:1px solid #51421f;border-radius:12px;
+background:#111;color:#e6d8ae;font-size:12px;font-weight:800;cursor:pointer;transition:.2s
 }
-.lang-button{
-display:inline-flex;
-justify-content:center;
-align-items:center;
-gap:6px;
-min-height:39px;
-padding:7px 13px;
-border:1px solid #51421f;
-border-radius:12px;
-background:#111;
-color:#e6d8ae;
-font-size:12px;
-font-weight:800;
-cursor:pointer;
-transition:.2s
-}
-.lang-button:hover,.lang-button.active{
-border-color:var(--gold);
-background:linear-gradient(135deg,#30250d,#171208);
-color:var(--gold-light);
-box-shadow:0 4px 15px #d4af3712
-}
-.top-whatsapp{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-gap:7px;
-min-height:39px;
-padding:7px 14px;
-border:1px solid #5d4820;
-border-radius:12px;
-background:#17130a;
-color:var(--gold-light);
-text-decoration:none;
-font-size:12px;
-font-weight:800;
-transition:.2s
-}
+.lang-button:hover,.lang-button.active{border-color:var(--gold);background:linear-gradient(135deg,#30250d,#171208);color:var(--gold-light)}
+.top-whatsapp{gap:7px;background:#17130a;color:var(--gold-light);text-decoration:none;border-color:#5d4820}
 .top-whatsapp:hover{background:#29200d;border-color:var(--gold)}
 .top-whatsapp svg{width:19px;height:19px;fill:currentColor;flex-shrink:0}
 
 .hero{text-align:center;padding:26px 0 28px}
-.eyebrow{
-display:inline-block;
-color:var(--gold-light);
-background:#1b170a;
-border:1px solid #695522;
-border-radius:50px;
-padding:7px 16px;
-font-size:12px;
-font-weight:700
-}
-.hero h1{
-font-family:'Amiri',serif;
-font-size:clamp(28px,4vw,42px);
-font-weight:700;
-color:var(--gold-light);
-margin:13px 0 5px
-}
-.hero p{
-margin:0 auto;
-max-width:650px;
-line-height:2;
-color:var(--muted);
-font-size:15px
-}
+.eyebrow{display:inline-block;color:var(--gold-light);background:#1b170a;border:1px solid #695522;border-radius:50px;padding:7px 16px;font-size:12px;font-weight:700}
+.hero h1{font-family:'Amiri',serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:var(--gold-light);margin:13px 0 5px}
+.hero p{margin:0 auto;max-width:650px;line-height:2;color:var(--muted);font-size:15px}
 .heart-divider{color:var(--gold);margin-top:14px;font-size:17px}
 
-.section-heading{
-display:flex;
-align-items:end;
-justify-content:space-between;
-gap:15px;
-margin:12px 0 18px
-}
-.section-heading h2{
-font-family:'Amiri',serif;
-color:var(--gold-light);
-font-size:27px;
-margin:0
-}
-.section-heading p{
-margin:3px 0 0;
-color:var(--muted);
-font-size:13px;
-line-height:1.8
-}
-.count{
-font-size:12px;
-background:#15130d;
-border:1px solid var(--line);
-padding:7px 12px;
-border-radius:40px;
-color:var(--gold-light);
-white-space:nowrap
-}
+.section-heading{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:12px 0 18px}
+.section-heading h2{font-family:'Amiri',serif;color:var(--gold-light);font-size:27px;margin:0}
+.section-heading p{margin:3px 0 0;color:var(--muted);font-size:13px;line-height:1.8}
+.count{font-size:12px;background:#15130d;border:1px solid var(--line);padding:7px 12px;border-radius:40px;color:var(--gold-light);white-space:nowrap}
 
-/* أقسام المناسبات */
-.category-grid{
-display:grid;
-grid-template-columns:repeat(3,minmax(0,1fr));
-gap:16px
-}
+.category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .category{
-position:relative;
-display:flex;
-align-items:center;
-gap:15px;
-text-align:right;
-padding:20px 18px;
-min-height:112px;
-background:linear-gradient(145deg,#17150e,#0c0c0b);
-border:1px solid var(--line);
-border-radius:18px;
-box-shadow:var(--shadow);
-cursor:pointer;
-transition:transform .2s,border-color .2s,box-shadow .2s;
-color:var(--ink);
-overflow:hidden;
-width:100%
+position:relative;display:flex;align-items:center;gap:15px;text-align:right;padding:20px 18px;
+min-height:112px;background:linear-gradient(145deg,#17150e,#0c0c0b);
+border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);
+cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;
+color:var(--ink);overflow:hidden;width:100%
 }
-.category:after{
-content:"";
-position:absolute;
-inset:auto -18px -32px auto;
-width:105px;
-height:105px;
-border-radius:50%;
-background:#d4af3710;
-z-index:0
-}
-.category:hover,.category.active{
-transform:translateY(-3px);
-border-color:var(--gold);
-box-shadow:0 15px 34px #d4af3712
-}
-.category.active{background:linear-gradient(135deg,#25200f,#111)}
-.category-icon{
-position:relative;
-z-index:1;
-flex:0 0 60px;
-width:60px;
-height:60px;
-display:grid;
-place-items:center;
-border-radius:17px;
-background:linear-gradient(145deg,#29210d,#15130c);
-border:1px solid #695522;
-font-size:29px
-}
+.category:after{content:"";position:absolute;inset:auto -18px -32px auto;width:105px;height:105px;border-radius:50%;background:#d4af3710;z-index:0}
+.category:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 15px 34px #d4af3712}
+.category-icon{position:relative;z-index:1;flex:0 0 60px;width:60px;height:60px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(145deg,#29210d,#15130c);border:1px solid #695522;font-size:29px}
 .category-copy{position:relative;z-index:1;min-width:0}
-.category-copy strong{
-display:block;
-font-size:15px;
-color:var(--gold-light);
-line-height:1.7
-}
-.category-copy small{
-display:block;
-color:var(--muted);
-font-size:11px;
-margin-top:3px;
-line-height:1.7
-}
-.category-arrow{
-position:relative;
-z-index:1;
-margin-right:auto;
-color:var(--gold);
-font-size:20px
-}
+.category-copy strong{display:block;font-size:15px;color:var(--gold-light);line-height:1.7}
+.category-copy small{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.7}
+.category-arrow{position:relative;z-index:1;margin-right:auto;color:var(--gold);font-size:20px}
 
-/* صندوق الدعوات الذي يظهر بعد اختيار المناسبة */
+#categoriesSection{scroll-margin-top:20px}
 .gallery-panel{
-display:none;
-margin:28px 0 30px;
-padding:23px;
+display:none;margin:24px 0 30px;padding:23px;
 background:linear-gradient(145deg,#151208,#0c0c0b);
-border:1px solid #72591f;
-border-radius:23px;
-box-shadow:0 18px 48px #0008;
-scroll-margin-top:18px
+border:1px solid #72591f;border-radius:23px;box-shadow:0 18px 48px #0008;
+scroll-margin-top:18px;animation:panelIn .25s ease-out
 }
 .gallery-panel.open{display:block}
-.gallery-top{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px;
-margin-bottom:18px;
-padding-bottom:16px;
-border-bottom:1px solid #45381c
-}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.gallery-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid #45381c}
 .gallery-title-wrap{min-width:0}
-.gallery-title-wrap h2{
-font-family:'Amiri',serif;
-color:var(--gold-light);
-font-size:clamp(24px,3.5vw,34px);
-margin:0;
-line-height:1.6
-}
-.gallery-title-wrap p{
-color:var(--muted);
-font-size:12px;
-margin:3px 0 0;
-line-height:1.8
-}
+.gallery-title-wrap h2{font-family:'Amiri',serif;color:var(--gold-light);font-size:clamp(24px,3.5vw,34px);margin:0;line-height:1.6}
+.gallery-title-wrap p{color:var(--muted);font-size:12px;margin:3px 0 0;line-height:1.8}
 .gallery-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.refresh,.close-gallery{
-border:1px solid var(--line);
-background:#111;
-color:var(--gold-light);
-border-radius:12px;
-padding:10px 13px;
-cursor:pointer;
-font-weight:700;
-font-size:12px
+.refresh,.back-categories{
+border:1px solid var(--line);background:#111;color:var(--gold-light);
+border-radius:12px;padding:10px 13px;cursor:pointer;font-weight:700;font-size:12px
 }
 .refresh:disabled{opacity:.65;cursor:wait}
-.close-gallery:hover,.refresh:hover{border-color:var(--gold);background:#211b0b}
+.back-categories{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;border-color:#d4af37}
+.back-categories:hover{filter:brightness(1.1)}
+.refresh:hover{border-color:var(--gold);background:#211b0b}
 
-/* بطاقات الدعوات */
-.cards{
-display:grid;
-grid-template-columns:repeat(3,minmax(0,1fr));
-gap:19px;
-padding-bottom:5px
-}
-.invite-card{
-background:var(--panel);
-border:1px solid #40351e;
-border-radius:20px;
-overflow:hidden;
-box-shadow:var(--shadow);
-transition:transform .22s,box-shadow .22s;
-min-width:0
-}
-.invite-card:hover{
-transform:translateY(-4px);
-box-shadow:0 20px 45px #0008
-}
-.card-media{
-height:220px;
-position:relative;
-background:linear-gradient(145deg,#050505,#30250c 55%,#b28a22);
-overflow:hidden;
-display:grid;
-place-items:center
-}
-.card-media:before{
-content:"";
-position:absolute;
-inset:13px;
-border:1px solid #d4af3780;
-border-radius:13px;
-pointer-events:none;
-z-index:1
-}
-.card-media:after{
-content:"❦";
-position:absolute;
-color:#f3dca755;
-font-family:Georgia,serif;
-font-size:80px;
-bottom:-15px;
-left:14px;
-transform:rotate(-18deg);
-pointer-events:none
-}
-.card-media img,.card-media video{
-position:absolute;
-width:100%;
-height:100%;
-inset:0;
-object-fit:cover
-}
-.card-media img{object-position:center}
-.media-fallback{
-position:relative;
-z-index:1;
-color:#fff1c4;
-text-align:center;
-padding:22px
-}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px;padding-bottom:5px}
+.invite-card{background:var(--panel);border:1px solid #40351e;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);transition:transform .22s,box-shadow .22s;min-width:0}
+.invite-card:hover{transform:translateY(-4px);box-shadow:0 20px 45px #0008}
+.card-media{height:220px;position:relative;background:linear-gradient(145deg,#050505,#30250c 55%,#b28a22);overflow:hidden;display:grid;place-items:center}
+.card-media:before{content:"";position:absolute;inset:13px;border:1px solid #d4af3780;border-radius:13px;pointer-events:none;z-index:1}
+.card-media:after{content:"❦";position:absolute;color:#f3dca755;font-family:Georgia,serif;font-size:80px;bottom:-15px;left:14px;transform:rotate(-18deg);pointer-events:none}
+.card-media img,.card-media video{position:absolute;width:100%;height:100%;inset:0;object-fit:cover}
+.media-fallback{position:relative;z-index:1;color:#fff1c4;text-align:center;padding:22px}
 .media-fallback .big-icon{display:block;font-size:46px;margin-bottom:7px}
 .media-fallback strong{font-family:'Amiri',serif;font-size:24px}
-.media-fallback small{
-display:block;
-font-size:11px;
-color:#d9c78e;
-margin-top:3px
-}
-.media-chip{
-position:absolute;
-z-index:2;
-top:13px;
-right:13px;
-background:#17130a;
-color:var(--gold-light);
-border:1px solid #8c6b1d;
-border-radius:30px;
-padding:5px 10px;
-font-size:10px;
-font-weight:800
-}
+.media-fallback small{display:block;font-size:11px;color:#d9c78e;margin-top:3px}
+.media-chip{position:absolute;z-index:2;top:13px;right:13px;background:#17130a;color:var(--gold-light);border:1px solid #8c6b1d;border-radius:30px;padding:5px 10px;font-size:10px;font-weight:800}
 .card-body{padding:17px}
-.card-title{
-font-size:17px;
-font-weight:800;
-color:var(--gold-light);
-margin:0 0 6px;
-overflow-wrap:anywhere
-}
-.card-sub{
-font-size:12px;
-color:var(--muted);
-margin:0 0 13px;
-line-height:1.8
-}
+.card-title{font-size:17px;font-weight:800;color:var(--gold-light);margin:0 0 6px;overflow-wrap:anywhere}
+.card-sub{font-size:12px;color:var(--muted);margin:0 0 13px;line-height:1.8}
 .card-meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:15px}
-.meta-pill{
-background:#1b170b;
-border:1px solid #4b3c19;
-border-radius:30px;
-padding:5px 9px;
-color:#d9c995;
-font-size:10px
-}
+.meta-pill{background:#1b170b;border:1px solid #4b3c19;border-radius:30px;padding:5px 9px;color:#d9c995;font-size:10px}
 .card-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.btn{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:6px;
-text-decoration:none;
-border-radius:11px;
-padding:11px 9px;
-font-size:12px;
-font-weight:800;
-cursor:pointer;
-border:1px solid transparent;
-transition:filter .15s;
-line-height:1.7
-}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;border-radius:11px;padding:11px 9px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid transparent;transition:filter .15s;line-height:1.7}
 .btn:hover{filter:brightness(1.08)}
-.btn-primary{
-background:linear-gradient(135deg,#8a6a12,#d4af37);
-color:#080705;
-box-shadow:0 5px 14px #d4af3720
-}
+.btn-primary{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;box-shadow:0 5px 14px #d4af3720}
 .btn-secondary{background:#14120c;color:var(--gold-light);border-color:#5a4820}
-
-.empty,.loading,.error{
-grid-column:1/-1;
-text-align:center;
-background:#111;
-border:1px dashed #5a4820;
-border-radius:18px;
-padding:38px 20px;
-color:var(--muted);
-line-height:2
-}
+.empty,.loading,.error{grid-column:1/-1;text-align:center;background:#111;border:1px dashed #5a4820;border-radius:18px;padding:38px 20px;color:var(--muted);line-height:2}
 .empty .empty-icon{display:block;font-size:37px;margin-bottom:7px;color:var(--gold)}
 .error{color:#f1b6a7}
 
-.about{
-background:linear-gradient(135deg,#090909,#211a0a);
-border:1px solid #6b531c;
-color:#fff;
-border-radius:24px;
-padding:30px;
-margin:0 auto 32px;
-position:relative;
-overflow:hidden
-}
-.about:after{
-content:"♥";
-position:absolute;
-left:20px;
-bottom:-58px;
-font-size:170px;
-color:#ffffff09;
-pointer-events:none
-}
-.about h2{
-font-family:'Amiri',serif;
-font-size:28px;
-margin:0 0 7px;
-color:var(--gold-light)
-}
+.about{background:linear-gradient(135deg,#090909,#211a0a);border:1px solid #6b531c;color:#fff;border-radius:24px;padding:30px;margin:0 auto 32px;position:relative;overflow:hidden}
+.about:after{content:"♥";position:absolute;left:20px;bottom:-58px;font-size:170px;color:#ffffff09;pointer-events:none}
+.about h2{font-family:'Amiri',serif;font-size:28px;margin:0 0 7px;color:var(--gold-light)}
 .about p{color:#e0d5b5;line-height:2;margin:0;max-width:650px;font-size:14px}
-
-.contact-panel{
-background:#111;
-border:1px solid var(--line);
-border-radius:20px;
-padding:23px;
-margin-bottom:30px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:20px;
-box-shadow:var(--shadow)
-}
-.contact-copy h2{
-font-family:'Amiri',serif;
-color:var(--gold-light);
-font-size:25px;
-margin:0 0 5px
-}
+.contact-panel{background:#111;border:1px solid var(--line);border-radius:20px;padding:23px;margin-bottom:30px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:var(--shadow)}
+.contact-copy h2{font-family:'Amiri',serif;color:var(--gold-light);font-size:25px;margin:0 0 5px}
 .contact-copy p{color:var(--muted);font-size:13px;margin:0;line-height:1.9}
-.phone{
-direction:ltr;
-display:inline-block;
-color:var(--gold-light);
-font-weight:800;
-font-size:20px;
-text-decoration:none;
-margin-top:8px
-}
+.phone{direction:ltr;display:inline-block;color:var(--gold-light);font-weight:800;font-size:20px;text-decoration:none;margin-top:8px}
 .contact-actions{display:flex;gap:10px;flex-wrap:wrap}
 .contact-actions .btn{min-width:132px;padding:13px 17px;font-size:13px}
 .btn-call{background:#211b0b;color:var(--gold-light);border-color:#6a531c}
 .btn-wa{background:#168653;color:#fff}
-
-.footer{
-text-align:center;
-padding:20px 0 27px;
-border-top:1px solid #302714;
-color:#a79b78;
-font-size:11px;
-line-height:2
-}
-.footer strong{
-color:var(--gold-light);
-font-family:'Amiri',serif;
-font-size:19px;
-display:block
-}
-.toast{
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translate(-50%,20px);
-opacity:0;
-pointer-events:none;
-background:var(--gold);
-color:#090909;
-padding:12px 18px;
-border-radius:12px;
-font-size:13px;
-box-shadow:0 8px 25px #0002;
-transition:.2s;
-z-index:100;
-max-width:calc(100% - 30px);
-text-align:center
-}
+.footer{text-align:center;padding:20px 0 27px;border-top:1px solid #302714;color:#a79b78;font-size:11px;line-height:2}
+.footer strong{color:var(--gold-light);font-family:'Amiri',serif;font-size:19px;display:block}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--gold);color:#090909;padding:12px 18px;border-radius:12px;font-size:13px;box-shadow:0 8px 25px #0002;transition:.2s;z-index:100;max-width:calc(100% - 30px);text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 html[dir="ltr"] .category{text-align:left}
@@ -554,12 +159,9 @@ html[dir="ltr"] .card-media:after{left:auto;right:14px}
 html[dir="ltr"] .media-chip{right:auto;left:13px}
 html[dir="ltr"] .top-actions{direction:ltr}
 html[dir="ltr"] .gallery-title-wrap{text-align:left}
+html[dir="ltr"] .gallery-tools{direction:ltr}
 
-button:focus-visible,a:focus-visible{
-outline:2px solid var(--gold-light);
-outline-offset:3px
-}
-
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
 @media(max-width:850px){
 .category-grid,.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
 .card-media{height:205px}
@@ -585,8 +187,8 @@ outline-offset:3px
 .gallery-top{align-items:flex-start;gap:8px}
 .gallery-title-wrap h2{font-size:23px}
 .gallery-title-wrap p{font-size:11px}
-.gallery-tools{gap:5px}
-.refresh,.close-gallery{padding:9px;font-size:11px}
+.gallery-tools{gap:5px;flex-wrap:wrap}
+.refresh,.back-categories{padding:9px;font-size:11px}
 .cards{grid-template-columns:1fr;gap:15px}
 .card-media{height:230px}
 .card-body{padding:16px}
@@ -598,31 +200,21 @@ outline-offset:3px
 .card-actions{gap:7px}
 .btn{font-size:11px}
 }
-@media(prefers-reduced-motion:reduce){
-*{scroll-behavior:auto!important;transition:none!important}
-}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 </head>
 
 <body>
 <header class="topbar wrap">
-
   <nav class="top-actions" aria-label="Language and contact">
-    <button class="lang-button active" type="button" data-lang="ar" aria-label="العربية">🇮🇶 العربية</button>
-    <button class="lang-button" type="button" data-lang="ku" aria-label="کوردی">☀️ کوردی</button>
-    <button class="lang-button" type="button" data-lang="en" aria-label="English">🇬🇧 English</button>
-
-    <a class="top-whatsapp" id="menuContact"
-       href="https://wa.me/9647867430232"
-       target="_blank" rel="noopener noreferrer"
-       aria-label="مراسلتنا عبر واتساب">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M16 .8A15.1 15.1 0 0 0 3.05 23.67L1 31l7.5-1.97A15.1 15.1 0 1 0 16 .8Zm0 27.45c-2.2 0-4.35-.59-6.25-1.72l-.45-.27-4.45 1.17 1.19-4.34-.29-.46A12.36 12.36 0 1 1 16 28.25Zm6.79-9.25c-.37-.19-2.2-1.09-2.54-1.21-.34-.12-.59-.19-.84.19-.25.37-.96 1.21-1.18 1.46-.22.25-.44.28-.81.09-.37-.19-1.57-.58-2.99-1.85-1.1-.98-1.85-2.2-2.07-2.57-.22-.37-.02-.58.17-.76.17-.17.37-.44.56-.66.19-.22.25-.37.37-.62.12-.25.06-.47-.03-.66-.09-.19-.84-2.02-1.15-2.77-.3-.72-.61-.62-.84-.63h-.72c-.25 0-.66.09-1 .47-.34.37-1.31 1.28-1.31 3.11s1.34 3.61 1.53 3.86c.19.25 2.64 4.03 6.4 5.65.9.39 1.6.62 2.14.79.9.29 1.72.25 2.37.15.72-.11 2.2-.9 2.51-1.77.31-.87.31-1.61.22-1.77-.09-.15-.34-.25-.72-.44Z"/>
-      </svg>
+    <button class="lang-button active" type="button" data-lang="ar" aria-label="العربية" aria-pressed="true">🇮🇶 العربية</button>
+    <button class="lang-button" type="button" data-lang="ku" aria-label="کوردی" aria-pressed="false">☀️ کوردی</button>
+    <button class="lang-button" type="button" data-lang="en" aria-label="English" aria-pressed="false">🇬🇧 English</button>
+    <a class="top-whatsapp" id="menuContact" href="https://wa.me/9647867430232" target="_blank" rel="noopener noreferrer" aria-label="مراسلتنا عبر واتساب">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 .8A15.1 15.1 0 0 0 3.05 23.67L1 31l7.5-1.97A15.1 15.1 0 1 0 16 .8Zm0 27.45c-2.2 0-4.35-.59-6.25-1.72l-.45-.27-4.45 1.17 1.19-4.34-.29-.46A12.36 12.36 0 1 1 16 28.25Zm6.79-9.25c-.37-.19-2.2-1.09-2.54-1.21-.34-.12-.59-.19-.84.19-.25.37-.96 1.21-1.18 1.46-.22.25-.44.28-.81.09-.37-.19-1.57-.58-2.99-1.85-1.1-.98-1.85-2.2-2.07-2.57-.22-.37-.02-.58.17-.76.17-.17.37-.44.56-.66.19-.22.25-.37.37-.62.12-.25.06-.47-.03-.66-.09-.19-.84-2.02-1.15-2.77-.3-.72-.61-.62-.84-.63h-.72c-.25 0-.66.09-1 .47-.34.37-1.31 1.28-1.31 3.11s1.34 3.61 1.53 3.86c.19.25 2.64 4.03 6.4 5.65.9.39 1.6.62 2.14.79.9.29 1.72.25 2.37.15.72-.11 2.2-.9 2.51-1.77.31-.87.31-1.61.22-1.77-.09-.15-.34-.25-.72-.44Z"/></svg>
       <span id="topWhatsappText">مراسلتنا</span>
     </a>
   </nav>
-
   <a href="./catalog.html" style="text-decoration:none" aria-label="باب الفرح">
     <div class="brand"><span>باب الفرح</span><span class="brand-heart" aria-hidden="true">♥</span></div>
     <div class="brand-en">BAB AL FARAH · DIGITAL INVITATIONS</div>
@@ -681,8 +273,7 @@ outline-offset:3px
     </div>
   </section>
 
-  <!-- صندوق مستقل للدعوات، لا تظهر الدعوات إلا بعد اختيار المناسبة -->
-  <section class="gallery-panel" id="galleryPanel" aria-labelledby="galleryTitle">
+  <section class="gallery-panel" id="galleryPanel" aria-labelledby="galleryTitle" aria-live="polite">
     <div class="gallery-top">
       <div class="gallery-title-wrap">
         <h2 id="galleryTitle">دعوات حفلات الزفاف</h2>
@@ -690,7 +281,7 @@ outline-offset:3px
       </div>
       <div class="gallery-tools">
         <button class="refresh" id="refreshBtn" type="button">↻ تحديث</button>
-        <button class="close-gallery" id="closeGalleryBtn" type="button" aria-label="إغلاق الدعوات">✕</button>
+        <button class="back-categories" id="backCategoriesBtn" type="button">↩ رجوع للمناسبات</button>
       </div>
     </div>
     <div class="cards" id="invitationCards"></div>
@@ -729,12 +320,9 @@ outline-offset:3px
 
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
-
-const db=window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {auth:{persistSession:false,autoRefreshToken:false}}
-);
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+  auth:{persistSession:false,autoRefreshToken:false}
+});
 
 const OWNER_PHONE_DISPLAY="07867430232";
 const OWNER_PHONE_WA="9647867430232";
@@ -742,41 +330,27 @@ const $=id=>document.getElementById(id);
 
 const LANG={
 ar:{
-dir:"rtl",
-language:"اختاروا اللغة",
-contact:"مراسلتنا",
+dir:"rtl",contact:"مراسلتنا",
 heroBadge:"فرحتكم تستاهل دعوة مميزة",
 heroTitle:"كل فرحة إلها باب… وإحنا نفتحلكم أحلى البدايات",
 heroText:"اختاروا مناسبتكم، تصفّحوا الدعوات المنشورة، وشوفوا تصميم الباب قبل ما تتواصلون ويانا لتجهيز دعوتكم الخاصة.",
 categoriesTitle:"اختاروا نوع الفرحة",
 categoriesHint:"اضغط على المناسبة حتى تشوف الدعوات الخاصة بيها",
-loadingCount:"جارٍ التحميل…",
-refresh:"↻ تحديث",
-refreshing:"جارٍ التحديث…",
-galleryTitle:"تصاميم باب الفرح",
-gallerySubtitle:"اختاروا التصميم اللي يعجبكم",
-chooseTitle:"اختاروا المناسبة أولاً",
-chooseText:"اضغطوا على أحد الأقسام الستة حتى تظهر التصاميم المنشورة الخاصة بيه.",
+loadingCount:"جارٍ التحميل…",refresh:"↻ تحديث",refreshing:"جارٍ التحديث…",
+gallerySubtitle:"اختاروا التصميم اللي يعجبكم",back:"↩ رجوع للمناسبات",
 loading:"جارٍ تحميل الدعوات المنشورة…",
 emptyTitle:"ماكو دعوات منشورة بهذا القسم حالياً",
 emptyText:"تابعونا، راح نضيف تصاميم جديدة قريباً.",
 loadError:"تعذر تحميل الدعوات حالياً",
 loadErrorText:"تأكد من إعداد قاعدة البيانات الخاص بمعرض باب الفرح.",
-total:"دعوة منشورة",
-count:"دعوة",
-available:"تصميم متاح",
-soon:"تُضاف التصاميم قريباً",
-preview:"♡ معاينة الدعوة",
-order:"اطلب مثلها ↗",
-interactive:"🚪 تصميم تفاعلي",
+total:"دعوة منشورة",available:"تصميم متاح",soon:"تُضاف التصاميم قريباً",
+preview:"♡ معاينة الدعوة",order:"اطلب مثلها ↗",interactive:"🚪 تصميم تفاعلي",
 aboutTitle:"باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة",
 aboutText:"نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.",
 contactTitle:"تفاصيلنا والتواصل ويانا",
 contactText:"عندك استفسار أو تريد تصمم دعوتك الخاصة؟ إحنا بالخدمة بكل حب.",
-call:"☎ اتصل بنا",
-whatsapp:"◉ تواصل واتساب",
-footer:"نصنع لحظاتكم الجميلة بكل حب",
-rights:"جميع الحقوق محفوظة",
+call:"☎ اتصل بنا",whatsapp:"◉ تواصل واتساب",
+footer:"نصنع لحظاتكم الجميلة بكل حب",rights:"جميع الحقوق محفوظة",
 noLoad:"تعذر تحميل الدعوات؛ تأكد من إعداد قاعدة البيانات.",
 contactMessage:"السلام عليكم، أريد الاستفسار عن دعوات باب الفرح ❤️",
 event:{
@@ -788,41 +362,27 @@ graduation:{title:"دعوات حفلات التخرج",small:"احتفال بإ�
 birthday:{title:"دعوات أعياد الميلاد",small:"خلّوا يومهم ذكرى حلوة",singular:"دعوة عيد ميلاد",description:"دعوات أعياد الميلاد"}
 }},
 ku:{
-dir:"rtl",
-language:"زمان هەڵبژێرە",
-contact:"پەیوەندیمان پێوە بکە",
+dir:"rtl",contact:"پەیوەندیمان پێوە بکە",
 heroBadge:"شادییەکەتان بانگهێشتنامەیەکی تایبەتی دەوێت",
 heroTitle:"هەر شادییەک دەرگایەکی هەیە… ئێمە جوانترین دەستپێک بۆتان دەکەینەوە",
 heroText:"جۆری بۆنەکەتان هەڵبژێرن، بانگهێشتنامە بڵاوکراوەکان ببینن و دیزاینی دەرگاکە ببینن پێش ئەوەی پەیوەندیمان پێوە بکەن.",
 categoriesTitle:"جۆری شادییەکەتان هەڵبژێرن",
 categoriesHint:"بۆ بینینی بانگهێشتنامەکانی هەر بۆنەیەک کرتە لەسەری بکەن",
-loadingCount:"بارکردن…",
-refresh:"↻ نوێکردنەوە",
-refreshing:"نوێ دەکرێتەوە…",
-galleryTitle:"دیزاینەکانی دەرگای شادی",
-gallerySubtitle:"ئەو دیزاینە هەڵبژێرن کە پێتان خۆشە",
-chooseTitle:"سەرەتا بۆنەکە هەڵبژێرن",
-chooseText:"کرتە لە یەکێک لە شەش بەشەکە بکەن بۆ بینینی دیزاینە بڵاوکراوەکان.",
+loadingCount:"بارکردن…",refresh:"↻ نوێکردنەوە",refreshing:"نوێ دەکرێتەوە…",
+gallerySubtitle:"ئەو دیزاینە هەڵبژێرن کە پێتان خۆشە",back:"↩ گەڕانەوە بۆ بۆنەکان",
 loading:"بانگهێشتنامە بڵاوکراوەکان بار دەکرێن…",
 emptyTitle:"لە ئێستادا بانگهێشتنامەی بڵاوکراوە لەم بەشەدا نییە",
 emptyText:"بەردەوام بن، دیزاینی نوێ زیاد دەکەین.",
 loadError:"لە ئێستادا نەتوانرا بانگهێشتنامەکان بار بکرێن",
 loadErrorText:"تکایە ڕێکخستنی بنکەدراوەی گەلەری دەرگای شادی بپشکنن.",
-total:"بانگهێشتنامەی بڵاوکراوە",
-count:"بانگهێشتنامە",
-available:"دیزاین بەردەستە",
-soon:"دیزاینەکان بەم زووانە زیاد دەکرێن",
-preview:"♡ پیشاندانی بانگهێشتنامە",
-order:"داوای هاوشێوەی بکە ↗",
-interactive:"🚪 دیزاینی کارلێککەر",
+total:"بانگهێشتنامەی بڵاوکراوە",available:"دیزاین بەردەستە",soon:"دیزاینەکان بەم زووانە زیاد دەکرێن",
+preview:"♡ پیشاندانی بانگهێشتنامە",order:"داوای هاوشێوەی بکە ↗",interactive:"🚪 دیزاینی کارلێککەر",
 aboutTitle:"دەرگای شادی… وردەکارییە بچووکەکان یادگاریی گەورە دروست دەکەن",
 aboutText:"بانگهێشتنامەی ئەلیکترۆنی کارلێککەر بۆ بۆنە خۆشەکان ئامادە دەکەین، بە دیزاینی جۆراوجۆر و دەرگایەکی تایبەت. ئەو بیرۆکەیە هەڵبژێرن کە لەگەڵ شادییەکەتان دەگونجێت و پەیوەندیمان پێوە بکەن.",
 contactTitle:"زانیاری و پەیوەندیمان",
 contactText:"پرسیارتان هەیە یان دەتەوێت بانگهێشتنامەی تایبەت دروست بکەیت؟ بە خۆشحاڵی لە خزمەتداین.",
-call:"☎ پەیوەندی تەلەفۆنی",
-whatsapp:"◉ واتساپ",
-footer:"بە خۆشەویستی ساتە جوانەکانتان دروست دەکەین",
-rights:"هەموو مافەکان پارێزراون",
+call:"☎ پەیوەندی تەلەفۆنی",whatsapp:"◉ واتساپ",
+footer:"بە خۆشەویستی ساتە جوانەکانتان دروست دەکەین",rights:"هەموو مافەکان پارێزراون",
 noLoad:"بارکردنی بانگهێشتنامەکان سەرکەوتوو نەبوو؛ ڕێکخستنی بنکەدراوە بپشکنە.",
 contactMessage:"سڵاو، دەمەوێت دەربارەی بانگهێشتنامەکانی دەرگای شادی بپرسم ❤️",
 event:{
@@ -834,41 +394,27 @@ graduation:{title:"بانگهێشتنامەی دەرچوون",small:"جەژن ب
 birthday:{title:"بانگهێشتنامەی لەدایکبوون",small:"ڕۆژەکەیان بکەنە یادگارییەکی خۆش",singular:"بانگهێشتنامەی لەدایکبوون",description:"بانگهێشتنامەی لەدایکبوون"}
 }},
 en:{
-dir:"ltr",
-language:"Choose language",
-contact:"Message us",
+dir:"ltr",contact:"Message us",
 heroBadge:"Your celebration deserves a special invitation",
 heroTitle:"Every celebration has a door… let us open a beautiful beginning",
 heroText:"Choose your occasion, browse published invitations, and preview the door design before contacting us to prepare your own invitation.",
 categoriesTitle:"Choose your occasion",
 categoriesHint:"Select an occasion to see its invitations",
-loadingCount:"Loading…",
-refresh:"↻ Refresh",
-refreshing:"Refreshing…",
-galleryTitle:"Bab Al Farah Designs",
-gallerySubtitle:"Choose the design you love",
-chooseTitle:"Choose an occasion first",
-chooseText:"Select one of the six categories to see its published designs.",
+loadingCount:"Loading…",refresh:"↻ Refresh",refreshing:"Refreshing…",
+gallerySubtitle:"Choose the design you love",back:"↩ Back to occasions",
 loading:"Loading published invitations…",
 emptyTitle:"There are no published invitations in this category yet",
 emptyText:"Check back soon for new designs.",
 loadError:"Invitations could not be loaded",
 loadErrorText:"Please check the Bab Al Farah gallery database setup.",
-total:"published invitations",
-count:"invitations",
-available:"designs available",
-soon:"New designs coming soon",
-preview:"♡ Preview invitation",
-order:"Order a similar one ↗",
-interactive:"🚪 Interactive design",
+total:"published invitations",available:"designs available",soon:"New designs coming soon",
+preview:"♡ Preview invitation",order:"Order a similar one ↗",interactive:"🚪 Interactive design",
 aboutTitle:"Bab Al Farah… small details make big memories",
 aboutText:"We create interactive digital invitations for happy occasions, with varied designs and a special opening door. Choose the idea that suits your celebration and contact us to prepare your invitation.",
 contactTitle:"Contact details",
 contactText:"Have a question or want a custom invitation? We are happy to help.",
-call:"☎ Call us",
-whatsapp:"◉ WhatsApp us",
-footer:"Creating your beautiful moments with love",
-rights:"All rights reserved",
+call:"☎ Call us",whatsapp:"◉ WhatsApp us",
+footer:"Creating your beautiful moments with love",rights:"All rights reserved",
 noLoad:"Could not load invitations. Please check the database setup.",
 contactMessage:"Hello, I would like to ask about Bab Al Farah invitations ❤️",
 event:{
@@ -894,31 +440,19 @@ let allInvitations=[];
 let activeCategory=null;
 let currentLang="ar";
 let toastTimer=null;
+let loadRequest=0;
 
-function tr(key){
-return LANG[currentLang][key]||LANG.ar[key]||key
-}
-
-function eventType(item){
-return EVENT_TYPES[item.event_type]?item.event_type:"wedding"
-}
-
-function displayName(item){
-return String(item.title||LANG[currentLang].event[eventType(item)].singular).trim()
-}
+function tr(key){return LANG[currentLang][key]||LANG.ar[key]||key}
+function eventType(item){return EVENT_TYPES[item.event_type]?item.event_type:"wedding"}
+function displayName(item){return String(item.title||LANG[currentLang].event[eventType(item)].singular).trim()}
 
 function validHttpUrl(value){
 try{
 const u=new URL(String(value||""));
 return["https:","http:"].includes(u.protocol)?u.href:""
-}catch(e){
-return""
+}catch(e){return""}
 }
-}
-
-function inviteUrl(item){
-return validHttpUrl(item.invitation_url)||"#"
-}
+function inviteUrl(item){return validHttpUrl(item.invitation_url)||"#"}
 
 function makeWhatsAppUrl(item){
 const t=LANG[currentLang];
@@ -936,12 +470,19 @@ clearTimeout(toastTimer);
 toastTimer=setTimeout(()=>el.classList.remove("show"),2800)
 }
 
+function updateCounts(){
+$("totalCount").textContent=allInvitations.length+" "+tr("total");
+document.querySelectorAll(".category[data-category]").forEach(button=>{
+const key=button.dataset.category;
+const count=allInvitations.filter(item=>eventType(item)===key).length;
+button.querySelector("small").textContent=count?count+" "+tr("available"):tr("soon")
+})
+}
+
 function applyLanguage(lang){
 if(!LANG[lang])return;
-
 currentLang=lang;
 const t=LANG[lang];
-
 document.documentElement.lang=lang;
 document.documentElement.dir=t.dir;
 
@@ -958,6 +499,7 @@ $("heroText").textContent=t.heroText;
 $("categoriesTitle").textContent=t.categoriesTitle;
 $("categoriesHint").textContent=t.categoriesHint;
 $("refreshBtn").textContent=t.refresh;
+$("backCategoriesBtn").textContent=t.back;
 $("aboutTitle").textContent=t.aboutTitle;
 $("aboutText").textContent=t.aboutText;
 $("contactTitle").textContent=t.contactTitle;
@@ -970,51 +512,24 @@ $("rightsText").textContent=t.rights;
 document.querySelectorAll(".category[data-category]").forEach(button=>{
 const key=button.dataset.category;
 button.querySelector("strong").textContent=t.event[key].title;
-button.querySelector("small").textContent=t.event[key].small;
 button.setAttribute("aria-label",t.event[key].title)
 });
-
-if(!allInvitations.length){
-$("totalCount").textContent=t.loadingCount
-}
-
-if(activeCategory){
-$("galleryTitle").textContent=t.event[activeCategory].title
-}
 
 updateCounts();
 renderCards()
 }
 
-function updateCounts(){
-$("totalCount").textContent=allInvitations.length+" "+tr("total");
-
-document.querySelectorAll(".category[data-category]").forEach(button=>{
-const key=button.dataset.category;
-const count=allInvitations.filter(item=>eventType(item)===key).length;
-button.querySelector("small").textContent=count
-?count+" "+tr("available")
-:tr("soon")
-})
-}
-
 function fallbackMedia(item){
-const t=LANG[currentLang];
 const key=eventType(item);
-
 const wrap=document.createElement("div");
 wrap.className="media-fallback";
-
 const icon=document.createElement("span");
 icon.className="big-icon";
 icon.textContent=EVENT_TYPES[key].icon;
-
 const title=document.createElement("strong");
 title.textContent="باب الفرح";
-
 const small=document.createElement("small");
-small.textContent=t.event[key].singular+" · "+t.interactive.replace(/^🚪 /,"");
-
+small.textContent=LANG[currentLang].event[key].singular+" · "+LANG[currentLang].interactive.replace(/^🚪 /,"");
 wrap.append(icon,title,small);
 return wrap
 }
@@ -1023,14 +538,12 @@ function cardMedia(item){
 const key=eventType(item);
 const holder=document.createElement("div");
 holder.className="card-media";
-
 const chip=document.createElement("span");
 chip.className="media-chip";
 chip.textContent=LANG[currentLang].event[key].singular;
 holder.appendChild(chip);
 
 const url=validHttpUrl(item.image_url||"");
-
 if(url&&/\.mp4(?:$|\?)/i.test(url)){
 const video=document.createElement("video");
 video.src=url;
@@ -1038,70 +551,56 @@ video.muted=true;
 video.playsInline=true;
 video.preload="metadata";
 video.setAttribute("aria-label","Preview invitation");
-
-video.addEventListener("loadedmetadata",()=>{
-try{video.currentTime=.1}catch(e){}
-});
-
+video.addEventListener("loadedmetadata",()=>{try{video.currentTime=.1}catch(e){}});
 holder.appendChild(video)
 }else if(url){
 const img=document.createElement("img");
 img.src=url;
 img.alt=displayName(item);
 img.loading="lazy";
-
 img.onerror=()=>{
 img.remove();
-if(!holder.querySelector(".media-fallback")){
-holder.appendChild(fallbackMedia(item))
-}
+if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item))
 };
-
 holder.appendChild(img)
 }else{
 holder.appendChild(fallbackMedia(item))
 }
-
 return holder
 }
 
 function renderCards(){
 const container=$("invitationCards");
 container.replaceChildren();
-
 const t=LANG[currentLang];
 const panel=$("galleryPanel");
+const categories=$("categoriesSection");
 
 if(!activeCategory){
 panel.classList.remove("open");
+categories.style.display="";
 return
 }
 
+/* عند اختيار مناسبة نخفي جميع صناديق المناسبات */
+categories.style.display="none";
 panel.classList.add("open");
 
-const items=allInvitations
-.filter(item=>eventType(item)===activeCategory);
-
-$("shownCount")?.remove();
-
+const items=allInvitations.filter(item=>eventType(item)===activeCategory);
 $("galleryTitle").textContent=t.event[activeCategory].title;
-$("gallerySubtitle").textContent=t.gallerySubtitle;
+$("gallerySubtitle").textContent=t.gallerySubtitle+" · "+items.length;
 
 if(!items.length){
 const empty=document.createElement("div");
 empty.className="empty";
-
 const icon=document.createElement("span");
 icon.className="empty-icon";
 icon.textContent="♡";
-
 const strong=document.createElement("strong");
 strong.textContent=t.emptyTitle;
-
 const p=document.createElement("p");
 p.textContent=t.emptyText;
 p.style.margin="5px 0 0";
-
 empty.append(icon,strong,p);
 container.appendChild(empty);
 return
@@ -1109,7 +608,6 @@ return
 
 for(const item of items){
 const key=eventType(item);
-
 const card=document.createElement("article");
 card.className="invite-card";
 card.appendChild(cardMedia(item));
@@ -1129,15 +627,12 @@ body.appendChild(sub);
 
 const meta=document.createElement("div");
 meta.className="card-meta";
-
 const typePill=document.createElement("span");
 typePill.className="meta-pill";
 typePill.textContent=t.event[key].singular;
-
 const template=document.createElement("span");
 template.className="meta-pill";
 template.textContent=t.interactive;
-
 meta.append(typePill,template);
 body.appendChild(meta);
 
@@ -1150,7 +645,6 @@ view.href=inviteUrl(item);
 view.target="_blank";
 view.rel="noopener noreferrer";
 view.textContent=t.preview;
-
 if(view.href==="#"){
 view.style.pointerEvents="none";
 view.setAttribute("aria-disabled","true")
@@ -1171,107 +665,91 @@ container.appendChild(card)
 }
 
 async function loadCatalog(){
+const requestId=++loadRequest;
 const button=$("refreshBtn");
 button.disabled=true;
 button.textContent=tr("refreshing");
 
 if(activeCategory){
-$("invitationCards").innerHTML=
-'<div class="loading">'+tr("loading")+'</div>'
+$("invitationCards").innerHTML='<div class="loading">'+tr("loading")+'</div>'
 }
 
 try{
 const {data,error}=await db.rpc("get_public_invitation_catalog");
 if(error)throw error;
+if(requestId!==loadRequest)return;
 
 allInvitations=(Array.isArray(data)?data:[])
-.map(row=>typeof row==="string"?JSON.parse(row):row)
-.filter(item=>
-item&&
-item.is_visible===true&&
-validHttpUrl(item.invitation_url)
-)
-.sort((a,b)=>
-(Number(a.sort_order)||0)-(Number(b.sort_order)||0)
-);
+.map(row=>{
+if(typeof row==="string"){
+try{return JSON.parse(row)}catch(e){return null}
+}
+return row
+})
+.filter(item=>item&&item.is_visible===true&&validHttpUrl(item.invitation_url))
+.sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
 
 updateCounts();
 renderCards()
 }catch(error){
+if(requestId!==loadRequest)return;
 console.error("Catalog load error:",error);
-
 if(activeCategory){
 $("invitationCards").replaceChildren();
-
 const box=document.createElement("div");
 box.className="error";
-
 const strong=document.createElement("strong");
 strong.textContent=tr("loadError");
-
 const p=document.createElement("p");
 p.textContent=tr("loadErrorText");
-
 box.append(strong,p);
 $("invitationCards").appendChild(box)
 }
-
 $("totalCount").textContent=tr("loadError");
 showToast(tr("noLoad"))
 }finally{
+if(requestId===loadRequest){
 button.disabled=false;
 button.textContent=tr("refresh")
 }
 }
+}
 
-/* اختيار المناسبة يفتح صندوقاً مستقلاً بعنوان المناسبة */
+function chooseCategory(key){
+if(!EVENT_TYPES[key])return;
+activeCategory=key;
 document.querySelectorAll(".category[data-category]").forEach(button=>{
-button.addEventListener("click",()=>{
-activeCategory=button.dataset.category;
-
-document.querySelectorAll(".category").forEach(b=>{
-b.classList.toggle("active",b===button)
+button.classList.toggle("active",button.dataset.category===key)
 });
-
 renderCards();
+$("galleryPanel").scrollIntoView({behavior:"smooth",block:"start"})
+}
 
-$("galleryPanel").scrollIntoView({
-behavior:"smooth",
-block:"start"
-})
-})
+function backToCategories(){
+activeCategory=null;
+document.querySelectorAll(".category").forEach(button=>button.classList.remove("active"));
+$("galleryPanel").classList.remove("open");
+$("categoriesSection").style.display="";
+$("invitationCards").replaceChildren();
+$("categoriesSection").scrollIntoView({behavior:"smooth",block:"start"})
+}
+
+document.querySelectorAll(".category[data-category]").forEach(button=>{
+button.addEventListener("click",()=>chooseCategory(button.dataset.category))
 });
 
 $("refreshBtn").addEventListener("click",loadCatalog);
-
-$("closeGalleryBtn").addEventListener("click",()=>{
-activeCategory=null;
-
-document.querySelectorAll(".category").forEach(button=>{
-button.classList.remove("active")
-});
-
-$("galleryPanel").classList.remove("open");
-
-$("categoriesSection").scrollIntoView({
-behavior:"smooth",
-block:"start"
-})
-});
+$("backCategoriesBtn").addEventListener("click",backToCategories);
 
 $("year").textContent=String(new Date().getFullYear());
-
 $("phoneText").textContent=OWNER_PHONE_DISPLAY;
 $("phoneText").href="tel:"+OWNER_PHONE_DISPLAY.replace(/[^\d+]/g,"");
 $("callBtn").href="tel:"+OWNER_PHONE_DISPLAY.replace(/[^\d+]/g,"");
-
 $("whatsappBtn").href="https://wa.me/"+OWNER_PHONE_WA;
 $("menuContact").href="https://wa.me/"+OWNER_PHONE_WA;
 
 document.querySelectorAll("[data-lang]").forEach(button=>{
-button.addEventListener("click",()=>{
-applyLanguage(button.dataset.lang)
-})
+button.addEventListener("click",()=>applyLanguage(button.dataset.lang))
 });
 
 applyLanguage("ar");
