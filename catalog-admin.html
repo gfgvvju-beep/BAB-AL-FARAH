@@ -10,15 +10,63 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f7f1e9;--wine:#4e1728;--gold:#c3a36b;--ink:#33242a;--muted:#88777b;--line:#e9dcd5;--green:#16784d;--red:#a52e3d}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#f7eee5,#fffdf9);color:var(--ink);font-family:Cairo,Tahoma,sans-serif}
-.wrap{width:min(1050px,calc(100% - 24px));margin:auto}.head{text-align:center;padding:24px 0}.brand{font:700 40px Amiri,serif;color:var(--wine)}.brand span{color:var(--gold)}.sub,.muted,.small{color:var(--muted);font-size:12px;line-height:1.9}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(145deg,#f7eee5,#fffdf9);color:var(--ink);font-family:Cairo,Tahoma,sans-serif}
+.wrap{width:min(1050px,calc(100% - 24px));margin:auto}
+.head{text-align:center;padding:24px 0}
+.brand{font:700 40px Amiri,serif;color:var(--wine)}
+.brand span{color:var(--gold)}
+.sub,.muted,.small{color:var(--muted);font-size:12px;line-height:1.9}
 .panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(14px,3vw,25px);margin-bottom:17px;box-shadow:0 12px 35px #4e17280b}
-h1,h2{font:700 24px Amiri,serif;color:var(--wine);margin:0 0 5px}h3{margin:0 0 5px;font-size:15px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px}.full{grid-column:1/-1}
-label{font-size:12px;font-weight:800;color:#684b52}input,select,textarea{width:100%;font:inherit;font-size:13px;padding:11px;border:1px solid #e4d6d4;border-radius:10px;background:#fffdfa;color:var(--ink);outline:none}input[type=file]{padding:8px}textarea{min-height:75px}input:focus,select:focus,textarea:focus{border-color:var(--gold)}
-.actions,.toolbar,.tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}.toolbar{justify-content:space-between;margin:0 0 12px}.btn{border:0;border-radius:10px;padding:10px 14px;font:700 12px Cairo;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:5px}.primary{background:linear-gradient(135deg,#4e1728,#85334a);color:white}.secondary{background:#f6eee5;border:1px solid #e8d8c7;color:#674a31}.danger{background:#fff0f0;color:#a52e3d;border:1px solid #f0d0d3}.green{background:#eaf7ef;color:#16784d}.btn:disabled{opacity:.6;cursor:wait}
-.notice{padding:11px 13px;border-radius:10px;background:#fbf3e4;color:#775a31;font-size:12px;line-height:1.8;margin-top:12px;overflow-wrap:anywhere}.notice.error{background:#fff0f0;color:#a52e3d}.notice.success{background:#eaf7ef;color:#16784d}.hidden{display:none!important}
-.tabs{margin:0 0 15px}.tab{flex:1;min-width:180px}.tab.active{background:#4e1728;color:#fff}.list{display:grid;gap:10px}.item{border:1px solid var(--line);border-radius:13px;padding:12px;display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;align-items:center}.thumb{height:100px;border-radius:9px;overflow:hidden;background:linear-gradient(145deg,#4e1728,#c3a36b);color:#fff;display:grid;place-items:center}.thumb img,.thumb video{width:100%;height:100%;object-fit:cover}.item p{margin:0;color:var(--muted);font-size:11px;line-height:1.8;overflow-wrap:anywhere}.item-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.item-actions .btn{padding:6px 9px;font-size:11px}.status{font-size:11px;font-weight:800}.on{color:var(--green)}.off{color:var(--red)}.preview{max-width:240px;max-height:200px;border-radius:12px;margin-top:8px}.empty{text-align:center;padding:20px;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.section-tag{display:inline-block;background:#f6eee5;border-radius:20px;padding:4px 9px;font-size:11px;color:#674a31;margin-bottom:9px}.footer{text-align:center;color:#9b898c;font-size:11px;padding:10px 0 25px}
-@media(max-width:600px){.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.item{grid-template-columns:65px minmax(0,1fr);gap:9px;padding:9px}.thumb{height:82px}.brand{font-size:34px}.panel h1,.panel h2{font-size:22px}.item-actions .btn{flex:1}}
+h1,h2{font:700 24px Amiri,serif;color:var(--wine);margin:0 0 5px}
+h3{margin:0 0 5px;font-size:15px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+.full{grid-column:1/-1}
+label{font-size:12px;font-weight:800;color:#684b52}
+input,select,textarea{width:100%;font:inherit;font-size:13px;padding:11px;border:1px solid #e4d6d4;border-radius:10px;background:#fffdfa;color:var(--ink);outline:none}
+input[type=file]{padding:8px}
+textarea{min-height:75px}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+.actions,.toolbar,.tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.toolbar{justify-content:space-between;margin:0 0 12px}
+.btn{border:0;border-radius:10px;padding:10px 14px;font:700 12px Cairo;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:5px}
+.primary{background:linear-gradient(135deg,#4e1728,#85334a);color:white}
+.secondary{background:#f6eee5;border:1px solid #e8d8c7;color:#674a31}
+.danger{background:#fff0f0;color:#a52e3d;border:1px solid #f0d0d3}
+.green{background:#eaf7ef;color:#16784d}
+.btn:disabled{opacity:.6;cursor:wait}
+.notice{padding:11px 13px;border-radius:10px;background:#fbf3e4;color:#775a31;font-size:12px;line-height:1.8;margin-top:12px;overflow-wrap:anywhere;white-space:pre-line}
+.notice.error{background:#fff0f0;color:#a52e3d}
+.notice.success{background:#eaf7ef;color:#16784d}
+.hidden{display:none!important}
+.tabs{margin:0 0 15px}
+.tab{flex:1;min-width:180px}
+.tab.active{background:#4e1728;color:#fff}
+.list{display:grid;gap:10px}
+.item{border:1px solid var(--line);border-radius:13px;padding:12px;display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;align-items:center}
+.thumb{height:100px;border-radius:9px;overflow:hidden;background:linear-gradient(145deg,#4e1728,#c3a36b);color:#fff;display:grid;place-items:center}
+.thumb img,.thumb video{width:100%;height:100%;object-fit:cover}
+.item p{margin:0;color:var(--muted);font-size:11px;line-height:1.8;overflow-wrap:anywhere}
+.item-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.item-actions .btn{padding:6px 9px;font-size:11px}
+.status{font-size:11px;font-weight:800}
+.on{color:var(--green)}
+.off{color:var(--red)}
+.preview{max-width:240px;max-height:200px;border-radius:12px;margin-top:8px}
+.empty{text-align:center;padding:20px;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+.section-tag{display:inline-block;background:#f6eee5;border-radius:20px;padding:4px 9px;font-size:11px;color:#674a31;margin-bottom:9px}
+.footer{text-align:center;color:#9b898c;font-size:11px;padding:10px 0 25px}
+.fixed-text{background:#f9f4ec;border:1px solid #e9dcd5;border-radius:10px;padding:12px;font-size:13px;line-height:2;color:#684b52}
+@media(max-width:600px){
+.form-grid{grid-template-columns:1fr}
+.full{grid-column:auto}
+.item{grid-template-columns:65px minmax(0,1fr);gap:9px;padding:9px}
+.thumb{height:82px}
+.brand{font-size:34px}
+.panel h1,.panel h2{font-size:22px}
+.item-actions .btn{flex:1}
+}
 </style>
 </head>
 <body>
@@ -26,13 +74,26 @@ label{font-size:12px;font-weight:800;color:#684b52}input,select,textarea{width:1
 <div class="brand">باب الفرح <span>♥</span></div>
 <div class="sub">لوحة إدارة المعرض واختبار جنس الجنين</div>
 </header>
+
 <main class="wrap">
 <section id="loginPanel" class="panel">
-<h1>دخول الإدارة</h1><p class="muted">سجّل الدخول بحساب الإدارة المصرح له.</p>
-<form id="loginForm"><div class="form-grid">
-<div class="field full"><label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="username" required></div>
-<div class="field full"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" required></div>
-</div><div class="actions"><button class="btn primary" id="loginBtn">دخول الإدارة</button></div></form>
+<h1>دخول الإدارة</h1>
+<p class="muted">سجّل الدخول بحساب الإدارة المصرح له.</p>
+<form id="loginForm">
+<div class="form-grid">
+<div class="field full">
+<label>البريد الإلكتروني</label>
+<input id="email" type="email" autocomplete="username" required>
+</div>
+<div class="field full">
+<label>كلمة المرور</label>
+<input id="password" type="password" autocomplete="current-password" required>
+</div>
+</div>
+<div class="actions">
+<button class="btn primary" id="loginBtn">دخول الإدارة</button>
+</div>
+</form>
 <div id="loginNotice" class="notice hidden"></div>
 </section>
 
@@ -41,6 +102,7 @@ label{font-size:12px;font-weight:800;color:#684b52}input,select,textarea{width:1
 <button class="btn secondary" id="logoutBtn">تسجيل الخروج</button>
 <a class="btn secondary" href="https://bab-alfarah.pages.dev/" target="_blank" rel="noopener">فتح موقع الزبائن ↗</a>
 </div>
+
 <div class="tabs">
 <button class="btn tab active" data-tab="catalogPanel">معرض الدعوات</button>
 <button class="btn tab secondary" data-tab="genderPanel">اختبار جنس الجنين 🎈</button>
@@ -50,199 +112,869 @@ label{font-size:12px;font-weight:800;color:#684b52}input,select,textarea{width:1
 <div class="panel">
 <h1 id="catalogHeading">إضافة دعوة إلى معرض الزبائن</h1>
 <p class="muted">تقدر تضيف صورة أو GIF أو فيديو MP4. تبقى الدعوات الأصلية منفصلة عن المعرض.</p>
+
 <form id="catalogForm">
-<input type="hidden" id="catId"><input type="hidden" id="catImageUrl">
+<input type="hidden" id="catId">
+<input type="hidden" id="catImageUrl">
+
 <div class="form-grid">
-<div class="field"><label>اسم الدعوة *</label><input id="catTitle" required maxlength="140"></div>
-<div class="field"><label>قسم المناسبة *</label><select id="catType">
-<option value="wedding">دعوات حفلات الزفاف</option><option value="engagement">دعوات عقد القران</option><option value="henna">دعوات حفلات الحنّة</option><option value="circumcision">دعوات مناسبة الختان</option><option value="graduation">دعوات حفلات التخرج</option><option value="birthday">دعوات أعياد الميلاد</option>
-</select></div>
-<div class="field full"><label>رابط الدعوة الفعلي *</label><input id="catUrl" type="url" required placeholder="https://..."></div>
-<div class="field full"><label>صورة أو GIF أو فيديو</label><input id="catFile" type="file" accept="image/*,video/mp4,video/webm,video/ogg,.gif,.mp4,.webm,.ogv,.ogg"><img id="catPreview" class="preview hidden" alt="معاينة الوسائط"></div>
-<div class="field full"><label>وصف اختياري</label><textarea id="catDescription" maxlength="500"></textarea></div>
-<div class="field"><label>ترتيب العرض</label><input id="catOrder" type="number" value="0"></div>
-<div class="field"><label>حالة النشر</label><select id="catVisible"><option value="true">منشورة</option><option value="false">مخفية</option></select></div>
+<div class="field">
+<label>اسم الدعوة *</label>
+<input id="catTitle" required maxlength="140">
 </div>
-<div class="actions"><button class="btn primary" id="catSave">حفظ الدعوة</button><button class="btn secondary" type="button" id="catReset">تفريغ الحقول</button></div>
-</form><div id="catNotice" class="notice hidden"></div>
+
+<div class="field">
+<label>قسم المناسبة *</label>
+<select id="catType">
+<option value="wedding">دعوات حفلات الزفاف</option>
+<option value="engagement">دعوات عقد القران</option>
+<option value="henna">دعوات حفلات الحنّة</option>
+<option value="circumcision">دعوات مناسبة الختان</option>
+<option value="graduation">دعوات حفلات التخرج</option>
+<option value="birthday">دعوات أعياد الميلاد</option>
+</select>
 </div>
-<div class="panel"><div class="toolbar"><h2>دعوات المعرض</h2><button class="btn secondary" id="catRefresh">↻ تحديث</button></div><div id="catList" class="list"><div class="empty">جارٍ التحميل…</div></div></div>
+
+<div class="field full">
+<label>رابط الدعوة الفعلي *</label>
+<input id="catUrl" type="url" required placeholder="https://...">
+</div>
+
+<div class="field full">
+<label>صورة أو GIF أو فيديو</label>
+<input id="catFile" type="file" accept="image/*,video/mp4,video/webm,video/ogg,.gif,.mp4,.webm,.ogv,.ogg">
+<img id="catPreview" class="preview hidden" alt="معاينة الوسائط">
+</div>
+
+<div class="field full">
+<label>وصف اختياري</label>
+<textarea id="catDescription" maxlength="500"></textarea>
+</div>
+
+<div class="field">
+<label>ترتيب العرض</label>
+<input id="catOrder" type="number" value="0">
+</div>
+
+<div class="field">
+<label>حالة النشر</label>
+<select id="catVisible">
+<option value="true">منشورة</option>
+<option value="false">مخفية</option>
+</select>
+</div>
+</div>
+
+<div class="actions">
+<button class="btn primary" id="catSave">حفظ الدعوة</button>
+<button class="btn secondary" type="button" id="catReset">تفريغ الحقول</button>
+</div>
+</form>
+<div id="catNotice" class="notice hidden"></div>
+</div>
+
+<div class="panel">
+<div class="toolbar">
+<h2>دعوات المعرض</h2>
+<button class="btn secondary" id="catRefresh">↻ تحديث</button>
+</div>
+<div id="catList" class="list"><div class="empty">جارٍ التحميل…</div></div>
+</div>
 </section>
 
 <section id="genderPanel" class="hidden">
 <div class="panel">
 <span class="section-tag">منتج مستقل عن دعوات الزفاف</span>
 <h1 id="genderHeading">إضافة اختبار جنس الجنين</h1>
-<p class="muted">حدد النتيجة الحقيقية هنا بشكل سري. الزائر لا يحصل على جنس الطفل أو اسمه من دوال البداية، وتظهر النتيجة بعد إكمال اللعبة.</p>
-<form id="genderForm">
-<input type="hidden" id="testId"><input type="hidden" id="testToken">
-<div class="form-grid">
-<div class="field full"><label>اسم الاختبار *</label><input id="testTitle" required maxlength="150" value="اختبار جنس الجنين"></div>
-<div class="field"><label>عدد الأطفال</label><select id="babyCount"><option value="1">طفل واحد</option><option value="2">توأم</option></select></div>
-<div class="field"><label>جنس الطفل الأول (سري) *</label><select id="baby1Gender"><option value="boy">ولد 💙</option><option value="girl">بنت 💗</option></select></div>
-<div class="field hidden" id="baby2Field"><label>جنس الطفل الثاني (سري) *</label><select id="baby2Gender"><option value="girl">بنت 💗</option><option value="boy">ولد 💙</option></select></div>
-<div class="field"><label>اسم الطفل الأول (اختياري)</label><input id="baby1Name" maxlength="100"></div>
-<div class="field hidden" id="baby2NameField"><label>اسم الطفل الثاني (اختياري)</label><input id="baby2Name" maxlength="100"></div>
-<div class="field"><label>اسم الأب (اختياري)</label><input id="fatherName" maxlength="100"></div>
-<div class="field"><label>اسم الأم (اختياري)</label><input id="motherName" maxlength="100"></div>
-<div class="field full"><label>عبارة التهنئة (اختياري)</label><textarea id="congratulationText" maxlength="500" placeholder="مبارك قدوم المولود، جعله الله من مواليد السعادة"></textarea></div>
+<p class="muted">حدد النتيجة الحقيقية هنا بشكل سري. جنس الطفل وأسماؤه لا تظهر للزائر إلا بعد إكمال اللعبة.</p>
 
-<div class="field full"><label>وسائط شاشة البداية (اختياري)</label><input id="openingFile" type="file" accept="image/*,video/*,.gif,.mp4,.webm,.ogv,.ogg"><input id="openingUrl" type="hidden"><p class="small">إذا ما تختار ملف، صفحة اللعبة تعرض تصميماً متحركاً جاهزاً.</p><div id="openingInfo" class="small"></div></div>
-<div class="field full"><label>وسائط شاشة اللعبة (اختياري)</label><input id="gameFile" type="file" accept="image/*,video/*,.gif,.mp4,.webm,.ogv,.ogg"><input id="gameUrl" type="hidden"><p class="small">تقدر تخليها فارغة حتى تظهر الخلفية الافتراضية والبالونات.</p><div id="gameInfo" class="small"></div></div>
-<div class="field full"><label>موسيقى اختيارية للاختبار</label><input id="musicFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac"><input id="musicUrl" type="hidden"><div id="musicInfo" class="small"></div></div>
-<div class="field full"><label>صوت فرقعة البالون (اختياري)</label><input id="popFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac"><input id="popUrl" type="hidden"><div id="popInfo" class="small"></div></div>
-<div class="field"><label>حالة الاختبار</label><select id="testVisible"><option value="true">متاح للزوار</option><option value="false">مخفي</option></select></div>
+<form id="genderForm">
+<input type="hidden" id="testId">
+<input type="hidden" id="testToken">
+
+<div class="form-grid">
+<div class="field full">
+<label>اسم الاختبار *</label>
+<input id="testTitle" required maxlength="150" value="اختبار جنس الجنين">
 </div>
-<div class="actions"><button class="btn primary" id="testSave">حفظ الاختبار</button><button class="btn secondary" type="button" id="testReset">اختبار جديد / تفريغ</button></div>
+
+<div class="field">
+<label>عدد الأطفال</label>
+<select id="babyCount">
+<option value="1">طفل واحد</option>
+<option value="2">توأم</option>
+</select>
+</div>
+
+<div class="field">
+<label>جنس الطفل الأول (سري) *</label>
+<select id="baby1Gender">
+<option value="boy">ولد 💙</option>
+<option value="girl">بنت 💗</option>
+</select>
+</div>
+
+<div class="field hidden" id="baby2Field">
+<label>جنس الطفل الثاني (سري) *</label>
+<select id="baby2Gender">
+<option value="girl">بنت 💗</option>
+<option value="boy">ولد 💙</option>
+</select>
+</div>
+
+<div class="field">
+<label>اسم الطفل الأول (اختياري)</label>
+<input id="baby1Name" maxlength="100">
+</div>
+
+<div class="field hidden" id="baby2NameField">
+<label>اسم الطفل الثاني (اختياري)</label>
+<input id="baby2Name" maxlength="100">
+</div>
+
+<div class="field">
+<label>اسم الأب (اختياري)</label>
+<input id="fatherName" maxlength="100">
+</div>
+
+<div class="field">
+<label>اسم الأم (اختياري)</label>
+<input id="motherName" maxlength="100">
+</div>
+
+<div class="field full">
+<label>عبارة التهنئة الثابتة</label>
+<div class="fixed-text">اللهم أنبته نباتاً حسناً، واجعله قرة عين لوالديه، واحفظه وبارك لهما فيه</div>
+<p class="small">تُستخدم العبارة الثابتة في الاختبار، ولا تحتاج إلى إدخالها في كل مرة.</p>
+</div>
+
+<div class="field full">
+<label>وسائط شاشة البداية (اختياري)</label>
+<input id="openingFile" type="file" accept="image/*,video/*,.gif,.mp4,.webm,.ogv,.ogg">
+<input id="openingUrl" type="hidden">
+<p class="small">إذا ما تختار ملف، صفحة اللعبة تعرض تصميماً متحركاً جاهزاً. الملف المحفوظ يبقى مرتبطاً بهذا الاختبار عند التعديل.</p>
+<div id="openingInfo" class="small"></div>
+</div>
+
+<div class="field full">
+<label>وسائط شاشة اللعبة (اختياري)</label>
+<input id="gameFile" type="file" accept="image/*,video/*,.gif,.mp4,.webm,.ogv,.ogg">
+<input id="gameUrl" type="hidden">
+<p class="small">تقدر تخليها فارغة حتى تظهر الخلفية الافتراضية والبالونات. عند تعديل الاختبار، تبقى الوسائط القديمة ما لم ترفع بديلاً.</p>
+<div id="gameInfo" class="small"></div>
+</div>
+
+<div class="field full">
+<label>موسيقى اختيارية للاختبار</label>
+<input id="musicFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac">
+<input id="musicUrl" type="hidden">
+<p class="small">الموسيقى المحفوظة تبقى مرتبطة بالاختبار عند التعديل ما لم تختَر ملفاً جديداً.</p>
+<div id="musicInfo" class="small"></div>
+</div>
+
+<div class="field">
+<label>حالة الاختبار</label>
+<select id="testVisible">
+<option value="true">متاح للزوار</option>
+<option value="false">مخفي</option>
+</select>
+</div>
+</div>
+
+<div class="actions">
+<button class="btn primary" id="testSave">حفظ الاختبار</button>
+<button class="btn secondary" type="button" id="testReset">اختبار جديد / تفريغ</button>
+</div>
 </form>
 <div id="testNotice" class="notice hidden"></div>
 </div>
+
 <div class="panel">
-<div class="toolbar"><div><h2>اختبارات جنس الجنين</h2><p class="muted">كل اختبار له رابط خاص مستقل.</p></div><button class="btn secondary" id="testRefresh">↻ تحديث</button></div>
+<div class="toolbar">
+<div>
+<h2>اختبارات جنس الجنين</h2>
+<p class="muted">كل اختبار له رابط خاص مستقل.</p>
+</div>
+<button class="btn secondary" id="testRefresh">↻ تحديث</button>
+</div>
 <div id="testList" class="list"><div class="empty">جارٍ تحميل الاختبارات…</div></div>
 </div>
 </section>
 </section>
 </main>
+
 <footer class="footer wrap">باب الفرح ♥ — إدارة خاصة</footer>
 
 <script>
 "use strict";
+
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
-const BUCKET="catalog-images",MAX_SIZE=50*1024*1024;
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const BUCKET="catalog-images";
+const MAX_SIZE=50*1024*1024;
+const FIXED_CONGRATULATION="اللهم أنبته نباتاً حسناً، واجعله قرة عين لوالديه، واحفظه وبارك لهما فيه";
+
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+ auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+});
+
 const $=id=>document.getElementById(id);
-let adminUser=null,catItems=[],tests=[],catFile=null,files={opening:null,game:null,music:null,pop:null};
-const eventNames={wedding:"دعوات حفلات الزفاف",engagement:"دعوات عقد القران",henna:"دعوات حفلات الحنّة",circumcision:"دعوات مناسبة الختان",graduation:"دعوات حفلات التخرج",birthday:"دعوات أعياد الميلاد"};
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function safeUrl(v){try{let u=new URL(String(v||""));return ["https:","http:"].includes(u.protocol)?u.href:""}catch{return""}}
-function showNotice(id,msg,type=""){let e=$(id);e.textContent=msg;e.className="notice"+(type?" "+type:"");}
-function hideNotice(id){$(id).classList.add("hidden");}
-function mediaType(url,file){let f=file?.name||url||"";let ext=f.split("?")[0].split("#")[0].split(".").pop().toLowerCase();if(["mp4","webm","ogv","ogg","mov","m4v"].includes(ext)||file?.type?.startsWith("video/"))return"video";return"image";}
-function toggleTwinFields(){let twin=$("babyCount").value==="2";$("baby2Field").classList.toggle("hidden",!twin);$("baby2NameField").classList.toggle("hidden",!twin);}
+
+let adminUser=null;
+let catItems=[];
+let tests=[];
+let catFile=null;
+let files={opening:null,game:null,music:null};
+
+const eventNames={
+ wedding:"دعوات حفلات الزفاف",
+ engagement:"دعوات عقد القران",
+ henna:"دعوات حفلات الحنّة",
+ circumcision:"دعوات مناسبة الختان",
+ graduation:"دعوات حفلات التخرج",
+ birthday:"دعوات أعياد الميلاد"
+};
+
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function safeUrl(v){
+ try{
+  let u=new URL(String(v||""));
+  return ["https:","http:"].includes(u.protocol)?u.href:"";
+ }catch{
+  return "";
+ }
+}
+
+function showNotice(id,msg,type=""){
+ let e=$(id);
+ e.textContent=msg;
+ e.className="notice"+(type?" "+type:"");
+}
+
+function hideNotice(id){
+ $(id).classList.add("hidden");
+}
+
+function mediaType(url,file){
+ let f=file?.name||url||"";
+ let ext=f.split("?")[0].split("#")[0].split(".").pop().toLowerCase();
+ if(["mp4","webm","ogv","ogg","mov","m4v"].includes(ext)||file?.type?.startsWith("video/"))return"video";
+ return"image";
+}
+
+function toggleTwinFields(){
+ let twin=$("babyCount").value==="2";
+ $("baby2Field").classList.toggle("hidden",!twin);
+ $("baby2NameField").classList.toggle("hidden",!twin);
+}
+
 $("babyCount").addEventListener("change",toggleTwinFields);
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>{x.classList.remove("active");x.classList.add("secondary")});b.classList.add("active");b.classList.remove("secondary");$("catalogPanel").classList.toggle("hidden",b.dataset.tab!=="catalogPanel");$("genderPanel").classList.toggle("hidden",b.dataset.tab!=="genderPanel");});
+
+document.querySelectorAll("[data-tab]").forEach(b=>{
+ b.onclick=()=>{
+  document.querySelectorAll("[data-tab]").forEach(x=>{
+   x.classList.remove("active");
+   x.classList.add("secondary");
+  });
+  b.classList.add("active");
+  b.classList.remove("secondary");
+  $("catalogPanel").classList.toggle("hidden",b.dataset.tab!=="catalogPanel");
+  $("genderPanel").classList.toggle("hidden",b.dataset.tab!=="genderPanel");
+ };
+});
 
 async function checkAccess(user){
- if(!user){adminUser=null;$("loginPanel").classList.remove("hidden");$("appPanel").classList.add("hidden");return false;}
- const {data,error}=await db.from("catalog_admins").select("user_id").eq("user_id",user.id).maybeSingle();
- if(error||!data){await db.auth.signOut();adminUser=null;$("loginPanel").classList.remove("hidden");$("appPanel").classList.add("hidden");showNotice("loginNotice","هذا الحساب غير مخوّل لإدارة الموقع.","error");return false;}
- adminUser=user;$("loginPanel").classList.add("hidden");$("appPanel").classList.remove("hidden");hideNotice("loginNotice");await Promise.all([loadCatalog(),loadTests()]);return true;
+ if(!user){
+  adminUser=null;
+  $("loginPanel").classList.remove("hidden");
+  $("appPanel").classList.add("hidden");
+  return false;
+ }
+
+ const {data,error}=await db.from("catalog_admins")
+  .select("user_id")
+  .eq("user_id",user.id)
+  .maybeSingle();
+
+ if(error||!data){
+  await db.auth.signOut();
+  adminUser=null;
+  $("loginPanel").classList.remove("hidden");
+  $("appPanel").classList.add("hidden");
+  showNotice("loginNotice","هذا الحساب غير مخوّل لإدارة الموقع.","error");
+  return false;
+ }
+
+ adminUser=user;
+ $("loginPanel").classList.add("hidden");
+ $("appPanel").classList.remove("hidden");
+ hideNotice("loginNotice");
+ await Promise.all([loadCatalog(),loadTests()]);
+ return true;
 }
-$("loginForm").onsubmit=async e=>{e.preventDefault();$("loginBtn").disabled=true;try{let {data,error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error)throw error;await checkAccess(data.user);}catch(err){showNotice("loginNotice",err.message||"تعذر تسجيل الدخول","error")}finally{$("loginBtn").disabled=false}};
-$("logoutBtn").onclick=async()=>{await db.auth.signOut();location.reload()};
-(async()=>{try{let {data,error}=await db.auth.getSession();if(error)throw error;if(data.session)await checkAccess(data.session.user)}catch(e){showNotice("loginNotice",e.message,"error")}})();
+
+$("loginForm").onsubmit=async e=>{
+ e.preventDefault();
+ $("loginBtn").disabled=true;
+ try{
+  let {data,error}=await db.auth.signInWithPassword({
+   email:$("email").value.trim(),
+   password:$("password").value
+  });
+  if(error)throw error;
+  await checkAccess(data.user);
+ }catch(err){
+  showNotice("loginNotice",err.message||"تعذر تسجيل الدخول","error");
+ }finally{
+  $("loginBtn").disabled=false;
+ }
+};
+
+$("logoutBtn").onclick=async()=>{
+ await db.auth.signOut();
+ location.reload();
+};
+
+(async()=>{
+ try{
+  let {data,error}=await db.auth.getSession();
+  if(error)throw error;
+  if(data.session)await checkAccess(data.session.user);
+ }catch(e){
+  showNotice("loginNotice",e.message,"error");
+ }
+})();
 
 async function uploadFile(file,allowed="any"){
  if(!adminUser)throw Error("سجّل الدخول مرة ثانية.");
- if(!file) return null;
+ if(!file)return null;
  if(file.size>MAX_SIZE)throw Error("الحد الأقصى لحجم الملف 50 ميغابايت.");
+
  const ext=(file.name.split(".").pop()||"").toLowerCase().replace(/[^a-z0-9]/g,"");
  if(!ext)throw Error("اسم الملف يحتاج امتداداً صحيحاً.");
- if(allowed==="audio"&&!file.type.startsWith("audio/")&&!["mp3","wav","ogg","m4a","aac"].includes(ext))throw Error("اختار ملفاً صوتياً صالحاً.");
- if(allowed==="media"&&!file.type.startsWith("image/")&&!file.type.startsWith("video/")&&!["jpg","jpeg","png","webp","gif","avif","bmp","svg","mp4","webm","ogv","ogg"].includes(ext))throw Error("اختار صورة أو GIF أو فيديو.");
+
+ if(allowed==="audio"&&!file.type.startsWith("audio/")&&!["mp3","wav","ogg","m4a","aac"].includes(ext)){
+  throw Error("اختار ملفاً صوتياً صالحاً.");
+ }
+
+ if(allowed==="media"&&!file.type.startsWith("image/")&&!file.type.startsWith("video/")&&!["jpg","jpeg","png","webp","gif","avif","bmp","svg","mp4","webm","ogv","ogg"].includes(ext)){
+  throw Error("اختار صورة أو GIF أو فيديو.");
+ }
+
  const path=adminUser.id+"/"+Date.now()+"-"+crypto.randomUUID()+"."+ext;
- const {data,error}=await db.storage.from(BUCKET).upload(path,file,{cacheControl:"3600",contentType:file.type||undefined,upsert:false});
+
+ const {data,error}=await db.storage.from(BUCKET).upload(path,file,{
+  cacheControl:"3600",
+  contentType:file.type||undefined,
+  upsert:false
+ });
+
  if(error)throw Error("فشل رفع الملف: "+error.message);
+
  const {data:pub}=db.storage.from(BUCKET).getPublicUrl(data.path);
- const url=safeUrl(pub?.publicUrl);if(!url)throw Error("تعذر إنشاء رابط الملف.");
+ const url=safeUrl(pub?.publicUrl);
+
+ if(!url)throw Error("تعذر إنشاء رابط الملف.");
  return url;
 }
 
 /* إدارة معرض الدعوات الحالي */
-$("catFile").onchange=()=>{catFile=$("catFile").files[0]||null;let p=$("catPreview");if(!catFile){p.classList.add("hidden");return}if(catFile.size>MAX_SIZE){catFile=null;$("catFile").value="";alert("حجم الملف أكبر من 50 ميغابايت");return}p.classList.remove("hidden");p.src=URL.createObjectURL(catFile)};
-function resetCatalog(){catFile=null;$("catalogForm").reset();$("catId").value="";$("catImageUrl").value="";$("catOrder").value="0";$("catVisible").value="true";$("catPreview").classList.add("hidden");$("catalogHeading").textContent="إضافة دعوة إلى معرض الزبائن";$("catSave").textContent="حفظ الدعوة";hideNotice("catNotice")}
-$("catReset").onclick=resetCatalog;
-$("catalogForm").onsubmit=async e=>{
- e.preventDefault();hideNotice("catNotice");
- if(!adminUser)return showNotice("catNotice","سجّل الدخول أولاً.","error");
- let url=safeUrl($("catUrl").value.trim());if(!url)return showNotice("catNotice","رابط الدعوة غير صحيح.","error");
- $("catSave").disabled=true;
- try{
-  let image_url=$("catImageUrl").value||null;if(catFile)image_url=await uploadFile(catFile,"media");
-  const payload={title:$("catTitle").value.trim(),event_type:$("catType").value,invitation_url:url,image_url,description:$("catDescription").value.trim()||null,sort_order:parseInt($("catOrder").value,10)||0,is_visible:$("catVisible").value==="true",updated_at:new Date().toISOString()};
-  const id=$("catId").value;let r=id?await db.from("catalog_items").update(payload).eq("id",id):await db.from("catalog_items").insert(payload);if(r.error)throw r.error;
-  resetCatalog();showNotice("catNotice","تم حفظ الدعوة بنجاح.","success");await loadCatalog();
- }catch(err){showNotice("catNotice",err.message||"تعذر الحفظ.","error")}finally{$("catSave").disabled=false}
+
+$("catFile").onchange=()=>{
+ catFile=$("catFile").files[0]||null;
+ let p=$("catPreview");
+
+ if(!catFile){
+  p.classList.add("hidden");
+  return;
+ }
+
+ if(catFile.size>MAX_SIZE){
+  catFile=null;
+  $("catFile").value="";
+  alert("حجم الملف أكبر من 50 ميغابايت");
+  return;
+ }
+
+ p.classList.remove("hidden");
+ p.src=URL.createObjectURL(catFile);
 };
+
+function resetCatalog(){
+ catFile=null;
+ $("catalogForm").reset();
+ $("catId").value="";
+ $("catImageUrl").value="";
+ $("catOrder").value="0";
+ $("catVisible").value="true";
+ $("catPreview").classList.add("hidden");
+ $("catalogHeading").textContent="إضافة دعوة إلى معرض الزبائن";
+ $("catSave").textContent="حفظ الدعوة";
+ hideNotice("catNotice");
+}
+
+$("catReset").onclick=resetCatalog;
+
+$("catalogForm").onsubmit=async e=>{
+ e.preventDefault();
+ hideNotice("catNotice");
+
+ if(!adminUser)return showNotice("catNotice","سجّل الدخول أولاً.","error");
+
+ let url=safeUrl($("catUrl").value.trim());
+ if(!url)return showNotice("catNotice","رابط الدعوة غير صحيح.","error");
+
+ $("catSave").disabled=true;
+
+ try{
+  let image_url=$("catImageUrl").value||null;
+  if(catFile)image_url=await uploadFile(catFile,"media");
+
+  const payload={
+   title:$("catTitle").value.trim(),
+   event_type:$("catType").value,
+   invitation_url:url,
+   image_url,
+   description:$("catDescription").value.trim()||null,
+   sort_order:parseInt($("catOrder").value,10)||0,
+   is_visible:$("catVisible").value==="true",
+   updated_at:new Date().toISOString()
+  };
+
+  const id=$("catId").value;
+  let r=id
+   ?await db.from("catalog_items").update(payload).eq("id",id)
+   :await db.from("catalog_items").insert(payload);
+
+  if(r.error)throw r.error;
+
+  resetCatalog();
+  showNotice("catNotice","تم حفظ الدعوة بنجاح.","success");
+  await loadCatalog();
+
+ }catch(err){
+  showNotice("catNotice",err.message||"تعذر الحفظ.","error");
+ }finally{
+  $("catSave").disabled=false;
+ }
+};
+
 async function loadCatalog(){
  $("catList").innerHTML='<div class="empty">جارٍ التحميل…</div>';
- let {data,error}=await db.from("catalog_items").select("*").order("sort_order").order("created_at",{ascending:false});
- if(error){$("catList").textContent="تعذر تحميل الدعوات: "+error.message;return}
- catItems=data||[];$("catList").replaceChildren();
- if(!catItems.length){$("catList").innerHTML='<div class="empty">ماكو دعوات بالمعرض بعد.</div>';return}
+
+ let {data,error}=await db.from("catalog_items")
+  .select("*")
+  .order("sort_order")
+  .order("created_at",{ascending:false});
+
+ if(error){
+  $("catList").textContent="تعذر تحميل الدعوات: "+error.message;
+  return;
+ }
+
+ catItems=data||[];
+ $("catList").replaceChildren();
+
+ if(!catItems.length){
+  $("catList").innerHTML='<div class="empty">ماكو دعوات بالمعرض بعد.</div>';
+  return;
+ }
+
  catItems.forEach(it=>{
-  let card=document.createElement("article");card.className="item";let th=document.createElement("div");th.className="thumb";
-  if(safeUrl(it.image_url)){if(mediaType(it.image_url)==="video"){let v=document.createElement("video");v.src=it.image_url;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;th.append(v)}else{let im=document.createElement("img");im.src=it.image_url;im.alt="";th.append(im)}}else th.textContent="باب الفرح ♥";
-  let box=document.createElement("div"),h=document.createElement("h3");h.textContent=it.title||"دعوة";let p=document.createElement("p");p.textContent=(eventNames[it.event_type]||it.event_type||"مناسبة")+" · "+(it.description||"بدون وصف");
-  let st=document.createElement("span");st.className="status "+(it.is_visible?"on":"off");st.textContent=it.is_visible?"منشورة":"مخفية";let acts=document.createElement("div");acts.className="item-actions";
-  const btn=(txt,cls,fn)=>{let b=document.createElement("button");b.className="btn "+cls;b.textContent=txt;b.onclick=fn;acts.append(b)};
-  btn("تعديل","secondary",()=>{resetCatalog();$("catId").value=it.id;$("catTitle").value=it.title||"";$("catType").value=it.event_type||"wedding";$("catUrl").value=it.invitation_url||"";$("catImageUrl").value=it.image_url||"";$("catDescription").value=it.description||"";$("catOrder").value=it.sort_order||0;$("catVisible").value=String(!!it.is_visible);$("catalogHeading").textContent="تعديل دعوة المعرض";$("catSave").textContent="حفظ التعديلات";if(it.image_url){$("catPreview").src=it.image_url;$("catPreview").classList.remove("hidden")}window.scrollTo({top:0,behavior:"smooth"})});
-  btn(it.is_visible?"إخفاء":"نشر","secondary",async()=>{let r=await db.from("catalog_items").update({is_visible:!it.is_visible,updated_at:new Date().toISOString()}).eq("id",it.id);if(r.error)alert(r.error.message);else loadCatalog()});
-  let a=document.createElement("a");a.className="btn secondary";a.textContent="فتح الرابط ↗";a.href=safeUrl(it.invitation_url)||"#";a.target="_blank";a.rel="noopener noreferrer";acts.append(a);
-  btn("حذف","danger",async()=>{if(!confirm("حذف الدعوة من المعرض فقط؟"))return;let r=await db.from("catalog_items").delete().eq("id",it.id);if(r.error)alert(r.error.message);else loadCatalog()});
-  box.append(h,p,st,acts);card.append(th,box);$("catList").append(card);
+  let card=document.createElement("article");
+  card.className="item";
+
+  let th=document.createElement("div");
+  th.className="thumb";
+
+  if(safeUrl(it.image_url)){
+   if(mediaType(it.image_url)==="video"){
+    let v=document.createElement("video");
+    v.src=it.image_url;
+    v.muted=true;
+    v.loop=true;
+    v.autoplay=true;
+    v.playsInline=true;
+    th.append(v);
+   }else{
+    let im=document.createElement("img");
+    im.src=it.image_url;
+    im.alt="";
+    th.append(im);
+   }
+  }else{
+   th.textContent="باب الفرح ♥";
+  }
+
+  let box=document.createElement("div");
+  let h=document.createElement("h3");
+  h.textContent=it.title||"دعوة";
+
+  let p=document.createElement("p");
+  p.textContent=(eventNames[it.event_type]||it.event_type||"مناسبة")+" · "+(it.description||"بدون وصف");
+
+  let st=document.createElement("span");
+  st.className="status "+(it.is_visible?"on":"off");
+  st.textContent=it.is_visible?"منشورة":"مخفية";
+
+  let acts=document.createElement("div");
+  acts.className="item-actions";
+
+  const btn=(txt,cls,fn)=>{
+   let b=document.createElement("button");
+   b.className="btn "+cls;
+   b.textContent=txt;
+   b.onclick=fn;
+   acts.append(b);
+  };
+
+  btn("تعديل","secondary",()=>{
+   resetCatalog();
+   $("catId").value=it.id;
+   $("catTitle").value=it.title||"";
+   $("catType").value=it.event_type||"wedding";
+   $("catUrl").value=it.invitation_url||"";
+   $("catImageUrl").value=it.image_url||"";
+   $("catDescription").value=it.description||"";
+   $("catOrder").value=it.sort_order||0;
+   $("catVisible").value=String(!!it.is_visible);
+   $("catalogHeading").textContent="تعديل دعوة المعرض";
+   $("catSave").textContent="حفظ التعديلات";
+
+   if(it.image_url){
+    $("catPreview").src=it.image_url;
+    $("catPreview").classList.remove("hidden");
+   }
+
+   window.scrollTo({top:0,behavior:"smooth"});
+  });
+
+  btn(it.is_visible?"إخفاء":"نشر","secondary",async()=>{
+   let r=await db.from("catalog_items")
+    .update({is_visible:!it.is_visible,updated_at:new Date().toISOString()})
+    .eq("id",it.id);
+
+   if(r.error)alert(r.error.message);
+   else loadCatalog();
+  });
+
+  let a=document.createElement("a");
+  a.className="btn secondary";
+  a.textContent="فتح الرابط ↗";
+  a.href=safeUrl(it.invitation_url)||"#";
+  a.target="_blank";
+  a.rel="noopener noreferrer";
+  acts.append(a);
+
+  btn("حذف","danger",async()=>{
+   if(!confirm("حذف الدعوة من المعرض فقط؟"))return;
+   let r=await db.from("catalog_items").delete().eq("id",it.id);
+   if(r.error)alert(r.error.message);
+   else loadCatalog();
+  });
+
+  box.append(h,p,st,acts);
+  card.append(th,box);
+  $("catList").append(card);
  });
 }
+
 $("catRefresh").onclick=loadCatalog;
 
-/* إدارة اختبارات جنس الجنين */
-const fileFields={opening:{input:"openingFile",url:"openingUrl",info:"openingInfo",column:"opening_media_url",typeColumn:"opening_media_type",type:"media"},game:{input:"gameFile",url:"gameUrl",info:"gameInfo",column:"game_media_url",typeColumn:"game_media_type",type:"media"},music:{input:"musicFile",url:"musicUrl",info:"musicInfo",column:"music_url",type:"audio"},pop:{input:"popFile",url:"popUrl",info:"popInfo",column:"pop_sound_url",type:"audio"}};
-Object.entries(fileFields).forEach(([key,f])=>$(f.input).onchange=()=>{
- const file=$(f.input).files[0]||null;files[key]=file;
- if(file&&file.size>MAX_SIZE){files[key]=null;$(f.input).value="";$(f.info).textContent="الملف أكبر من 50 ميغابايت.";return}
- $(f.info).textContent=file?"ملف جديد: "+file.name:($(f.url).value?"الرابط المحفوظ موجود":"ماكو ملف مختار");
+/* إدارة اختبارات جنس الجنين
+   الملفات الثلاثة محفوظة بروابطها في سجل الاختبار:
+   opening_media_url, game_media_url, music_url.
+   عدم اختيار ملف جديد يحافظ على الرابط السابق.
+*/
+
+const fileFields={
+ opening:{
+  input:"openingFile",
+  url:"openingUrl",
+  info:"openingInfo",
+  column:"opening_media_url",
+  typeColumn:"opening_media_type",
+  type:"media"
+ },
+ game:{
+  input:"gameFile",
+  url:"gameUrl",
+  info:"gameInfo",
+  column:"game_media_url",
+  typeColumn:"game_media_type",
+  type:"media"
+ },
+ music:{
+  input:"musicFile",
+  url:"musicUrl",
+  info:"musicInfo",
+  column:"music_url",
+  type:"audio"
+ }
+};
+
+Object.entries(fileFields).forEach(([key,f])=>{
+ $(f.input).onchange=()=>{
+  const file=$(f.input).files[0]||null;
+  files[key]=file;
+
+  if(file&&file.size>MAX_SIZE){
+   files[key]=null;
+   $(f.input).value="";
+   $(f.info).textContent="الملف أكبر من 50 ميغابايت.";
+   return;
+  }
+
+  $(f.info).textContent=file
+   ?"ملف جديد: "+file.name+" — سيتم حفظه عند الضغط على حفظ الاختبار"
+   :($(f.url).value?"الرابط المحفوظ موجود":"ماكو ملف مختار");
+ };
 });
+
 function resetTest(){
- $("genderForm").reset();$("testId").value="";$("testToken").value="";
- Object.entries(fileFields).forEach(([k,f])=>{files[k]=null;$(f.url).value="";$(f.info).textContent="";$(f.input).value=""});
- $("testTitle").value="اختبار جنس الجنين";$("babyCount").value="1";$("baby1Gender").value="boy";$("testVisible").value="true";toggleTwinFields();
- $("genderHeading").textContent="إضافة اختبار جنس الجنين";$("testSave").textContent="حفظ الاختبار";hideNotice("testNotice");
+ $("genderForm").reset();
+ $("testId").value="";
+ $("testToken").value="";
+
+ Object.entries(fileFields).forEach(([k,f])=>{
+  files[k]=null;
+  $(f.url).value="";
+  $(f.info).textContent="";
+  $(f.input).value="";
+ });
+
+ $("testTitle").value="اختبار جنس الجنين";
+ $("babyCount").value="1";
+ $("baby1Gender").value="boy";
+ $("testVisible").value="true";
+ toggleTwinFields();
+
+ $("genderHeading").textContent="إضافة اختبار جنس الجنين";
+ $("testSave").textContent="حفظ الاختبار";
+ hideNotice("testNotice");
 }
+
 $("testReset").onclick=resetTest;
+
 $("genderForm").onsubmit=async e=>{
- e.preventDefault();hideNotice("testNotice");if(!adminUser)return showNotice("testNotice","سجّل الدخول أولاً.","error");
- const count=Number($("babyCount").value);if(count===2&&!$("baby2Gender").value)return showNotice("testNotice","حدد جنس الطفل الثاني.","error");
- $("testSave").disabled=true;$("testSave").textContent="جارٍ الحفظ والرفع…";
+ e.preventDefault();
+ hideNotice("testNotice");
+
+ if(!adminUser)return showNotice("testNotice","سجّل الدخول أولاً.","error");
+
+ const count=Number($("babyCount").value);
+
+ if(count===2&&!$("baby2Gender").value){
+  return showNotice("testNotice","حدد جنس الطفل الثاني.","error");
+ }
+
+ const editing=Boolean($("testId").value);
+ $("testSave").disabled=true;
+ $("testSave").textContent="جارٍ الحفظ والرفع…";
+
  try{
-  let media={};for(const [key,f] of Object.entries(fileFields)){let url=$(f.url).value||null;if(files[key])url=await uploadFile(files[key],f.type);media[f.column]=url;if(f.typeColumn)media[f.typeColumn]=url?mediaType(url,files[key]):null}
-  const payload={title:$("testTitle").value.trim()||"اختبار جنس الجنين",baby_count:count,baby1_gender:$("baby1Gender").value,baby2_gender:count===2?$("baby2Gender").value:null,baby1_name:$("baby1Name").value.trim()||null,baby2_name:count===2?($("baby2Name").value.trim()||null):null,father_name:$("fatherName").value.trim()||null,mother_name:$("motherName").value.trim()||null,congratulation_text:$("congratulationText").value.trim()||null,is_visible:$("testVisible").value==="true",updated_at:new Date().toISOString(),...media};
+  let media={};
+
+  for(const [key,f] of Object.entries(fileFields)){
+   let url=$(f.url).value||null;
+
+   // إذا اختار المستخدم ملفاً جديداً نرفعه ونحفظ رابطه.
+   // إذا لم يختر ملفاً جديداً، نحتفظ بالرابط المحفوظ سابقاً.
+   if(files[key]){
+    url=await uploadFile(files[key],f.type);
+   }
+
+   media[f.column]=url;
+
+   if(f.typeColumn){
+    media[f.typeColumn]=url?mediaType(url,files[key]):null;
+   }
+  }
+
+  const payload={
+   title:$("testTitle").value.trim()||"اختبار جنس الجنين",
+   baby_count:count,
+   baby1_gender:$("baby1Gender").value,
+   baby2_gender:count===2?$("baby2Gender").value:null,
+   baby1_name:$("baby1Name").value.trim()||null,
+   baby2_name:count===2?($("baby2Name").value.trim()||null):null,
+   father_name:$("fatherName").value.trim()||null,
+   mother_name:$("motherName").value.trim()||null,
+   congratulation_text:FIXED_CONGRATULATION,
+   is_visible:$("testVisible").value==="true",
+   updated_at:new Date().toISOString(),
+   ...media
+  };
+
   const id=$("testId").value;
   let result;
-  if(id)result=await db.from("gender_reveal_tests").update(payload).eq("id",id).select("id,public_token").single();
-  else result=await db.from("gender_reveal_tests").insert({...payload,created_by:adminUser.id}).select("id,public_token").single();
+
+  if(id){
+   result=await db.from("gender_reveal_tests")
+    .update(payload)
+    .eq("id",id)
+    .select("id,public_token")
+    .single();
+  }else{
+   result=await db.from("gender_reveal_tests")
+    .insert({...payload,created_by:adminUser.id})
+    .select("id,public_token")
+    .single();
+  }
+
   if(result.error)throw result.error;
+
   const token=result.data.public_token||$("testToken").value;
-  resetTest();showNotice("testNotice","تم حفظ الاختبار بنجاح. رابط الاختبار:\n"+gameLink(token),"success");
+  const link=gameLink(token);
+
+  resetTest();
+  showNotice("testNotice","تم حفظ الاختبار بنجاح.\nرابط الاختبار:\n"+link,"success");
   await loadTests();
- }catch(err){showNotice("testNotice",err.message||"تعذر حفظ الاختبار. تحقق من صلاحيات الجدول والتخزين.","error")}
- finally{$("testSave").disabled=false;$("testSave").textContent=$("testId").value?"حفظ التعديلات":"حفظ الاختبار"}
+
+ }catch(err){
+  showNotice("testNotice",err.message||"تعذر حفظ الاختبار. تحقق من صلاحيات الجدول والتخزين.","error");
+ }finally{
+  $("testSave").disabled=false;
+  $("testSave").textContent=$("testId").value?"حفظ التعديلات":"حفظ الاختبار";
+ }
 };
-function gameLink(token){return location.origin+location.pathname.replace(/[^/]*$/,"")+"gender-reveal.html?token="+encodeURIComponent(token)}
+
+function gameLink(token){
+ return location.origin+location.pathname.replace(/[^/]*$/,"")+"gender-reveal.html?token="+encodeURIComponent(token);
+}
+
 async function loadTests(){
  $("testList").innerHTML='<div class="empty">جارٍ تحميل الاختبارات…</div>';
- const {data,error}=await db.from("gender_reveal_tests").select("*").order("created_at",{ascending:false});
- if(error){$("testList").textContent="تعذر تحميل الاختبارات: "+error.message;return}
- tests=data||[];$("testList").replaceChildren();
- if(!tests.length){$("testList").innerHTML='<div class="empty">ماكو اختبارات بعد. أضف أول اختبار من النموذج.</div>';return}
+
+ const {data,error}=await db.from("gender_reveal_tests")
+  .select("*")
+  .order("created_at",{ascending:false});
+
+ if(error){
+  $("testList").textContent="تعذر تحميل الاختبارات: "+error.message;
+  return;
+ }
+
+ tests=data||[];
+ $("testList").replaceChildren();
+
+ if(!tests.length){
+  $("testList").innerHTML='<div class="empty">ماكو اختبارات بعد. أضف أول اختبار من النموذج.</div>';
+  return;
+ }
+
  tests.forEach(t=>{
-  let card=document.createElement("article");card.className="item";let th=document.createElement("div");th.className="thumb";th.textContent=t.baby_count===2?"👶👶":"🎈";
-  let box=document.createElement("div"),h=document.createElement("h3");h.textContent=t.title||"اختبار جنس الجنين";let p=document.createElement("p");p.textContent=(t.baby_count===2?"توأم":"طفل واحد")+" · "+(t.is_visible?"متاح للزوار":"مخفي");
-  let link=gameLink(t.public_token),a=document.createElement("a");a.href=link;a.target="_blank";a.rel="noopener noreferrer";a.className="btn secondary";a.textContent="فتح الاختبار ↗";
-  let copy=document.createElement("button");copy.className="btn secondary";copy.textContent="نسخ الرابط";copy.onclick=async()=>{try{await navigator.clipboard.writeText(link);copy.textContent="تم النسخ ✓"}catch{prompt("انسخ الرابط:",link)}};
-  let edit=document.createElement("button");edit.className="btn secondary";edit.textContent="تعديل";edit.onclick=()=>editTest(t.id);
-  let toggle=document.createElement("button");toggle.className="btn "+(t.is_visible?"secondary":"green");toggle.textContent=t.is_visible?"إخفاء":"نشر";toggle.onclick=async()=>{let r=await db.from("gender_reveal_tests").update({is_visible:!t.is_visible,updated_at:new Date().toISOString()}).eq("id",t.id);if(r.error)alert(r.error.message);else loadTests()};
-  let del=document.createElement("button");del.className="btn danger";del.textContent="حذف";del.onclick=async()=>{if(!confirm("حذف هذا الاختبار نهائياً؟"))return;let r=await db.from("gender_reveal_tests").delete().eq("id",t.id);if(r.error)alert("تعذر الحذف: "+r.error.message);else loadTests()};
-  let acts=document.createElement("div");acts.className="item-actions";acts.append(a,copy,edit,toggle,del);box.append(h,p,acts);card.append(th,box);$("testList").append(card);
+  let card=document.createElement("article");
+  card.className="item";
+
+  let th=document.createElement("div");
+  th.className="thumb";
+  th.textContent=t.baby_count===2?"👶👶":"🎈";
+
+  let box=document.createElement("div");
+  let h=document.createElement("h3");
+  h.textContent=t.title||"اختبار جنس الجنين";
+
+  let p=document.createElement("p");
+  p.textContent=(t.baby_count===2?"توأم":"طفل واحد")+" · "+(t.is_visible?"متاح للزوار":"مخفي");
+
+  let link=gameLink(t.public_token);
+
+  let a=document.createElement("a");
+  a.href=link;
+  a.target="_blank";
+  a.rel="noopener noreferrer";
+  a.className="btn secondary";
+  a.textContent="فتح الاختبار ↗";
+
+  let copy=document.createElement("button");
+  copy.className="btn secondary";
+  copy.textContent="نسخ الرابط";
+  copy.onclick=async()=>{
+   try{
+    await navigator.clipboard.writeText(link);
+    copy.textContent="تم النسخ ✓";
+   }catch{
+    prompt("انسخ الرابط:",link);
+   }
+  };
+
+  let edit=document.createElement("button");
+  edit.className="btn secondary";
+  edit.textContent="تعديل";
+  edit.onclick=()=>editTest(t.id);
+
+  let toggle=document.createElement("button");
+  toggle.className="btn "+(t.is_visible?"secondary":"green");
+  toggle.textContent=t.is_visible?"إخفاء":"نشر";
+  toggle.onclick=async()=>{
+   let r=await db.from("gender_reveal_tests")
+    .update({is_visible:!t.is_visible,updated_at:new Date().toISOString()})
+    .eq("id",t.id);
+
+   if(r.error)alert(r.error.message);
+   else loadTests();
+  };
+
+  let del=document.createElement("button");
+  del.className="btn danger";
+  del.textContent="حذف";
+  del.onclick=async()=>{
+   if(!confirm("حذف هذا الاختبار نهائياً؟"))return;
+
+   let r=await db.from("gender_reveal_tests").delete().eq("id",t.id);
+
+   if(r.error)alert("تعذر الحذف: "+r.error.message);
+   else loadTests();
+  };
+
+  let acts=document.createElement("div");
+  acts.className="item-actions";
+  acts.append(a,copy,edit,toggle,del);
+  box.append(h,p,acts);
+  card.append(th,box);
+  $("testList").append(card);
  });
 }
+
 function editTest(id){
- const t=tests.find(x=>x.id===id);if(!t)return;resetTest();
- $("testId").value=t.id;$("testToken").value=t.public_token;$("testTitle").value=t.title||"اختبار جنس الجنين";$("babyCount").value=String(t.baby_count||1);$("baby1Gender").value=t.baby1_gender||"boy";$("baby2Gender").value=t.baby2_gender||"girl";$("baby1Name").value=t.baby1_name||"";$("baby2Name").value=t.baby2_name||"";$("fatherName").value=t.father_name||"";$("motherName").value=t.mother_name||"";$("congratulationText").value=t.congratulation_text||"";$("testVisible").value=String(!!t.is_visible);toggleTwinFields();
- Object.entries(fileFields).forEach(([k,f])=>{let url=t[f.column]||"";$(f.url).value=url;$(f.info).textContent=url?"رابط محفوظ موجود":"ماكو ملف محفوظ"});
- $("genderHeading").textContent="تعديل اختبار جنس الجنين";$("testSave").textContent="حفظ التعديلات";$("genderPanel").scrollIntoView({behavior:"smooth"});
+ const t=tests.find(x=>x.id===id);
+ if(!t)return;
+
+ resetTest();
+
+ $("testId").value=t.id;
+ $("testToken").value=t.public_token;
+ $("testTitle").value=t.title||"اختبار جنس الجنين";
+ $("babyCount").value=String(t.baby_count||1);
+ $("baby1Gender").value=t.baby1_gender||"boy";
+ $("baby2Gender").value=t.baby2_gender||"girl";
+ $("baby1Name").value=t.baby1_name||"";
+ $("baby2Name").value=t.baby2_name||"";
+ $("fatherName").value=t.father_name||"";
+ $("motherName").value=t.mother_name||"";
+ $("testVisible").value=String(!!t.is_visible);
+
+ toggleTwinFields();
+
+ Object.entries(fileFields).forEach(([k,f])=>{
+  let url=t[f.column]||"";
+  $(f.url).value=url;
+  $(f.info).textContent=url
+   ?"رابط الملف المحفوظ موجود — لن يتغير ما لم تختَر ملفاً جديداً"
+   :"ماكو ملف محفوظ";
+ });
+
+ $("genderHeading").textContent="تعديل اختبار جنس الجنين";
+ $("testSave").textContent="حفظ التعديلات";
+ $("genderPanel").scrollIntoView({behavior:"smooth"});
 }
+
 $("testRefresh").onclick=loadTests;
 </script>
 </body>
