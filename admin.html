@@ -185,9 +185,8 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <h3>إضافة أغنية جديدة إلى المكتبة</h3>
 <label for="librarySongName">اسم الأغنية</label>
 <input id="librarySongName" placeholder="مثال: أغنية زفاف أحمد">
-<label for="librarySongFile">اختيار ملف MP3 من الجهاز</label>
-<input id="librarySongFile" type="file" accept=".mp3,audio/mpeg">
-<button type="button" id="uploadLibrarySongBtn">رفع الأغنية وإضافتها إلى المكتبة</button>
+<label for="librarySongFile">اختيار ملف MP3 لإضافته إلى المكتبة</label>
+  <button type="button" id="uploadLibrarySongBtn">رفع الأغنية وإضافتها إلى المكتبة</button>
 <p id="librarySongStatus" class="help">اختر أغنية MP3 لإضافتها إلى مكتبة الأغاني.</p>
 <hr>
 <h3>رفع أغنية خاصة بهذه الدعوة فقط</h3>
@@ -391,7 +390,7 @@ const date=new Date(value);
 if(Number.isNaN(date.getTime()))return "تاريخ غير صالح";
 return date.toLocaleString("ar-IQ",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
 }
-function selectDoor(id){
+  function selectDoor(id){
 id=Number(id);
 if(!doorNames[id])id=1;
 $("template").value=String(id);
@@ -527,6 +526,13 @@ $("audioLibrary").value=String(song.id);
 renderLibraryList();
 status("تم اختيار أغنية «"+song.name+"». اضغط حفظ الدعوة لحفظ الاختيار.");
 }
+$("audioLibrary").addEventListener("change",()=>{
+const id=$("audioLibrary").value;
+if(!id)return;
+const song=librarySongs.find(s=>String(s.id)===String(id));
+if(song)useLibrarySong(song);
+});
+
 $("useLibrarySongBtn").addEventListener("click",()=>{
 const id=$("audioLibrary").value;
 const song=librarySongs.find(s=>String(s.id)===String(id));
@@ -641,6 +647,7 @@ const {data:publicData}=db.storage.from(DOOR_BUCKET).getPublicUrl(uploadData.pat
 if(!publicData?.publicUrl)throw new Error("تعذر إنشاء رابط عام للملف.");
 const mediaUrl=publicData.publicUrl;
 $("doorImageStatus").textContent="جارٍ حفظ إعدادات الباب للمناسبة والقالب المحددين...";
+  $("doorImageStatus").textContent="جارٍ حفظ إعدادات الباب للمناسبة والقالب المحددين...";
 const {error:saveError}=await db.from("template_doors").upsert({event_type:eventType,template_id:id,image_url:mediaUrl,updated_at:new Date().toISOString()},{onConflict:"event_type,template_id"});
 if(saveError)throw saveError;
 if(getEventType()===eventType&&Number($("template").value)===id){
