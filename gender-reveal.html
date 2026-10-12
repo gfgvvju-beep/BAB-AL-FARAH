@@ -36,13 +36,13 @@ p{line-height:2;margin:8px 0;color:#795e6f}
 #opening,#game,#result{width:100%}
 #openingMedia,#gameMedia{width:100%;min-height:0}
 
-/* المقدمة واللعبة */
+/* المقدمة واللعبة: الوسائط خلفية كاملة والكتابة فوقها */
 body.stage-active .app{width:100%;min-height:100svh;padding:0}
 body.stage-active .brand,body.stage-active .footer{display:none}
 body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-radius:0;box-shadow:none;background:transparent;backdrop-filter:none;overflow:visible}
-#opening,#game{position:relative;isolation:isolate;min-height:100svh;min-height:100dvh;width:100%;padding:max(28px,env(safe-area-inset-top)) 18px max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:visible;background:linear-gradient(145deg,#fff4f8,#eef8ff)}
+#opening,#game{position:relative;isolation:isolate;min-height:100svh;min-height:100dvh;width:100%;padding:max(28px,env(safe-area-inset-top)) 18px max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:visible;background:linear-gradient(145deg,#f9d9e7,#e4f2ff)}
 #opening::before,#game::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(24,15,26,.48),rgba(24,15,26,.26) 45%,rgba(24,15,26,.65));pointer-events:none}
-#openingMedia,#gameMedia{position:fixed;inset:0;z-index:-2;width:100%;height:100%;max-width:none;max-height:none;margin:0;border-radius:0;background:#201923;overflow:hidden}
+#openingMedia,#gameMedia{position:fixed;inset:0;z-index:-2;width:100%;height:100%;max-width:none;max-height:none;margin:0;border-radius:0;background:transparent;overflow:hidden}
 #openingMedia img,#openingMedia video,#gameMedia img,#gameMedia video{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;border-radius:0}
 #opening>*:not(#openingMedia),#game>*:not(#gameMedia){position:relative;z-index:1;flex-shrink:0}
 #opening h1,#game h2{color:#fff;text-shadow:0 2px 12px #0008}
@@ -53,7 +53,16 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 #opening .sparkle{color:#ffe1a0}
 #opening .btn{margin-top:12px;min-height:52px;padding:14px 27px;background:linear-gradient(135deg,#b36b8e,#e2a2bd);box-shadow:0 8px 28px #0004}
 
-/* البالونات الكبيرة */
+/* إخفاء التعتيم عند عدم وجود صورة أو فيديو، مع الإبقاء على الخلفية الوردية */
+#opening.no-media,#game.no-media{background:radial-gradient(circle at 15% 15%,#ffe1ed,transparent 38%),radial-gradient(circle at 90% 85%,#d9efff,transparent 40%),linear-gradient(135deg,#fff0f6,#fce4ee 50%,#edf7ff)}
+#opening.no-media::before,#game.no-media::before{background:linear-gradient(145deg,#f7dbe8aa,#e4f2ff99)}
+#opening.no-media h1,#game.no-media h2{color:#8c4867;text-shadow:none}
+#opening.no-media p,#game.no-media p{color:#795e6f;text-shadow:none}
+#opening.no-media .eyebrow,#game.no-media .eyebrow{color:#a37c51;text-shadow:none}
+#opening.no-media .heart{filter:drop-shadow(0 8px 18px #e58db833)}
+#opening.no-media .sparkle{color:#c6a15e}
+
+/* البالونات */
 #game .game-art{margin:0 auto 6px;min-height:60px}
 #game .game-art span{filter:drop-shadow(0 3px 8px #0004)}
 #game .balloons{width:min(100%,420px);display:flex;justify-content:center;align-items:center;gap:clamp(24px,8vw,60px);margin:25px auto 22px}
@@ -71,29 +80,33 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 #game .balloon.popped{animation:pop .32s forwards;pointer-events:none}
 #game .game-status{color:#fff;min-height:48px;text-shadow:0 2px 8px #0009;font-weight:800}
 #game #gameIntro{margin-top:2px}
+#game.no-media .game-status{color:#795e6f;text-shadow:none}
 
-/* النتيجة تبقى داخل نفس صفحة اللعبة وخلفيتها */
+/* عرض التهنئة والتفاصيل فوق خلفية الوسائط نفسها، دون البطاقة الوردية */
 #game.reveal-mode{justify-content:flex-start;min-height:100dvh;padding-top:max(25px,env(safe-area-inset-top));padding-bottom:35px}
 #game.reveal-mode>#gameMedia{position:fixed}
-#game.reveal-mode>#result{position:relative;z-index:3;width:min(850px,100%);margin:22px auto 0;padding:clamp(16px,4vw,30px);border-radius:24px;background:#fffaf4f2;border:1px solid #ffffffd9;box-shadow:0 15px 50px #0002;backdrop-filter:blur(10px);color:var(--ink)}
-#game.reveal-mode>#result h1{color:#8c4867;text-shadow:none}
-#game.reveal-mode>#result p{color:#795e6f;text-shadow:none}
-#game.reveal-mode>#result .eyebrow{color:#a37c51;text-shadow:none}
-#game.reveal-mode>#result .prayer{color:#8b5470}
-#game.reveal-mode>#result .contact-card p{color:#f5e9d6}
-#game.reveal-mode>#result .result-message{color:#795e6f}
-#game.reveal-mode>.eyebrow,
-#game.reveal-mode>.game-art,
-#game.reveal-mode>#gameMedia,
-#game.reveal-mode>h2,
-#game.reveal-mode>#gameIntro,
-#game.reveal-mode>#balloons,
-#game.reveal-mode>#gameStatus{flex-shrink:0}
-#game.reveal-mode>#gameMedia{position:fixed;z-index:-2}
-#game.reveal-mode>#gameMedia img,#game.reveal-mode>#gameMedia video{position:absolute}
+#game.reveal-mode>#result{position:relative;z-index:3;width:min(850px,100%);margin:22px auto 0;padding:clamp(16px,4vw,30px);border-radius:0;background:transparent;border:0;box-shadow:none;backdrop-filter:none;color:#fff}
+#game.reveal-mode>#result h1{color:#fff;text-shadow:0 2px 12px #000a}
+#game.reveal-mode>#result p{color:#fff;text-shadow:0 2px 9px #0009}
+#game.reveal-mode>#result .eyebrow{color:#ffe2a9;text-shadow:0 2px 8px #0008}
+#game.reveal-mode>#result .prayer{color:#fff;background:#23152255;border:1px solid #ffffff80;text-shadow:0 2px 8px #0008;backdrop-filter:blur(5px)}
+#game.reveal-mode>#result .contact-card p{color:#f5e9d6;text-shadow:none}
+#game.reveal-mode>#result .result-message{color:#fff}
+#game.reveal-mode>#result .result-card{max-width:580px;background:transparent;border:0;border-radius:0;padding:10px 0;margin:12px auto;box-shadow:none}
+#game.reveal-mode>#result .name-line{color:#fff;text-shadow:0 2px 8px #0009}
+#game.reveal-mode>#result .result-icon{text-shadow:0 4px 15px #0005}
+#game.reveal-mode>#result .btn{margin:10px 0}
+#game.reveal-mode>#result .contact-card{margin-top:25px}
+#game.reveal-mode.no-media>#result h1{color:#8c4867;text-shadow:none}
+#game.reveal-mode.no-media>#result p{color:#795e6f;text-shadow:none}
+#game.reveal-mode.no-media>#result .eyebrow{color:#a37c51;text-shadow:none}
+#game.reveal-mode.no-media>#result .prayer{color:#8b5470;background:#fffaf3;border:1px solid #ead6b1;text-shadow:none;backdrop-filter:none}
+#game.reveal-mode.no-media>#result .result-message,
+#game.reveal-mode.no-media>#result .name-line{color:#795e6f;text-shadow:none}
+#game.reveal-mode.no-media>#result .result-card{background:#ffffff50;border-radius:18px}
 #game.reveal-mode>#result .btn{margin:10px 0}
 
-/* النتيجة */
+/* النتيجة العامة */
 #loading{padding:24px}
 #result{padding:clamp(16px,4vw,36px)}
 .result-icon{font-size:clamp(60px,15vw,105px);animation:float 2.5s infinite}
@@ -174,7 +187,7 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 <div class="eyebrow">المفاجأة صارت حقيقة</div>
 <h1 id="resultTitle">ألف مبارك!</h1>
 <div class="result-card">
-<p id="resultMessage"></p>
+<p id="resultMessage" class="result-message"></p>
 <div id="babyNames" class="name-line"></div>
 <div id="parentsNames" class="name-line"></div>
 <div class="prayer">اللهم أنبته نباتاً حسناً، واجعله قرة عين لوالديه، واحفظه وبارك لهما فيه</div>
@@ -215,10 +228,15 @@ const token=params.get("token");
 
 let config=null,sessionId=null,music=null,completedResult=null,audioContext=null;
 let musicStarted=false;
+let musicWantsToPlay=false;
+let musicRetryTimer=null;
+let audioUnlocked=false;
+let currentStage="loading";
+let lastVisibleAt=0;
 
 function safeUrl(v){
  try{
-  const u=new URL(String(v||""));
+  const u=new URL(String(v||""),location.href);
   return ["https:","http:"].includes(u.protocol)?u.href:"";
  }catch{return""}
 }
@@ -239,37 +257,95 @@ function setStageActive(active){
  document.body.classList.toggle("stage-active",!!active);
 }
 
-/* نوقف الصوت عند مغادرة الصفحة فعلياً، وليس عند ظهور النتيجة */
-function stopAudio(){
- if(music){
-  try{music.pause();music.currentTime=0}catch(e){}
- }
- if(audioContext){
-  try{audioContext.close()}catch(e){}
-  audioContext=null;
- }
- document.querySelectorAll("video,audio").forEach(a=>{
-  try{a.pause()}catch(e){}
- });
+function setCurrentStage(stage){
+ currentStage=stage;
 }
 
-window.addEventListener("pagehide",stopAudio);
-window.addEventListener("beforeunload",stopAudio);
-
-/* لا نوقف الموسيقى لمجرد انتقال التطبيق إلى الخلفية */
-window.addEventListener("pageshow",()=>{
- if(musicStarted&&music&&music.paused){
-  music.play().catch(()=>{});
+/* الموسيقى لا تتوقف بسبب إخفاء الصفحة مؤقتاً أو فتح تبويب آخر.
+   عند مغادرة الصفحة نهائياً، المتصفح قد يوقف الصوت حسب سياساته. */
+function stopAudio(){
+ if(musicRetryTimer){
+  clearTimeout(musicRetryTimer);
+  musicRetryTimer=null;
  }
+ if(music){
+  try{music.pause()}catch(e){}
+ }
+ if(audioContext&&audioContext.state==="running"){
+  try{audioContext.suspend()}catch(e){}
+ }
+}
+
+function attemptMusicResume(){
+ if(!musicStarted||!musicWantsToPlay||!music)return;
+ if(document.visibilityState==="hidden")return;
+
+ try{
+  if(music.ended)music.currentTime=0;
+  if(music.paused){
+   const p=music.play();
+   if(p&&typeof p.then==="function"){
+    p.then(()=>{
+     musicWantsToPlay=true;
+    }).catch(()=>{
+     /* سيعاد المحاولة عند تفاعل المستخدم أو عودة الصفحة */
+    });
+   }
+  }
+ }catch(e){}
+}
+
+function scheduleMusicResume(){
+ if(musicRetryTimer)clearTimeout(musicRetryTimer);
+ musicRetryTimer=setTimeout(()=>{
+  musicRetryTimer=null;
+  attemptMusicResume();
+ },250);
+}
+
+document.addEventListener("visibilitychange",()=>{
+ if(document.visibilityState==="visible"){
+  lastVisibleAt=Date.now();
+  scheduleMusicResume();
+ }else{
+  /* لا نوقف الموسيقى يدوياً عند إخفاء التبويب */
+  if(audioContext&&audioContext.state==="running"){
+   try{audioContext.suspend()}catch(e){}
+  }
+ }
+});
+
+window.addEventListener("pageshow",()=>{
+ scheduleMusicResume();
+ if(audioContext&&audioContext.state==="suspended"&&audioUnlocked){
+  audioContext.resume().catch(()=>{});
+ }
+});
+
+window.addEventListener("focus",scheduleMusicResume);
+window.addEventListener("online",scheduleMusicResume);
+
+/* نحافظ على الموسيقى عند مغادرة الرابط والعودة إليه عبر سجل المتصفح */
+window.addEventListener("pagehide",()=>{
+ stopAudio();
+});
+
+/* إيقاف الموارد فقط عند الإغلاق النهائي للوثيقة */
+window.addEventListener("beforeunload",()=>{
+ stopAudio();
 });
 
 function renderMedia(containerId,defaultId,url,type){
  const box=$(containerId),fallback=$(defaultId),src=safeUrl(url);
  box.replaceChildren();
 
+ const stage=containerId==="openingMedia"?$("opening"):$("game");
+ stage.classList.remove("no-media");
+
  if(!src){
   hide(containerId);
   show(defaultId);
+  stage.classList.add("no-media");
   return;
  }
 
@@ -292,6 +368,11 @@ function renderMedia(containerId,defaultId,url,type){
  el.onerror=()=>{
   hide(containerId);
   show(defaultId);
+  stage.classList.add("no-media");
+ };
+
+ el.onload=()=>{
+  stage.classList.remove("no-media");
  };
 
  box.append(el);
@@ -329,6 +410,7 @@ async function loadConfig(){
 
   hide("loading");
   show("opening");
+  setCurrentStage("opening");
   setStageActive(true);
  }catch(e){
   hide("loading");
@@ -336,26 +418,62 @@ async function loadConfig(){
  }
 }
 
-/* تبدأ الموسيقى بعد تفاعل الزائر وتستمر خلال الاختبار والنتيجة */
+/* تبدأ الموسيقى بعد ضغط المستخدم، وتستمر بين مراحل الاختبار والنتيجة */
 function startAudio(){
- if(musicStarted)return;
- musicStarted=true;
+ musicWantsToPlay=true;
 
- if(config?.music_url){
-  try{
-   const src=safeUrl(config.music_url);
-   if(src){
-    music=new Audio(src);
+ if(!musicStarted&&config?.music_url){
+  const src=safeUrl(config.music_url);
+  if(src){
+   try{
+    music=new Audio();
+    music.preload="auto";
     music.loop=true;
     music.volume=.5;
-    music.preload="auto";
-    music.play().catch(()=>{});
+    music.src=src;
+    musicStarted=true;
+    music.addEventListener("ended",()=>{
+     if(musicWantsToPlay){
+      try{music.currentTime=0;music.play().catch(()=>{})}catch(e){}
+     }
+    });
+    music.addEventListener("pause",()=>{
+     if(musicWantsToPlay&&document.visibilityState==="visible"){
+      scheduleMusicResume();
+     }
+    });
+    music.addEventListener("error",()=>{
+     /* لا نغيّر مرحلة الاختبار إذا تعذّر تحميل ملف الموسيقى */
+    });
+   }catch(e){
+    music=null;
+   }
+  }
+ }
+
+ if(music){
+  try{
+   const p=music.play();
+   if(p&&typeof p.then==="function"){
+    p.then(()=>{musicWantsToPlay=true}).catch(()=>{});
    }
   }catch(e){}
  }
+
+ unlockAudio();
 }
 
-/* صوت فرقعة البالون مولّد داخل الصفحة */
+function unlockAudio(){
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
+  if(!audioContext)audioContext=new AC();
+  audioUnlocked=true;
+  if(audioContext.state==="suspended")audioContext.resume().catch(()=>{});
+ }catch(e){}
+}
+
+/* صوت فرقعة البالون */
 function playPop(){
  try{
   const AC=window.AudioContext||window.webkitAudioContext;
@@ -363,8 +481,9 @@ function playPop(){
 
   if(!audioContext)audioContext=new AC();
   const ctx=audioContext;
+  audioUnlocked=true;
 
-  if(ctx.state==="suspended")ctx.resume();
+  if(ctx.state==="suspended")ctx.resume().catch(()=>{});
 
   const now=ctx.currentTime;
   const duration=.14;
@@ -440,14 +559,26 @@ async function beginGame(){
 
   hide("opening");
   show("game");
+  setCurrentStage("game");
   setStageActive(true);
+  scheduleMusicResume();
  }catch(e){
   showError(e.message||"تعذر بدء الاختبار. حاول مرة ثانية.");
   $("startBtn").disabled=false;
+  scheduleMusicResume();
  }
 }
 
 $("startBtn").addEventListener("click",beginGame);
+
+/* استئناف الموسيقى عند أي تفاعل، لأن بعض المتصفحات تمنع التشغيل التلقائي */
+document.addEventListener("pointerdown",()=>{
+ if(musicWantsToPlay)attemptMusicResume();
+},{passive:true});
+
+document.addEventListener("keydown",()=>{
+ if(musicWantsToPlay)attemptMusicResume();
+});
 
 async function chooseBalloon(button,color){
  if(!sessionId||button.disabled)return;
@@ -492,12 +623,12 @@ function genderLabel(g){
 }
 
 function revealResult(data){
- /* لا نوقف الموسيقى ولا نخفي وسائط اللعبة */
+ /* إبقاء الاختبار والوسائط والموسيقى ضمن الصفحة نفسها */
  $("game").classList.add("reveal-mode");
-
- /* ننقل النتيجة إلى داخل اللعبة نفسها، أسفل منطقة الكشف */
  $("game").appendChild($("result"));
  show("result");
+ setCurrentStage("result");
+ scheduleMusicResume();
 
  const twin=Number(data.baby_count)===2;
 
@@ -557,9 +688,9 @@ function revealResult(data){
 
  confetti();
 
- /* تظهر النتيجة داخل الصفحة نفسها دون فتح صفحة جديدة */
  setTimeout(()=>{
   $("result").scrollIntoView({behavior:"smooth",block:"start"});
+  scheduleMusicResume();
  },150);
 }
 
@@ -593,6 +724,7 @@ $("replayBtn").onclick=()=>{
    [{opacity:.6,transform:"scale(.98)"},{opacity:1,transform:"scale(1)"}],
    {duration:400}
   );
+  scheduleMusicResume();
  }
 };
 
