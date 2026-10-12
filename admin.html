@@ -8,31 +8,30 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;padding:12px;background:#f5f0e7;color:#493b2b;font-family:Tahoma,Arial,sans-serif}
-main{max-width:760px;margin:15px auto;background:#fffdf9;padding:22px;border:1px solid #e5d6b7;border-radius:20px;box-shadow:0 8px 30px #38240e12}
+main{max-width:850px;margin:15px auto;background:#fffdf9;padding:22px;border:1px solid #e5d6b7;border-radius:20px;box-shadow:0 8px 30px #38240e12}
 h1{text-align:center;color:#aa8950}
 h3{color:#8d703e;margin-top:25px}
 .subtitle{text-align:center;color:#81715d}
 label{display:block;margin:12px 0 5px;font-weight:bold;font-size:14px}
 input,button,select,textarea{width:100%;padding:12px;margin:6px 0;border-radius:9px;font:inherit}
 input,select,textarea{border:1px solid #ddd2bf;background:white;color:#493b2b}
-input[type=checkbox]{width:auto}
+input[type=checkbox],input[type=radio]{width:auto}
+input[type=file]{padding:10px;background:#fff;border:1px dashed #aa8950}
 textarea{resize:vertical;min-height:85px}
 button{border:0;background:#aa8950;color:white;cursor:pointer;font-weight:bold}
 button:disabled{opacity:.5;cursor:not-allowed}
 .secondary{background:#6d6253}
-.danger{background:#9b3c32}
+.danger{background:#a83232}
 .hidden{display:none!important}
 .help{font-size:12px;color:#81715d;line-height:1.8}
 .door-panel{margin:15px 0;padding:14px;border:1px solid #e5d6b7;border-radius:14px;background:#fbf7ef}
-.door-panel summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;background:linear-gradient(135deg,#fffdf8,#f1e4c9);border:1px solid #e5d6b7;border-radius:11px;color:#8d703e;font-weight:bold;user-select:none}
+.door-panel summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;background:linear-gradient(135deg,#fffdf8,#f1e4c9);border:1px solid #e5d6b7;border-radius:11px;color:#8d703e;font-weight:bold}
 .door-panel summary::-webkit-details-marker{display:none}
-.door-panel summary::after{content:"＋";font-size:20px;flex-shrink:0}
-.door-panel[open] summary{border-radius:11px 11px 0 0}
+.door-panel summary::after{content:"＋";font-size:20px}
 .door-panel[open] summary::after{content:"−"}
 .door-content{padding-top:12px}
 .door-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.door-option{margin:0;background:white;color:#493b2b;border:1px solid #ded0b7;font-size:13px;line-height:1.7;transition:background .2s,border-color .2s}
-.door-option:hover{background:#f8f0df;border-color:#aa8950}
+.door-option{margin:0;background:white;color:#493b2b;border:1px solid #ded0b7;font-size:13px;line-height:1.7}
 .door-option.selected{border:2px solid #aa8950;background:#f5ecd9;color:#755821}
 .number{display:block;font-size:22px;color:#aa8950;font-weight:bold}
 .door-description{font-size:13px;line-height:1.8;color:#746550;background:#fffdf8;border-radius:8px;padding:9px;margin:10px 0 0}
@@ -43,128 +42,161 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .item button{margin-top:8px}
 .published{color:#28734b;font-weight:bold}
 .unpublished{color:#956126;font-weight:bold}
-.expired{color:#9b3c32;font-weight:bold}
+.expired{color:#a83232;font-weight:bold}
+.active-expiry{color:#28734b;font-weight:bold}
 #status{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
-.inline-check{display:flex;align-items:center;gap:8px}
-.inline-check label{display:inline;margin:0}
-.grid-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-#templateDoorPreview{display:block;width:100%;max-height:320px;object-fit:contain;border-radius:10px;margin-top:10px;background:#eee}
-@media(max-width:480px){
-main{padding:14px;margin:4px auto}
-body{padding:7px}
-.door-grid{grid-template-columns:1fr}
-.grid-two{grid-template-columns:1fr}
-}
+.row-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.door-image-preview{display:block;width:100%;max-width:320px;max-height:350px;object-fit:contain;margin:12px auto;border:1px solid #e5d6b7;border-radius:12px;background:#fff}
+.door-video-preview{display:block;width:100%;max-width:320px;max-height:450px;object-fit:contain;margin:12px auto;border:1px solid #e5d6b7;border-radius:12px;background:#222}
+.audio-library-item{display:flex;gap:8px;align-items:center;border:1px solid #e6ddcf;background:white;border-radius:10px;padding:10px;margin:8px 0;flex-wrap:wrap}
+.audio-library-item .audio-name{flex:1;min-width:150px;overflow-wrap:anywhere}
+.audio-library-item button{width:auto;min-width:100px;margin:0}
+.audio-library-item.selected-audio{border:2px solid #aa8950;background:#f5ecd9}
+.audio-library-item audio{width:100%;max-width:100%}
+.prompt-choice{padding:14px;border:1px solid #e5d6b7;border-radius:12px;background:#fffdf8;margin:10px 0}
+.prompt-choice label{display:flex;align-items:flex-start;gap:9px;line-height:1.9;margin:10px 0;cursor:pointer}
+.prompt-choice input[type=radio]{margin:5px 0 0;accent-color:#aa8950;flex-shrink:0}
+.prompt-preview{padding:13px;border-radius:10px;background:#f5ecd9;color:#755821;text-align:center;font-weight:bold;line-height:1.9;margin-top:10px}
+.event-panel{padding:14px;border:1px solid #e5d6b7;border-radius:12px;background:#fffdf8;margin:12px 0}
+.event-panel .help{margin-bottom:8px}
+.invitation-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.category-button{margin:0;background:#fff;color:#725b35;border:1px solid #e5d6b7;text-align:right;line-height:1.6}
+.category-button.active{background:#aa8950;color:#fff;border-color:#aa8950}
+.category-count{display:inline-block;float:left;min-width:26px;text-align:center;border-radius:20px;padding:0 6px;background:#f0e5d0;color:#755821;font-size:12px}
+.category-button.active .category-count{background:#fff;color:#755821}
+.search-box{position:relative;margin:12px 0}
+.search-box input{margin:0;padding-right:42px}
+.search-box::before{content:"⌕";position:absolute;right:14px;top:9px;font-size:25px;color:#aa8950;pointer-events:none}
+.search-results-info{font-size:13px;color:#81715d;line-height:1.8;margin:8px 0}
+hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
+@media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}.door-grid,.invitation-categories{grid-template-columns:1fr}.row-buttons{grid-template-columns:1fr}.audio-library-item button{width:100%}}
 </style>
 </head>
 <body>
 <main>
 <h1>باب الفرح</h1>
-<p class="subtitle">لوحة إدارة دعوات الزفاف الإلكترونية</p>
+<p class="subtitle">لوحة إدارة الدعوات الإلكترونية</p>
 
 <section id="login">
 <h3>تسجيل دخول الإدارة</h3>
 <label for="email">البريد الإلكتروني</label>
-<input id="email" type="email" autocomplete="username" placeholder="البريد الإلكتروني">
+<input id="email" type="email" autocomplete="username" placeholder="البريد الإلكتروني" required>
 <label for="password">كلمة المرور</label>
-<input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور">
+<input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور" required>
 <button id="loginBtn" type="button">تسجيل الدخول</button>
 </section>
 
 <section id="panel" class="hidden">
-
-<details class="door-panel" id="bookingsPanel">
-<summary>📒 إدارة الحجوزات</summary>
-<div class="door-content">
-<p class="help">سجّل حجوزات الزبائن وتابع حالة كل حجز. هذه الحجوزات منفصلة عن الدعوات المنشورة.</p>
-
-<form id="bookingForm">
-<input id="bookingId" type="hidden">
-
-<label for="customerName">اسم الزبون</label>
-<input id="customerName" required placeholder="اسم الزبون">
-
-<label for="customerPhone">رقم الهاتف</label>
-<input id="customerPhone" type="tel" placeholder="07xxxxxxxxx">
-
-<label for="bookingDate">موعد الزفاف</label>
-<input id="bookingDate" type="date">
-
-<label for="bookingType">نوع الحجز</label>
-<select id="bookingType">
-<option value="دعوة زفاف">دعوة زفاف</option>
-<option value="دعوة إلكترونية مخصصة">دعوة إلكترونية مخصصة</option>
-<option value="أخرى">أخرى</option>
-</select>
-
-<label for="bookingNotes">ملاحظات</label>
-<textarea id="bookingNotes" placeholder="تفاصيل الطلب أو الاتفاق"></textarea>
-
-<label for="bookingStatus">حالة الحجز</label>
-<select id="bookingStatus">
-<option value="جديد">جديد</option>
-<option value="قيد التنفيذ">قيد التنفيذ</option>
-<option value="مكتمل">مكتمل</option>
-<option value="ملغي">ملغي</option>
-</select>
-
-<button id="saveBookingBtn" type="submit">حفظ الحجز</button>
-<button id="resetBookingBtn" type="button" class="secondary">حجز جديد / إلغاء التعديل</button>
-</form>
-
-<button id="refreshBookingsBtn" type="button" class="secondary">تحديث الحجوزات</button>
-<div id="bookingsList"></div>
-</div>
-</details>
-
 <h3 id="formTitle">إضافة دعوة جديدة</h3>
-
 <form id="inviteForm" novalidate>
-<label for="slug">رابط الدعوة (يتولد تلقائياً)</label>
+
+<div class="event-panel">
+<h3 style="margin-top:0">🎉 نوع المناسبة</h3>
+<label for="eventType">اختَر نوع الدعوة</label>
+<select id="eventType">
+<option value="wedding">💍 دعوة زفاف</option>
+<option value="engagement">🤍 دعوة عقد قران</option>
+<option value="henna">🌿 دعوة حفلة الحنّة</option>
+<option value="circumcision">👶 دعوة مناسبة الختان</option>
+<option value="graduation">🎓 دعوة حفلة التخرج</option>
+<option value="birthday">🎂 دعوة مناسبة عيد ميلاد</option>
+</select>
+
+<div id="birthdayOptions" class="hidden">
+<label for="birthdayInviteStyle">نوع دعوة عيد الميلاد</label>
+<select id="birthdayInviteStyle">
+<option value="personal">دعوة شخصية</option>
+<option value="family">دعوة عائلية</option>
+</select>
+<label for="birthdayPersonType">صاحب عيد الميلاد</label>
+<select id="birthdayPersonType">
+<option value="self">عيد ميلادي</option>
+<option value="son">عيد ميلاد ابني</option>
+<option value="daughter">عيد ميلاد ابنتي</option>
+</select>
+</div>
+<p class="help">لكل مناسبة مجموعة أبواب مستقلة. تغيير المناسبة يغيّر مجموعة الأبواب وملفاتها المحفوظة، دون التأثير على المناسبات الأخرى.</p>
+</div>
+
+<label for="slug">رابط الدعوة</label>
 <input id="slug" readonly required>
-<p class="help">عند تعديل دعوة قديمة يبقى رابطها نفسه.</p>
+<p class="help">عند تعديل دعوة محفوظة يبقى رابطها نفسه.</p>
 
-<label for="groom">اسم العريس</label>
+<div id="primaryNameGroup">
+<label for="groom" id="primaryNameLabel">اسم العريس</label>
 <input id="groom" required placeholder="اسم العريس">
-
-<label for="bride">اسم العروس</label>
+</div>
+<div id="secondaryNameGroup">
+<label for="bride" id="secondaryNameLabel">اسم العروس</label>
 <input id="bride" required placeholder="اسم العروس">
+</div>
 
 <label for="date">تاريخ الحفل</label>
 <input id="date" type="date">
-
-<label for="expiresAt">تاريخ انتهاء صلاحية الدعوة</label>
-<input id="expiresAt" type="date">
-<p class="help">بعد هذا التاريخ لن تعمل الدعوة المنشورة. اتركه فارغاً إذا تريد الرابط بلا تاريخ انتهاء.</p>
-
 <label for="day">يوم الحفل</label>
 <input id="day" placeholder="مثال: الخميس">
-
 <label for="time">وقت الحفل</label>
 <input id="time" placeholder="مثال: الثامنة مساءً">
-
-<label for="venue">اسم القاعة</label>
-<input id="venue" placeholder="اسم قاعة الأفراح">
-
-<label for="map">رابط موقع القاعة على الخريطة</label>
+<label for="venue">اسم القاعة أو مكان المناسبة</label>
+<input id="venue" placeholder="اسم القاعة أو مكان المناسبة">
+<label for="map">رابط موقع المناسبة على الخريطة</label>
 <input id="map" type="url" placeholder="https://maps.google.com/...">
-
 <label for="phone">رقم التواصل</label>
 <input id="phone" type="tel" placeholder="رقم الهاتف">
-
 <label for="notes">ملاحظات إضافية</label>
-<textarea id="notes" placeholder="اكتب أي ملاحظات تريد إضافتها للدعوة"></textarea>
+<textarea id="notes" placeholder="اكتب الملاحظات التي تريد إضافتها للدعوة"></textarea>
+
+<hr>
+<h3>✨ اختيار طريقة فتح الدعوة</h3>
+<p class="help">اختر طريقة فتح الباب التي تريدها لهذه الدعوة. سيتم حفظ الاختيار مع الدعوة وإضافته إلى رابطها.</p>
+<div class="prompt-choice">
+<label>
+<input type="radio" name="openingPrompt" value="knock" checked>
+<span>🚪 أطرق الباب وأكتشف دعوتك الخاصة ❤️</span>
+</label>
+<label>
+<input type="radio" name="openingPrompt" value="tap">
+<span>👆 اضغط على الشاشة 3 مرات لفتح الدعوة ❤️</span>
+</label>
+<div id="openingPromptPreview" class="prompt-preview">أطرق الباب وأكتشف دعوتك الخاصة ❤️</div>
+</div>
+
+<hr>
+<h3>⏳ مدة صلاحية الرابط</h3>
+<label for="expiresAt">تاريخ ووقت إيقاف رابط الدعوة</label>
+<input id="expiresAt" type="datetime-local">
+<p class="help">هذا الإعداد خاص بلوحة الإدارة ولا يظهر للضيوف. اترك الحقل فارغاً إذا أردت أن يبقى الرابط بلا انتهاء.</p>
 
 <details class="door-panel">
-<summary>🔊 إعدادات صوت فتح الباب</summary>
+<summary>🔊 إعدادات الصوت والأغاني</summary>
 <div class="door-content">
 <label for="audioType">اختيار الصوت عند فتح الباب</label>
 <select id="audioType">
 <option value="none">🔇 بدون صوت</option>
-<option value="song">🎵 أغنية زفاف رومانسية</option>
+<option value="song">🎵 أغنية</option>
 <option value="quran">📖 القرآن الكريم — سورة الروم، الآية 21</option>
 </select>
-<p class="help">قد يحتاج تشغيل الصوت إلى تفاعل الزائر مع الصفحة.</p>
+<label for="audioLibrary">🎵 اختيار أغنية محفوظة</label>
+<select id="audioLibrary"><option value="">جارٍ تحميل قائمة الأغاني...</option></select>
+<button type="button" id="useLibrarySongBtn">استخدام الأغنية المحددة</button>
+<p class="help">الأغاني التي ترفعها تُحفظ في مكتبة الأغاني المشتركة، ويمكنك اختيارها لأي دعوة.</p>
+<div id="audioLibraryList"></div>
+<hr>
+<h3>إضافة أغنية جديدة إلى المكتبة</h3>
+<label for="librarySongName">اسم الأغنية</label>
+<input id="librarySongName" placeholder="مثال: أغنية زفاف أحمد">
+<label for="librarySongFile">اختيار ملف MP3 من الجهاز</label>
+<input id="librarySongFile" type="file" accept=".mp3,audio/mpeg">
+<button type="button" id="uploadLibrarySongBtn">رفع الأغنية وإضافتها إلى المكتبة</button>
+<p id="librarySongStatus" class="help">اختر أغنية MP3 لإضافتها إلى مكتبة الأغاني.</p>
+<hr>
+<h3>رفع أغنية خاصة بهذه الدعوة فقط</h3>
+<label for="audioFile">اختيار أغنية MP3 من الجهاز</label>
+<input id="audioFile" type="file" accept=".mp3,audio/mpeg">
+<p class="help">هذا الخيار يرفع أغنية خاصة بالدعوة الحالية.</p>
+<p id="audioFileStatus" class="help">لم يتم اختيار ملف جديد.</p>
+<p id="currentSongStatus" class="help"></p>
+<button type="button" id="clearSongBtn" class="secondary">إزالة الأغنية من هذه الدعوة</button>
 </div>
 </details>
 
@@ -173,60 +205,86 @@ body{padding:7px}
 <span>🚪 اختيار تصميم الباب</span>
 <span class="selected-door" id="selectedDoorLabel">المحدد: الملكي الذهبي</span>
 </summary>
-
 <div class="door-content">
 <input id="template" type="hidden" value="1">
-
+<p id="doorEventLabel" class="help">المناسبة الحالية: الزفاف</p>
 <div class="door-grid">
-<button type="button" class="door-option selected" data-id="1" aria-pressed="true"><span class="number">01</span>الملكي الذهبي</button>
-<button type="button" class="door-option" data-id="2" aria-pressed="false"><span class="number">02</span>الأبيض الملكي</button>
-<button type="button" class="door-option" data-id="3" aria-pressed="false"><span class="number">03</span>التراثي الشرقي</button>
-<button type="button" class="door-option" data-id="4" aria-pressed="false"><span class="number">04</span>الزجاجي الحديث</button>
-<button type="button" class="door-option" data-id="5" aria-pressed="false"><span class="number">05</span>الأخضر الملكي</button>
-<button type="button" class="door-option" data-id="6" aria-pressed="false"><span class="number">06</span>الوردي الرومانسي</button>
-<button type="button" class="door-option" data-id="7" aria-pressed="false"><span class="number">07</span>الأزرق الليلي</button>
-<button type="button" class="door-option" data-id="8" aria-pressed="false"><span class="number">08</span>الرخام الفخم</button>
-<button type="button" class="door-option" data-id="9" aria-pressed="false"><span class="number">09</span>القالب التاسع</button>
-<button type="button" class="door-option" data-id="10" aria-pressed="false"><span class="number">10</span>القالب العاشر</button>
-<button type="button" class="door-option" data-id="11" aria-pressed="false"><span class="number">11</span>القالب الحادي عشر</button>
-<button type="button" class="door-option" data-id="12" aria-pressed="false"><span class="number">12</span>القالب الثاني عشر</button>
-<button type="button" class="door-option" data-id="13" aria-pressed="false"><span class="number">13</span>القالب الثالث عشر</button>
-<button type="button" class="door-option" data-id="14" aria-pressed="false"><span class="number">14</span>القالب الرابع عشر</button>
+<button type="button" class="door-option selected" data-id="1"><span class="number">01</span>الملكي الذهبي</button>
+<button type="button" class="door-option" data-id="2"><span class="number">02</span>الأبيض الملكي</button>
+<button type="button" class="door-option" data-id="3"><span class="number">03</span>التراثي الشرقي</button>
+<button type="button" class="door-option" data-id="4"><span class="number">04</span>الزجاجي الحديث</button>
+<button type="button" class="door-option" data-id="5"><span class="number">05</span>الأخضر الملكي</button>
+<button type="button" class="door-option" data-id="6"><span class="number">06</span>الوردي الرومانسي</button>
+<button type="button" class="door-option" data-id="7"><span class="number">07</span>الأزرق الليلي</button>
+<button type="button" class="door-option" data-id="8"><span class="number">08</span>الرخام الفخم</button>
+<button type="button" class="door-option" data-id="9"><span class="number">09</span>القالب التاسع</button>
+<button type="button" class="door-option" data-id="10"><span class="number">10</span>القالب العاشر</button>
+<button type="button" class="door-option" data-id="11"><span class="number">11</span>القالب الحادي عشر</button>
+<button type="button" class="door-option" data-id="12"><span class="number">12</span>القالب الثاني عشر</button>
+<button type="button" class="door-option" data-id="13"><span class="number">13</span>القالب الثالث عشر</button>
+<button type="button" class="door-option" data-id="14"><span class="number">14</span>القالب الرابع عشر</button>
 </div>
-
 <p id="doorDescription" class="door-description"></p>
-<p class="help">اختَر الباب المناسب؛ سيُحفظ اختيارك مع الدعوة. يجب توفر تصميم القالب في صفحة الدعوة حتى يظهر بشكل مختلف.</p>
-
-<div class="door-image-tools">
-<h3 style="margin-top:0">🖼️ تعديل صورة الباب لهذا القالب</h3>
-<p class="help">ارفع صورة JPG أو PNG أو WEBP أو GIF متحركة. الصورة خاصة بالقالب المحدد، وتُستخدم لكل الدعوات التي تختار هذا القالب. الحد الأقصى 10 ميغابايت.</p>
-
-<label for="templateDoorFile">اختيار صورة الباب من اللابتوب</label>
-<input id="templateDoorFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
-
-<img id="templateDoorPreview" alt="معاينة صورة الباب" class="hidden">
-<p id="templateDoorImageStatus" class="help">سيظهر هنا وضع صورة القالب.</p>
-
-<div class="door-image-actions">
-<button type="button" id="uploadTemplateDoorBtn">رفع / حفظ صورة الباب</button>
-<button type="button" id="removeTemplateDoorBtn" class="secondary">إزالة الصورة المخصصة</button>
+<hr>
+<h3>🚪 ملف الباب المتحرك لهذا القالب</h3>
+<p class="help">يمكنك رفع صورة JPG أو PNG أو WEBP أو GIF متحرك أو فيديو MP4. لكل مناسبة ولكل قالب ملف مستقل.</p>
+<label for="doorImageFile">اختيار صورة أو GIF أو فيديو MP4</label>
+<input id="doorImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,.mp4">
+<div id="doorImagePreviewBox" class="hidden">
+<p class="help">معاينة الملف المختار أو المحفوظ:</p>
+<img id="doorImagePreview" class="door-image-preview hidden" alt="معاينة صورة الباب">
+<video id="doorVideoPreview" class="door-video-preview hidden" controls muted playsinline preload="metadata"></video>
 </div>
-</div>
+<p id="doorImageStatus" class="help">جارٍ تحميل إعدادات ملف الباب...</p>
+<button type="button" id="saveDoorImageBtn">رفع وحفظ ملف الباب لهذه المناسبة وهذا القالب</button>
+<button type="button" id="deleteDoorImageBtn" class="danger">إزالة الملف المخصص لهذه المناسبة وهذا القالب</button>
+<p class="help">يتطلب هذا القسم جدول template_doors مع العمود event_type وقيد فريد مركب على event_type وtemplate_id، ومخزناً عاماً باسم template-doors في Supabase.</p>
 </div>
 </details>
 
-<label class="inline-check"><input id="published" type="checkbox"> نشر الدعوة لتكون متاحة عبر رابطها</label>
-
-<button type="button" id="saveBtn" onclick="document.getElementById('inviteForm').requestSubmit()">حفظ الدعوة</button>
+<label><input id="published" type="checkbox"> نشر الدعوة لتكون متاحة عبر رابطها</label>
+<div class="row-buttons">
+<button type="button" id="saveBtn">حفظ الدعوة</button>
 <button type="button" class="secondary" id="newBtn">دعوة جديدة</button>
+</div>
+<div class="row-buttons">
+<button type="button" class="danger hidden" id="deleteCurrentBtn">حذف الدعوة الحالية</button>
+<button type="button" class="secondary hidden" id="cancelEditBtn">إلغاء التعديل</button>
+</div>
 </form>
 
-<h3>دعواتي</h3>
-<button id="refreshBtn" type="button">تحديث القائمة</button>
+<hr>
+<details class="door-panel" id="myInvitationsPanel">
+<summary>📨 دعواتي — الدعوات المحفوظة</summary>
+<div class="door-content">
+<p class="help">اختر نوع المناسبة لعرض دعواته فقط، أو اختر كل الدعوات وابحث بالاسم أو رقم الهاتف.</p>
+<div class="invitation-categories" id="invitationCategories">
+<button type="button" class="category-button active" data-category="all">📋 كل الدعوات <span class="category-count" id="count-all">0</span></button>
+<button type="button" class="category-button" data-category="wedding">💍 دعوات الزفاف <span class="category-count" id="count-wedding">0</span></button>
+<button type="button" class="category-button" data-category="engagement">🤍 دعوات عقد القران <span class="category-count" id="count-engagement">0</span></button>
+<button type="button" class="category-button" data-category="henna">🌿 دعوات الحنّة <span class="category-count" id="count-henna">0</span></button>
+<button type="button" class="category-button" data-category="circumcision">👶 دعوات الختان <span class="category-count" id="count-circumcision">0</span></button>
+<button type="button" class="category-button" data-category="graduation">🎓 دعوات التخرج <span class="category-count" id="count-graduation">0</span></button>
+<button type="button" class="category-button" data-category="birthday">🎂 دعوات أعياد الميلاد <span class="category-count" id="count-birthday">0</span></button>
+</div>
+<div id="allInvitationsSearch">
+<label for="invitationSearch">🔎 البحث باسم صاحب الدعوة أو رقم الهاتف</label>
+<div class="search-box"><input id="invitationSearch" type="search" placeholder="اكتب الاسم أو رقم الهاتف..." autocomplete="off"></div>
+<button type="button" class="secondary" id="clearSearchBtn">مسح البحث</button>
+</div>
+<p id="searchResultsInfo" class="search-results-info"></p>
+<button id="refreshBtn" type="button">تحديث قائمة الدعوات</button>
 <div id="list"></div>
+</div>
+</details>
+<hr>
+<h3>إدارة الحجوزات</h3>
+<p class="help">يعرض هذا القسم الحجوزات إذا كان جدول bookings موجوداً ومهيأً في Supabase.</p>
+<button id="refreshBookingsBtn" type="button">تحديث الحجوزات</button>
+<div id="bookingsList"></div>
+<h3>الحساب</h3>
 <button id="logoutBtn" type="button" class="secondary">تسجيل الخروج</button>
 </section>
-
 <p id="status" role="status" aria-live="polite"></p>
 </main>
 
@@ -235,472 +293,664 @@ body{padding:7px}
 
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
-
-const $=id=>document.getElementById(id);
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
+const $=id=>document.getElementById(id);
 let editingId=null;
-let editingBookingId=null;
 let busy=false;
-let bookingBusy=false;
-let templateDoorPreviewUrl=null;
-let currentTemplateDoorUrl=null;
+let loading=false;
+let currentAudioUrl="";
+let currentAudioType="none";
+let currentLibrarySongId=null;
+let doorImageBusy=false;
+let currentDoorImageUrl="";
+let currentDoorMediaType="";
+let doorPreviewObjectUrl="";
+let doorLoadRequest=0;
+const MAX_AUDIO_SIZE=10*1024*1024;
+const MAX_DOOR_IMAGE_SIZE=50*1024*1024;
+const AUDIO_BUCKET="invitation-audio";
+const AUDIO_LIBRARY_BUCKET="invitation-audio";
+const AUDIO_LIBRARY_TABLE="audio_library";
+const DOOR_BUCKET="template-doors";
+const allowedDoorImageTypes=["image/jpeg","image/png","image/webp","image/gif","video/mp4"];
+let librarySongs=[];
+let cachedInvitations=[];
+let activeInvitationCategory="all";
 
-const doorNames={
-1:"الملكي الذهبي",
-2:"الأبيض الملكي",
-3:"التراثي الشرقي",
-4:"الزجاجي الحديث",
-5:"الأخضر الملكي",
-6:"الوردي الرومانسي",
-7:"الأزرق الليلي",
-8:"الرخام الفخم",
-9:"القالب التاسع",
-10:"القالب العاشر",
-11:"القالب الحادي عشر",
-12:"القالب الثاني عشر",
-13:"القالب الثالث عشر",
-14:"القالب الرابع عشر"
+const eventNames={wedding:"دعوة زفاف",engagement:"دعوة عقد قران",henna:"دعوة حفلة الحنّة",circumcision:"دعوة مناسبة الختان",graduation:"دعوة حفلة التخرج",birthday:"دعوة عيد ميلاد"};
+const eventShortNames={wedding:"الزفاف",engagement:"عقد القران",henna:"الحنّة",circumcision:"الختان",graduation:"التخرج",birthday:"عيد الميلاد"};
+const openingPrompts={knock:"أطرق الباب وأكتشف دعوتك الخاصة ❤️",tap:"اضغط على الشاشة 3 مرات لفتح الدعوة ❤️"};
+
+function getOpeningPrompt(){
+const selected=document.querySelector('input[name="openingPrompt"]:checked');
+return selected&&openingPrompts[selected.value]?selected.value:"knock";
+}
+function setOpeningPrompt(value){
+const safeValue=openingPrompts[value]?value:"knock";
+const radio=document.querySelector('input[name="openingPrompt"][value="'+safeValue+'"]');
+if(radio)radio.checked=true;
+$("openingPromptPreview").textContent=openingPrompts[safeValue];
+}
+document.querySelectorAll('input[name="openingPrompt"]').forEach(radio=>radio.addEventListener("change",()=>setOpeningPrompt(getOpeningPrompt())));
+
+function getEventType(){return eventNames[$("eventType").value]?$("eventType").value:"wedding"}
+
+function updateEventFields(){
+const type=getEventType();
+const single=["henna","circumcision","graduation","birthday"].includes(type);
+$("birthdayOptions").classList.toggle("hidden",type!=="birthday");
+$("secondaryNameGroup").classList.toggle("hidden",single);
+$("bride").required=!single;
+const settings={
+wedding:{primary:"اسم العريس",secondary:"اسم العروس",primaryPlaceholder:"اسم العريس",secondaryPlaceholder:"اسم العروس"},
+engagement:{primary:"اسم الطرف الأول",secondary:"اسم الطرف الثاني",primaryPlaceholder:"اسم الطرف الأول",secondaryPlaceholder:"اسم الطرف الثاني"},
+henna:{primary:"اسم صاحبة الحنّة",primaryPlaceholder:"اسم صاحبة الحنّة"},
+circumcision:{primary:"اسم الطفل",primaryPlaceholder:"اسم الطفل"},
+graduation:{primary:"اسم الخريج أو الخريجة",primaryPlaceholder:"اسم الخريج أو الخريجة"},
+birthday:{primary:"اسم صاحب عيد الميلاد",primaryPlaceholder:"اسم صاحب عيد الميلاد"}
 };
-
-const doorDescriptions={
-1:"أسود ملكي مع زخارف ذهبية.",
-2:"أبيض عاجي بلمسات ذهبية.",
-3:"خشب داكن بنقوش شرقية.",
-4:"زجاج حديث بإطار معدني.",
-5:"أخضر زمردي بتفاصيل نحاسية.",
-6:"وردي لؤلؤي رومانسي.",
-7:"أزرق ليلي بزخارف فضية.",
-8:"رخام عاجي بخطوط برونزية.",
-9:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-10:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-11:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-12:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-13:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة.",
-14:"قالب جديد — يجب إضافة تصميمه إلى صفحة الدعوة."
-};
-
-const audioNames={
-none:"بدون صوت",
-song:"أغنية زفاف",
-quran:"القرآن الكريم — سورة الروم، الآية 21"
-};
-
-function status(message){
-const box=$("status");
-if(box)box.textContent=message;
+const s=settings[type];
+$("primaryNameLabel").textContent=s.primary;
+$("groom").placeholder=s.primaryPlaceholder;
+if(!single){
+$("secondaryNameLabel").textContent=s.secondary;
+$("bride").placeholder=s.secondaryPlaceholder;
+}
+if(type==="birthday"){
+const person=$("birthdayPersonType").value;
+if(person==="son")$("primaryNameLabel").textContent="اسم الابن";
+else if(person==="daughter")$("primaryNameLabel").textContent="اسم الابنة";
+else $("primaryNameLabel").textContent="اسم صاحب عيد الميلاد";
+}
+$("formTitle").textContent=editingId?"تعديل "+eventNames[type]:"إضافة "+eventNames[type];
+$("doorEventLabel").textContent="المناسبة الحالية: "+(eventShortNames[type]||eventShortNames.wedding)+" — القوالب الأربعة عشر مستقلة لهذه المناسبة.";
 }
 
+const doorNames={1:"الملكي الذهبي",2:"الأبيض الملكي",3:"التراثي الشرقي",4:"الزجاجي الحديث",5:"الأخضر الملكي",6:"الوردي الرومانسي",7:"الأزرق الليلي",8:"الرخام الفخم",9:"القالب التاسع",10:"القالب العاشر",11:"القالب الحادي عشر",12:"القالب الثاني عشر",13:"القالب الثالث عشر",14:"القالب الرابع عشر"};
+const doorDescriptions={1:"أسود ملكي مع زخارف ذهبية.",2:"أبيض عاجي بلمسات ذهبية.",3:"خشب داكن بنقوش شرقية.",4:"زجاج حديث بإطار معدني.",5:"أخضر زمردي بتفاصيل نحاسية.",6:"وردي لؤلؤي رومانسي.",7:"أزرق ليلي بزخارف فضية.",8:"رخام عاجي بخطوط برونزية.",9:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",10:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",11:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",12:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",13:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",14:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به."};
+const audioNames={none:"بدون صوت",song:"أغنية",quran:"القرآن الكريم — سورة الروم، الآية 21"};
+
+function status(message){$("status").textContent=message}
 function makeSlug(){
-const bytes=new Uint8Array(7);
+const bytes=new Uint8Array(8);
 crypto.getRandomValues(bytes);
-const token=Array.from(bytes,b=>b.toString(36).padStart(2,"0")).join("").slice(0,10);
-return "wedding-"+token;
+return "wedding-"+Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
 }
-
-function newUniqueSlug(){
-$("slug").value=makeSlug();
+function newUniqueSlug(){$("slug").value=makeSlug()}
+function toLocalDateTime(value){
+if(!value)return "";
+const date=new Date(value);
+if(Number.isNaN(date.getTime()))return "";
+const local=new Date(date.getTime()-date.getTimezoneOffset()*60000);
+return local.toISOString().slice(0,16);
 }
-
-function clearTemplateDoorPreview(){
-if(templateDoorPreviewUrl){
-URL.revokeObjectURL(templateDoorPreviewUrl);
-templateDoorPreviewUrl=null;
+function formatExpiry(value){
+if(!value)return "بدون انتهاء";
+const date=new Date(value);
+if(Number.isNaN(date.getTime()))return "تاريخ غير صالح";
+return date.toLocaleString("ar-IQ",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
 }
-}
-
-function setTemplateDoorStatus(message){
-$("templateDoorImageStatus").textContent=message;
-}
-
-async function loadTemplateDoorImage(id){
-id=Number(id);
-$("templateDoorFile").value="";
-clearTemplateDoorPreview();
-$("templateDoorPreview").classList.add("hidden");
-$("templateDoorPreview").removeAttribute("src");
-currentTemplateDoorUrl=null;
-
-setTemplateDoorStatus("جارٍ تحميل صورة القالب "+id+"...");
-
-try{
-const {data,error}=await db
-.from("template_doors")
-.select("image_url")
-.eq("template_id",id)
-.maybeSingle();
-
-if(error)throw error;
-
-if(data&&data.image_url){
-currentTemplateDoorUrl=data.image_url;
-$("templateDoorPreview").src=data.image_url;
-$("templateDoorPreview").classList.remove("hidden");
-setTemplateDoorStatus("توجد صورة محفوظة لهذا القالب. يمكنك استبدالها أو إزالتها.");
-}else{
-setTemplateDoorStatus("لا توجد صورة مخصصة لهذا القالب؛ سيُستخدم الباب الافتراضي إلى أن ترفع صورة.");
-}
-}catch(error){
-setTemplateDoorStatus("تعذر قراءة صورة القالب: "+(error.message||String(error)));
-}
-}
-
-$("templateDoorFile").addEventListener("change",()=>{
-const file=$("templateDoorFile").files[0];
-clearTemplateDoorPreview();
-
-if(!file){
-if(currentTemplateDoorUrl){
-$("templateDoorPreview").src=currentTemplateDoorUrl;
-$("templateDoorPreview").classList.remove("hidden");
-}
-return;
-}
-
-const allowed=["image/jpeg","image/png","image/webp","image/gif"];
-
-if(!allowed.includes(file.type)){
-setTemplateDoorStatus("نوع الملف غير مدعوم. اختر JPG أو PNG أو WEBP أو GIF.");
-$("templateDoorFile").value="";
-return;
-}
-
-if(file.size>10*1024*1024){
-setTemplateDoorStatus("حجم الصورة أكبر من 10 ميغابايت.");
-$("templateDoorFile").value="";
-return;
-}
-
-templateDoorPreviewUrl=URL.createObjectURL(file);
-$("templateDoorPreview").src=templateDoorPreviewUrl;
-$("templateDoorPreview").classList.remove("hidden");
-setTemplateDoorStatus("الصورة جاهزة للرفع إلى القالب "+$("template").value+".");
-});
-
-$("uploadTemplateDoorBtn").onclick=async()=>{
-const file=$("templateDoorFile").files[0];
-const id=Number($("template").value);
-
-if(!file){
-setTemplateDoorStatus("اختَر صورة من اللابتوب أولاً.");
-return;
-}
-
-if(file.size>10*1024*1024){
-setTemplateDoorStatus("حجم الصورة أكبر من 10 ميغابايت.");
-return;
-}
-
-const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
-const path=id+"/door-"+Date.now()+"."+ext;
-const btn=$("uploadTemplateDoorBtn");
-
-btn.disabled=true;
-setTemplateDoorStatus("جارٍ رفع الصورة وحفظها...");
-
-try{
-const {error:uploadError}=await db.storage
-.from("template-doors")
-.upload(path,file,{
-upsert:false,
-contentType:file.type,
-cacheControl:"3600"
-});
-
-if(uploadError)throw uploadError;
-
-const {data:publicData}=db.storage.from("template-doors").getPublicUrl(path);
-const imageUrl=publicData.publicUrl;
-
-const {error:saveError}=await db
-.from("template_doors")
-.upsert({
-template_id:id,
-image_url:imageUrl,
-updated_at:new Date().toISOString()
-},{onConflict:"template_id"});
-
-if(saveError)throw saveError;
-
-currentTemplateDoorUrl=imageUrl;
-clearTemplateDoorPreview();
-$("templateDoorPreview").src=imageUrl;
-$("templateDoorPreview").classList.remove("hidden");
-$("templateDoorFile").value="";
-
-setTemplateDoorStatus("تم حفظ صورة الباب للقالب "+id+" بنجاح. ستظهر في الدعوات التي تستخدم هذا القالب بعد تحديث الصفحة.");
-}catch(error){
-setTemplateDoorStatus("لم يتم حفظ الصورة: "+(error.message||String(error))+". تأكد من تسجيل الدخول وسياسات Supabase.");
-}finally{
-btn.disabled=false;
-}
-};
-
-$("removeTemplateDoorBtn").onclick=async()=>{
-const id=Number($("template").value);
-
-if(!currentTemplateDoorUrl){
-setTemplateDoorStatus("لا توجد صورة مخصصة لإزالتها.");
-return;
-}
-
-if(!confirm("إزالة الصورة المخصصة من القالب "+id+"؟ سيعود القالب إلى الباب الافتراضي."))return;
-
-const btn=$("removeTemplateDoorBtn");
-btn.disabled=true;
-
-try{
-const {error}=await db.from("template_doors").delete().eq("template_id",id);
-if(error)throw error;
-
-currentTemplateDoorUrl=null;
-clearTemplateDoorPreview();
-$("templateDoorPreview").classList.add("hidden");
-$("templateDoorPreview").removeAttribute("src");
-
-setTemplateDoorStatus("تمت إزالة الصورة المخصصة من القالب. سيعود الباب الافتراضي.");
-}catch(error){
-setTemplateDoorStatus("تعذر إزالة الصورة: "+(error.message||String(error)));
-}finally{
-btn.disabled=false;
-}
-};
-
-function selectDoor(id,closePicker=false){
+function selectDoor(id){
 id=Number(id);
 if(!doorNames[id])id=1;
-
 $("template").value=String(id);
-$("doorDescription").textContent="الباب "+id+" — "+doorNames[id]+": "+doorDescriptions[id];
+$("doorDescription").textContent="المناسبة: "+(eventShortNames[getEventType()]||"الزفاف")+" — الباب "+id+" — "+doorNames[id]+": "+doorDescriptions[id];
 $("selectedDoorLabel").textContent="المحدد: "+doorNames[id];
-
 document.querySelectorAll(".door-option").forEach(button=>{
 const selected=Number(button.dataset.id)===id;
 button.classList.toggle("selected",selected);
 button.setAttribute("aria-pressed",String(selected));
 });
-
-if(closePicker)$("doorPicker").open=false;
-loadTemplateDoorImage(id);
+}
+function clearDoorPreview(){
+$("doorImagePreview").removeAttribute("src");
+$("doorVideoPreview").removeAttribute("src");
+$("doorImagePreview").classList.add("hidden");
+$("doorVideoPreview").classList.add("hidden");
+$("doorImagePreviewBox").classList.add("hidden");
+$("doorVideoPreview").load();
+}
+function showDoorPreview(url,type){
+clearDoorPreview();
+if(!url)return;
+$("doorImagePreviewBox").classList.remove("hidden");
+if(type==="video/mp4"||type==="video"){
+$("doorVideoPreview").src=url;
+$("doorVideoPreview").classList.remove("hidden");
+$("doorVideoPreview").load();
+}else{
+$("doorImagePreview").src=url;
+$("doorImagePreview").classList.remove("hidden");
+}
+}
+function mediaTypeFromFile(file){
+if(file.type==="video/mp4"||file.name.toLowerCase().endsWith(".mp4"))return "video/mp4";
+if(file.type==="image/gif"||file.name.toLowerCase().endsWith(".gif"))return "image/gif";
+if(file.type==="image/png"||file.name.toLowerCase().endsWith(".png"))return "image/png";
+if(file.type==="image/webp"||file.name.toLowerCase().endsWith(".webp"))return "image/webp";
+if(file.type==="image/jpeg"||/\.(jpg|jpeg)$/i.test(file.name))return "image/jpeg";
+return file.type||"application/octet-stream";
+}
+function safeAudioName(file){
+return file.name.normalize("NFKD").replace(/[^\w.-]+/g,"_").replace(/^\.+/,"").slice(-100)||"wedding-song.mp3";
+}
+function normalizeLibrarySong(row){
+return {id:row.id,name:row.name||row.title||row.song_name||row.file_name||"أغنية بدون اسم",audio_url:row.audio_url||row.url||row.public_url||row.file_url||"",storage_path:row.storage_path||row.file_path||row.path||"",created_at:row.created_at||""};
+}
+function renderLibrarySelect(){
+const select=$("audioLibrary");
+select.replaceChildren();
+const empty=document.createElement("option");
+empty.value="";
+empty.textContent=librarySongs.length?"اختر أغنية من المكتبة":"لا توجد أغاني محفوظة في المكتبة";
+select.appendChild(empty);
+for(const song of librarySongs){
+const option=document.createElement("option");
+option.value=String(song.id);
+option.textContent=song.name;
+select.appendChild(option);
+}
+if(currentLibrarySongId!==null&&librarySongs.some(s=>String(s.id)===String(currentLibrarySongId)))select.value=String(currentLibrarySongId);
+else select.value="";
+}
+function renderLibraryList(){
+const box=$("audioLibraryList");
+box.replaceChildren();
+if(!librarySongs.length){
+const p=document.createElement("p");
+p.className="help";
+p.textContent="قائمة المكتبة فارغة حالياً. ارفع أغنية جديدة لإضافتها.";
+box.appendChild(p);
+return;
+}
+for(const song of librarySongs){
+const card=document.createElement("div");
+card.className="audio-library-item"+(currentAudioUrl===song.audio_url?" selected-audio":"");
+const name=document.createElement("div");
+name.className="audio-name";
+const strong=document.createElement("strong");
+strong.textContent=song.name;
+name.appendChild(strong);
+card.appendChild(name);
+const choose=document.createElement("button");
+choose.type="button";
+choose.textContent=currentAudioUrl===song.audio_url?"الأغنية مختارة ✓":"اختيار للدعوة";
+choose.onclick=()=>useLibrarySong(song);
+card.appendChild(choose);
+const preview=document.createElement("audio");
+preview.controls=true;
+preview.preload="none";
+preview.src=song.audio_url;
+card.appendChild(preview);
+const remove=document.createElement("button");
+remove.type="button";
+remove.className="danger";
+remove.textContent="حذف من المكتبة";
+remove.onclick=()=>deleteLibrarySong(song);
+card.appendChild(remove);
+box.appendChild(card);
+}
+}
+async function loadAudioLibrary(){
+$("audioLibrary").disabled=true;
+$("uploadLibrarySongBtn").disabled=true;
+$("librarySongStatus").textContent="جارٍ تحميل قائمة الأغاني...";
+try{
+const {data,error}=await db.from(AUDIO_LIBRARY_TABLE).select("*").order("created_at",{ascending:false});
+if(error)throw error;
+librarySongs=(data||[]).map(normalizeLibrarySong).filter(song=>song.audio_url);
+renderLibrarySelect();
+renderLibraryList();
+$("librarySongStatus").textContent="تم تحميل "+librarySongs.length+" أغنية من المكتبة.";
+}catch(error){
+console.error("Load audio library:",error);
+librarySongs=[];
+renderLibrarySelect();
+renderLibraryList();
+$("librarySongStatus").textContent="تعذر تحميل مكتبة الأغاني. تأكد من إنشاء جدول audio_library في Supabase.";
+}finally{
+$("audioLibrary").disabled=false;
+$("uploadLibrarySongBtn").disabled=false;
+}
+}
+async function useLibrarySong(song){
+if(!song||!song.audio_url){status("رابط الأغنية غير متوفر.");return}
+currentAudioUrl=song.audio_url;
+currentAudioType="song";
+currentLibrarySongId=song.id;
+$("audioType").value="song";
+$("audioFile").value="";
+$("audioFileStatus").textContent="تم اختيار أغنية من المكتبة.";
+$("currentSongStatus").textContent="الأغنية المختارة للدعوة: "+song.name;
+$("audioLibrary").value=String(song.id);
+renderLibraryList();
+status("تم اختيار أغنية «"+song.name+"». اضغط حفظ الدعوة لحفظ الاختيار.");
+}
+$("useLibrarySongBtn").addEventListener("click",()=>{
+const id=$("audioLibrary").value;
+const song=librarySongs.find(s=>String(s.id)===String(id));
+if(!song){status("اختر أغنية من القائمة أولاً.");return}
+useLibrarySong(song);
+});
+$("uploadLibrarySongBtn").addEventListener("click",async()=>{
+const file=$("librarySongFile").files[0];
+const name=$("librarySongName").value.trim()||file?.name.replace(/\.mp3$/i,"")||"أغنية زفاف";
+if(!file){status("اختر ملف MP3 من جهازك أولاً.");return}
+if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){status("اختر ملف MP3 صحيحاً.");return}
+if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
+$("uploadLibrarySongBtn").disabled=true;
+$("librarySongStatus").textContent="جارٍ رفع الأغنية...";
+try{
+const path="library/"+Date.now()+"-"+crypto.randomUUID()+"-"+safeAudioName(file);
+const {data:uploadData,error:uploadError}=await db.storage.from(AUDIO_LIBRARY_BUCKET).upload(path,file,{cacheControl:"3600",upsert:false,contentType:"audio/mpeg"});
+if(uploadError)throw uploadError;
+const {data:publicData}=db.storage.from(AUDIO_LIBRARY_BUCKET).getPublicUrl(uploadData.path);
+if(!publicData?.publicUrl)throw new Error("تعذر الحصول على رابط الأغنية.");
+const {data:inserted,error:insertError}=await db.from(AUDIO_LIBRARY_TABLE).insert({name,audio_url:publicData.publicUrl,storage_path:uploadData.path,file_name:file.name,created_at:new Date().toISOString()}).select("*").single();
+if(insertError)throw new Error("تم رفع الملف لكن لم تتم إضافته إلى جدول المكتبة: "+insertError.message);
+$("librarySongFile").value="";
+$("librarySongName").value="";
+await loadAudioLibrary();
+const song=normalizeLibrarySong(inserted);
+if(song.audio_url)await useLibrarySong(song);
+$("librarySongStatus").textContent="تم رفع الأغنية وإضافتها إلى المكتبة بنجاح.";
+status("تمت إضافة الأغنية إلى المكتبة. تم اختيارها للدعوة الحالية؛ اضغط حفظ الدعوة لتطبيقها.");
+}catch(error){
+console.error("Upload library song:",error);
+$("librarySongStatus").textContent="تعذرت إضافة الأغنية: "+(error.message||"خطأ غير معروف");
+status("تعذرت إضافة الأغنية إلى المكتبة. تحقق من إعدادات جدول audio_library وصلاحيات Supabase.");
+}finally{$("uploadLibrarySongBtn").disabled=false}
+});
+async function deleteLibrarySong(song){
+if(!confirm("حذف الأغنية «"+song.name+"» من المكتبة؟ الدعوات التي تستخدم رابطها الحالي لن تتغير تلقائياً."))return;
+try{
+const {error}=await db.from(AUDIO_LIBRARY_TABLE).delete().eq("id",song.id);
+if(error)throw error;
+if(song.storage_path){
+const {error:storageError}=await db.storage.from(AUDIO_LIBRARY_BUCKET).remove([song.storage_path]);
+if(storageError)console.warn("Could not remove audio file:",storageError);
+}
+librarySongs=librarySongs.filter(s=>String(s.id)!==String(song.id));
+if(String(currentLibrarySongId)===String(song.id))currentLibrarySongId=null;
+renderLibrarySelect();
+renderLibraryList();
+status("تم حذف الأغنية من المكتبة.");
+}catch(error){console.error("Delete library song:",error);status("تعذر حذف الأغنية: "+(error.message||"خطأ غير معروف"))}
 }
 
-document.querySelectorAll(".door-option").forEach(button=>{
-button.addEventListener("click",()=>selectDoor(button.dataset.id,true));
+/* تحميل الباب حسب المناسبة ورقم القالب */
+async function loadDoorImage(templateId){
+const id=Number(templateId);
+const eventType=getEventType();
+const requestId=++doorLoadRequest;
+currentDoorImageUrl="";
+currentDoorMediaType="";
+$("doorImageFile").value="";
+clearDoorPreview();
+$("doorImageStatus").textContent="جارٍ تحميل باب "+eventShortNames[eventType]+" — القالب "+id+"...";
+try{
+const {data,error}=await db.from("template_doors").select("image_url,event_type,template_id").eq("event_type",eventType).eq("template_id",id).maybeSingle();
+if(requestId!==doorLoadRequest)return;
+if(error)throw error;
+if(data&&data.image_url){
+currentDoorImageUrl=data.image_url;
+currentDoorMediaType=/\.mp4(?:$|\?)/i.test(data.image_url)?"video/mp4":"image";
+showDoorPreview(data.image_url,currentDoorMediaType);
+$("doorImageStatus").textContent="يوجد ملف محفوظ لمناسبة "+eventShortNames[eventType]+" — القالب "+id+". يمكنك اختيار ملف جديد لاستبداله.";
+}else{$("doorImageStatus").textContent="لا يوجد ملف مخصص لمناسبة "+eventShortNames[eventType]+" — القالب "+id+". سيُستخدم الباب الافتراضي لهذه المناسبة."}
+}catch(error){
+if(requestId!==doorLoadRequest)return;
+console.error("Load door media:",error);
+$("doorImageStatus").textContent="تعذر تحميل ملف الباب: "+(error.message||"خطأ غير معروف")+". تأكد من تحديث جدول template_doors.";
+}
+}
+document.querySelectorAll(".door-option").forEach(button=>button.addEventListener("click",()=>{selectDoor(button.dataset.id);loadDoorImage(button.dataset.id)}));
+$("eventType").addEventListener("change",()=>{updateEventFields();selectDoor($("template").value||1);loadDoorImage($("template").value||1)});
+$("doorImageFile").addEventListener("change",()=>{
+const file=$("doorImageFile").files[0];
+if(!file){loadDoorImage($("template").value);return}
+const type=mediaTypeFromFile(file);
+if(!allowedDoorImageTypes.includes(type)){$("doorImageFile").value="";status("اختر صورة JPG أو PNG أو WEBP أو GIF أو فيديو MP4 صحيحاً.");return}
+if(file.size>MAX_DOOR_IMAGE_SIZE){$("doorImageFile").value="";status("حجم الملف يجب ألا يتجاوز 50 ميغابايت.");return}
+if(doorPreviewObjectUrl)URL.revokeObjectURL(doorPreviewObjectUrl);
+doorPreviewObjectUrl=URL.createObjectURL(file);
+showDoorPreview(doorPreviewObjectUrl,type);
+$("doorImageStatus").textContent="المناسبة: "+eventShortNames[getEventType()]+" — القالب: "+$("template").value+" — الملف المختار: "+file.name+" — الحجم: "+(file.size/1024/1024).toFixed(2)+" ميغابايت. اضغط حفظ الملف.";
+});
+$("saveDoorImageBtn").addEventListener("click",async()=>{
+if(doorImageBusy)return;
+const id=Number($("template").value);
+const eventType=getEventType();
+const file=$("doorImageFile").files[0];
+if(!Number.isInteger(id)||id<1||id>14){status("اختر قالباً صحيحاً أولاً.");return}
+if(!file){status("اختر صورة أو GIF أو فيديو MP4 من جهازك أولاً.");return}
+const type=mediaTypeFromFile(file);
+if(!allowedDoorImageTypes.includes(type)){status("نوع الملف غير مدعوم.");return}
+if(file.size>MAX_DOOR_IMAGE_SIZE){status("حجم الملف أكبر من 50 ميغابايت.");return}
+doorImageBusy=true;
+$("saveDoorImageBtn").disabled=true;
+$("deleteDoorImageBtn").disabled=true;
+try{
+const extension={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif","video/mp4":"mp4"}[type];
+const path=eventType+"/"+id+"/door."+extension;
+$("doorImageStatus").textContent="جارٍ رفع ملف "+eventShortNames[eventType]+" — القالب "+id+" إلى Supabase Storage...";
+const {data:uploadData,error:uploadError}=await db.storage.from(DOOR_BUCKET).upload(path,file,{upsert:true,cacheControl:"3600",contentType:type});
+if(uploadError)throw uploadError;
+const {data:publicData}=db.storage.from(DOOR_BUCKET).getPublicUrl(uploadData.path);
+if(!publicData?.publicUrl)throw new Error("تعذر إنشاء رابط عام للملف.");
+const mediaUrl=publicData.publicUrl;
+$("doorImageStatus").textContent="جارٍ حفظ إعدادات الباب للمناسبة والقالب المحددين...";
+const {error:saveError}=await db.from("template_doors").upsert({event_type:eventType,template_id:id,image_url:mediaUrl,updated_at:new Date().toISOString()},{onConflict:"event_type,template_id"});
+if(saveError)throw saveError;
+if(getEventType()===eventType&&Number($("template").value)===id){
+currentDoorImageUrl=mediaUrl;
+currentDoorMediaType=type;
+showDoorPreview(mediaUrl+"?v="+Date.now(),type);
+$("doorImageFile").value="";
+if(doorPreviewObjectUrl){URL.revokeObjectURL(doorPreviewObjectUrl);doorPreviewObjectUrl=""}
+$("doorImageStatus").textContent="تم حفظ الملف بنجاح لمناسبة "+eventShortNames[eventType]+" — القالب "+id+".";
+}
+status("تم رفع وحفظ باب "+eventShortNames[eventType]+" — القالب "+id+" بنجاح. بقية المناسبات والقوالب لم تتغير.");
+}catch(error){
+console.error("Save door media:",error);
+status("تعذر حفظ ملف الباب: "+(error.message||"خطأ غير معروف"));
+$("doorImageStatus").textContent="تعذر حفظ الملف. تأكد من وجود bucket باسم template-doors وتحديث جدول template_doors ليستخدم event_type مع template_id.";
+}finally{doorImageBusy=false;$("saveDoorImageBtn").disabled=false;$("deleteDoorImageBtn").disabled=false}
+});
+$("deleteDoorImageBtn").addEventListener("click",async()=>{
+if(doorImageBusy)return;
+const id=Number($("template").value);
+const eventType=getEventType();
+if(!confirm("متأكد تريد إزالة الملف المخصص لمناسبة "+eventShortNames[eventType]+" — القالب "+id+"؟"))return;
+doorImageBusy=true;
+$("deleteDoorImageBtn").disabled=true;
+$("saveDoorImageBtn").disabled=true;
+try{
+const {error}=await db.from("template_doors").delete().eq("event_type",eventType).eq("template_id",id);
+if(error)throw error;
+if(getEventType()===eventType&&Number($("template").value)===id){
+currentDoorImageUrl="";
+currentDoorMediaType="";
+$("doorImageFile").value="";
+clearDoorPreview();
+$("doorImageStatus").textContent="تمت إزالة الملف لمناسبة "+eventShortNames[eventType]+" — القالب "+id+".";
+if(doorPreviewObjectUrl){URL.revokeObjectURL(doorPreviewObjectUrl);doorPreviewObjectUrl=""}
+}
+status("تمت إزالة الملف المخصص لمناسبة "+eventShortNames[eventType]+" — القالب "+id+" فقط.");
+}catch(error){console.error("Delete door media:",error);status("تعذرت إزالة الملف: "+(error.message||"خطأ غير معروف"))}
+finally{doorImageBusy=false;$("deleteDoorImageBtn").disabled=false;$("saveDoorImageBtn").disabled=false}
+});
+$("audioFile").addEventListener("change",()=>{
+const file=$("audioFile").files[0];
+if(!file){
+$("audioFileStatus").textContent=currentAudioUrl?"توجد أغنية محفوظة لهذه الدعوة. لن يتغير الرابط ما لم تختر ملفاً جديداً.":"لم يتم اختيار ملف جديد.";
+return;
+}
+if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
+$("audioFile").value="";
+status("اختر ملف MP3 صحيحاً.");
+$("audioFileStatus").textContent="لم يتم اختيار ملف صالح.";
+return;
+}
+if(file.size>MAX_AUDIO_SIZE){$("audioFile").value="";status("حجم الأغنية أكبر من 10 ميغابايت.");$("audioFileStatus").textContent="الملف أكبر من الحجم المسموح.";return}
+$("audioType").value="song";
+currentLibrarySongId=null;
+$("audioLibrary").value="";
+$("audioFileStatus").textContent="الملف المختار: "+file.name+" — الحجم: "+(file.size/1024/1024).toFixed(2)+" ميغابايت";
+status("تم اختيار الأغنية. اضغط حفظ الدعوة لرفعها.");
+});
+$("audioType").addEventListener("change",()=>{
+if($("audioType").value==="none"||$("audioType").value==="quran"){
+currentAudioUrl="";
+currentLibrarySongId=null;
+$("audioLibrary").value="";
+$("audioFile").value="";
+$("currentSongStatus").textContent=$("audioType").value==="none"?"تم اختيار عدم تشغيل صوت.":"تم اختيار القرآن الكريم.";
+}
+renderLibraryList();
+});
+$("clearSongBtn").addEventListener("click",()=>{
+currentAudioUrl="";
+currentAudioType="none";
+currentLibrarySongId=null;
+$("audioType").value="none";
+$("audioFile").value="";
+$("audioLibrary").value="";
+$("audioFileStatus").textContent="لم يتم اختيار ملف جديد.";
+$("currentSongStatus").textContent="لن تحتوي الدعوة على أغنية مخصصة بعد حفظ التغييرات.";
+renderLibraryList();
+status("تمت إزالة الأغنية من إعدادات الدعوة الحالية. اضغط حفظ الدعوة لتطبيق التغيير.");
 });
 
 function showSession(session){
-$("login").classList.toggle("hidden",!!session);
-$("panel").classList.toggle("hidden",!session);
-
-if(session){
-loadInvitations();
-loadBookings();
+const signedIn=!!session;
+$("login").classList.toggle("hidden",signedIn);
+$("panel").classList.toggle("hidden",!signedIn);
+if(signedIn&&!loading){loading=true;Promise.all([loadInvitations(),loadBookings(),loadDoorImage($("template").value),loadAudioLibrary()]).finally(()=>loading=false)}
 }
-}
-
-$("loginBtn").onclick=async()=>{
-const email=$("email").value.trim();
-const password=$("password").value;
-
-if(!email||!password){
-status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");
-return;
-}
-
-$("loginBtn").disabled=true;
-
-try{
-const {error}=await db.auth.signInWithPassword({email,password});
-if(error){
-status("تعذر الدخول: "+error.message);
-return;
-}
-status("تم تسجيل الدخول.");
-}catch(error){
-status("تعذر الاتصال: "+(error.message||String(error)));
-}finally{
-$("loginBtn").disabled=false;
-}
-};
-
-db.auth.onAuthStateChange((_event,session)=>showSession(session));
-
-function invitationUrl(slug){
-const base=location.origin+location.pathname.replace(/admin\.html$/,"");
-const url=new URL(base);
+function invitationUrl(slug,openingPrompt="knock"){
+const path=location.pathname.replace(/admin\.html$/i,"");
+const url=new URL(path||"/",location.origin);
 url.searchParams.set("invite",slug);
+url.searchParams.set("opening_prompt",openingPrompt==="tap"?"tap":"knock");
 return url.href;
 }
-
 async function copyText(text){
-if(navigator.clipboard&&window.isSecureContext){
-await navigator.clipboard.writeText(text);
-return;
-}
-
+if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return}
 const field=document.createElement("textarea");
-field.value=text;
-field.style.position="fixed";
-field.style.opacity="0";
-document.body.appendChild(field);
-field.select();
-
-const ok=document.execCommand("copy");
-field.remove();
-
-if(!ok)throw new Error("تعذر نسخ الرابط");
+field.value=text;field.style.position="fixed";field.style.opacity="0";
+document.body.appendChild(field);field.select();
+const ok=document.execCommand("copy");field.remove();
+if(!ok)throw new Error("تعذر النسخ");
 }
-
-function isExpired(date){
-return !!date&&date<new Date().toISOString().slice(0,10);
+function addText(parent,tag,text,className){
+const element=document.createElement(tag);
+element.textContent=text;
+if(className)element.className=className;
+parent.appendChild(element);
+return element;
 }
-
-async function loadInvitations(){
-const {data,error}=await db
-.from("invitations")
-.select("*")
-.order("created_at",{ascending:false});
-
-if(error){
-status("تعذر تحميل الدعوات: "+error.message);
-return;
+function invitationDisplayName(item){
+const type=eventNames[item.event_type]?item.event_type:"wedding";
+const first=item.groom_name||"بدون اسم";
+if(type==="wedding"||type==="engagement")return first+" و "+(item.bride_name||"بدون اسم");
+return first+" — "+eventNames[type];
 }
-
-$("list").replaceChildren();
-
-for(const item of data||[]){
-const card=document.createElement("div");
+function normalizeSearchText(value){
+return String(value??"").normalize("NFKC").toLocaleLowerCase("ar").replace(/[ًٌٍَُِّْـ]/g,"").replace(/\s+/g," ").trim();
+}
+function normalizePhone(value){
+return String(value??"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/\D/g,"");
+}
+function invitationMatchesSearch(item,query){
+if(!query)return true;
+const nameQuery=normalizeSearchText(query);
+const phoneQuery=normalizePhone(query);
+const names=[item.groom_name,item.bride_name,invitationDisplayName(item),item.slug].map(normalizeSearchText);
+const phones=[item.contact_phone,item.phone,item.customer_phone].map(normalizePhone);
+if(names.some(name=>name&&name.includes(nameQuery)))return true;
+return phoneQuery.length>0&&phones.some(phone=>phone&&phone.includes(phoneQuery));
+}
+function updateInvitationCounts(){
+const counts={all:cachedInvitations.length,wedding:0,engagement:0,henna:0,circumcision:0,graduation:0,birthday:0};
+for(const item of cachedInvitations){const type=eventNames[item.event_type]?item.event_type:"wedding";counts[type]++}
+for(const [category,count] of Object.entries(counts)){const element=$("count-"+category);if(element)element.textContent=String(count)}
+}
+function renderInvitationCategories(){
+document.querySelectorAll(".category-button").forEach(button=>{
+const active=button.dataset.category===activeInvitationCategory;
+button.classList.toggle("active",active);
+button.setAttribute("aria-pressed",String(active));
+});
+$("allInvitationsSearch").classList.toggle("hidden",activeInvitationCategory!=="all");
+}
+function renderInvitationList(){
+const list=$("list");
+list.replaceChildren();
+const query=$("invitationSearch").value.trim();
+let items=cachedInvitations;
+if(activeInvitationCategory!=="all")items=items.filter(item=>(eventNames[item.event_type]?item.event_type:"wedding")===activeInvitationCategory);
+if(activeInvitationCategory==="all"&&query)items=items.filter(item=>invitationMatchesSearch(item,query));
+const categoryLabel=activeInvitationCategory==="all"?"كل الدعوات":eventNames[activeInvitationCategory]||"الدعوات";
+$("searchResultsInfo").textContent=query&&activeInvitationCategory==="all"?"نتائج البحث: "+items.length+" من أصل "+cachedInvitations.length+" دعوة.":"عدد "+categoryLabel+": "+items.length+" دعوة.";
+if(!cachedInvitations.length){addText(list,"p","ما عندك دعوات محفوظة حالياً. أضف دعوة جديدة من النموذج أعلاه.");return}
+if(!items.length){addText(list,"p",query&&activeInvitationCategory==="all"?"ما لقينا دعوة تطابق الاسم أو رقم الهاتف الذي بحثت عنه.":"ماكو دعوات محفوظة ضمن هذا التصنيف حالياً.");return}
+for(const item of items){
+const card=document.createElement("article");
 card.className="item";
-
-const title=document.createElement("strong");
-title.textContent=(item.groom_name||"")+" و "+(item.bride_name||"");
-
+addText(card,"strong",invitationDisplayName(item));
 const details=document.createElement("p");
 details.style.whiteSpace="pre-line";
-details.textContent=
-"رمز الدعوة: "+item.slug+
-"\nالباب: "+(item.template_id||1)+" — "+(doorNames[item.template_id]||"قالب غير معروف")+
-"\nتاريخ الحفل: "+(item.wedding_date||"غير محدد")+
-"\nانتهاء الصلاحية: "+(item.expires_at||"بدون تاريخ انتهاء")+
-"\nالوقت: "+(item.wedding_time||"غير محدد")+
-"\nالمكان: "+(item.venue_name||"غير محدد")+
-"\nالملاحظات: "+(item.notes||"لا توجد")+
-"\nالصوت: "+(audioNames[item.audio_type]||audioNames.none);
-
-const url=invitationUrl(item.slug);
-
+details.textContent="نوع المناسبة: "+(eventNames[item.event_type]||"دعوة زفاف (قديمة)")+"\nرمز الدعوة: "+(item.slug||"—")+"\nالباب: "+(item.template_id||1)+" — "+(doorNames[Number(item.template_id)]||"قالب غير معروف")+"\nطريقة الفتح: "+(openingPrompts[item.opening_prompt]||openingPrompts.knock)+"\nالتاريخ: "+(item.wedding_date||"غير محدد")+"\nاليوم: "+(item.day_name||"غير محدد")+"\nالوقت: "+(item.wedding_time||"غير محدد")+"\nالمكان: "+(item.venue_name||"غير محدد")+"\nرقم التواصل: "+(item.contact_phone||"غير محدد")+"\nالملاحظات: "+(item.notes||"لا توجد")+"\nالصوت: "+(audioNames[item.audio_type]||audioNames.none)+"\nالأغنية: "+(item.audio_url?"مرفوعة ومحفوظة":"لا يوجد رابط أغنية مخصص")+"\nانتهاء الرابط: "+formatExpiry(item.expires_at);
+card.appendChild(details);
+if(item.expires_at){
+const expired=new Date(item.expires_at).getTime()<=Date.now();
+addText(card,"p",expired?"انتهت مدة الرابط المحددة":"الرابط محدد بموعد انتهاء",expired?"expired":"active-expiry");
+}
+const url=invitationUrl(item.slug||"",item.opening_prompt||"knock");
 const link=document.createElement("a");
-link.href=url;
-link.target="_blank";
-link.rel="noopener noreferrer";
-link.textContent="فتح رابط الدعوة";
-
-const copyButton=document.createElement("button");
+link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="فتح رابط الدعوة";card.appendChild(link);
+addText(card,"p",item.is_published?"منشورة":"غير منشورة",item.is_published?"published":"unpublished");
+const copyButton=addText(card,"button","نسخ رابط الدعوة 📋");
 copyButton.type="button";
-copyButton.textContent="نسخ رابط الدعوة 📋";
-copyButton.onclick=async()=>{
+copyButton.onclick=async()=>{try{await copyText(url);status("تم نسخ رابط الدعوة:\n"+url);copyButton.textContent="تم النسخ ✓"}catch(e){status("تعذر النسخ. يمكنك نسخ الرابط التالي:\n"+url)}};
+const editButton=addText(card,"button","تعديل الدعوة");
+editButton.type="button";
+editButton.onclick=()=>{fillForm(item);window.scrollTo({top:0,behavior:"smooth"})};
+const deleteButton=addText(card,"button","حذف الدعوة");
+deleteButton.type="button";deleteButton.className="danger";deleteButton.onclick=()=>deleteInvitation(item);
+list.appendChild(card);
+}
+}
+document.querySelectorAll(".category-button").forEach(button=>button.addEventListener("click",()=>{activeInvitationCategory=button.dataset.category;renderInvitationCategories();renderInvitationList()}));
+$("invitationSearch").addEventListener("input",renderInvitationList);
+$("clearSearchBtn").addEventListener("click",()=>{$("invitationSearch").value="";renderInvitationList();$("invitationSearch").focus()});
+
+async function loadInvitations(){
+$("refreshBtn").disabled=true;
+$("list").replaceChildren();
+addText($("list"),"p","جارٍ تحميل الدعوات...");
 try{
-await copyText(url);
-status("تم نسخ رابط الدعوة:\n"+url);
-copyButton.textContent="تم النسخ ✓";
-}catch(error){
-status("تعذر النسخ. انسخ الرابط من هنا:\n"+url);
+const {data,error}=await db.from("invitations").select("*").order("created_at",{ascending:false});
+if(error){cachedInvitations=[];updateInvitationCounts();$("list").replaceChildren();addText($("list"),"p","تعذر تحميل الدعوات: "+error.message);status("تعذر تحميل الدعوات. تحقق من صلاحيات جدول invitations في Supabase.");return}
+cachedInvitations=data||[];
+updateInvitationCounts();renderInvitationCategories();renderInvitationList();
+status("تم تحميل "+cachedInvitations.length+" دعوة محفوظة.");
+}catch(e){console.error("Load invitations:",e);$("list").replaceChildren();addText($("list"),"p","حدث خطأ أثناء تحميل الدعوات. تحقق من اتصال الإنترنت.");status("حدث خطأ غير متوقع أثناء تحميل الدعوات.")}
+finally{$("refreshBtn").disabled=false}
 }
-};
-
-const publication=document.createElement("p");
-publication.className=isExpired(item.expires_at)
-?"expired"
-:(item.is_published?"published":"unpublished");
-publication.textContent=isExpired(item.expires_at)
-?"منتهية الصلاحية"
-:(item.is_published?"منشورة":"غير منشورة");
-
-const edit=document.createElement("button");
-edit.type="button";
-edit.textContent="تعديل الدعوة";
-edit.onclick=()=>fillForm(item);
-
-card.append(title,details,link,copyButton,publication,edit);
-$("list").appendChild(card);
-}
-
-status("تم تحديث قائمة الدعوات.");
-}
-
 function fillForm(item){
 editingId=item.id;
-$("formTitle").textContent="تعديل الدعوة";
-
+$("eventType").value=eventNames[item.event_type]?item.event_type:"wedding";
+$("birthdayInviteStyle").value=item.birthday_invite_style||"personal";
+$("birthdayPersonType").value=item.birthday_person_type||"self";
+updateEventFields();
+$("formTitle").textContent="تعديل "+eventNames[getEventType()];
 $("slug").value=item.slug||"";
 $("groom").value=item.groom_name||"";
 $("bride").value=item.bride_name||"";
 $("date").value=item.wedding_date||"";
-$("expiresAt").value=item.expires_at||"";
 $("day").value=item.day_name||"";
 $("time").value=item.wedding_time||"";
 $("venue").value=item.venue_name||"";
 $("map").value=item.map_url||"";
 $("phone").value=item.contact_phone||"";
 $("notes").value=item.notes||"";
+setOpeningPrompt(item.opening_prompt||"knock");
+$("expiresAt").value=toLocalDateTime(item.expires_at);
 $("audioType").value=item.audio_type||"none";
+currentAudioUrl=item.audio_url||"";
+currentAudioType=item.audio_type||"none";
+currentLibrarySongId=null;
+const match=librarySongs.find(song=>song.audio_url===currentAudioUrl);
+if(match)currentLibrarySongId=match.id;
+renderLibrarySelect();
+$("audioFile").value="";
+$("audioFileStatus").textContent=currentAudioUrl?"توجد أغنية محفوظة لهذه الدعوة. اختر أغنية من المكتبة أو ارفع ملفاً جديداً لتغييرها.":"لا توجد أغنية مرفوعة لهذه الدعوة.";
+$("currentSongStatus").textContent=currentAudioUrl?"رابط الأغنية الحالية محفوظ. يمكنك تغييره من قائمة الأغاني.":"لا توجد أغنية مخصصة حالياً.";
 $("published").checked=!!item.is_published;
-
 selectDoor(item.template_id||1);
+loadDoorImage(item.template_id||1);
 $("doorPicker").open=false;
-
-status("عدّل البيانات ثم اضغط حفظ الدعوة. رابط الدعوة سيبقى نفسه.");
-window.scrollTo({top:0,behavior:"smooth"});
+$("deleteCurrentBtn").classList.remove("hidden");
+$("cancelEditBtn").classList.remove("hidden");
+$("saveBtn").textContent="حفظ التعديلات";
+renderLibraryList();
+status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه، ويمكنك تغيير نوع المناسبة وطريقة الفتح والأغنية ثم حفظ التعديلات.");
 }
+async function deleteInvitation(item){
+const name=invitationDisplayName(item);
+if(!confirm("متأكد تريد حذف الدعوة "+name+"؟\nلا يمكن التراجع عن الحذف."))return;
+status("جارٍ حذف الدعوة...");
+try{
+const {error}=await db.from("invitations").delete().eq("id",item.id);
+if(error){status("تعذر حذف الدعوة: "+error.message);return}
+if(editingId===item.id)resetForm();
+status("تم حذف الدعوة بنجاح.");
+await loadInvitations();
+}catch(e){status("حدث خطأ أثناء حذف الدعوة.")}
+}
+$("deleteCurrentBtn").onclick=async()=>{
+if(!editingId)return;
+const itemId=editingId;
+const {data,error}=await db.from("invitations").select("*").eq("id",itemId).maybeSingle();
+if(error){status("تعذر جلب الدعوة للحذف: "+error.message);return}
+if(!data){status("الدعوة غير موجودة أو تم حذفها مسبقاً.");resetForm();await loadInvitations();return}
+await deleteInvitation(data);
+};
+$("cancelEditBtn").onclick=()=>{resetForm();status("تم إلغاء التعديل.")};
 
-/* حفظ الدعوة: يعمل من الزر أو من إرسال النموذج */
+/* معالجة الحفظ من زر مباشر ومن إرسال النموذج */
 async function saveInvitation(event){
-if(event){
-event.preventDefault();
-event.stopPropagation();
+if(event){event.preventDefault();event.stopPropagation()}
+if(busy){status("الحفظ جارٍ بالفعل، انتظر حتى يكتمل.");return}
+
+try{
+const expiryValue=$("expiresAt").value;
+let expiresAt=null;
+if(expiryValue){
+const expiryDate=new Date(expiryValue);
+if(Number.isNaN(expiryDate.getTime())){status("تاريخ انتهاء الرابط غير صالح.");return}
+if(expiryDate.getTime()<=Date.now()){status("اختَر وقت انتهاء في المستقبل.");return}
+expiresAt=expiryDate.toISOString();
 }
 
-if(busy){
-status("انتظر قليلاً، عملية الحفظ السابقة ما زالت جارية.");
-return;
-}
-
+const type=getEventType();
+const selectedType=$("audioType").value;
+const single=["henna","circumcision","graduation","birthday"].includes(type);
 const record={
 slug:$("slug").value.trim(),
+event_type:type,
+birthday_invite_style:type==="birthday"?$("birthdayInviteStyle").value:null,
+birthday_person_type:type==="birthday"?$("birthdayPersonType").value:null,
 groom_name:$("groom").value.trim(),
-bride_name:$("bride").value.trim(),
+bride_name:single?"":$("bride").value.trim(),
 wedding_date:$("date").value||null,
-expires_at:$("expiresAt").value||null,
 day_name:$("day").value.trim(),
 wedding_time:$("time").value.trim(),
 venue_name:$("venue").value.trim(),
 map_url:$("map").value.trim()||null,
 contact_phone:$("phone").value.trim(),
 notes:$("notes").value.trim(),
-audio_type:$("audioType").value,
-audio_url:null,
+opening_prompt:getOpeningPrompt(),
+audio_type:selectedType,
+audio_url:selectedType==="song"?(currentAudioUrl||null):null,
 template_id:Number($("template").value),
-is_published:$("published").checked
+is_published:$("published").checked,
+expires_at:expiresAt
 };
 
-if(!record.slug){
-status("تعذر إنشاء رمز الدعوة. اضغط «دعوة جديدة» وحاول مرة أخرى.");
-return;
-}
+if(!record.slug){status("تعذر إنشاء رابط الدعوة. اضغط دعوة جديدة.");return}
+if(!record.groom_name){status("اكتب الاسم المطلوب للمناسبة.");$("groom").focus();return}
+if(!single&&!record.bride_name){status(type==="engagement"?"اكتب اسم الطرف الثاني.":"اكتب اسم العروس.");$("bride").focus();return}
+if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>14){status("اختَر قالباً من القوالب الأربعة عشر.");return}
 
-if(!record.groom_name||!record.bride_name){
-status("اكتب اسم العريس واسم العروس قبل الحفظ.");
-return;
-}
-
-if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>14){
-status("اختار قالباً من القوالب الأربعة عشر.");
-return;
-}
-
-if(record.expires_at&&record.expires_at<new Date().toISOString().slice(0,10)){
-status("تاريخ انتهاء الصلاحية يجب أن يكون اليوم أو تاريخاً مستقبلياً.");
-return;
+const file=$("audioFile").files[0];
+if(selectedType==="song"&&!currentAudioUrl&&!file){status("اختر أغنية من المكتبة أو ارفع ملف MP3.");return}
+if(file){
+if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){status("اختر ملف MP3 صحيحاً.");return}
+if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
 }
 
 busy=true;
@@ -708,37 +958,65 @@ $("saveBtn").disabled=true;
 $("saveBtn").textContent="جارٍ الحفظ...";
 status("تم استلام طلب الحفظ، جارٍ التحقق من البيانات...");
 
-try{
-let result;
-
-if(editingId){
-result=await db.from("invitations").update(record).eq("id",editingId);
+if(file){
+status("جارٍ رفع الأغنية إلى التخزين...");
+const path="library/"+Date.now()+"-"+crypto.randomUUID()+"-"+safeAudioName(file);
+const {data:uploadData,error:uploadError}=await db.storage.from(AUDIO_BUCKET).upload(path,file,{cacheControl:"3600",upsert:false,contentType:"audio/mpeg"});
+if(uploadError)throw new Error("تعذر رفع الأغنية: "+uploadError.message);
+const {data:publicData}=db.storage.from(AUDIO_BUCKET).getPublicUrl(uploadData.path);
+if(!publicData?.publicUrl)throw new Error("تم رفع الأغنية لكن تعذر الحصول على رابطها.");
+currentAudioUrl=publicData.publicUrl;
+record.audio_url=currentAudioUrl;
+record.audio_type="song";
+const libraryName=$("librarySongName").value.trim()||file.name.replace(/\.mp3$/i,"")||"أغنية زفاف";
+const {data:libraryRow,error:libraryError}=await db.from(AUDIO_LIBRARY_TABLE).insert({name:libraryName,audio_url:currentAudioUrl,storage_path:uploadData.path,file_name:file.name,created_at:new Date().toISOString()}).select("*").single();
+if(libraryError){
+console.warn("The song works for this invitation, but library insertion failed:",libraryError);
+$("librarySongStatus").textContent="تم رفع الأغنية للدعوة، لكن تعذرت إضافتها للمكتبة: "+libraryError.message;
 }else{
-result=await db.from("invitations").insert(record);
+const newSong=normalizeLibrarySong(libraryRow);
+librarySongs=[newSong,...librarySongs.filter(song=>String(song.id)!==String(newSong.id)&&song.audio_url!==newSong.audio_url)];
+currentLibrarySongId=newSong.id;
+renderLibrarySelect();
+renderLibraryList();
+}
+$("audioType").value="song";
+$("audioFileStatus").textContent="تم رفع الأغنية بنجاح: "+file.name;
+}
+
+status("جارٍ حفظ بيانات الدعوة في قاعدة البيانات...");
+
+/* إظهار نتيجة Supabase بشكل صريح، بما فيها حالة عدم إرجاع خطأ */
+let result;
+if(editingId){
+result=await db.from("invitations").update(record).eq("id",editingId).select("id,slug").maybeSingle();
+}else{
+result=await db.from("invitations").insert(record).select("id,slug").maybeSingle();
 }
 
 if(result.error){
 if(!editingId&&/duplicate|unique/i.test(result.error.message)){
 newUniqueSlug();
-status("رمز الرابط مستخدم مسبقاً. تم إنشاء رمز جديد؛ اضغط حفظ الدعوة مرة أخرى.");
+status("تعارض رمز الرابط؛ أنشأنا رمزاً جديداً. اضغط حفظ الدعوة مرة أخرى.");
 return;
 }
-
-throw result.error;
+throw new Error("لم يتم حفظ الدعوة: "+result.error.message);
 }
 
-const savedUrl=invitationUrl(record.slug);
-status("تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+savedUrl);
+/* منع اعتبار الطلب ناجحاً إذا لم تُرجع قاعدة البيانات سجلاً */
+if(!result.data){
+throw new Error("لم تُرجع قاعدة البيانات تأكيداً لحفظ الدعوة. تحقق من صلاحيات INSERT/UPDATE وسياسات RLS لجدول invitations في Supabase.");
+}
 
-editingId=null;
-await loadInvitations();
+const savedSlug=result.data.slug||record.slug;
+const savedUrl=invitationUrl(savedSlug,record.opening_prompt);
 resetForm();
-
 status("تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+savedUrl);
+await Promise.allSettled([loadInvitations(),loadAudioLibrary()]);
 
 }catch(error){
 console.error("Save invitation error:",error);
-status("تعذر حفظ الدعوة: "+(error?.message||String(error)||"خطأ غير معروف"));
+status("تعذر حفظ الدعوة أو رفع الأغنية:\n"+(error?.message||String(error)||"خطأ غير معروف"));
 }finally{
 busy=false;
 $("saveBtn").disabled=false;
@@ -747,202 +1025,162 @@ $("saveBtn").textContent=editingId?"حفظ التعديلات":"حفظ الدع�
 }
 
 $("inviteForm").addEventListener("submit",saveInvitation);
-$("saveBtn").addEventListener("click",event=>{
-event.preventDefault();
-saveInvitation(event);
+$("saveBtn").addEventListener("click",()=>{
+if(busy)return;
+saveInvitation();
+});
+
+$("inviteForm").addEventListener("invalid",event=>{
+const field=event.target;
+if(field&&field.id){
+const labels={groom:"اكتب الاسم المطلوب للمناسبة.",bride:"اكتب اسم الطرف الثاني أو العروس.",slug:"تعذر إنشاء رابط الدعوة."};
+if(labels[field.id])status(labels[field.id]);
+}
+},true);
+
+window.addEventListener("error",event=>{
+console.error("Page error:",event.error||event.message);
+if($("status"))status("حدث خطأ في الصفحة: "+(event.message||"خطأ JavaScript غير معروف"));
+});
+window.addEventListener("unhandledrejection",event=>{
+console.error("Unhandled promise rejection:",event.reason);
+const reason=event.reason;
+if($("status"))status("حدث خطأ أثناء التنفيذ: "+(reason?.message||String(reason||"خطأ غير معروف")));
 });
 
 function resetForm(){
 $("inviteForm").reset();
 editingId=null;
+currentAudioUrl="";
+currentAudioType="none";
+currentLibrarySongId=null;
+$("audioFile").value="";
+$("audioFileStatus").textContent="لم يتم اختيار ملف جديد.";
+$("currentSongStatus").textContent="";
+$("librarySongName").value="";
+$("eventType").value="wedding";
+$("birthdayInviteStyle").value="personal";
+$("birthdayPersonType").value="self";
+updateEventFields();
 $("formTitle").textContent="إضافة دعوة جديدة";
-newUniqueSlug();
-$("template").value="1";
-$("audioType").value="none";
-$("notes").value="";
-$("expiresAt").value="";
-selectDoor(1);
-$("doorPicker").open=false;
 $("saveBtn").textContent="حفظ الدعوة";
-$("saveBtn").disabled=false;
+$("deleteCurrentBtn").classList.add("hidden");
+$("cancelEditBtn").classList.add("hidden");
+newUniqueSlug();
+setOpeningPrompt("knock");
+selectDoor(1);
+loadDoorImage(1);
+$("doorPicker").open=false;
+$("audioType").value="none";
+$("expiresAt").value="";
+$("published").checked=false;
+renderLibrarySelect();
+renderLibraryList();
 }
-
 $("newBtn").onclick=()=>{
+if(busy){status("انتظر حتى يكتمل الحفظ قبل إنشاء دعوة جديدة.");return}
 resetForm();
-status("تم إنشاء رمز رابط جديد. أدخل بيانات الدعوة واحفظها.");
+status("تم إنشاء رابط جديد. أدخل بيانات الدعوة ثم اضغط حفظ الدعوة.");
 window.scrollTo({top:0,behavior:"smooth"});
 };
-
 $("refreshBtn").onclick=loadInvitations;
 
+async function loadBookings(){
+const box=$("bookingsList");
+box.replaceChildren();
+addText(box,"p","جارٍ تحميل الحجوزات...");
+try{
+const {data,error}=await db.from("bookings").select("*").order("created_at",{ascending:false});
+if(error){box.replaceChildren();addText(box,"p","تعذر عرض الحجوزات: "+error.message);return}
+box.replaceChildren();
+if(!data||data.length===0){addText(box,"p","لا توجد حجوزات مسجلة حالياً.");return}
+for(const item of data){
+const card=document.createElement("article");
+card.className="item";
+addText(card,"strong",item.customer_name||item.name||"حجز بدون اسم");
+const info=document.createElement("p");
+info.style.whiteSpace="pre-line";
+info.textContent="رقم الهاتف: "+(item.phone||item.customer_phone||"—")+"\nالتاريخ: "+(item.wedding_date||item.booking_date||"—")+"\nنوع الحجز: "+(item.booking_type||item.type||"—")+"\nالملاحظات: "+(item.notes||"—")+"\nالحالة: "+(item.status||"جديد");
+card.appendChild(info);
+const statusSelect=document.createElement("select");
+["جديد","قيد التواصل","مؤكد","مكتمل","ملغي"].forEach(value=>{const option=document.createElement("option");option.value=value;option.textContent=value;statusSelect.appendChild(option)});
+statusSelect.value=item.status||"جديد";
+card.appendChild(statusSelect);
+const saveStatus=addText(card,"button","حفظ حالة الحجز");
+saveStatus.type="button";
+saveStatus.onclick=async()=>{
+saveStatus.disabled=true;
+try{
+const {error:updateError}=await db.from("bookings").update({status:statusSelect.value}).eq("id",item.id);
+if(updateError)throw updateError;
+status("تم تحديث حالة الحجز.");
+await loadBookings();
+}catch(error){status("تعذر تحديث حالة الحجز: "+(error.message||"خطأ غير معروف"))}
+finally{saveStatus.disabled=false}
+};
+const remove=addText(card,"button","حذف الحجز");
+remove.type="button";remove.className="danger";
+remove.onclick=async()=>{
+if(!confirm("متأكد تريد حذف هذا الحجز؟"))return;
+remove.disabled=true;
+try{
+const {error:deleteError}=await db.from("bookings").delete().eq("id",item.id);
+if(deleteError)throw deleteError;
+status("تم حذف الحجز.");
+await loadBookings();
+}catch(error){status("تعذر حذف الحجز: "+(error.message||"خطأ غير معروف"))}
+finally{remove.disabled=false}
+};
+box.appendChild(card);
+}
+}catch(e){box.replaceChildren();addText(box,"p","حدث خطأ أثناء تحميل الحجوزات.")}
+}
+$("refreshBookingsBtn").onclick=loadBookings;
+
+$("loginBtn").onclick=async()=>{
+const email=$("email").value.trim();
+const password=$("password").value;
+if(!email||!password){status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");return}
+$("loginBtn").disabled=true;
+status("جارٍ تسجيل الدخول...");
+try{
+const {data,error}=await db.auth.signInWithPassword({email,password});
+if(error){status("تعذر الدخول: "+error.message);return}
+status("تم تسجيل الدخول بنجاح.");
+showSession(data.session);
+}catch(e){status("تعذر الاتصال بـ Supabase. تحقق من الإنترنت وحاول مرة أخرى.")}
+finally{$("loginBtn").disabled=false}
+};
+$("password").addEventListener("keydown",event=>{if(event.key==="Enter")$("loginBtn").click()});
 $("logoutBtn").onclick=async()=>{
 try{
 const {error}=await db.auth.signOut();
-if(error){
-status("تعذر تسجيل الخروج: "+error.message);
-return;
-}
-status("تم تسجيل الخروج.");
-}catch(error){
-status("تعذر تسجيل الخروج: "+(error.message||String(error)));
-}
-};
-
-/* إدارة الحجوزات */
-function resetBookingForm(){
-$("bookingForm").reset();
-editingBookingId=null;
-$("bookingId").value="";
-$("bookingStatus").value="جديد";
-$("bookingType").value="دعوة زفاف";
-$("saveBookingBtn").textContent="حفظ الحجز";
-$("saveBookingBtn").disabled=false;
-}
-
-$("resetBookingBtn").onclick=()=>{
-resetBookingForm();
-status("تم تجهيز نموذج حجز جديد.");
-};
-
-$("bookingForm").addEventListener("submit",async event=>{
-event.preventDefault();
-event.stopPropagation();
-
-if(bookingBusy)return;
-
-const record={
-customer_name:$("customerName").value.trim(),
-phone:$("customerPhone").value.trim()||null,
-wedding_date:$("bookingDate").value||null,
-booking_type:$("bookingType").value,
-notes:$("bookingNotes").value.trim()||null,
-status:$("bookingStatus").value
-};
-
-if(!record.customer_name){
-status("اكتب اسم الزبون أولاً.");
-return;
-}
-
-bookingBusy=true;
-$("saveBookingBtn").disabled=true;
-status("جارٍ حفظ الحجز...");
-
-try{
-const result=editingBookingId
-?await db.from("bookings").update(record).eq("id",editingBookingId)
-:await db.from("bookings").insert(record);
-
-if(result.error)throw result.error;
-
-resetBookingForm();
-await loadBookings();
-status("تم حفظ الحجز بنجاح.");
-}catch(error){
-status("تعذر حفظ الحجز: "+(error?.message||String(error)));
-}finally{
-bookingBusy=false;
-$("saveBookingBtn").disabled=false;
-}
-});
-
-async function loadBookings(){
-const {data,error}=await db.from("bookings").select("*").order("created_at",{ascending:false});
-
-if(error){
-$("bookingsList").textContent="تعذر تحميل الحجوزات: "+error.message;
-return;
-}
-
+if(error){status("تعذر تسجيل الخروج: "+error.message);return}
+resetForm();
+cachedInvitations=[];
+updateInvitationCounts();
+renderInvitationList();
 $("bookingsList").replaceChildren();
-
-if(!data||!data.length){
-$("bookingsList").textContent="لا توجد حجوزات حتى الآن.";
-return;
-}
-
-for(const booking of data){
-const card=document.createElement("div");
-card.className="item";
-
-const title=document.createElement("strong");
-title.textContent=booking.customer_name||"زبون بدون اسم";
-
-const details=document.createElement("p");
-details.style.whiteSpace="pre-line";
-details.textContent=
-"الهاتف: "+(booking.phone||"غير محدد")+
-"\nموعد الزفاف: "+(booking.wedding_date||"غير محدد")+
-"\nنوع الحجز: "+(booking.booking_type||"دعوة زفاف")+
-"\nالحالة: "+(booking.status||"جديد")+
-"\nالملاحظات: "+(booking.notes||"لا توجد")+
-"\nتاريخ التسجيل: "+(booking.created_at?new Date(booking.created_at).toLocaleDateString("ar-IQ"):"غير معروف");
-
-const edit=document.createElement("button");
-edit.type="button";
-edit.textContent="تعديل الحجز";
-edit.onclick=()=>{
-editingBookingId=booking.id;
-$("bookingId").value=booking.id;
-$("customerName").value=booking.customer_name||"";
-$("customerPhone").value=booking.phone||"";
-$("bookingDate").value=booking.wedding_date||"";
-$("bookingType").value=booking.booking_type||"دعوة زفاف";
-$("bookingNotes").value=booking.notes||"";
-$("bookingStatus").value=booking.status||"جديد";
-$("saveBookingBtn").textContent="حفظ تعديل الحجز";
-$("bookingsPanel").open=true;
-status("عدّل بيانات الحجز ثم اضغط حفظ تعديل الحجز.");
+status("تم تسجيل الخروج.");
+}catch(error){status("تعذر تسجيل الخروج: "+(error.message||"خطأ غير معروف"))}
 };
-
-const del=document.createElement("button");
-del.type="button";
-del.className="danger";
-del.textContent="حذف الحجز";
-
-del.onclick=async()=>{
-if(!confirm("متأكد تريد حذف حجز "+(booking.customer_name||"هذا الزبون")+"؟"))return;
-
-try{
-const {error:deleteError}=await db.from("bookings").delete().eq("id",booking.id);
-if(deleteError)throw deleteError;
-
-await loadBookings();
-status("تم حذف الحجز.");
-}catch(error){
-status("تعذر حذف الحجز: "+(error.message||String(error)));
-}
-};
-
-card.append(title,details,edit,del);
-$("bookingsList").appendChild(card);
-}
-}
-
-$("refreshBookingsBtn").onclick=loadBookings;
-
-window.addEventListener("error",event=>{
-console.error("Admin page error:",event.error||event.message);
-status("حدث خطأ في الصفحة: "+(event.message||"خطأ JavaScript غير معروف"));
-});
-
-window.addEventListener("unhandledrejection",event=>{
-console.error("Admin async error:",event.reason);
-status("حدث خطأ: "+(event.reason?.message||String(event.reason)||"خطأ غير معروف"));
-});
 
 selectDoor(1);
+setOpeningPrompt("knock");
 newUniqueSlug();
+updateEventFields();
+renderInvitationCategories();
+updateInvitationCounts();
 
-db.auth.getSession().then(({data,error})=>{
-if(error){
-status("تعذر التحقق من جلسة الدخول: "+error.message);
-return;
-}
+db.auth.onAuthStateChange((_event,session)=>{showSession(session)});
+
+(async()=>{
+try{
+const {data,error}=await db.auth.getSession();
+if(error){status("تعذر التحقق من جلسة الدخول: "+error.message);return}
 showSession(data.session);
-}).catch(error=>{
-status("تعذر الاتصال بخدمة تسجيل الدخول: "+(error.message||String(error)));
-});
+}catch(e){status("تعذر الاتصال بـ Supabase. تحقق من اتصال الإنترنت.")}
+})();
 </script>
 </body>
 </html>
