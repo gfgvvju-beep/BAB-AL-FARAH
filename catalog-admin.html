@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -43,8 +44,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .list{display:grid;gap:12px}
 .item{border:1px solid var(--line);border-radius:15px;padding:13px;display:grid;grid-template-columns:105px 1fr;gap:14px;align-items:center}
-.thumb{height:110px;background:linear-gradient(145deg,#4e1728,#8a394f,#c3a36b);border-radius:11px;overflow:hidden;display:grid;place-items:center;color:#f4dfb4;font:700 20px Amiri,serif}
-.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb{height:125px;background:linear-gradient(145deg,#4e1728,#8a394f,#c3a36b);border-radius:11px;overflow:hidden;display:grid;place-items:center;color:#f4dfb4;font:700 20px Amiri,serif;position:relative}
+.thumb img,.thumb video{width:100%;height:100%;object-fit:cover;display:block}
+.media-type{position:absolute;bottom:5px;right:5px;background:#000b;color:white;padding:3px 7px;border-radius:6px;font:700 10px Cairo,sans-serif}
 .item h3{margin:0 0 4px;font-size:16px;color:var(--dark);overflow-wrap:anywhere}
 .item p{margin:0;color:var(--muted);font-size:12px;line-height:1.8;overflow-wrap:anywhere}
 .status{display:inline-block;border-radius:30px;padding:4px 9px;font-size:11px;font-weight:800;margin:6px 0}
@@ -56,11 +58,13 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 .empty{text-align:center;padding:28px 12px;color:var(--muted);border:1px dashed #e3d1d0;border-radius:13px}
 .small{font-size:11px;color:var(--muted);line-height:1.8;margin-top:8px}
 .image-preview-wrap{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-top:8px}
-.image-preview{width:150px;height:150px;border-radius:13px;overflow:hidden;background:linear-gradient(145deg,#4e1728,#8a394f,#c3a36b);display:grid;place-items:center;color:#f4dfb4;font:700 18px Amiri,serif;border:1px solid var(--line)}
-.image-preview img{width:100%;height:100%;object-fit:cover}
+.image-preview{width:180px;height:180px;border-radius:13px;overflow:hidden;background:linear-gradient(145deg,#4e1728,#8a394f,#c3a36b);display:grid;place-items:center;color:#f4dfb4;font:700 18px Amiri,serif;border:1px solid var(--line);position:relative}
+.image-preview img,.image-preview video{width:100%;height:100%;object-fit:cover;display:block}
 .preview-info{flex:1;min-width:170px;font-size:12px;color:var(--muted);line-height:1.9}
+.file-types{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.file-type{font-size:10px;background:#f8f0e9;color:#674a31;border:1px solid #eadbc5;padding:4px 8px;border-radius:20px}
 .footer{text-align:center;color:#9b898c;font-size:11px;padding:12px 0 25px}
-@media(max-width:620px){.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.item{grid-template-columns:82px 1fr;gap:10px;padding:10px}.thumb{height:95px}.item-actions .btn{flex:1}.panel h1,.panel h2{font-size:23px}.image-preview{width:125px;height:125px}}
+@media(max-width:620px){.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.item{grid-template-columns:82px 1fr;gap:10px;padding:10px}.thumb{height:100px}.item-actions .btn{flex:1}.panel h1,.panel h2{font-size:23px}.image-preview{width:140px;height:140px}}
 </style>
 </head>
 <body>
@@ -93,12 +97,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 <section id="appPanel" class="hidden">
 <div class="top-actions">
 <button class="btn secondary" id="logoutBtn" type="button">تسجيل الخروج</button>
-<a class="btn secondary" href="catalog.html" target="_blank" rel="noopener">فتح موقع الزبائن ↗</a>
+<a class="btn secondary" href="https://bab-alfarah.pages.dev/" target="_blank" rel="noopener">فتح موقع الزبائن ↗</a>
 </div>
 
 <section class="panel">
 <h1 id="formTitle">إضافة دعوة إلى معرض الزبائن</h1>
-<p class="muted">هنا تختار بنفسك الدعوات التي تريد عرضها. الدعوات التي تنشئها في لوحة الإدارة الأساسية لا تظهر تلقائياً هنا.</p>
+<p class="muted">اختار الدعوات التي تريد عرضها للزبائن. تقدر تضيف صورة ثابتة أو صورة GIF متحركة أو فيديو MP4، وتظهر الوسائط داخل بطاقة الدعوة في الموقع.</p>
 
 <form id="itemForm">
 <input type="hidden" id="itemId">
@@ -126,22 +130,31 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 </div>
 
 <div class="field full">
-<label for="imageFile">صورة غلاف الدعوة من جهازك</label>
-<input id="imageFile" type="file" accept="image/*">
+<label for="imageFile">صورة أو ملف متحرك أو فيديو من جهازك</label>
+<input id="imageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/bmp,image/svg+xml,video/mp4,video/webm,video/ogg,.jpg,.jpeg,.png,.webp,.gif,.avif,.bmp,.svg,.mp4,.webm,.ogv,.ogg">
+<div class="file-types">
+<span class="file-type">JPG</span>
+<span class="file-type">PNG</span>
+<span class="file-type">WEBP</span>
+<span class="file-type">GIF متحرك</span>
+<span class="file-type">MP4 فيديو</span>
+<span class="file-type">WEBM</span>
+</div>
 <input id="imageUrl" type="hidden">
 <div class="image-preview-wrap">
 <div class="image-preview" id="imagePreview">باب الفرح ♥</div>
 <div class="preview-info">
-<strong id="imageStatus">ما مختار صورة جديدة</strong>
-<p id="imageHelp">اختار صورة من اللابتوب حتى تظهر غلافاً للدعوة في معرض الزبائن. الصيغ المدعومة تعتمد على الصور، والحد الأقصى 5 ميغابايت.</p>
-<button class="btn secondary hidden" type="button" id="removeImageBtn">إزالة الصورة</button>
+<strong id="imageStatus">ما مختار ملف جديد</strong>
+<p id="imageHelp">اختار صورة أو GIF متحرك أو فيديو MP4 من اللابتوب. الصورة المتحركة تبقى متحركة، والفيديو يشتغل داخل بطاقة الدعوة بالموقع.</p>
+<p id="fileSizeHelp">الحد الأقصى للملف 50 ميغابايت.</p>
+<button class="btn secondary hidden" type="button" id="removeImageBtn">إزالة الوسائط</button>
 </div>
 </div>
 </div>
 
 <div class="field full">
 <label for="description">وصف قصير (اختياري)</label>
-<textarea id="description" maxlength="500" placeholder="وصف بسيط يظهر تحت اسم الدعوة"></textarea>
+<textarea id="description" maxlength="500" placeholder="وصف بسيط للدعوة"></textarea>
 </div>
 
 <div class="field">
@@ -171,7 +184,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 <div class="toolbar">
 <div>
 <h2>دعوات معرض الزبائن</h2>
-<p class="muted" style="margin:3px 0 0">تقدر تعدّلها، تخفيها أو تحذفها من المعرض بدون المساس بالدعوات في لوحة الإدارة الأساسية.</p>
+<p class="muted" style="margin:3px 0 0">تقدر تعدّلها، تخفيها أو تحذفها من المعرض بدون المساس بالدعوات الأصلية.</p>
 </div>
 <button class="btn secondary" id="refreshBtn" type="button">↻ تحديث القائمة</button>
 </div>
@@ -188,12 +201,10 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
-
-/* اسم مخزن الصور في Supabase Storage */
 const STORAGE_BUCKET="catalog-images";
 
-/* أقصى حجم للصورة: 5 ميغابايت */
-const MAX_IMAGE_SIZE=5*1024*1024;
+/* الحد الأقصى للملف: 50 ميغابايت */
+const MAX_MEDIA_SIZE=50*1024*1024;
 
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
@@ -209,6 +220,9 @@ const EVENT_NAMES={
  graduation:"دعوات حفلات التخرج",
  birthday:"دعوات أعياد الميلاد"
 };
+
+const IMAGE_EXTENSIONS=["jpg","jpeg","png","webp","gif","avif","bmp","svg"];
+const VIDEO_EXTENSIONS=["mp4","webm","ogv","ogg"];
 
 let adminUser=null;
 let items=[];
@@ -242,21 +256,25 @@ function hideNotice(id){
  $(id).classList.add("hidden");
 }
 
-function showImagePreview(src){
- const preview=$("imagePreview");
- preview.replaceChildren();
+function getExtension(file){
+ return (file?.name?.split(".").pop()||"").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
 
- if(src){
-  const img=document.createElement("img");
-  img.src=src;
-  img.alt="معاينة صورة الدعوة";
-  img.onerror=()=>{
-   preview.textContent="تعذر عرض الصورة";
-  };
-  preview.appendChild(img);
- }else{
-  preview.textContent="باب الفرح ♥";
- }
+function isVideoFile(file){
+ if(!file)return false;
+ const ext=getExtension(file);
+ return file.type.startsWith("video/")||VIDEO_EXTENSIONS.includes(ext);
+}
+
+function isImageFile(file){
+ if(!file)return false;
+ const ext=getExtension(file);
+ return file.type.startsWith("image/")||IMAGE_EXTENSIONS.includes(ext);
+}
+
+function isVideoUrl(url){
+ const clean=String(url||"").split("?")[0].split("#")[0].toLowerCase();
+ return /\.(mp4|webm|ogv|ogg|mov|m4v)$/.test(clean);
 }
 
 function clearPreviewObjectUrl(){
@@ -266,22 +284,53 @@ function clearPreviewObjectUrl(){
  }
 }
 
+function showMediaPreview(src,isVideo=false){
+ const preview=$("imagePreview");
+ preview.replaceChildren();
+
+ if(!src){
+  preview.textContent="باب الفرح ♥";
+  return;
+ }
+
+ if(isVideo||isVideoUrl(src)){
+  const video=document.createElement("video");
+  video.src=src;
+  video.muted=true;
+  video.autoplay=true;
+  video.loop=true;
+  video.playsInline=true;
+  video.controls=true;
+  video.preload="metadata";
+  video.onerror=()=>{preview.replaceChildren();preview.textContent="تعذر عرض الفيديو";};
+  preview.appendChild(video);
+  video.play().catch(()=>{});
+ }else{
+  const img=document.createElement("img");
+  img.src=src;
+  img.alt="معاينة وسائط الدعوة";
+  img.onerror=()=>{preview.replaceChildren();preview.textContent="تعذر عرض الصورة";};
+  preview.appendChild(img);
+ }
+}
+
 function updateImageStatus(){
  const currentUrl=$("imageUrl").value.trim();
 
  if(selectedImageFile){
-  $("imageStatus").textContent="الصورة الجديدة: "+selectedImageFile.name;
+  const kind=isVideoFile(selectedImageFile)?"فيديو":"صورة / ملف متحرك";
+  $("imageStatus").textContent=kind+": "+selectedImageFile.name;
   $("removeImageBtn").classList.remove("hidden");
   return;
  }
 
  if(currentUrl&&!removeExistingImage){
-  $("imageStatus").textContent="توجد صورة محفوظة للدعوة";
+  $("imageStatus").textContent=isVideoUrl(currentUrl)?"يوجد فيديو محفوظ للدعوة":"توجد صورة محفوظة للدعوة";
   $("removeImageBtn").classList.remove("hidden");
   return;
  }
 
- $("imageStatus").textContent="ما مختار صورة";
+ $("imageStatus").textContent="ما مختار ملف";
  $("removeImageBtn").classList.add("hidden");
 }
 
@@ -293,30 +342,34 @@ $("imageFile").addEventListener("change",()=>{
 
  if(!file){
   if($("imageUrl").value&&!removeExistingImage){
-   showImagePreview($("imageUrl").value);
+   showMediaPreview($("imageUrl").value);
   }else{
-   showImagePreview("");
+   showMediaPreview("");
   }
   updateImageStatus();
   return;
  }
 
- if(!file.type.startsWith("image/")){
+ if(!isImageFile(file)&&!isVideoFile(file)){
   $("imageFile").value="";
-  notice("formNotice","الملف المختار مو صورة. اختار صورة من جهازك.","error");
+  showMediaPreview($("imageUrl").value);
+  updateImageStatus();
+  notice("formNotice","نوع الملف غير مدعوم. اختار صورة أو GIF أو فيديو MP4 أو WEBM.","error");
   return;
  }
 
- if(file.size>MAX_IMAGE_SIZE){
+ if(file.size>MAX_MEDIA_SIZE){
   $("imageFile").value="";
-  notice("formNotice","حجم الصورة أكبر من 5 ميغابايت. اختار صورة أصغر.","error");
+  showMediaPreview($("imageUrl").value);
+  updateImageStatus();
+  notice("formNotice","حجم الملف أكبر من 50 ميغابايت. اختار ملفاً أصغر.","error");
   return;
  }
 
  selectedImageFile=file;
  removeExistingImage=false;
  previewObjectUrl=URL.createObjectURL(file);
- showImagePreview(previewObjectUrl);
+ showMediaPreview(previewObjectUrl,isVideoFile(file));
  updateImageStatus();
  hideNotice("formNotice");
 });
@@ -327,7 +380,7 @@ $("removeImageBtn").addEventListener("click",()=>{
  $("imageFile").value="";
  $("imageUrl").value="";
  removeExistingImage=true;
- showImagePreview("");
+ showMediaPreview("");
  updateImageStatus();
 });
 
@@ -349,7 +402,7 @@ async function checkAccess(user){
   adminUser=null;
   $("loginPanel").classList.remove("hidden");
   $("appPanel").classList.add("hidden");
-  notice("loginNotice","هذا الحساب غير مخوّل لإدارة المعرض. أضف حسابك إلى جدول catalog_admins من SQL Editor.","error");
+  notice("loginNotice","هذا الحساب غير مخوّل لإدارة المعرض. تأكد من إضافته إلى جدول catalog_admins في Supabase.","error");
   return false;
  }
 
@@ -387,6 +440,7 @@ $("logoutBtn").addEventListener("click",async()=>{
  adminUser=null;
  $("loginPanel").classList.remove("hidden");
  $("appPanel").classList.add("hidden");
+ resetForm();
 });
 
 function resetForm(){
@@ -402,7 +456,7 @@ function resetForm(){
  $("formTitle").textContent="إضافة دعوة إلى معرض الزبائن";
  $("saveBtn").textContent="حفظ الدعوة في المعرض";
  $("cancelEditBtn").classList.add("hidden");
- showImagePreview("");
+ showMediaPreview("");
  updateImageStatus();
  hideNotice("formNotice");
 }
@@ -414,47 +468,73 @@ $("resetBtn").addEventListener("click",e=>{
 
 $("cancelEditBtn").addEventListener("click",resetForm);
 
-/*
- * رفع الصورة إلى Supabase Storage.
- * يجب أن يكون مخزن catalog-images موجوداً ومضبوطاً كـ Public.
- */
-async function uploadImage(file){
+/* رفع الصور وملفات GIF والفيديو إلى Supabase Storage */
+async function uploadMedia(file){
  if(!file)return null;
 
  if(!adminUser){
   throw new Error("انتهت جلسة الإدارة. سجّل الدخول مرة ثانية.");
  }
 
- if(!file.type.startsWith("image/")){
-  throw new Error("الملف المحدد ليس صورة.");
+ if(!isImageFile(file)&&!isVideoFile(file)){
+  throw new Error("نوع الملف غير مدعوم. اختار صورة أو GIF أو فيديو.");
  }
 
- if(file.size>MAX_IMAGE_SIZE){
-  throw new Error("حجم الصورة أكبر من 5 ميغابايت.");
+ if(file.size>MAX_MEDIA_SIZE){
+  throw new Error("حجم الملف أكبر من 50 ميغابايت.");
  }
 
- const extension=(file.name.split(".").pop()||"jpg")
-  .toLowerCase().replace(/[^a-z0-9]/g,"");
+ const extension=getExtension(file);
 
- const safeExtension=extension||"jpg";
- const filePath=adminUser.id+"/"+Date.now()+"-"+crypto.randomUUID()+"."+safeExtension;
+ if(!extension){
+  throw new Error("تعذر تحديد امتداد الملف. تأكد أن اسم الملف يحتوي على امتداده.");
+ }
+
+ let contentType=file.type;
+
+ if(!contentType){
+  const mimeByExtension={
+   jpg:"image/jpeg",
+   jpeg:"image/jpeg",
+   png:"image/png",
+   webp:"image/webp",
+   gif:"image/gif",
+   avif:"image/avif",
+   bmp:"image/bmp",
+   svg:"image/svg+xml",
+   mp4:"video/mp4",
+   webm:"video/webm",
+   ogv:"video/ogg",
+   ogg:VIDEO_EXTENSIONS.includes(extension)?"video/ogg":"application/octet-stream"
+  };
+  contentType=mimeByExtension[extension]||"application/octet-stream";
+ }
+
+ const randomId=window.crypto&&crypto.randomUUID
+  ?crypto.randomUUID()
+  :Date.now()+"-"+Math.random().toString(36).slice(2);
+
+ const filePath=adminUser.id+"/"+Date.now()+"-"+randomId+"."+extension;
 
  const {data,error}=await db.storage
   .from(STORAGE_BUCKET)
   .upload(filePath,file,{
    cacheControl:"3600",
-   contentType:file.type,
+   contentType:contentType,
    upsert:false
   });
 
  if(error){
-  if(error.message&&/bucket not found/i.test(error.message)){
-   throw new Error("مخزن الصور catalog-images غير موجود في Supabase Storage. أنشئه واجعله Public ثم حاول مرة ثانية.");
+  if(/bucket not found/i.test(error.message||"")){
+   throw new Error("مخزن catalog-images غير موجود في Supabase Storage.");
   }
-  if(error.message&&/row-level security|policy|permission|not authorized/i.test(error.message)){
-   throw new Error("رفع الصور مرفوض بسبب صلاحيات Storage. تأكد من إعداد سياسة رفع الصور للحساب المسجّل.");
+  if(/row-level security|policy|permission|not authorized/i.test(error.message||"")){
+   throw new Error("رفع الملف مرفوض بسبب صلاحيات Storage. تأكد من سياسات الرفع لحساب الإدارة.");
   }
-  throw new Error("تعذر رفع الصورة: "+error.message);
+  if(/payload too large|entity too large/i.test(error.message||"")){
+   throw new Error("الملف كبير على إعدادات التخزين الحالية. قلل حجمه وحاول مرة ثانية.");
+  }
+  throw new Error("تعذر رفع الملف: "+error.message);
  }
 
  const {data:publicData}=db.storage
@@ -464,7 +544,7 @@ async function uploadImage(file){
  const publicUrl=validUrl(publicData?.publicUrl);
 
  if(!publicUrl){
-  throw new Error("تم رفع الصورة لكن تعذر الحصول على رابطها.");
+  throw new Error("تم رفع الملف لكن تعذر الحصول على رابطه.");
  }
 
  return publicUrl;
@@ -494,21 +574,21 @@ $("itemForm").addEventListener("submit",async e=>{
  }
 
  const id=$("itemId").value;
- const oldImageUrl=$("imageUrl").value.trim();
- let image_url=oldImageUrl?validUrl(oldImageUrl):null;
+ const oldMediaUrl=$("imageUrl").value.trim();
+ let image_url=oldMediaUrl?validUrl(oldMediaUrl):null;
 
- if(oldImageUrl&&!image_url){
-  notice("formNotice","رابط الصورة المحفوظ غير صحيح.","error");
+ if(oldMediaUrl&&!image_url){
+  notice("formNotice","رابط الوسائط المحفوظ غير صحيح.","error");
   return;
  }
 
  $("saveBtn").disabled=true;
- $("saveBtn").textContent=selectedImageFile?"جارٍ رفع الصورة والحفظ…":"جارٍ الحفظ…";
+ $("saveBtn").textContent=selectedImageFile?"جارٍ رفع الملف والحفظ…":"جارٍ الحفظ…";
 
  try{
   if(selectedImageFile){
-   notice("formNotice","جارٍ رفع الصورة إلى مخزن الصور…","success");
-   image_url=await uploadImage(selectedImageFile);
+   notice("formNotice","جارٍ رفع الملف إلى Supabase Storage. انتظر حتى يكتمل الرفع…","success");
+   image_url=await uploadMedia(selectedImageFile);
   }else if(removeExistingImage){
    image_url=null;
   }
@@ -530,13 +610,15 @@ $("itemForm").addEventListener("submit",async e=>{
 
   if(result.error)throw result.error;
 
+  const savedTitle=title;
+  resetForm();
+
   notice(
    "formNotice",
-   id?"تم تحديث الدعوة وصورتها بنجاح.":"تمت إضافة الدعوة وصورتها إلى المعرض بنجاح.",
+   "تم حفظ الدعوة «"+savedTitle+"» ووسائطها بنجاح.",
    "success"
   );
 
-  resetForm();
   await loadItems();
 
  }catch(err){
@@ -556,7 +638,11 @@ async function loadItems(){
   .order("created_at",{ascending:false});
 
  if(error){
-  $("itemsList").innerHTML='<div class="empty">تعذر تحميل القائمة: '+esc(error.message)+'</div>';
+  $("itemsList").replaceChildren();
+  const msg=document.createElement("div");
+  msg.className="empty";
+  msg.textContent="تعذر تحميل القائمة: "+error.message;
+  $("itemsList").appendChild(msg);
   return;
  }
 
@@ -580,18 +666,46 @@ function renderItems(){
   const thumb=document.createElement("div");
   thumb.className="thumb";
 
-  const image=validUrl(item.image_url);
+  const mediaUrl=validUrl(item.image_url);
 
-  if(image){
-   const img=document.createElement("img");
-   img.src=image;
-   img.alt="صورة "+(item.title||"الدعوة");
-   img.loading="lazy";
-   img.onerror=()=>{
-    thumb.replaceChildren();
-    thumb.textContent="باب الفرح ♥";
-   };
-   thumb.appendChild(img);
+  if(mediaUrl){
+   if(isVideoUrl(mediaUrl)){
+    const video=document.createElement("video");
+    video.src=mediaUrl;
+    video.muted=true;
+    video.autoplay=true;
+    video.loop=true;
+    video.playsInline=true;
+    video.preload="metadata";
+    video.onerror=()=>{
+     thumb.replaceChildren();
+     thumb.textContent="تعذر عرض الفيديو";
+    };
+    thumb.appendChild(video);
+
+    const badge=document.createElement("span");
+    badge.className="media-type";
+    badge.textContent="فيديو";
+    thumb.appendChild(badge);
+    video.play().catch(()=>{});
+   }else{
+    const img=document.createElement("img");
+    img.src=mediaUrl;
+    img.alt="وسائط "+(item.title||"الدعوة");
+    img.loading="lazy";
+    img.onerror=()=>{
+     thumb.replaceChildren();
+     thumb.textContent="تعذر عرض الصورة";
+    };
+    thumb.appendChild(img);
+
+    if(/\.gif(?:$|[?#])/i.test(mediaUrl)){
+     const badge=document.createElement("span");
+     badge.className="media-type";
+     badge.textContent="GIF";
+     thumb.appendChild(badge);
+    }
+   }
   }else{
    thumb.textContent="باب الفرح ♥";
   }
@@ -599,10 +713,11 @@ function renderItems(){
   const info=document.createElement("div");
 
   const title=document.createElement("h3");
-  title.textContent=item.title;
+  title.textContent=item.title||"دعوة بدون اسم";
 
   const desc=document.createElement("p");
-  desc.textContent=(EVENT_NAMES[item.event_type]||item.event_type)+" · "+(item.description||"بدون وصف");
+  desc.textContent=(EVENT_NAMES[item.event_type]||item.event_type||"مناسبة")+
+   " · "+(item.description||"بدون وصف");
 
   const status=document.createElement("span");
   status.className="status "+(item.is_visible?"on":"off");
@@ -623,7 +738,7 @@ function renderItems(){
 
   const open=document.createElement("a");
   open.className="btn secondary";
-  open.href=item.invitation_url;
+  open.href=validUrl(item.invitation_url)||"#";
   open.target="_blank";
   open.rel="noopener noreferrer";
   open.textContent="فتح الرابط ↗";
@@ -648,7 +763,7 @@ function editItem(id){
 
  $("itemId").value=item.id;
  $("title").value=item.title||"";
- $("eventType").value=item.event_type;
+ $("eventType").value=item.event_type||"wedding";
  $("invitationUrl").value=item.invitation_url||"";
  $("imageUrl").value=item.image_url||"";
  $("description").value=item.description||"";
@@ -658,11 +773,13 @@ function editItem(id){
  removeExistingImage=false;
 
  if(item.image_url){
-  showImagePreview(item.image_url);
-  $("imageStatus").textContent="الصورة الحالية محفوظة";
+  showMediaPreview(item.image_url,isVideoUrl(item.image_url));
+  $("imageStatus").textContent=isVideoUrl(item.image_url)
+   ?"الفيديو الحالي محفوظ"
+   :"الصورة الحالية محفوظة";
  }else{
-  showImagePreview("");
-  $("imageStatus").textContent="ماكو صورة محفوظة";
+  showMediaPreview("");
+  $("imageStatus").textContent="ماكو وسائط محفوظة";
  }
 
  $("formTitle").textContent="تعديل دعوة المعرض";
@@ -710,9 +827,16 @@ async function deleteItem(item){
 
 $("refreshBtn").addEventListener("click",loadItems);
 
+window.addEventListener("beforeunload",clearPreviewObjectUrl);
+
 (async()=>{
- const {data}=await db.auth.getSession();
- if(data.session)await checkAccess(data.session.user);
+ try{
+  const {data,error}=await db.auth.getSession();
+  if(error)throw error;
+  if(data.session)await checkAccess(data.session.user);
+ }catch(err){
+  notice("loginNotice",err.message||"تعذر التحقق من جلسة الدخول.","error");
+ }
 })();
 </script>
 </body>
