@@ -59,8 +59,17 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .prompt-preview{padding:13px;border-radius:10px;background:#f5ecd9;color:#755821;text-align:center;font-weight:bold;line-height:1.9;margin-top:10px}
 .event-panel{padding:14px;border:1px solid #e5d6b7;border-radius:12px;background:#fffdf8;margin:12px 0}
 .event-panel .help{margin-bottom:8px}
+.invitation-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.category-button{margin:0;background:#fff;color:#725b35;border:1px solid #e5d6b7;text-align:right;line-height:1.6}
+.category-button.active{background:#aa8950;color:#fff;border-color:#aa8950}
+.category-count{display:inline-block;float:left;min-width:26px;text-align:center;border-radius:20px;padding:0 6px;background:#f0e5d0;color:#755821;font-size:12px}
+.category-button.active .category-count{background:#fff;color:#755821}
+.search-box{position:relative;margin:12px 0}
+.search-box input{margin:0;padding-right:42px}
+.search-box::before{content:"⌕";position:absolute;right:14px;top:9px;font-size:25px;color:#aa8950;pointer-events:none}
+.search-results-info{font-size:13px;color:#81715d;line-height:1.8;margin:8px 0}
 hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
-@media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}.door-grid{grid-template-columns:1fr}.row-buttons{grid-template-columns:1fr}.audio-library-item button{width:100%}}
+@media(max-width:480px){main{padding:14px;margin:4px auto}body{padding:7px}.door-grid,.invitation-categories{grid-template-columns:1fr}.row-buttons{grid-template-columns:1fr}.audio-library-item button{width:100%}}
 </style>
 </head>
 <body>
@@ -247,8 +256,27 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <details class="door-panel" id="myInvitationsPanel">
 <summary>📨 دعواتي — الدعوات المحفوظة</summary>
 <div class="door-content">
-<p class="help">افتح هذا القسم لعرض الدعوات المحفوظة. يمكنك فتح الرابط أو نسخه أو تعديل الدعوة أو حذفها.</p>
-<button id="refreshBtn" type="button">تحديث قائمة دعواتي</button>
+<p class="help">اختر نوع المناسبة لعرض دعواته فقط، أو اختر كل الدعوات وابحث بالاسم أو رقم الهاتف.</p>
+
+<div class="invitation-categories" id="invitationCategories">
+<button type="button" class="category-button active" data-category="all">📋 كل الدعوات <span class="category-count" id="count-all">0</span></button>
+<button type="button" class="category-button" data-category="wedding">💍 دعوات الزفاف <span class="category-count" id="count-wedding">0</span></button>
+<button type="button" class="category-button" data-category="engagement">🤍 دعوات عقد القران <span class="category-count" id="count-engagement">0</span></button>
+<button type="button" class="category-button" data-category="henna">🌿 دعوات الحنّة <span class="category-count" id="count-henna">0</span></button>
+<button type="button" class="category-button" data-category="circumcision">👶 دعوات الختان <span class="category-count" id="count-circumcision">0</span></button>
+<button type="button" class="category-button" data-category="graduation">🎓 دعوات التخرج <span class="category-count" id="count-graduation">0</span></button>
+<button type="button" class="category-button" data-category="birthday">🎂 دعوات أعياد الميلاد <span class="category-count" id="count-birthday">0</span></button>
+</div>
+
+<div id="allInvitationsSearch">
+<label for="invitationSearch">🔎 البحث باسم صاحب الدعوة أو رقم الهاتف</label>
+<div class="search-box">
+<input id="invitationSearch" type="search" placeholder="اكتب الاسم أو رقم الهاتف..." autocomplete="off">
+</div>
+<button type="button" class="secondary" id="clearSearchBtn">مسح البحث</button>
+</div>
+<p id="searchResultsInfo" class="search-results-info"></p>
+<button id="refreshBtn" type="button">تحديث قائمة الدعوات</button>
 <div id="list"></div>
 </div>
 </details>
@@ -289,6 +317,8 @@ const AUDIO_LIBRARY_TABLE="audio_library";
 const DOOR_BUCKET="template-doors";
 const allowedDoorImageTypes=["image/jpeg","image/png","image/webp","image/gif","video/mp4"];
 let librarySongs=[];
+let cachedInvitations=[];
+let activeInvitationCategory="all";
 
 const eventNames={
 wedding:"دعوة زفاف",
@@ -646,17 +676,74 @@ const first=item.groom_name||"بدون اسم";
 if(type==="wedding"||type==="engagement")return first+" و "+(item.bride_name||"بدون اسم");
 return first+" — "+eventNames[type];
 }
-async function loadInvitations(){
-$("refreshBtn").disabled=true;$("list").replaceChildren();addText($("list"),"p","جارٍ تحميل دعواتي...");
-try{
-const {data,error}=await db.from("invitations").select("*").order("created_at",{ascending:false});
-if(error){$("list").replaceChildren();addText($("list"),"p","تعذر تحميل الدعوات: "+error.message);status("تعذر تحميل دعواتي. تحقق من صلاحيات جدول invitations في Supabase.");return}
-$("list").replaceChildren();
-if(!data||data.length===0){addText($("list"),"p","ما عندك دعوات محفوظة حالياً. أضف دعوة جديدة من النموذج أعلاه.");status("لا توجد دعوات محفوظة حالياً.");return}
-for(const item of data){
-const card=document.createElement("article");card.className="item";
+
+function normalizeSearchText(value){
+return String(value??"").normalize("NFKC").toLocaleLowerCase("ar").replace(/[ًٌٍَُِّْـ]/g,"").replace(/\s+/g," ").trim();
+}
+function normalizePhone(value){
+return String(value??"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/\D/g,"");
+}
+function invitationMatchesSearch(item,query){
+if(!query)return true;
+const nameQuery=normalizeSearchText(query);
+const phoneQuery=normalizePhone(query);
+const names=[
+item.groom_name,item.bride_name,
+invitationDisplayName(item),item.slug
+].map(normalizeSearchText);
+const phones=[item.contact_phone,item.phone,item.customer_phone].map(normalizePhone);
+if(names.some(name=>name&&name.includes(nameQuery)))return true;
+return phoneQuery.length>0&&phones.some(phone=>phone&&phone.includes(phoneQuery));
+}
+function updateInvitationCounts(){
+const counts={all:cachedInvitations.length,wedding:0,engagement:0,henna:0,circumcision:0,graduation:0,birthday:0};
+for(const item of cachedInvitations){
+const type=eventNames[item.event_type]?item.event_type:"wedding";
+counts[type]++;
+}
+for(const [category,count] of Object.entries(counts)){
+const element=$("count-"+category);
+if(element)element.textContent=String(count);
+}
+}
+function renderInvitationCategories(){
+document.querySelectorAll(".category-button").forEach(button=>{
+const active=button.dataset.category===activeInvitationCategory;
+button.classList.toggle("active",active);
+button.setAttribute("aria-pressed",String(active));
+});
+$("allInvitationsSearch").classList.toggle("hidden",activeInvitationCategory!=="all");
+}
+function renderInvitationList(){
+const list=$("list");
+list.replaceChildren();
+const query=$("invitationSearch").value.trim();
+let items=cachedInvitations;
+if(activeInvitationCategory!=="all"){
+items=items.filter(item=>(eventNames[item.event_type]?item.event_type:"wedding")===activeInvitationCategory);
+}
+if(activeInvitationCategory==="all"&&query){
+items=items.filter(item=>invitationMatchesSearch(item,query));
+}
+const categoryLabel=activeInvitationCategory==="all"?"كل الدعوات":eventNames[activeInvitationCategory]||"الدعوات";
+$("searchResultsInfo").textContent=query&&activeInvitationCategory==="all"?
+"نتائج البحث: "+items.length+" من أصل "+cachedInvitations.length+" دعوة.":
+"عدد "+categoryLabel+": "+items.length+" دعوة.";
+
+if(!cachedInvitations.length){
+addText(list,"p","ما عندك دعوات محفوظة حالياً. أضف دعوة جديدة من النموذج أعلاه.");
+return;
+}
+if(!items.length){
+addText(list,"p",query&&activeInvitationCategory==="all"?"ما لقينا دعوة تطابق الاسم أو رقم الهاتف الذي بحثت عنه.":"ماكو دعوات محفوظة ضمن هذا التصنيف حالياً.");
+return;
+}
+for(const item of items){
+const card=document.createElement("article");
+card.className="item";
 addText(card,"strong",invitationDisplayName(item));
-const details=document.createElement("p");details.style.whiteSpace="pre-line";
+const details=document.createElement("p");
+details.style.whiteSpace="pre-line";
 details.textContent="نوع المناسبة: "+(eventNames[item.event_type]||"دعوة زفاف (قديمة)")+
 "\nرمز الدعوة: "+(item.slug||"—")+
 "\nالباب: "+(item.template_id||1)+" — "+(doorNames[Number(item.template_id)]||"قالب غير معروف")+
@@ -671,19 +758,70 @@ details.textContent="نوع المناسبة: "+(eventNames[item.event_type]||"�
 "\nالأغنية: "+(item.audio_url?"مرفوعة ومحفوظة":"لا يوجد رابط أغنية مخصص")+
 "\nانتهاء الرابط: "+formatExpiry(item.expires_at);
 card.appendChild(details);
-if(item.expires_at){const expired=new Date(item.expires_at).getTime()<=Date.now();addText(card,"p",expired?"انتهت مدة الرابط المحددة":"الرابط محدد بموعد انتهاء",expired?"expired":"active-expiry")}
-const url=invitationUrl(item.slug||"",item.opening_prompt||"knock");
-const link=document.createElement("a");link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="فتح رابط الدعوة";card.appendChild(link);
-addText(card,"p",item.is_published?"منشورة":"غير منشورة",item.is_published?"published":"unpublished");
-const copyButton=addText(card,"button","نسخ رابط الدعوة 📋");copyButton.type="button";
-copyButton.onclick=async()=>{try{await copyText(url);status("تم نسخ رابط الدعوة:\n"+url);copyButton.textContent="تم النسخ ✓"}catch(e){status("تعذر النسخ. يمكنك نسخ الرابط التالي:\n"+url)}};
-const editButton=addText(card,"button","تعديل الدعوة");editButton.type="button";editButton.onclick=()=>{fillForm(item);window.scrollTo({top:0,behavior:"smooth"})};
-const deleteButton=addText(card,"button","حذف الدعوة");deleteButton.type="button";deleteButton.className="danger";deleteButton.onclick=()=>deleteInvitation(item);
-$("list").appendChild(card);
+if(item.expires_at){
+const expired=new Date(item.expires_at).getTime()<=Date.now();
+addText(card,"p",expired?"انتهت مدة الرابط المحددة":"الرابط محدد بموعد انتهاء",expired?"expired":"active-expiry");
 }
-status("تم تحميل "+data.length+" دعوة في قسم دعواتي.");
-}catch(e){$("list").replaceChildren();addText($("list"),"p","حدث خطأ أثناء تحميل الدعوات. تحقق من اتصال الإنترنت.");status("حدث خطأ غير متوقع أثناء تحميل الدعوات.")}
-finally{$("refreshBtn").disabled=false}
+const url=invitationUrl(item.slug||"",item.opening_prompt||"knock");
+const link=document.createElement("a");
+link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="فتح رابط الدعوة";
+card.appendChild(link);
+addText(card,"p",item.is_published?"منشورة":"غير منشورة",item.is_published?"published":"unpublished");
+const copyButton=addText(card,"button","نسخ رابط الدعوة 📋");
+copyButton.type="button";
+copyButton.onclick=async()=>{
+try{await copyText(url);status("تم نسخ رابط الدعوة:\n"+url);copyButton.textContent="تم النسخ ✓"}
+catch(e){status("تعذر النسخ. يمكنك نسخ الرابط التالي:\n"+url)}
+};
+const editButton=addText(card,"button","تعديل الدعوة");
+editButton.type="button";
+editButton.onclick=()=>{fillForm(item);window.scrollTo({top:0,behavior:"smooth"})};
+const deleteButton=addText(card,"button","حذف الدعوة");
+deleteButton.type="button";deleteButton.className="danger";
+deleteButton.onclick=()=>deleteInvitation(item);
+list.appendChild(card);
+}
+}
+document.querySelectorAll(".category-button").forEach(button=>{
+button.addEventListener("click",()=>{
+activeInvitationCategory=button.dataset.category;
+renderInvitationCategories();
+renderInvitationList();
+});
+});
+$("invitationSearch").addEventListener("input",renderInvitationList);
+$("clearSearchBtn").addEventListener("click",()=>{
+$("invitationSearch").value="";
+renderInvitationList();
+$("invitationSearch").focus();
+});
+async function loadInvitations(){
+$("refreshBtn").disabled=true;
+$("list").replaceChildren();
+addText($("list"),"p","جارٍ تحميل الدعوات...");
+try{
+const {data,error}=await db.from("invitations").select("*").order("created_at",{ascending:false});
+if(error){
+cachedInvitations=[];
+updateInvitationCounts();
+$("list").replaceChildren();
+addText($("list"),"p","تعذر تحميل الدعوات: "+error.message);
+status("تعذر تحميل الدعوات. تحقق من صلاحيات جدول invitations في Supabase.");
+return;
+}
+cachedInvitations=data||[];
+updateInvitationCounts();
+renderInvitationCategories();
+renderInvitationList();
+status("تم تحميل "+cachedInvitations.length+" دعوة محفوظة.");
+}catch(e){
+console.error("Load invitations:",e);
+$("list").replaceChildren();
+addText($("list"),"p","حدث خطأ أثناء تحميل الدعوات. تحقق من اتصال الإنترنت.");
+status("حدث خطأ غير متوقع أثناء تحميل الدعوات.");
+}finally{
+$("refreshBtn").disabled=false;
+}
 }
 function fillForm(item){
 editingId=item.id;
@@ -717,7 +855,8 @@ try{
 const {error}=await db.from("invitations").delete().eq("id",item.id);
 if(error){status("تعذر حذف الدعوة: "+error.message);return}
 if(editingId===item.id)resetForm();
-status("تم حذف الدعوة بنجاح.");await loadInvitations();
+status("تم حذف الدعوة بنجاح.");
+await loadInvitations();
 }catch(e){status("حدث خطأ أثناء حذف الدعوة.")}
 }
 $("deleteCurrentBtn").onclick=async()=>{
@@ -1065,7 +1204,9 @@ status("تعذر تسجيل الخروج: "+error.message);
 return;
 }
 resetForm();
-$("list").replaceChildren();
+cachedInvitations=[];
+updateInvitationCounts();
+renderInvitationList();
 $("bookingsList").replaceChildren();
 status("تم تسجيل الخروج.");
 }catch(error){
@@ -1077,6 +1218,8 @@ selectDoor(1);
 setOpeningPrompt("knock");
 newUniqueSlug();
 updateEventFields();
+renderInvitationCategories();
+updateInvitationCounts();
 
 db.auth.onAuthStateChange((_event,session)=>{
 showSession(session);
