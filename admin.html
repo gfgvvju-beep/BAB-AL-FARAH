@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -80,7 +79,7 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 
 <section id="panel" class="hidden">
 <h3 id="formTitle">إضافة دعوة جديدة</h3>
-<form id="inviteForm">
+<form id="inviteForm" novalidate>
 
 <div class="event-panel">
 <h3 style="margin-top:0">🎉 نوع المناسبة</h3>
@@ -731,18 +730,35 @@ await deleteInvitation(data);
 };
 $("cancelEditBtn").onclick=()=>{resetForm();status("تم إلغاء التعديل.")};
 
-$("inviteForm").onsubmit=async event=>{
-event.preventDefault();if(busy)return;
-const expiryValue=$("expiresAt").value;let expiresAt=null;
+$("inviteForm").addEventListener("submit",async event=>{
+event.preventDefault();
+event.stopPropagation();
+
+if(busy){
+status("الحفظ جارٍ بالفعل، انتظر حتى يكتمل.");
+return;
+}
+
+const expiryValue=$("expiresAt").value;
+let expiresAt=null;
+
 if(expiryValue){
 const expiryDate=new Date(expiryValue);
-if(Number.isNaN(expiryDate.getTime())){status("تاريخ انتهاء الرابط غير صالح.");return}
-if(expiryDate.getTime()<=Date.now()){status("اختَر وقت انتهاء في المستقبل.");return}
+if(Number.isNaN(expiryDate.getTime())){
+status("تاريخ انتهاء الرابط غير صالح.");
+return;
+}
+if(expiryDate.getTime()<=Date.now()){
+status("اختَر وقت انتهاء في المستقبل.");
+return;
+}
 expiresAt=expiryDate.toISOString();
 }
+
 const type=getEventType();
 const selectedType=$("audioType").value;
 const single=["henna","circumcision","graduation","birthday"].includes(type);
+
 const record={
 slug:$("slug").value.trim(),
 event_type:type,
@@ -764,128 +780,319 @@ template_id:Number($("template").value),
 is_published:$("published").checked,
 expires_at:expiresAt
 };
-if(!record.slug)return status("تعذر إنشاء رابط الدعوة. اضغط دعوة جديدة.");
-if(!record.groom_name)return status("اكتب الاسم المطلوب للمناسبة.");
-if(!single&&!record.bride_name)return status(type==="engagement"?"اكتب اسم الطرف الثاني.":"اكتب اسم العروس.");
-if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>14)return status("اختَر قالباً من القوالب الأربعة عشر.");
-const file=$("audioFile").files[0];
-if(selectedType==="song"&&!currentAudioUrl&&!file){status("اختر أغنية من المكتبة أو ارفع ملف MP3.");return}
-if(file){
-if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){status("اختر ملف MP3 صحيحاً.");return}
-if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
+
+if(!record.slug){
+status("تعذر إنشاء رابط الدعوة. اضغط دعوة جديدة.");
+return;
 }
-busy=true;$("saveBtn").disabled=true;let result;
+if(!record.groom_name){
+status("اكتب الاسم المطلوب للمناسبة.");
+$("groom").focus();
+return;
+}
+if(!single&&!record.bride_name){
+status(type==="engagement"?"اكتب اسم الطرف الثاني.":"اكتب اسم العروس.");
+$("bride").focus();
+return;
+}
+if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_id>14){
+status("اختَر قالباً من القوالب الأربعة عشر.");
+return;
+}
+
+const file=$("audioFile").files[0];
+
+if(selectedType==="song"&&!currentAudioUrl&&!file){
+status("اختر أغنية من المكتبة أو ارفع ملف MP3.");
+return;
+}
+if(file){
+if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
+status("اختر ملف MP3 صحيحاً.");
+return;
+}
+if(file.size>MAX_AUDIO_SIZE){
+status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");
+return;
+}
+}
+
+busy=true;
+$("saveBtn").disabled=true;
+$("saveBtn").textContent="جارٍ الحفظ...";
+status("تم استلام طلب الحفظ، جارٍ التحقق من البيانات...");
+
 try{
 if(file){
 status("جارٍ رفع الأغنية إلى التخزين...");
+
 const path="library/"+Date.now()+"-"+crypto.randomUUID()+"-"+safeAudioName(file);
-const {data:uploadData,error:uploadError}=await db.storage.from(AUDIO_BUCKET).upload(path,file,{cacheControl:"3600",upsert:false,contentType:"audio/mpeg"});
-if(uploadError)throw uploadError;
+const {data:uploadData,error:uploadError}=await db.storage.from(AUDIO_BUCKET).upload(
+path,
+file,
+{cacheControl:"3600",upsert:false,contentType:"audio/mpeg"}
+);
+
+if(uploadError)throw new Error("تعذر رفع الأغنية: "+uploadError.message);
+
 const {data:publicData}=db.storage.from(AUDIO_BUCKET).getPublicUrl(uploadData.path);
-if(!publicData?.publicUrl)throw new Error("تعذر الحصول على رابط الأغنية.");
-currentAudioUrl=publicData.publicUrl;record.audio_url=currentAudioUrl;record.audio_type="song";
+if(!publicData?.publicUrl)throw new Error("تم رفع الأغنية لكن تعذر الحصول على رابطها.");
+
+currentAudioUrl=publicData.publicUrl;
+record.audio_url=currentAudioUrl;
+record.audio_type="song";
+
 const libraryName=$("librarySongName").value.trim()||file.name.replace(/\.mp3$/i,"")||"أغنية زفاف";
-const {data:libraryRow,error:libraryError}=await db.from(AUDIO_LIBRARY_TABLE).insert({name:libraryName,audio_url:currentAudioUrl,storage_path:uploadData.path,file_name:file.name,created_at:new Date().toISOString()}).select("*").single();
-if(libraryError){console.warn("The song works for this invitation, but library insertion failed:",libraryError);$("librarySongStatus").textContent="تم رفع الأغنية للدعوة، لكن تعذرت إضافتها للمكتبة. تحقق من جدول audio_library وصلاحياته."}
-else{
+
+const {data:libraryRow,error:libraryError}=await db.from(AUDIO_LIBRARY_TABLE).insert({
+name:libraryName,
+audio_url:currentAudioUrl,
+storage_path:uploadData.path,
+file_name:file.name,
+created_at:new Date().toISOString()
+}).select("*").single();
+
+if(libraryError){
+console.warn("The song works for this invitation, but library insertion failed:",libraryError);
+$("librarySongStatus").textContent="تم رفع الأغنية للدعوة، لكن تعذرت إضافتها للمكتبة: "+libraryError.message;
+}else{
 const newSong=normalizeLibrarySong(libraryRow);
-librarySongs=[newSong,...librarySongs.filter(s=>s.audio_url!==newSong.audio_url)];
-renderLibrarySelect();renderLibraryList();currentLibrarySongId=newSong.id;
+librarySongs=[newSong,...librarySongs.filter(song=>String(song.id)!==String(newSong.id)&&song.audio_url!==newSong.audio_url)];
+currentLibrarySongId=newSong.id;
+renderLibrarySelect();
+renderLibraryList();
 }
-$("audioType").value="song";$("audioFileStatus").textContent="تم رفع الأغنية بنجاح: "+file.name;
+
+$("audioType").value="song";
+$("audioFileStatus").textContent="تم رفع الأغنية بنجاح: "+file.name;
 }
-status("جارٍ حفظ بيانات الدعوة...");
-if(editingId)result=await db.from("invitations").update(record).eq("id",editingId);
-else result=await db.from("invitations").insert(record);
-}catch(e){
-console.error("Save invitation error:",e);
-status("تعذر حفظ الدعوة أو رفع الأغنية: "+(e.message||"خطأ غير معروف"));
-busy=false;$("saveBtn").disabled=false;return;
+
+status("جارٍ حفظ بيانات الدعوة في قاعدة البيانات...");
+
+let result;
+if(editingId){
+result=await db.from("invitations").update(record).eq("id",editingId);
+}else{
+result=await db.from("invitations").insert(record);
 }
-busy=false;$("saveBtn").disabled=false;
+
 if(result.error){
-if(!editingId&&/duplicate|unique/i.test(result.error.message)){newUniqueSlug();status("تعارض رمز الرابط؛ أنشأنا رمزاً جديداً. اضغط حفظ الدعوة مرة أخرى.");return}
-status("لم يتم الحفظ: "+result.error.message);return;
+if(!editingId&&/duplicate|unique/i.test(result.error.message)){
+newUniqueSlug();
+status("تعارض رمز الرابط؛ أنشأنا رمزاً جديداً. اضغط حفظ الدعوة مرة أخرى.");
+return;
 }
+throw new Error("لم يتم حفظ الدعوة: "+result.error.message);
+}
+
 const savedUrl=invitationUrl(record.slug,record.opening_prompt);
 resetForm();
 status("تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+savedUrl);
-await Promise.all([loadInvitations(),loadAudioLibrary()]);
-};
-function resetForm(){
-$("inviteForm").reset();editingId=null;currentAudioUrl="";currentAudioType="none";currentLibrarySongId=null;
-$("audioFile").value="";$("audioFileStatus").textContent="لم يتم اختيار ملف جديد.";
-$("currentSongStatus").textContent="";$("librarySongName").value="";
-$("eventType").value="wedding";$("birthdayInviteStyle").value="personal";$("birthdayPersonType").value="self";
-updateEventFields();$("formTitle").textContent="إضافة دعوة جديدة";$("saveBtn").textContent="حفظ الدعوة";
-$("deleteCurrentBtn").classList.add("hidden");$("cancelEditBtn").classList.add("hidden");
-newUniqueSlug();setOpeningPrompt("knock");selectDoor(1);loadDoorImage(1);$("doorPicker").open=false;
-$("audioType").value="none";$("expiresAt").value="";$("published").checked=false;
-renderLibrarySelect();renderLibraryList();
+
+await Promise.allSettled([loadInvitations(),loadAudioLibrary()]);
+
+}catch(error){
+console.error("Save invitation error:",error);
+status("تعذر حفظ الدعوة أو رفع الأغنية:\n"+(error?.message||String(error)||"خطأ غير معروف"));
+}finally{
+busy=false;
+$("saveBtn").disabled=false;
+$("saveBtn").textContent=editingId?"حفظ التعديلات":"حفظ الدعوة";
 }
-$("newBtn").onclick=()=>{resetForm();status("تم إنشاء رابط جديد. أدخل بيانات الدعوة ثم اضغط حفظ الدعوة.");window.scrollTo({top:0,behavior:"smooth"})};
+});
+
+$("inviteForm").addEventListener("invalid",event=>{
+const field=event.target;
+if(field&&field.id){
+const labels={
+groom:"اكتب الاسم المطلوب للمناسبة.",
+bride:"اكتب اسم الطرف الثاني أو العروس.",
+slug:"تعذر إنشاء رابط الدعوة."
+};
+if(labels[field.id])status(labels[field.id]);
+}
+},true);
+
+window.addEventListener("error",event=>{
+console.error("Page error:",event.error||event.message);
+if($("status"))status("حدث خطأ في الصفحة: "+(event.message||"خطأ JavaScript غير معروف"));
+});
+
+window.addEventListener("unhandledrejection",event=>{
+console.error("Unhandled promise rejection:",event.reason);
+const reason=event.reason;
+if($("status"))status("حدث خطأ أثناء التنفيذ: "+(reason?.message||String(reason||"خطأ غير معروف")));
+});
+
+function resetForm(){
+$("inviteForm").reset();
+editingId=null;
+currentAudioUrl="";
+currentAudioType="none";
+currentLibrarySongId=null;
+$("audioFile").value="";
+$("audioFileStatus").textContent="لم يتم اختيار ملف جديد.";
+$("currentSongStatus").textContent="";
+$("librarySongName").value="";
+$("eventType").value="wedding";
+$("birthdayInviteStyle").value="personal";
+$("birthdayPersonType").value="self";
+updateEventFields();
+$("formTitle").textContent="إضافة دعوة جديدة";
+$("saveBtn").textContent="حفظ الدعوة";
+$("deleteCurrentBtn").classList.add("hidden");
+$("cancelEditBtn").classList.add("hidden");
+newUniqueSlug();
+setOpeningPrompt("knock");
+selectDoor(1);
+loadDoorImage(1);
+$("doorPicker").open=false;
+$("audioType").value="none";
+$("expiresAt").value="";
+$("published").checked=false;
+renderLibrarySelect();
+renderLibraryList();
+}
+$("newBtn").onclick=()=>{
+if(busy){status("انتظر حتى يكتمل الحفظ قبل إنشاء دعوة جديدة.");return}
+resetForm();
+status("تم إنشاء رابط جديد. أدخل بيانات الدعوة ثم اضغط حفظ الدعوة.");
+window.scrollTo({top:0,behavior:"smooth"});
+};
 $("refreshBtn").onclick=loadInvitations;
 
 async function loadBookings(){
-const box=$("bookingsList");box.replaceChildren();addText(box,"p","جارٍ تحميل الحجوزات...");
+const box=$("bookingsList");
+box.replaceChildren();
+addText(box,"p","جارٍ تحميل الحجوزات...");
 try{
 const {data,error}=await db.from("bookings").select("*").order("created_at",{ascending:false});
-if(error){box.replaceChildren();addText(box,"p","تعذر عرض الحجوزات: "+error.message);return}
+if(error){
 box.replaceChildren();
-if(!data||data.length===0){addText(box,"p","لا توجد حجوزات مسجلة حالياً.");return}
+addText(box,"p","تعذر عرض الحجوزات: "+error.message);
+return;
+}
+box.replaceChildren();
+if(!data||data.length===0){
+addText(box,"p","لا توجد حجوزات مسجلة حالياً.");
+return;
+}
 for(const item of data){
-const card=document.createElement("article");card.className="item";
+const card=document.createElement("article");
+card.className="item";
 addText(card,"strong",item.customer_name||item.name||"حجز بدون اسم");
-const info=document.createElement("p");info.style.whiteSpace="pre-line";
-info.textContent="رقم الهاتف: "+(item.phone||item.customer_phone||"—")+"\nالتاريخ: "+(item.wedding_date||item.booking_date||"—")+"\nنوع الحجز: "+(item.booking_type||item.type||"—")+"\nالملاحظات: "+(item.notes||"—")+"\nالحالة: "+(item.status||"جديد");card.appendChild(info);
+const info=document.createElement("p");
+info.style.whiteSpace="pre-line";
+info.textContent="رقم الهاتف: "+(item.phone||item.customer_phone||"—")+"\nالتاريخ: "+(item.wedding_date||item.booking_date||"—")+"\nنوع الحجز: "+(item.booking_type||item.type||"—")+"\nالملاحظات: "+(item.notes||"—")+"\nالحالة: "+(item.status||"جديد");
+card.appendChild(info);
 const statusSelect=document.createElement("select");
-["جديد","قيد التواصل","مؤكد","مكتمل","ملغي"].forEach(value=>{const option=document.createElement("option");option.value=value;option.textContent=value;statusSelect.appendChild(option)});
-statusSelect.value=item.status||"جديد";card.appendChild(statusSelect);
-const saveStatus=addText(card,"button","حفظ حالة الحجز");saveStatus.type="button";
+["جديد","قيد التواصل","مؤكد","مكتمل","ملغي"].forEach(value=>{
+const option=document.createElement("option");
+option.value=value;
+option.textContent=value;
+statusSelect.appendChild(option);
+});
+statusSelect.value=item.status||"جديد";
+card.appendChild(statusSelect);
+const saveStatus=addText(card,"button","حفظ حالة الحجز");
+saveStatus.type="button";
 saveStatus.onclick=async()=>{
 saveStatus.disabled=true;
+try{
 const {error:updateError}=await db.from("bookings").update({status:statusSelect.value}).eq("id",item.id);
-saveStatus.disabled=false;
-if(updateError){status("تعذر تحديث حالة الحجز: "+updateError.message);return}
-status("تم تحديث حالة الحجز.");await loadBookings();
+if(updateError)throw updateError;
+status("تم تحديث حالة الحجز.");
+await loadBookings();
+}catch(error){
+status("تعذر تحديث حالة الحجز: "+(error.message||"خطأ غير معروف"));
+}finally{saveStatus.disabled=false}
 };
-const remove=addText(card,"button","حذف الحجز");remove.type="button";remove.className="danger";
+const remove=addText(card,"button","حذف الحجز");
+remove.type="button";
+remove.className="danger";
 remove.onclick=async()=>{
 if(!confirm("متأكد تريد حذف هذا الحجز؟"))return;
+remove.disabled=true;
+try{
 const {error:deleteError}=await db.from("bookings").delete().eq("id",item.id);
-if(deleteError){status("تعذر حذف الحجز: "+deleteError.message);return}
-status("تم حذف الحجز.");await loadBookings();
+if(deleteError)throw deleteError;
+status("تم حذف الحجز.");
+await loadBookings();
+}catch(error){
+status("تعذر حذف الحجز: "+(error.message||"خطأ غير معروف"));
+}finally{remove.disabled=false}
 };
 box.appendChild(card);
 }
-}catch(e){box.replaceChildren();addText(box,"p","حدث خطأ أثناء تحميل الحجوزات.")}
+}catch(e){
+box.replaceChildren();
+addText(box,"p","حدث خطأ أثناء تحميل الحجوزات.");
+}
 }
 $("refreshBookingsBtn").onclick=loadBookings;
+
 $("loginBtn").onclick=async()=>{
-const email=$("email").value.trim();const password=$("password").value;
-if(!email||!password){status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");return}
-$("loginBtn").disabled=true;status("جارٍ تسجيل الدخول...");
+const email=$("email").value.trim();
+const password=$("password").value;
+if(!email||!password){
+status("اكتب البريد الإلكتروني وكلمة المرور أولاً.");
+return;
+}
+$("loginBtn").disabled=true;
+status("جارٍ تسجيل الدخول...");
 try{
 const {data,error}=await db.auth.signInWithPassword({email,password});
-if(error){status("تعذر الدخول: "+error.message);return}
-status("تم تسجيل الدخول بنجاح.");showSession(data.session);
-}catch(e){status("تعذر الاتصال بـ Supabase. تحقق من الإنترنت وحاول مرة أخرى.")}
-finally{$("loginBtn").disabled=false}
+if(error){
+status("تعذر الدخول: "+error.message);
+return;
+}
+status("تم تسجيل الدخول بنجاح.");
+showSession(data.session);
+}catch(e){
+status("تعذر الاتصال بـ Supabase. تحقق من الإنترنت وحاول مرة أخرى.");
+}finally{
+$("loginBtn").disabled=false;
+}
 };
-$("password").addEventListener("keydown",event=>{if(event.key==="Enter")$("loginBtn").click()});
+$("password").addEventListener("keydown",event=>{
+if(event.key==="Enter")$("loginBtn").click();
+});
 $("logoutBtn").onclick=async()=>{
+try{
 const {error}=await db.auth.signOut();
-if(error){status("تعذر تسجيل الخروج: "+error.message);return}
-resetForm();$("list").replaceChildren();$("bookingsList").replaceChildren();status("تم تسجيل الخروج.");
+if(error){
+status("تعذر تسجيل الخروج: "+error.message);
+return;
+}
+resetForm();
+$("list").replaceChildren();
+$("bookingsList").replaceChildren();
+status("تم تسجيل الخروج.");
+}catch(error){
+status("تعذر تسجيل الخروج: "+(error.message||"خطأ غير معروف"));
+}
 };
-selectDoor(1);setOpeningPrompt("knock");newUniqueSlug();updateEventFields();
-db.auth.onAuthStateChange((_event,session)=>{showSession(session)});
+
+selectDoor(1);
+setOpeningPrompt("knock");
+newUniqueSlug();
+updateEventFields();
+
+db.auth.onAuthStateChange((_event,session)=>{
+showSession(session);
+});
+
 (async()=>{
 try{
 const {data,error}=await db.auth.getSession();
-if(error){status("تعذر التحقق من جلسة الدخول: "+error.message);return}
+if(error){
+status("تعذر التحقق من جلسة الدخول: "+error.message);
+return;
+}
 showSession(data.session);
-}catch(e){status("تعذر الاتصال بـ Supabase. تحقق من اتصال الإنترنت.")}
+}catch(e){
+status("تعذر الاتصال بـ Supabase. تحقق من اتصال الإنترنت.");
+}
 })();
 </script>
 </body>
