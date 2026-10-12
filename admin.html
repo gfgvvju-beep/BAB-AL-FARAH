@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -103,8 +102,8 @@ hr{border:0;border-top:1px solid #e5d6b7;margin:25px 0}
 <textarea id="notes" placeholder="اكتب الملاحظات التي تريد إضافتها للدعوة"></textarea>
 
 <hr>
-<h3>✨ العبارة التي تظهر عند فتح الدعوة</h3>
-<p class="help">اختَر العبارة المناسبة للفيديو الخاص بهذه الدعوة. سيتم حفظ اختيارك مع الدعوة وتمريره إلى رابط الدعوة.</p>
+<h3>✨ اختيار طريقة فتح الدعوة</h3>
+<p class="help">اختر طريقة فتح الباب التي تريدها لهذه الدعوة. سيتم حفظ الاختيار مع الدعوة وإضافته إلى رابطها حتى تتمكن صفحة الدعوة من معرفة الطريقة المختارة.</p>
 <div class="prompt-choice">
 <label>
 <input type="radio" name="openingPrompt" value="knock" checked>
@@ -724,7 +723,7 @@ Promise.all([loadInvitations(),loadBookings(),loadDoorImage($("template").value)
 }
 }
 
-/* تعديل الرابط لتمرير طريقة فتح الدعوة */
+/* إنشاء رابط الدعوة مع تضمين طريقة الفتح المختارة */
 function invitationUrl(slug,openingPrompt="knock"){
 const path=location.pathname.replace(/admin\.html$/i,"");
 const url=new URL(path||"/",location.origin);
@@ -780,7 +779,7 @@ const details=document.createElement("p");
 details.style.whiteSpace="pre-line";
 details.textContent="رمز الدعوة: "+(item.slug||"—")+
 "\nالباب: "+(item.template_id||1)+" — "+(doorNames[Number(item.template_id)]||"قالب غير معروف")+
-"\nعبارة البداية: "+(openingPrompts[item.opening_prompt]||openingPrompts.knock)+
+"\nطريقة الفتح: "+(openingPrompts[item.opening_prompt]||openingPrompts.knock)+
 "\nالتاريخ: "+(item.wedding_date||"غير محدد")+
 "\nاليوم: "+(item.day_name||"غير محدد")+
 "\nالوقت: "+(item.wedding_time||"غير محدد")+
@@ -795,7 +794,6 @@ if(item.expires_at){
 const expired=new Date(item.expires_at).getTime()<=Date.now();
 addText(card,"p",expired?"انتهت مدة الرابط المحددة":"الرابط محدد بموعد انتهاء",expired?"expired":"active-expiry");
 }
-/* تمرير اختيار العبارة إلى رابط الدعوة */
 const url=invitationUrl(item.slug||"",item.opening_prompt||"knock");
 const link=document.createElement("a");
 link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="فتح رابط الدعوة";
@@ -836,7 +834,6 @@ $("venue").value=item.venue_name||"";
 $("map").value=item.map_url||"";
 $("phone").value=item.contact_phone||"";
 $("notes").value=item.notes||"";
-/* استعادة العبارة المحفوظة عند تعديل الدعوة */
 setOpeningPrompt(item.opening_prompt||"knock");
 $("expiresAt").value=toLocalDateTime(item.expires_at);
 $("audioType").value=item.audio_type||"none";
@@ -857,7 +854,7 @@ $("deleteCurrentBtn").classList.remove("hidden");
 $("cancelEditBtn").classList.remove("hidden");
 $("saveBtn").textContent="حفظ التعديلات";
 renderLibraryList();
-status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه، ويمكنك تغيير العبارة والأغنية ثم حفظ التعديلات.");
+status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه، ويمكنك تغيير طريقة الفتح والأغنية ثم حفظ التعديلات.");
 }
 
 async function deleteInvitation(item){
@@ -907,7 +904,6 @@ venue_name:$("venue").value.trim(),
 map_url:$("map").value.trim()||null,
 contact_phone:$("phone").value.trim(),
 notes:$("notes").value.trim(),
-/* حفظ طريقة فتح الدعوة داخل سجل Supabase */
 opening_prompt:getOpeningPrompt(),
 audio_type:selectedType,
 audio_url:selectedType==="song"?(currentAudioUrl||null):null,
@@ -996,7 +992,6 @@ status("لم يتم الحفظ: "+result.error.message);
 return;
 }
 
-/* إنشاء الرابط النهائي مع طريقة الفتح التي اختارها المستخدم */
 const savedUrl=invitationUrl(record.slug,record.opening_prompt);
 resetForm();
 status("تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+savedUrl);
