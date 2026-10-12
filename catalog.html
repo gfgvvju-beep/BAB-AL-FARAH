@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -109,26 +110,92 @@ border-radius:12px;padding:10px 13px;cursor:pointer;font-weight:700;font-size:12
 .back-categories:hover{filter:brightness(1.1)}
 .refresh:hover{border-color:var(--gold);background:#211b0b}
 
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px;padding-bottom:5px}
-.invite-card{background:var(--panel);border:1px solid #40351e;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);transition:transform .22s,box-shadow .22s;min-width:0}
-.invite-card:hover{transform:translateY(-4px);box-shadow:0 20px 45px #0008}
-.card-media{height:220px;position:relative;background:linear-gradient(145deg,#050505,#30250c 55%,#b28a22);overflow:hidden;display:grid;place-items:center}
-.card-media:before{content:"";position:absolute;inset:13px;border:1px solid #d4af3780;border-radius:13px;pointer-events:none;z-index:1}
-.card-media:after{content:"❦";position:absolute;color:#f3dca755;font-family:Georgia,serif;font-size:80px;bottom:-15px;left:14px;transform:rotate(-18deg);pointer-events:none}
-.card-media img,.card-media video{position:absolute;width:100%;height:100%;inset:0;object-fit:cover}
-.media-fallback{position:relative;z-index:1;color:#fff1c4;text-align:center;padding:22px}
+/* بطاقة الدعوة: الصورة أو الحركة تملأ المساحة الرئيسية */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding-bottom:5px}
+.invite-card{
+background:#080808;
+border:1px solid #806522;
+border-radius:19px;
+overflow:hidden;
+box-shadow:0 14px 40px #0009;
+transition:transform .22s,box-shadow .22s;
+min-width:0;
+padding:7px
+}
+.invite-card:hover{transform:translateY(-3px);box-shadow:0 20px 45px #d4af3718}
+.card-media{
+width:100%;
+aspect-ratio:3/4;
+position:relative;
+background:linear-gradient(145deg,#050505,#30250c 55%,#b28a22);
+overflow:hidden;
+display:grid;
+place-items:center;
+border-radius:13px
+}
+.card-media:before{
+content:"";
+position:absolute;
+inset:9px;
+border:1px solid #d4af3780;
+border-radius:9px;
+pointer-events:none;
+z-index:2
+}
+.card-media img,.card-media video{
+position:absolute;
+width:100%;
+height:100%;
+inset:0;
+object-fit:cover;
+display:block;
+background:#080808
+}
+.card-media video{pointer-events:none}
+.media-fallback{
+position:relative;
+z-index:1;
+color:#fff1c4;
+text-align:center;
+padding:22px
+}
 .media-fallback .big-icon{display:block;font-size:46px;margin-bottom:7px}
 .media-fallback strong{font-family:'Amiri',serif;font-size:24px}
 .media-fallback small{display:block;font-size:11px;color:#d9c78e;margin-top:3px}
-.media-chip{position:absolute;z-index:2;top:13px;right:13px;background:#17130a;color:var(--gold-light);border:1px solid #8c6b1d;border-radius:30px;padding:5px 10px;font-size:10px;font-weight:800}
-.card-body{padding:17px}
-.card-title{font-size:17px;font-weight:800;color:var(--gold-light);margin:0 0 6px;overflow-wrap:anywhere}
-.card-sub{font-size:12px;color:var(--muted);margin:0 0 13px;line-height:1.8}
-.card-meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:15px}
-.meta-pill{background:#1b170b;border:1px solid #4b3c19;border-radius:30px;padding:5px 9px;color:#d9c995;font-size:10px}
+.media-chip{
+position:absolute;
+z-index:3;
+top:15px;
+right:15px;
+background:#17130aeb;
+color:var(--gold-light);
+border:1px solid #8c6b1d;
+border-radius:30px;
+padding:6px 11px;
+font-size:11px;
+font-weight:800;
+max-width:calc(100% - 30px)
+}
+.card-body{padding:9px 2px 2px}
 .card-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.btn{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;border-radius:11px;padding:11px 9px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid transparent;transition:filter .15s;line-height:1.7}
-.btn:hover{filter:brightness(1.08)}
+.btn{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+text-decoration:none;
+border-radius:11px;
+padding:12px 8px;
+font-size:12px;
+font-weight:800;
+cursor:pointer;
+border:1px solid transparent;
+transition:filter .15s;
+line-height:1.7;
+text-align:center;
+min-width:0
+}
+.btn:hover{filter:brightness(1.12)}
 .btn-primary{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;box-shadow:0 5px 14px #d4af3720}
 .btn-secondary{background:#14120c;color:var(--gold-light);border-color:#5a4820}
 .empty,.loading,.error{grid-column:1/-1;text-align:center;background:#111;border:1px dashed #5a4820;border-radius:18px;padding:38px 20px;color:var(--muted);line-height:2}
@@ -155,16 +222,15 @@ border-radius:12px;padding:10px 13px;cursor:pointer;font-weight:700;font-size:12
 html[dir="ltr"] .category{text-align:left}
 html[dir="ltr"] .category-arrow{margin-left:auto;margin-right:0}
 html[dir="ltr"] .category:after{inset:auto auto -32px -18px}
-html[dir="ltr"] .card-media:after{left:auto;right:14px}
-html[dir="ltr"] .media-chip{right:auto;left:13px}
+html[dir="ltr"] .media-chip{right:auto;left:15px}
 html[dir="ltr"] .top-actions{direction:ltr}
 html[dir="ltr"] .gallery-title-wrap{text-align:left}
 html[dir="ltr"] .gallery-tools{direction:ltr}
 
 button:focus-visible,a:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
+
 @media(max-width:850px){
 .category-grid,.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-.card-media{height:205px}
 .contact-panel{align-items:flex-start;flex-direction:column}
 .contact-actions{width:100%}
 .contact-actions .btn{flex:1}
@@ -189,16 +255,17 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold-light);outline
 .gallery-title-wrap p{font-size:11px}
 .gallery-tools{gap:5px;flex-wrap:wrap}
 .refresh,.back-categories{padding:9px;font-size:11px}
-.cards{grid-template-columns:1fr;gap:15px}
-.card-media{height:230px}
-.card-body{padding:16px}
+.cards{grid-template-columns:1fr;gap:17px}
+.invite-card{padding:7px}
+.card-media{aspect-ratio:3/4}
+.card-body{padding:8px 1px 1px}
 .contact-panel{padding:19px}
 .contact-actions{flex-direction:column}
 .contact-actions .btn{width:100%}
 .about{padding:23px 20px}
 .brand{font-size:38px}
 .card-actions{gap:7px}
-.btn{font-size:11px}
+.btn{font-size:11px;padding:12px 6px}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
@@ -344,7 +411,7 @@ emptyText:"تابعونا، راح نضيف تصاميم جديدة قريباً
 loadError:"تعذر تحميل الدعوات حالياً",
 loadErrorText:"تأكد من إعداد قاعدة البيانات الخاص بمعرض باب الفرح.",
 total:"دعوة منشورة",available:"تصميم متاح",soon:"تُضاف التصاميم قريباً",
-preview:"♡ معاينة الدعوة",order:"اطلب مثلها ↗",interactive:"🚪 تصميم تفاعلي",
+preview:"♡ معاينة الدعوة",order:"طلب عبر واتساب",interactive:"🚪 تصميم تفاعلي",
 aboutTitle:"باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة",
 aboutText:"نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.",
 contactTitle:"تفاصيلنا والتواصل ويانا",
@@ -376,7 +443,7 @@ emptyText:"بەردەوام بن، دیزاینی نوێ زیاد دەکەین."
 loadError:"لە ئێستادا نەتوانرا بانگهێشتنامەکان بار بکرێن",
 loadErrorText:"تکایە ڕێکخستنی بنکەدراوەی گەلەری دەرگای شادی بپشکنن.",
 total:"بانگهێشتنامەی بڵاوکراوە",available:"دیزاین بەردەستە",soon:"دیزاینەکان بەم زووانە زیاد دەکرێن",
-preview:"♡ پیشاندانی بانگهێشتنامە",order:"داوای هاوشێوەی بکە ↗",interactive:"🚪 دیزاینی کارلێککەر",
+preview:"♡ پیشاندانی بانگهێشتنامە",order:"داوای لە واتساپ بکە",interactive:"🚪 دیزاینی کارلێککەر",
 aboutTitle:"دەرگای شادی… وردەکارییە بچووکەکان یادگاریی گەورە دروست دەکەن",
 aboutText:"بانگهێشتنامەی ئەلیکترۆنی کارلێککەر بۆ بۆنە خۆشەکان ئامادە دەکەین، بە دیزاینی جۆراوجۆر و دەرگایەکی تایبەت. ئەو بیرۆکەیە هەڵبژێرن کە لەگەڵ شادییەکەتان دەگونجێت و پەیوەندیمان پێوە بکەن.",
 contactTitle:"زانیاری و پەیوەندیمان",
@@ -408,7 +475,7 @@ emptyText:"Check back soon for new designs.",
 loadError:"Invitations could not be loaded",
 loadErrorText:"Please check the Bab Al Farah gallery database setup.",
 total:"published invitations",available:"designs available",soon:"New designs coming soon",
-preview:"♡ Preview invitation",order:"Order a similar one ↗",interactive:"🚪 Interactive design",
+preview:"♡ Preview invitation",order:"Order via WhatsApp",interactive:"🚪 Interactive design",
 aboutTitle:"Bab Al Farah… small details make big memories",
 aboutText:"We create interactive digital invitations for happy occasions, with varied designs and a special opening door. Choose the idea that suits your celebration and contact us to prepare your invitation.",
 contactTitle:"Contact details",
@@ -529,7 +596,7 @@ icon.textContent=EVENT_TYPES[key].icon;
 const title=document.createElement("strong");
 title.textContent="باب الفرح";
 const small=document.createElement("small");
-small.textContent=LANG[currentLang].event[key].singular+" · "+LANG[currentLang].interactive.replace(/^🚪 /,"");
+small.textContent=LANG[currentLang].event[key].singular;
 wrap.append(icon,title,small);
 return wrap
 }
@@ -538,31 +605,48 @@ function cardMedia(item){
 const key=eventType(item);
 const holder=document.createElement("div");
 holder.className="card-media";
+
 const chip=document.createElement("span");
 chip.className="media-chip";
 chip.textContent=LANG[currentLang].event[key].singular;
 holder.appendChild(chip);
 
 const url=validHttpUrl(item.image_url||"");
-if(url&&/\.mp4(?:$|\?)/i.test(url)){
+
+if(url&&/\.(mp4|webm|ogg)(?:$|[?#])/i.test(url)){
 const video=document.createElement("video");
 video.src=url;
 video.muted=true;
+video.defaultMuted=true;
+video.loop=true;
+video.autoplay=true;
 video.playsInline=true;
 video.preload="metadata";
-video.setAttribute("aria-label","Preview invitation");
-video.addEventListener("loadedmetadata",()=>{try{video.currentTime=.1}catch(e){}});
-holder.appendChild(video)
+video.setAttribute("muted","");
+video.setAttribute("autoplay","");
+video.setAttribute("loop","");
+video.setAttribute("playsinline","");
+video.setAttribute("aria-label",displayName(item));
+video.addEventListener("loadeddata",()=>{
+const playPromise=video.play();
+if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(()=>{});
+});
+video.addEventListener("error",()=>{
+video.remove();
+if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item))
+});
+holder.appendChild(video);
 }else if(url){
 const img=document.createElement("img");
 img.src=url;
 img.alt=displayName(item);
 img.loading="lazy";
+img.decoding="async";
 img.onerror=()=>{
 img.remove();
 if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item))
 };
-holder.appendChild(img)
+holder.appendChild(img);
 }else{
 holder.appendChild(fallbackMedia(item))
 }
@@ -582,7 +666,6 @@ categories.style.display="";
 return
 }
 
-/* عند اختيار مناسبة نخفي جميع صناديق المناسبات */
 categories.style.display="none";
 panel.classList.add("open");
 
@@ -607,34 +690,15 @@ return
 }
 
 for(const item of items){
-const key=eventType(item);
 const card=document.createElement("article");
 card.className="invite-card";
+
+/* الصورة أو GIF أو الفيديو يحتل مساحة بطاقة الدعوة */
 card.appendChild(cardMedia(item));
 
+/* الأزرار فقط أسفل الصورة */
 const body=document.createElement("div");
 body.className="card-body";
-
-const title=document.createElement("h3");
-title.className="card-title";
-title.textContent=displayName(item);
-body.appendChild(title);
-
-const sub=document.createElement("p");
-sub.className="card-sub";
-sub.textContent=item.description||t.event[key].description;
-body.appendChild(sub);
-
-const meta=document.createElement("div");
-meta.className="card-meta";
-const typePill=document.createElement("span");
-typePill.className="meta-pill";
-typePill.textContent=t.event[key].singular;
-const template=document.createElement("span");
-template.className="meta-pill";
-template.textContent=t.interactive;
-meta.append(typePill,template);
-body.appendChild(meta);
 
 const actions=document.createElement("div");
 actions.className="card-actions";
@@ -645,6 +709,7 @@ view.href=inviteUrl(item);
 view.target="_blank";
 view.rel="noopener noreferrer";
 view.textContent=t.preview;
+
 if(view.href==="#"){
 view.style.pointerEvents="none";
 view.setAttribute("aria-disabled","true")
