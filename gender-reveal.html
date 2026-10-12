@@ -1,56 +1,84 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#fff2f6">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fff7f4">
 <title>اختبار جنس الجنين | باب الفرح</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--pink:#ef8eaf;--blue:#83c8f5;--gold:#c6a15e;--ink:#493443;--cream:#fffaf4}
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{margin:0;min-height:100vh;font-family:Cairo,Tahoma,sans-serif;color:var(--ink);background:radial-gradient(circle at 15% 15%,#ffe1ed,transparent 34%),radial-gradient(circle at 90% 85%,#d9efff,transparent 36%),linear-gradient(135deg,#fffaf4,#fff2f7);overflow-x:hidden}
-button{font:inherit}.app{width:min(850px,calc(100% - 24px));margin:auto;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:25px 0}
-.brand{text-align:center;font:700 25px Amiri,serif;color:#6b344d;margin-bottom:16px}.brand span{color:var(--gold)}
-.card{position:relative;overflow:hidden;background:#ffffffdf;border:1px solid #ffffff;border-radius:28px;padding:clamp(20px,5vw,48px);text-align:center;box-shadow:0 22px 75px #74405a15;backdrop-filter:blur(12px)}
-h1{font:700 clamp(29px,6vw,48px) Amiri,serif;color:#8c4867;margin:0 0 10px;line-height:1.5}
-h2{font:700 clamp(24px,5vw,36px) Amiri,serif;margin:0 0 10px;color:#8c4867}
+button,a{font:inherit}
+.app{width:min(850px,calc(100% - 24px));margin:auto;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:20px 0}
+.brand{text-align:center;font:700 27px Amiri,serif;color:#6b344d;margin:0 0 14px}
+.brand span{color:var(--gold)}
+.card{position:relative;overflow:hidden;background:#ffffffdf;border:1px solid #ffffff;border-radius:28px;padding:clamp(16px,4vw,36px);text-align:center;box-shadow:0 22px 75px #74405a15;backdrop-filter:blur(12px)}
+h1{font:700 clamp(29px,6vw,46px) Amiri,serif;color:#8c4867;margin:0 0 10px;line-height:1.5}
+h2{font:700 clamp(24px,5vw,34px) Amiri,serif;margin:0 0 10px;color:#8c4867}
 p{line-height:2;margin:8px 0;color:#795e6f}
-.eyebrow{font-size:12px;letter-spacing:1px;color:#a37c51;font-weight:800}
-.btn{border:0;border-radius:50px;padding:13px 24px;background:linear-gradient(135deg,#a8557d,#d889a9);color:white;font-weight:800;cursor:pointer;box-shadow:0 9px 22px #a8557d28;transition:transform .2s,opacity .2s}
-.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5;cursor:wait}
+.eyebrow{font-size:12px;letter-spacing:.5px;color:#a37c51;font-weight:800;margin:5px 0 12px}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border:0;border-radius:50px;padding:13px 24px;background:linear-gradient(135deg,#a8557d,#d889a9);color:white;font-weight:800;cursor:pointer;box-shadow:0 9px 22px #a8557d28;transition:transform .2s,opacity .2s;text-decoration:none}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.5;cursor:wait}
 .hidden{display:none!important}
 .default-art{position:relative;min-height:180px;display:grid;place-items:center;margin:4px auto 20px;max-width:450px;overflow:hidden}
 .heart{font-size:clamp(75px,18vw,135px);filter:drop-shadow(0 10px 18px #e58db833);animation:float 3s ease-in-out infinite}
-.sparkle{position:absolute;color:#d2ad69;animation:twinkle 2s infinite alternate}.s1{top:12%;left:15%}.s2{right:12%;top:30%;animation-delay:.7s}.s3{bottom:8%;left:30%;animation-delay:1s}
-.media-box{margin:10px auto 20px;max-width:100%;border-radius:18px;overflow:hidden;display:flex;justify-content:center;align-items:center}
-.media-box img,.media-box video{display:block;max-width:100%;max-height:42vh;object-fit:contain;border-radius:18px}
-.game-art{position:relative;min-height:100px;margin:0 auto 10px;display:grid;place-items:center}
-.balloons{display:grid;grid-template-columns:repeat(4,minmax(52px,1fr));gap:13px;max-width:580px;margin:25px auto 15px}
-.balloon{position:relative;min-height:100px;border:0;background:transparent;cursor:pointer;animation:float 2.8s ease-in-out infinite;transition:transform .2s,opacity .2s;touch-action:manipulation}
-.balloon:nth-child(2n){animation-delay:.45s}.balloon:nth-child(3n){animation-delay:.9s}
+.sparkle{position:absolute;color:#d2ad69;animation:twinkle 2s infinite alternate}
+.s1{top:12%;left:15%}.s2{right:12%;top:30%;animation-delay:.7s}.s3{bottom:8%;left:30%;animation-delay:1s}
+.media-box{margin:12px auto 18px;width:100%;max-width:100%;border-radius:18px;overflow:hidden;display:flex;justify-content:center;align-items:center;background:linear-gradient(145deg,#fff7fa,#f2f8ff)}
+.media-box img,.media-box video{display:block;width:100%;height:auto;max-width:100%;max-height:none;object-fit:contain;border-radius:18px}
+.media-box video{background:#1d1820}
+#opening,#game,#result{width:100%}
+#openingMedia,#gameMedia{width:100%;min-height:0}
+#openingMedia img,#openingMedia video,#gameMedia img,#gameMedia video{width:100%;height:auto;max-height:78svh;object-fit:contain}
+.game-art{position:relative;min-height:85px;margin:0 auto 10px;display:grid;place-items:center}
+.balloons{display:grid;grid-template-columns:repeat(2,minmax(90px,1fr));gap:25px;max-width:360px;margin:28px auto 20px}
+.balloon{position:relative;min-height:125px;border:0;background:transparent;cursor:pointer;animation:float 2.8s ease-in-out infinite;transition:transform .2s,opacity .2s;touch-action:manipulation}
+.balloon:nth-child(2n){animation-delay:.45s}
 .balloon:disabled{cursor:default}
-.balloon-shape{display:block;position:relative;width:clamp(45px,11vw,76px);height:clamp(59px,14vw,96px);margin:auto;border-radius:50% 50% 46% 46%;box-shadow:inset -9px -8px 15px #00000012,inset 7px 5px 10px #ffffff90,0 9px 15px #6c52601a}
+.balloon-shape{display:block;position:relative;width:clamp(66px,19vw,100px);height:clamp(85px,24vw,130px);margin:auto;border-radius:50% 50% 46% 46%;box-shadow:inset -9px -8px 15px #00000012,inset 7px 5px 10px #ffffff90,0 9px 15px #6c52601a}
 .balloon-shape:before{content:"";position:absolute;bottom:-7px;left:calc(50% - 5px);border-left:5px solid transparent;border-right:5px solid transparent;border-top:9px solid var(--balloon-color)}
-.balloon-shape:after{content:"";position:absolute;left:50%;bottom:-34px;width:1px;height:29px;background:#bcaab1;transform:rotate(3deg)}
+.balloon-shape:after{content:"";position:absolute;left:50%;bottom:-40px;width:1px;height:35px;background:#bcaab1;transform:rotate(3deg)}
 .boy .balloon-shape{background:linear-gradient(135deg,#b6e5ff,#69b8ef);--balloon-color:#69b8ef}
 .girl .balloon-shape{background:linear-gradient(135deg,#ffd2e2,#ee8bb1);--balloon-color:#ee8bb1}
-.balloon:hover .balloon-shape{transform:scale(1.08)}
+.balloon:hover .balloon-shape{transform:scale(1.06)}
 .balloon.popped{animation:pop .32s forwards;pointer-events:none}
 .game-status{min-height:50px;font-weight:700;color:#93617d;line-height:1.9;margin:15px auto}
 .result-icon{font-size:clamp(60px,15vw,105px);animation:float 2.5s infinite}
-.result-card{background:linear-gradient(145deg,#fff,#fff6f9);border:1px solid #f6d9e4;border-radius:22px;padding:22px;margin:18px auto;max-width:580px}
-.name-line{font-size:18px;color:#83516a;font-weight:800;line-height:2}
+.result-card{background:linear-gradient(145deg,#fff,#fff6f9);border:1px solid #f6d9e4;border-radius:22px;padding:20px;margin:18px auto;max-width:580px}
+.name-line{font-size:18px;color:#83516a;font-weight:800;line-height:2;overflow-wrap:anywhere}
+.prayer{font:700 clamp(20px,4.5vw,28px) Amiri,serif;line-height:2;color:#8b5470;background:#fffaf3;border:1px solid #ead6b1;padding:17px;border-radius:18px;margin:20px auto}
 .confetti{position:fixed;top:-15px;width:9px;height:14px;z-index:10;pointer-events:none;animation:fall linear forwards}
 .error{background:#fff0f0;color:#a52e3d;padding:13px;border-radius:12px;margin-top:15px;line-height:1.9}
 .footer{text-align:center;font-size:11px;color:#ad919f;margin-top:16px}
+.contact-card{margin:28px auto 0;padding:23px 17px;border-radius:23px;border:1px solid #dfc38d;background:linear-gradient(145deg,#181514,#30251c 65%,#171313);color:#fff;text-align:center;box-shadow:0 15px 40px #24170f20}
+.contact-logo{font:700 32px Amiri,serif;color:#e6c783;margin:0 0 6px}
+.contact-card p{color:#f5e9d6;margin:5px 0 17px}
+.contact-actions{display:flex;justify-content:center;align-items:stretch;gap:9px;flex-wrap:wrap}
+.contact-actions a{flex:1 1 120px;max-width:190px;border-radius:13px;padding:12px 8px;font-size:14px;font-weight:800;text-decoration:none;transition:transform .2s}
+.contact-actions a:active{transform:scale(.97)}
+.contact-call{background:#e9d3a2;color:#342719}
+.contact-wa{background:#238d58;color:#fff}
+.contact-site{background:#fff7e9;color:#594024}
 @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
 @keyframes twinkle{from{opacity:.3;transform:scale(.7)}to{opacity:1;transform:scale(1.2)}}
 @keyframes pop{0%{transform:scale(1);opacity:1}60%{transform:scale(1.5);opacity:.8}100%{transform:scale(.05);opacity:0}}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
-@media(max-width:430px){.balloons{grid-template-columns:repeat(3,minmax(50px,1fr));gap:8px}.balloon{min-height:88px}.card{border-radius:22px}}
+@media(max-width:430px){
+ .app{width:100%;padding:10px 0}
+ .brand{margin-bottom:8px}
+ .card{border-radius:18px;padding:16px 12px}
+ #openingMedia,#gameMedia{margin:10px auto 16px;border-radius:12px}
+ #openingMedia img,#openingMedia video,#gameMedia img,#gameMedia video{max-height:72svh;border-radius:12px}
+ .balloons{gap:18px;margin:24px auto 18px}
+ .balloon{min-height:115px}
+ .contact-card{padding:20px 12px}
+ .contact-actions a{flex-basis:105px}
+}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -78,9 +106,7 @@ p{line-height:2;margin:8px 0;color:#795e6f}
 
 <div id="game" class="hidden">
 <div class="eyebrow">لحظة الكشف المنتظرة</div>
-<div id="gameDefault" class="game-art">
-<span style="font-size:45px">✨ 🎈 ✨</span>
-</div>
+<div id="gameDefault" class="game-art"><span style="font-size:45px">✨ 🎈 ✨</span></div>
 <div id="gameMedia" class="media-box hidden"></div>
 <h2>اختاروا البالونات 🎈</h2>
 <p id="gameIntro">اضغط على البالون واكتشف المفاجأة!</p>
@@ -96,10 +122,21 @@ p{line-height:2;margin:8px 0;color:#795e6f}
 <p id="resultMessage"></p>
 <div id="babyNames" class="name-line"></div>
 <div id="parentsNames" class="name-line"></div>
+<div class="prayer">اللهم أنبته نباتاً حسناً، واجعله قرة عين لوالديه، واحفظه وبارك لهما فيه</div>
 <p id="customCongrats"></p>
 </div>
 <p>الله يجعلهم من مواليد السعادة والفرح 💗💙</p>
 <button class="btn" id="replayBtn">إعادة مشاهدة التهنئة 🎉</button>
+
+<div class="contact-card">
+<div class="contact-logo">موقع باب الفرح <span>♥</span></div>
+<p>لإنشاء دعوة خاصة بكم تواصلوا معنا</p>
+<div class="contact-actions">
+<a class="contact-call" id="contactCall" href="#">☎ اتصال</a>
+<a class="contact-wa" id="contactWhatsApp" href="#" target="_blank" rel="noopener noreferrer">◉ واتساب</a>
+<a class="contact-site" href="https://bab-alfarah.pages.dev/" target="_blank" rel="noopener noreferrer">⌂ موقعنا</a>
+</div>
+</div>
 </div>
 
 <div id="pageError" class="error hidden"></div>
@@ -111,25 +148,48 @@ p{line-height:2;margin:8px 0;color:#795e6f}
 "use strict";
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
+const CONTACT_PHONE="07733490779";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 const $=id=>document.getElementById(id);
 const params=new URLSearchParams(location.search);
 const token=params.get("token");
-let config=null,sessionId=null,music=null,popAudio=null,completedResult=null,balloonCounter=0;
+let config=null,sessionId=null,music=null,popAudio=null,completedResult=null,audioContext=null;
+let pageActive=true;
+const prayerText="اللهم أنبته نباتاً حسناً، واجعله قرة عين لوالديه، واحفظه وبارك لهما فيه";
 
 function safeUrl(v){try{const u=new URL(String(v||""));return ["https:","http:"].includes(u.protocol)?u.href:""}catch{return""}}
 function show(id){$(id).classList.remove("hidden")}
 function hide(id){$(id).classList.add("hidden")}
 function showError(msg){$("pageError").textContent=msg;show("pageError")}
 function mediaIsVideo(url,type){return type==="video"||/\.(mp4|webm|ogv|ogg|mov|m4v)(?:$|[?#])/i.test(url||"")}
+
+function stopAudio(){
+ pageActive=false;
+ [music,popAudio].forEach(a=>{
+  if(a){try{a.pause();a.currentTime=0;a.src=""}catch(e){}}
+ });
+ music=null;popAudio=null;
+ if(audioContext){try{audioContext.close()}catch(e){}audioContext=null}
+ document.querySelectorAll("video,audio").forEach(a=>{
+  try{a.pause();a.currentTime=0}catch(e){}
+ });
+}
+function stopMusicOnly(){
+ if(music){try{music.pause();music.currentTime=0;music.src=""}catch(e){}music=null}
+}
+window.addEventListener("pagehide",stopAudio);
+window.addEventListener("beforeunload",stopAudio);
+document.addEventListener("visibilitychange",()=>{if(document.hidden){stopAudio()}});
+window.addEventListener("pageshow",()=>{pageActive=true});
 function renderMedia(containerId,defaultId,url,type){
  const box=$(containerId),fallback=$(defaultId),src=safeUrl(url);
  box.replaceChildren();
  if(!src){hide(containerId);show(defaultId);return}
  const el=document.createElement(mediaIsVideo(src,type)?"video":"img");
  el.src=src;
- if(el.tagName==="VIDEO"){el.controls=true;el.playsInline=true;el.loop=true;el.muted=true;el.preload="metadata"}
- else{el.alt="";el.loading="eager"}
+ if(el.tagName==="VIDEO"){
+  el.controls=true;el.playsInline=true;el.loop=true;el.muted=true;el.preload="metadata";
+ }else{el.alt="";el.loading="eager"}
  el.onerror=()=>{hide(containerId);show(defaultId)};
  box.append(el);hide(defaultId);show(containerId);
  if(el.tagName==="VIDEO")el.play().catch(()=>{});
@@ -149,23 +209,57 @@ async function loadConfig(){
  }catch(e){hide("loading");showError(e.message||"تعذر تحميل الاختبار. حاول مرة ثانية.")}
 }
 function startAudio(){
+ pageActive=true;
  if(config?.music_url){
-  try{music=new Audio(safeUrl(config.music_url));music.loop=true;music.volume=.5;music.play().catch(()=>{})}catch(e){}
+  try{
+   const src=safeUrl(config.music_url);
+   if(src){music=new Audio(src);music.loop=true;music.volume=.5;music.play().catch(()=>{})}
+  }catch(e){}
  }
 }
 function playPop(){
- if(!config?.pop_sound_url)return;
- try{popAudio=new Audio(safeUrl(config.pop_sound_url));popAudio.volume=.8;popAudio.play().catch(()=>{})}catch(e){}
+ const src=safeUrl(config?.pop_sound_url);
+ if(src){
+  try{
+   if(popAudio){popAudio.pause();popAudio.currentTime=0}
+   popAudio=new Audio(src);popAudio.volume=.8;popAudio.play().catch(()=>fallbackPop());
+  }catch(e){fallbackPop()}
+ }else fallbackPop();
+}
+function fallbackPop(){
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
+  if(!audioContext)audioContext=new AC();
+  if(audioContext.state==="suspended")audioContext.resume();
+  const ctx=audioContext,now=ctx.currentTime;
+  const duration=.13;
+  const buffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*duration),ctx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<data.length;i++){
+   const decay=1-i/data.length;
+   data[i]=(Math.random()*2-1)*decay*decay;
+  }
+  const noise=ctx.createBufferSource();noise.buffer=buffer;
+  const filter=ctx.createBiquadFilter();filter.type="lowpass";filter.frequency.setValueAtTime(1500,now);filter.frequency.exponentialRampToValueAtTime(250,now+duration);
+  const gain=ctx.createGain();gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.32,now+.008);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+  noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(now);noise.stop(now+duration);
+ }catch(e){}
 }
 function createBalloons(){
- const box=$("balloons");box.replaceChildren();balloonCounter=0;
- const colors=["boy","girl","girl","boy","girl","boy","boy","girl","boy","girl","girl","boy"];
- colors.forEach((color,i)=>{
-  const b=document.createElement("button");b.type="button";b.className="balloon "+color;b.dataset.color=color;b.setAttribute("aria-label",color==="boy"?"بالون أزرق":"بالون وردي");
-  b.style.animationDelay=(i%4)*.13+"s";
+ const box=$("balloons");box.replaceChildren();
+ const twins=Number(config?.baby_count)===2;
+ const total=twins?4:2;
+ const colors=twins?["boy","girl","boy","girl"]:["boy","girl"];
+ for(let i=0;i<total;i++){
+  const color=colors[i];
+  const b=document.createElement("button");
+  b.type="button";b.className="balloon "+color;b.dataset.color=color;
+  b.setAttribute("aria-label",color==="boy"?"بالون أزرق":"بالون وردي");
+  b.style.animationDelay=(i%2)*.25+"s";
   const shape=document.createElement("span");shape.className="balloon-shape";b.append(shape);
   b.onclick=()=>chooseBalloon(b,color);box.append(b);
- });
+ }
 }
 async function beginGame(){
  $("startBtn").disabled=true;hide("pageError");
@@ -198,12 +292,12 @@ async function chooseBalloon(button,color){
     $("gameStatus").textContent="انكشفت المفاجأة! 🎉";
     setTimeout(()=>revealResult(data),400);
    }else{
-    $("gameStatus").textContent=data.message||"اختيار صحيح! بقى بالون واحد حتى نكتشف المفاجأة 🎈";
+    $("gameStatus").textContent=data.message||"اختيار صحيح! اختاروا البالون الثاني حتى نكتشف المفاجأة 🎈";
    }
   }else{
    playPop();button.classList.add("popped");
    setTimeout(()=>button.remove(),300);
-   $("gameStatus").textContent=data.message||"مو هذا اللون، جرّب بالون ثاني 🎈";
+   $("gameStatus").textContent=data.message||"مو هذا اللون، جرّبوا بالون ثاني 🎈";
   }
  }catch(e){
   button.disabled=false;
@@ -212,13 +306,14 @@ async function chooseBalloon(button,color){
 }
 function genderLabel(g){return g==="boy"?"ولد":"بنت"}
 function revealResult(data){
+ stopMusicOnly();
  hide("game");show("result");
  const twin=Number(data.baby_count)===2;
  if(twin){
   const bothBoys=data.baby1_gender==="boy"&&data.baby2_gender==="boy";
   const bothGirls=data.baby1_gender==="girl"&&data.baby2_gender==="girl";
   $("resultTitle").textContent=bothBoys?"ألف مبارك التوأم الأولاد! 💙💙":bothGirls?"ألف مبارك التوأم البنات! 💗💗":"ألف مبارك التوأم! 💗💙";
-  $("resultIcon").textContent=bothBoys?"👶🏻👶🏻":bothGirls?"👶🏻👶🏻":"👶🏻👶🏻";
+  $("resultIcon").textContent=bothBoys?"👶🏻💙👶🏻💙":bothGirls?"👶🏻💗👶🏻💗":"👶🏻💙👶🏻💗";
   $("resultMessage").textContent=bothBoys?"رزقكم الله ولدين يملآن البيت فرحاً وسعادة.":bothGirls?"رزقكم الله بنتين يملأن البيت حباً ونوراً.":"ولد وبنت، فرحتان بوقت واحد! الله يحفظهما لكم.";
   const n1=data.baby1_name?("الطفل الأول: "+data.baby1_name):("الطفل الأول: "+genderLabel(data.baby1_gender));
   const n2=data.baby2_name?("الطفل الثاني: "+data.baby2_name):("الطفل الثاني: "+genderLabel(data.baby2_gender));
@@ -227,14 +322,14 @@ function revealResult(data){
   const boy=data.baby1_gender==="boy";
   $("resultTitle").textContent=boy?"ألف مبارك المولود الولد! 💙":"ألف مبارك المولودة البنت! 💗";
   $("resultIcon").textContent=boy?"👶🏻💙":"👶🏻💗";
-  $("resultMessage").textContent=boy?"نوّر البيت بقدوم الأمير الصغير، الله يجعله من مواليد السعادة.":"نوّر البيت بقدوم الأميرة الصغيرة، الله يجعلها من مواليد السعادة.";
+  $("resultMessage").textContent=boy?"نوّر البيت بقدوم الأمير الصغير، الله يجعله من مواليد السعادة.":"نوّرت الدنيا بقدوم الأميرة الصغيرة، الله يجعلها من مواليد السعادة.";
   $("babyNames").textContent=data.baby1_name?"اسم المولود: "+data.baby1_name:"";
  }
  const parents=[];
  if(data.father_name)parents.push("الأب: "+data.father_name);
  if(data.mother_name)parents.push("الأم: "+data.mother_name);
  $("parentsNames").textContent=parents.join(" · ");
- $("customCongrats").textContent=data.congratulation_text||"";
+ $("customCongrats").textContent=prayerText;
  confetti();
 }
 function confetti(){
@@ -246,7 +341,13 @@ function confetti(){
   e.style.fontSize=(10+Math.random()*12)+"px";document.body.append(e);setTimeout(()=>e.remove(),7000);
  }
 }
+function setupContactLinks(){
+ const phone=CONTACT_PHONE.replace(/\D/g,"");
+ $("contactCall").href="tel:"+phone;
+ $("contactWhatsApp").href="https://wa.me/964"+phone.replace(/^0/,"");
+}
 $("replayBtn").onclick=()=>{if(completedResult){confetti();$("result").animate([{opacity:.6,transform:"scale(.98)"},{opacity:1,transform:"scale(1)"}],{duration:400})}};
+setupContactLinks();
 loadConfig();
 </script>
 </body>
