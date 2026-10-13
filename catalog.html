@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -396,35 +395,53 @@ if(requestId===loadRequest){button.disabled=false;button.textContent=tr("refresh
 }
 }
 
+/* تم تعديل تحميل بطاقات اختبار جنس الجنين لاستخدام دالة Supabase الآمنة */
 async function loadGenderCards(){
 const requestId=++genderLoadRequest;
+
 try{
-const {data:cards,error:cardsError}=await db.from("gender_reveal_catalog_cards")
-.select("id,test_id,title,description,image_url,sort_order,is_visible")
-.eq("is_visible",true).order("sort_order",{ascending:true});
-if(cardsError)throw cardsError;if(requestId!==genderLoadRequest)return;
-const publishedCards=Array.isArray(cards)?cards:[];
-if(!publishedCards.length){genderCards=[];updateCounts();renderCards();return}
-const testIds=[...new Set(publishedCards.map(card=>card.test_id).filter(Boolean))];
-if(!testIds.length){genderCards=[];updateCounts();renderCards();return}
-const {data:tests,error:testsError}=await db.from("gender_reveal_tests")
-.select("id,public_token,title,is_visible").in("id",testIds).eq("is_visible",true);
-if(testsError)throw testsError;if(requestId!==genderLoadRequest)return;
-const testsById=new Map((tests||[]).map(test=>[test.id,test]));
-genderCards=publishedCards.map(card=>{
-const test=testsById.get(card.test_id);if(!test||!test.public_token)return null;
-return{...card,public_token:test.public_token,title:card.title||test.title||LANG[currentLang].genderTitle}
-}).filter(Boolean).sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
-updateCounts();renderCards()
+const {data,error}=await db.rpc("get_public_gender_reveal_catalog_cards");
+
+if(error)throw error;
+if(requestId!==genderLoadRequest)return;
+
+genderCards=(Array.isArray(data)?data:[])
+.map(row=>{
+if(typeof row==="string"){
+try{return JSON.parse(row)}catch(e){return null}
+}
+return row;
+})
+.filter(item=>item&&item.is_visible===true&&item.public_token);
+
+genderCards.sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
+
+updateCounts();
+renderCards();
+
 }catch(error){
-if(requestId!==genderLoadRequest)return;console.error("Gender reveal cards load error:",error);
-genderCards=[];updateCounts();
+if(requestId!==genderLoadRequest)return;
+
+console.error("Gender reveal cards load error:",error);
+
+genderCards=[];
+updateCounts();
+
 if(activeCategory==="gender"){
-const container=$("invitationCards");container.replaceChildren();
-const box=document.createElement("div");box.className="error";
-const strong=document.createElement("strong");strong.textContent=LANG[currentLang].genderError;
-const p=document.createElement("p");p.textContent=LANG[currentLang].loadErrorText;
-box.append(strong,p);container.appendChild(box)
+const container=$("invitationCards");
+container.replaceChildren();
+
+const box=document.createElement("div");
+box.className="error";
+
+const strong=document.createElement("strong");
+strong.textContent=LANG[currentLang].genderError;
+
+const p=document.createElement("p");
+p.textContent=LANG[currentLang].loadErrorText;
+
+box.append(strong,p);
+container.appendChild(box);
 }
 }
 }
