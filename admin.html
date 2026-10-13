@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -370,6 +371,10 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+/* العنوان الرسمي للموقع؛ لا تستخدم location.origin لبناء روابط الدعوات */
+const SITE_URL="https://bab-alfarah.pages.dev";
+
 const $=id=>document.getElementById(id);
 
 let editingId=null,busy=false,loading=false;
@@ -676,13 +681,14 @@ $("currentSongStatus").textContent="لن تحتوي الدعوة على أغني
 renderLibraryList();status("تمت إزالة الأغنية من إعدادات الدعوة الحالية. اضغط حفظ الدعوة لتطبيق التغيير.");
 });
 
-/* إصلاح الرابط: جميع الدعوات تفتح من الصفحة الرئيسية وليس من لوحة الإدارة */
+/* إصلاح رابط الدعوة: استخدام النطاق الرسمي دائماً */
 function invitationUrl(slug,openingPrompt="knock"){
-const url=new URL("/",location.origin);
+const url=new URL("/",SITE_URL);
 url.searchParams.set("invite",String(slug||""));
 url.searchParams.set("opening_prompt",openingPrompt==="tap"?"tap":"knock");
 return url.href;
 }
+
 async function copyText(text){
 if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return}
 const field=document.createElement("textarea");field.value=text;field.style.position="fixed";field.style.opacity="0";
@@ -804,7 +810,7 @@ $("deleteCurrentBtn").classList.remove("hidden");$("cancelEditBtn").classList.re
 renderLibraryList();navigate("editor");status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه.");
 }
 
-/* حذف الدعوة: التحقق من حذف السجل فعلياً من قاعدة البيانات */
+/* حذف الدعوة */
 async function deleteInvitation(item){
 if(busy){status("انتظر حتى يكتمل الحفظ قبل حذف الدعوة.");return}
 const name=invitationDisplayName(item);
@@ -852,7 +858,7 @@ await deleteInvitation(data);
 };
 $("cancelEditBtn").onclick=()=>{resetForm();navigate("invitations");status("تم إلغاء التعديل.")};
 
-/* حفظ الدعوة — مع إبقاء بيانات Supabase الحالية */
+/* حفظ الدعوة */
 async function saveInvitation(event){
 if(event){event.preventDefault();event.stopPropagation()}
 if(busy){status("الحفظ جارٍ بالفعل، انتظر حتى يكتمل.");return}
