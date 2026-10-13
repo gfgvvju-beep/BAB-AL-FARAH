@@ -874,7 +874,7 @@ wedding_date:$("date").value||null,day_name:$("day").value.trim(),wedding_time:$
 venue_name:$("venue").value.trim(),map_url:$("map").value.trim()||null,contact_phone:$("phone").value.trim(),
 notes:$("notes").value.trim(),opening_prompt:getOpeningPrompt(),audio_type:selectedType,
 audio_url:selectedType==="song"?(currentAudioUrl||null):null,
-template_id:Number($("template").value),is_published:$("published").checked,expires_at:expiresAt
+template_id:Number($("template").value),is_published:editingId?$("published").checked:true,expires_at:expiresAt
 };
 if(!record.slug){status("تعذر إنشاء رابط الدعوة. اضغط دعوة جديدة.");return}
 if(!record.groom_name){status("اكتب الاسم المطلوب للمناسبة.");$("groom").focus();return}
