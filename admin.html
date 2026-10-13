@@ -676,10 +676,11 @@ $("currentSongStatus").textContent="لن تحتوي الدعوة على أغني
 renderLibraryList();status("تمت إزالة الأغنية من إعدادات الدعوة الحالية. اضغط حفظ الدعوة لتطبيق التغيير.");
 });
 
+/* إصلاح الرابط: جميع الدعوات تفتح من الصفحة الرئيسية وليس من لوحة الإدارة */
 function invitationUrl(slug,openingPrompt="knock"){
-const path=location.pathname.replace(/admin\.html$/i,"");
-const url=new URL(path||"/",location.origin);
-url.searchParams.set("invite",slug);url.searchParams.set("opening_prompt",openingPrompt==="tap"?"tap":"knock");
+const url=new URL("/",location.origin);
+url.searchParams.set("invite",String(slug||""));
+url.searchParams.set("opening_prompt",openingPrompt==="tap"?"tap":"knock");
 return url.href;
 }
 async function copyText(text){
@@ -802,16 +803,44 @@ $("doorPicker").open=false;$("audioSettings").open=false;
 $("deleteCurrentBtn").classList.remove("hidden");$("cancelEditBtn").classList.remove("hidden");$("saveBtn").textContent="حفظ التعديلات";
 renderLibraryList();navigate("editor");status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه.");
 }
+
+/* حذف الدعوة: التحقق من حذف السجل فعلياً من قاعدة البيانات */
 async function deleteInvitation(item){
+if(busy){status("انتظر حتى يكتمل الحفظ قبل حذف الدعوة.");return}
 const name=invitationDisplayName(item);
-if(!confirm("متأكد تريد حذف الدعوة "+name+"؟\nلا يمكن التراجع عن الحذف."))return;
-status("جارٍ حذف الدعوة...");
+if(!confirm("متأكد تريد حذف الدعوة "+name+"؟\nسيتم حذف سجل الدعوة من قاعدة البيانات، ولا يمكن التراجع عن الحذف."))return;
+status("جارٍ حذف الدعوة من قاعدة البيانات...");
 try{
-const {error}=await db.from("invitations").delete().eq("id",item.id);
-if(error){status("تعذر حذف الدعوة: "+error.message);return}
-if(editingId===item.id)resetForm();
-status("تم حذف الدعوة بنجاح.");await loadInvitations();
-}catch(e){status("حدث خطأ أثناء حذف الدعوة.")}
+const {data,error}=await db.from("invitations")
+.delete()
+.eq("id",item.id)
+.select("id,slug")
+.maybeSingle();
+
+if(error){
+console.error("Delete invitation error:",error);
+status("فشل حذف الدعوة من قاعدة البيانات:\n"+error.message);
+return;
+}
+
+if(!data){
+status("لم يتم حذف الدعوة: لم ترجع قاعدة البيانات سجلاً محذوفاً. قد تكون صلاحيات DELETE أو سياسة RLS تمنع الحذف، أو أن الدعوة محذوفة مسبقاً. لم نعرض الحذف على أنه ناجح.");
+await loadInvitations();
+return;
+}
+
+cachedInvitations=cachedInvitations.filter(invite=>String(invite.id)!==String(item.id));
+if(String(editingId)===String(item.id))resetForm();
+updateInvitationCounts();
+renderInvitationCategories();
+renderInvitationList();
+renderRecentInvitations();
+status("تم حذف الدعوة فعلياً من قاعدة البيانات.\nرمز الدعوة المحذوف: "+(data.slug||item.slug||"—")+"\nإذا بقيت صفحة قديمة مفتوحة، حدّثها؛ يجب ألا تُحمّل الدعوة بعد حذف سجلها.");
+await loadInvitations();
+}catch(e){
+console.error("Delete invitation exception:",e);
+status("حدث خطأ أثناء حذف الدعوة:\n"+(e?.message||String(e)));
+}
 }
 $("deleteCurrentBtn").onclick=async()=>{
 if(!editingId)return;
