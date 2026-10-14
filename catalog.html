@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -220,29 +220,83 @@ let genderLoaded=false;
 let catalogPromise=null;
 let genderPromise=null;
 
+/*
+ * تحسين تشغيل فيديوهات البطاقات:
+ * - فيديو واحد فقط يمكنه التحميل والتشغيل في كل مرة.
+ * - تحميل الفيديو عندما يصبح ظاهرًا فعليًا.
+ * - إيقاف الفيديو وتحرير مصدره عند خروجه من منطقة العرض.
+ * - الاحتفاظ بالرابط في data-src حتى يمكن إعادة تشغيله عند الرجوع.
+ */
+let activePreviewVideo=null;
+
+function releasePreviewVideo(video){
+if(!video)return;
+
+video.pause();
+
+if(video.hasAttribute("src")){
+const source=video.getAttribute("src");
+if(source)video.dataset.src=source;
+video.removeAttribute("src");
+try{video.load()}catch(e){}
+}
+
+video.dataset.loading="";
+}
+
+function stopOtherPreviewVideos(current){
+document.querySelectorAll("#invitationCards video").forEach(video=>{
+if(video!==current){
+releasePreviewVideo(video);
+}
+});
+
+if(activePreviewVideo&&activePreviewVideo!==current){
+activePreviewVideo.pause();
+}
+}
+
+function activatePreviewVideo(video){
+if(!video||!video.isConnected)return;
+
+stopOtherPreviewVideos(video);
+activePreviewVideo=video;
+
+if(!video.getAttribute("src")){
+const url=video.dataset.src;
+if(!url)return;
+
+video.dataset.loading="1";
+video.src=url;
+video.load();
+}
+
+if(video.readyState>=2){
+const playPromise=video.play();
+if(playPromise&&playPromise.catch){
+playPromise.catch(()=>{});
+}
+}
+}
+
 const mediaObserver="IntersectionObserver" in window
 ?new IntersectionObserver(entries=>{
 entries.forEach(entry=>{
 const video=entry.target;
+
 if(!video.isConnected){
 mediaObserver.unobserve(video);
 return;
 }
-if(entry.isIntersecting){
-if(!video.src&&video.dataset.src){
-video.src=video.dataset.src;
-video.removeAttribute("data-src");
-video.load();
-}
-if(video.readyState>=2){
-const p=video.play();
-if(p&&p.catch)p.catch(()=>{});
-}
+
+if(entry.isIntersecting&&entry.intersectionRatio>=0.25){
+activatePreviewVideo(video);
 }else{
-video.pause();
+if(activePreviewVideo===video)activePreviewVideo=null;
+releasePreviewVideo(video);
 }
 });
-},{rootMargin:"80px 0px",threshold:0.01})
+},{rootMargin:"0px",threshold:[0,0.25,0.5]})
 :null;
 
 function tr(key){return LANG[currentLang][key]||LANG.ar[key]||key}
@@ -270,7 +324,6 @@ const message=t.contactMessage+"\n"+t.event[eventType(item)].singular+": "+displ
 return"https://wa.me/"+OWNER_PHONE_WA+"?text="+encodeURIComponent(message);
 }
 
-/* زر واتساب للاختبار يرسل رابط الاختبار الخاص بالبطاقة نفسها */
 function makeGenderWhatsAppUrl(item){
 const url=genderUrl(item);
 const title=String(item.title||LANG[currentLang].genderSingular).trim();
@@ -378,24 +431,29 @@ function prepareLazyVideo(video,url,onError){
 video.muted=true;
 video.defaultMuted=true;
 video.loop=true;
-video.autoplay=true;
+video.autoplay=false;
 video.playsInline=true;
 video.preload="none";
 video.setAttribute("muted","");
-video.setAttribute("autoplay","");
 video.setAttribute("loop","");
 video.setAttribute("playsinline","");
+video.removeAttribute("autoplay");
 video.dataset.src=url;
+video.dataset.loading="";
 
 video.addEventListener("loadeddata",()=>{
-if(!mediaObserver||video.getBoundingClientRect().top<window.innerHeight+80){
-const p=video.play();
-if(p&&p.catch)p.catch(()=>{});
+if(!video.isConnected)return;
+if(activePreviewVideo!==video)return;
+if(!mediaObserver||video.getBoundingClientRect().bottom>0&&video.getBoundingClientRect().top<window.innerHeight){
+const playPromise=video.play();
+if(playPromise&&playPromise.catch)playPromise.catch(()=>{});
 }
-},{once:true});
+});
 
 video.addEventListener("error",()=>{
 if(mediaObserver)mediaObserver.unobserve(video);
+if(activePreviewVideo===video)activePreviewVideo=null;
+releasePreviewVideo(video);
 if(typeof onError==="function")onError();
 },{once:true});
 
@@ -403,9 +461,9 @@ if(mediaObserver){
 mediaObserver.observe(video);
 }else{
 video.src=url;
-video.removeAttribute("data-src");
 video.load();
 }
+
 return video;
 }
 
@@ -511,18 +569,19 @@ holder.appendChild(genderFallback(item));
 return holder;
 }
 
-/* إيقاف ومراقبة الفيديوهات القديمة قبل تبديل القسم لتقليل استهلاك الذاكرة */
 function clearOldMedia(){
 const container=$("invitationCards");
-if(mediaObserver){
+
 container.querySelectorAll("video").forEach(video=>{
-mediaObserver.unobserve(video);
+if(mediaObserver)mediaObserver.unobserve(video);
 video.pause();
 video.removeAttribute("src");
 video.removeAttribute("data-src");
-video.load();
+video.dataset.loading="";
+try{video.load()}catch(e){}
 });
-}
+
+activePreviewVideo=null;
 }
 
 function replaceCards(fragment){
@@ -753,7 +812,6 @@ catalogPromise=null;
 return catalogPromise;
 }
 
-/* تحميل بطاقات اختبار جنس الجنين عبر دالة Supabase الآمنة */
 async function loadGenderCards(force=false){
 if(genderPromise&&!force)return genderPromise;
 if(genderLoaded&&!force)return;
@@ -866,7 +924,6 @@ button.addEventListener("click",()=>applyLanguage(button.dataset.lang));
 
 applyLanguage("ar");
 
-/* تحميل بيانات الكتالوج وبطاقات اختبار الجنين بالتوازي */
 Promise.allSettled([
 loadCatalog(),
 loadGenderCards()
@@ -874,4 +931,3 @@ loadGenderCards()
 </script>
 </body>
 </html>
-```
