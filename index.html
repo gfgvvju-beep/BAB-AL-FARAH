@@ -203,7 +203,7 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)stopAllAudi
 window.addEventListener("pagehide",()=>{stopAllAudio();stopDoorVideo()});
 window.addEventListener("beforeunload",()=>{stopAllAudio();stopDoorVideo()});
 
-function isVideoUrl(value){try{return /\.mp4$/i.test(new URL(String(value||"")).pathname)}catch(e){return false}}
+function isVideoUrl(value){try{return /\.(mp4|webm|mov)(?:$)/i.test(new URL(String(value||"")).pathname)}catch(e){return false}}
 function clearDoorImage(){selectedDoorImageUrl="";$("arch").style.removeProperty("--door-image");document.querySelectorAll("#arch .leaf").forEach(leaf=>leaf.style.backgroundImage="")}
 function setDoorImage(imageUrl){
  const url=String(imageUrl||"").trim();if(!url)return;
@@ -240,10 +240,14 @@ function extractDoorImage(row){
  for(const key of keys){const v=row[key];if(typeof v==="string"&&v.trim())return v.trim()}
  return "";
 }
-async function loadTemplateDoor(templateId){
+async function loadTemplateDoor(templateId,eventType=currentEventType){
  const id=Number(templateId);if(!Number.isInteger(id)||id<1||id>14)return;
  try{
-  const {data,error}=await db.from("template_doors").select("image_url").eq("template_id",id).maybeSingle();
+  let query=db.from("template_doors").select("*").eq("template_id",id);
+  if(String(eventType||"wedding").toLowerCase()!=="wedding"){
+   query=query.eq("event_type",String(eventType).toLowerCase());
+  }
+  const {data,error}=await query.maybeSingle();
   if(error){console.warn("تعذر تحميل ملف الباب",error.message);return}
   const media=extractDoorImage(data);if(media)setDoorImage(media);
  }catch(e){console.warn(e)}
@@ -340,8 +344,6 @@ async function loadInvitation(){
  const slug=(params.get("invite")||"").trim(),urlPrompt=params.get("opening_prompt");
  openingPrompt=urlPrompt==="tap"||urlPrompt==="knock"?urlPrompt:"knock";
 
- // لا تعرض أي دعوة اعتماداً على قيم افتراضية في الرابط.
- // كل رابط يجب أن يعود إلى دعوة محفوظة وموجودة فعلياً في قاعدة البيانات.
  if(!slug){
   showErrorInvitation("رابط الدعوة غير صالح","لا يحتوي الرابط على معرّف دعوة صحيح.");
   return;
@@ -377,14 +379,12 @@ async function loadInvitation(){
    return;
   }
 
-  // تحقق إضافي من تطابق المعرّف؛ لا تسمح بعرض دعوة مختلفة كبديل.
   const returnedSlug=String(item.slug||"").trim();
   if(returnedSlug && returnedSlug!==slug){
    showErrorInvitation("الدعوة غير متاحة","الرابط لا يطابق الدعوة المطلوبة، وقد تكون الدعوة حُذفت.");
    return;
   }
 
-  // لا تعرض الدعوات غير المنشورة إذا كانت حالة النشر متوفرة في النتيجة.
   if(item.is_published===false){
    showErrorInvitation("الدعوة غير متاحة","هذه الدعوة غير منشورة أو تم حذفها.");
    return;
@@ -423,7 +423,13 @@ async function loadInvitation(){
   const template=item.template_id||item.template||1;
   applyTemplate(template);
   const direct=extractDoorImage(item);
-  if(direct)setDoorImage(direct);else loadTemplateDoor(template);
+  if(direct){
+   setDoorImage(direct);
+  }else if(currentEventType==="wedding"){
+   loadTemplateDoor(template,"wedding");
+  }else{
+   await loadTemplateDoor(template,currentEventType);
+  }
 
   configureAudio(item.audio_type||"song",item.audio_url||"");
   if(item.day_name)$("date").textContent+=" — "+item.day_name;
