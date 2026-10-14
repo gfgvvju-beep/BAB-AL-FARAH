@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -110,8 +110,8 @@ html[dir="ltr"] .top-actions{direction:ltr}
 html[dir="ltr"] .gallery-title-wrap{text-align:left}
 html[dir="ltr"] .gallery-tools{direction:ltr}
 button:focus-visible,a:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
-@media(max-width:850px){.category-grid,.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.contact-panel{align-items:flex-start;flex-direction:column}.contact-actions{width:100%}.contact-actions .btn{flex:1}.gallery-panel{padding:18px}}
-@media(max-width:540px){.wrap{width:calc(100% - 24px)}.topbar{padding-top:15px}.top-actions{gap:6px;margin-bottom:14px}.lang-button{padding:7px 9px;font-size:11px;min-height:37px}.top-whatsapp{padding:7px 10px;font-size:11px;min-height:37px}.top-whatsapp svg{width:17px;height:17px}.hero{padding:20px 0 23px}.hero p{font-size:13px}.section-heading h2{font-size:24px}.category-grid{grid-template-columns:1fr;gap:10px}.category{min-height:88px;padding:13px}.category-icon{width:53px;height:53px;flex-basis:53px;font-size:25px}.gallery-panel{margin-top:20px;padding:14px;border-radius:18px}.gallery-top{align-items:flex-start;gap:8px}.gallery-title-wrap h2{font-size:23px}.gallery-title-wrap p{font-size:11px}.gallery-tools{gap:5px;flex-wrap:wrap}.refresh,.back-categories{padding:9px;font-size:11px}.cards{grid-template-columns:1fr;gap:17px}.invite-card{padding:7px}.card-media{aspect-ratio:3/4}.card-body{padding:8px 1px 1px}.contact-panel{padding:19px}.contact-actions{flex-direction:column}.contact-actions .btn{width:100%}.about{padding:23px 20px}.brand{font-size:38px}.card-actions{gap:7px}.btn{font-size:11px;padding:12px 6px}}
+@media(max-width:850px){.category-grid,.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.contact-panel{align-items:flex-start;flex-direction:column}.contact-actions{width:100%}.contact-actions .btn{flex:1}.gallery-panel{padding:18px}}
+@media(max-width:540px){.wrap{width:calc(100% - 24px)}.topbar{padding-top:15px}.top-actions{gap:6px;margin-bottom:14px}.lang-button{padding:7px 9px;font-size:11px;min-height:37px}.top-whatsapp{padding:7px 10px;font-size:11px;min-height:37px}.top-whatsapp svg{width:17px;height:17px}.hero{padding:20px 0 23px}.hero p{font-size:13px}.section-heading h2{font-size:24px}.category-grid{grid-template-columns:1fr;gap:10px}.category{min-height:88px;padding:13px}.category-icon{width:53px;height:53px;flex-basis:53px;font-size:25px}.gallery-panel{margin-top:20px;padding:14px;border-radius:18px}.gallery-top{align-items:flex-start;gap:8px}.gallery-title-wrap h2{font-size:23px}.gallery-title-wrap p{font-size:11px}.gallery-tools{gap:5px;flex-wrap:wrap}.refresh,.back-categories{padding:9px;font-size:11px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.invite-card{padding:5px}.card-media{aspect-ratio:3/4}.card-body{padding:7px 1px 1px}.contact-panel{padding:19px}.contact-actions{flex-direction:column}.contact-actions .btn{width:100%}.about{padding:23px 20px}.brand{font-size:38px}.card-actions{gap:6px}.btn{font-size:11px;padding:10px 5px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -175,7 +175,7 @@ const $=id=>document.getElementById(id);
 
 const LANG={
 ar:{
-dir:"rtl",contact:"مراسلتنا",heroBadge:"فرحتكم تستاهل دعوة مميزة",heroTitle:"كل فرحة إلها باب… وإحنا نفتحلكم أحلى البدايات",heroText:"اختاروا مناسبتكم، تصفّحوا الدعوات المنشورة، وشوفوا تصميم الباب قبل ما تتواصلون ويانا لتجهيز دعوتكم الخاصة.",categoriesTitle:"اختاروا نوع الفرحة",categoriesHint:"اضغط على المناسبة حتى تشوف الدعوات الخاصة بيها",loadingCount:"جارٍ التحميل…",refresh:"↻ تحديث",refreshing:"جارٍ التحديث…",gallerySubtitle:"اختاروا التصميم اللي يعجبكم",back:"↩ رجوع للمناسبات",loading:"جارٍ تحميل الدعوات المنشورة…",emptyTitle:"ماكو دعوات منشورة بهذا القسم حالياً",emptyText:"تابعونا، راح نضيف تصاميم جديدة قريباً.",loadError:"تعذر تحميل الدعوات حالياً",loadErrorText:"تأكد من إعداد قاعدة البيانات الخاص بمعرض باب الفرح.",total:"تصميم منشور",available:"تصميم متاح",soon:"تُضاف التصاميم قريباً",preview:"♡ معاينة الدعوة",order:"طلب عبر واتساب",genderTitle:"بطاقات اختبار جنس الجنين",genderSmall:"اكتشفوا المفاجأة بطريقة تفاعلية 🩷",genderSingular:"اختبار جنس الجنين",genderSubtitle:"اختاروا البطاقة وابدؤوا الاختبار",genderStart:"🩷 ابدأ الاختبار",genderContact:"مراسلة عبر واتساب",genderEmpty:"ماكو بطاقات اختبار منشورة حالياً",genderEmptyText:"تابعونا، راح نضيف بطاقات جديدة قريباً.",genderError:"تعذر تحميل بطاقات الاختبار حالياً",aboutTitle:"باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة",aboutText:"نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.",contactTitle:"تفاصيلنا والتواصل ويانا",contactText:"عندك استفسار أو تريد تصمم دعوتك الخاصة؟ إحنا بالخدمة بكل حب.",call:"☎ اتصل بنا",whatsapp:"◉ تواصل واتساب",footer:"نصنع لحظاتكم الجميلة بكل حب",rights:"جميع الحقوق محفوظة",noLoad:"تعذر تحميل الدعوات؛ تأكد من إعداد قاعدة البيانات.",contactMessage:"السلام عليكم، أريد الاستفسار عن دعوات باب الفرح ❤️",
+dir:"rtl",contact:"مراسلتنا",heroBadge:"فرحتكم تستاهل دعوة مميزة",heroTitle:"كل فرحة إلها باب… وإحنا نفتحلكم أحلى البدايات",heroText:"اختاروا مناسبتكم، تصفّحوا الدعوات المنشورة، وشوفوا تصميم الباب قبل ما تتواصلون ويانا لتجهيز دعوتكم الخاصة.",categoriesTitle:"اختاروا نوع الفرحة",categoriesHint:"اضغط على المناسبة حتى تشوف الدعوات الخاصة بيها",loadingCount:"جارٍ التحميل…",refresh:"↻ تحديث",refreshing:"جارٍ التحديث…",gallerySubtitle:"اختاروا التصميم اللي يعجبكم",back:"↩ رجوع للمناسبات",loading:"جارٍ تحميل الدعوات المنشورة…",emptyTitle:"ماكو دعوات منشورة بهذا القسم حالياً",emptyText:"تابعونا، راح نضيف تصاميم جديدة قريباً.",loadError:"تعذر تحميل الدعوات حالياً",loadErrorText:"تأكد من إعداد قاعدة البيانات الخاص بمعرض باب الفرح.",total:"تصميم منشور",available:"تصميم متاح",soon:"تُضاف التصاميم قريباً",preview:"♡ معاينة الدعوة",order:"طلب عبر واتساب",genderTitle:"بطاقات اختبار جنس الجنين",genderSmall:"اكتشفوا المفاجأة بطريقة تفاعلية 🩷",genderSingular:"اختبار جنس الجنين",genderSubtitle:"اختاروا البطاقة وابدؤوا الاختبار",genderStart:"🩷 ابدأ الاختبار",genderContact:"إرسال الاختبار عبر واتساب",genderEmpty:"ماكو بطاقات اختبار منشورة حالياً",genderEmptyText:"تابعونا، راح نضيف بطاقات جديدة قريباً.",genderError:"تعذر تحميل بطاقات الاختبار حالياً",aboutTitle:"باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة",aboutText:"نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.",contactTitle:"تفاصيلنا والتواصل ويانا",contactText:"عندك استفسار أو تريد تصمم دعوتك الخاصة؟ إحنا بالخدمة بكل حب.",call:"☎ اتصل بنا",whatsapp:"◉ تواصل واتساب",footer:"نصنع لحظاتكم الجميلة بكل حب",rights:"جميع الحقوق محفوظة",noLoad:"تعذر تحميل الدعوات؛ تأكد من إعداد قاعدة البيانات.",contactMessage:"السلام عليكم، أريد الاستفسار عن دعوات باب الفرح ❤️",
 event:{
 wedding:{title:"دعوات حفلات الزفاف",small:"فرحة العمر بتصميم يليق بيها",singular:"دعوة زفاف",description:"دعوات زفاف تفاعلية"},
 engagement:{title:"دعوات عقد القران",small:"بداية حكاية جديدة",singular:"دعوة عقد قران",description:"دعوات عقد القران"},
@@ -185,7 +185,7 @@ graduation:{title:"دعوات حفلات التخرج",small:"احتفال بإ�
 birthday:{title:"دعوات أعياد الميلاد",small:"خلّوا يومهم ذكرى حلوة",singular:"دعوة عيد ميلاد",description:"دعوات أعياد الميلاد"}
 }},
 ku:{
-dir:"rtl",contact:"پەیوەندیمان پێوە بکە",heroBadge:"شادییەکەتان بانگهێشتنامەیەکی تایبەتی دەوێت",heroTitle:"هەر شادییەک دەرگایەکی هەیە… ئێمە جوانترین دەستپێک بۆتان دەکەینەوە",heroText:"جۆری بۆنەکەتان هەڵبژێرن، بانگهێشتنامە بڵاوکراوەکان ببینن و دیزاینی دەرگاکە ببینن پێش ئەوەی پەیوەندیمان پێوە بکەن.",categoriesTitle:"جۆری شادییەکەتان هەڵبژێرن",categoriesHint:"بۆ بینینی بانگهێشتنامەکانی هەر بۆنەیەک کرتە لەسەری بکەن",loadingCount:"بارکردن…",refresh:"↻ نوێکردنەوە",refreshing:"نوێ دەکرێتەوە…",gallerySubtitle:"ئەو دیزاینە هەڵبژێرن کە پێتان خۆشە",back:"↩ گەڕانەوە بۆ بۆنەکان",loading:"بانگهێشتنامە بڵاوکراوەکان بار دەکرێن…",emptyTitle:"لە ئێستادا بانگهێشتنامەی بڵاوکراوە لەم بەشەدا نییە",emptyText:"بەردەوام بن، دیزاینی نوێ زیاد دەکەین.",loadError:"لە ئێستادا نەتوانرا بانگهێشتنامەکان بار بکرێن",loadErrorText:"تکایە ڕێکخستنی بنکەدراوەی گەلەری دەرگای شادی بپشکنن.",total:"دیزاینی بڵاوکراوە",available:"دیزاین بەردەستە",soon:"دیزاینەکان بەم زووانە زیاد دەکرێن",preview:"♡ پیشاندانی بانگهێشتنامە",order:"داوای لە واتساپ بکە",genderTitle:"کارتەکانی تاقیکردنەوەی ڕەگەزی منداڵ",genderSmall:"بە شێوەیەکی تایبەت نهێنییەکە بدۆزنەوە 🩷",genderSingular:"تاقیکردنەوەی ڕەگەزی منداڵ",genderSubtitle:"کارتەکە هەڵبژێرن و تاقیکردنەوەکە دەست پێ بکەن",genderStart:"🩷 دەستپێکردنی تاقیکردنەوە",genderContact:"پەیوەندی بە واتساپ",genderEmpty:"لە ئێستادا کارتی تاقیکردنەوەی بڵاوکراوە نییە",genderEmptyText:"بەردەوام بن، کارتی نوێ زیاد دەکەین.",genderError:"بارکردنی کارتەکانی تاقیکردنەوە سەرکەوتوو نەبوو",aboutTitle:"دەرگای شادی… وردەکارییە بچووکەکان یادگاریی گەورە دروست دەکەن",aboutText:"بانگهێشتنامەی ئەلیکترۆنی کارلێککەر بۆ بۆنە خۆشەکان ئامادە دەکەین، بە دیزاینی جۆراوجۆر و دەرگایەکی تایبەت. ئەو بیرۆکەیە هەڵبژێرن کە لەگەڵ شادییەکەتان دەگونجێت و پەیوەندیمان پێوە بکەن.",contactTitle:"زانیاری و پەیوەندیمان",contactText:"پرسیارتان هەیە یان دەتەوێت بانگهێشتنامەی تایبەت دروست بکەیت؟ بە خۆشحاڵی لە خزمەتداین.",call:"☎ پەیوەندی تەلەفۆنی",whatsapp:"◉ واتساپ",footer:"بە خۆشەویستی ساتە جوانەکانتان دروست دەکەین",rights:"هەموو مافەکان پارێزراون",noLoad:"بارکردنی بانگهێشتنامەکان سەرکەوتوو نەبوو؛ ڕێکخستنی بنکەدراوە بپشکنە.",contactMessage:"سڵاو، دەمەوێت دەربارەی بانگهێشتنامەکانی دەرگای شادی بپرسم ❤️",
+dir:"rtl",contact:"پەیوەندیمان پێوە بکە",heroBadge:"شادییەکەتان بانگهێشتنامەیەکی تایبەتی دەوێت",heroTitle:"هەر شادییەک دەرگایەکی هەیە… ئێمە جوانترین دەستپێک بۆتان دەکەینەوە",heroText:"جۆری بۆنەکەتان هەڵبژێرن، بانگهێشتنامە بڵاوکراوەکان ببینن و دیزاینی دەرگاکە ببینن پێش ئەوەی پەیوەندیمان پێوە بکەن.",categoriesTitle:"جۆری شادییەکەتان هەڵبژێرن",categoriesHint:"بۆ بینینی بانگهێشتنامەکانی هەر بۆنەیەک کرتە لەسەری بکەن",loadingCount:"بارکردن…",refresh:"↻ نوێکردنەوە",refreshing:"نوێ دەکرێتەوە…",gallerySubtitle:"ئەو دیزاینە هەڵبژێرن کە پێتان خۆشە",back:"↩ گەڕانەوە بۆ بۆنەکان",loading:"بانگهێشتنامە بڵاوکراوەکان بار دەکرێن…",emptyTitle:"لە ئێستادا بانگهێشتنامەی بڵاوکراوە لەم بەشەدا نییە",emptyText:"بەردەوام بن، دیزاینی نوێ زیاد دەکەین.",loadError:"لە ئێستادا نەتوانرا بانگهێشتنامەکان بار بکرێن",loadErrorText:"تکایە ڕێکخستنی بنکەدراوەی گەلەری دەرگای شادی بپشکنن.",total:"دیزاینی بڵاوکراوە",available:"دیزاین بەردەستە",soon:"دیزاینەکان بەم زووانە زیاد دەکرێن",preview:"♡ پیشاندانی بانگهێشتنامە",order:"داوای لە واتساپ بکە",genderTitle:"کارتەکانی تاقیکردنەوەی ڕەگەزی منداڵ",genderSmall:"بە شێوەیەکی تایبەت نهێنییەکە بدۆزنەوە 🩷",genderSingular:"تاقیکردنەوەی ڕەگەزی منداڵ",genderSubtitle:"کارتەکە هەڵبژێرن و تاقیکردنەوەکە دەست پێ بکەن",genderStart:"🩷 دەستپێکردنی تاقیکردنەوە",genderContact:"ناردنی تاقیکردنەوە بە واتساپ",genderEmpty:"لە ئێستادا کارتی تاقیکردنەوەی بڵاوکراوە نییە",genderEmptyText:"بەردەوام بن، کارتی نوێ زیاد دەکەین.",genderError:"بارکردنی کارتەکانی تاقیکردنەوە سەرکەوتوو نەبوو",aboutTitle:"دەرگای شادی… وردەکارییە بچووکەکان یادگاریی گەورە دروست دەکەن",aboutText:"بانگهێشتنامەی ئەلیکترۆنی کارلێککەر بۆ بۆنە خۆشەکان ئامادە دەکەین، بە دیزاینی جۆراوجۆر و دەرگایەکی تایبەت. ئەو بیرۆکەیە هەڵبژێرن کە لەگەڵ شادییەکەتان دەگونجێت و پەیوەندیمان پێوە بکەن.",contactTitle:"زانیاری و پەیوەندیمان",contactText:"پرسیارتان هەیە یان دەتەوێت بانگهێشتنامەی تایبەت دروست بکەیت؟ بە خۆشحاڵی لە خزمەتداین.",call:"☎ پەیوەندی تەلەفۆنی",whatsapp:"◉ واتساپ",footer:"بە خۆشەویستی ساتە جوانەکانتان دروست دەکەین",rights:"هەموو مافەکان پارێزراون",noLoad:"بارکردنی بانگهێشتنامەکان سەرکەوتوو نەبوو؛ ڕێکخستنی بنکەدراوە بپشکنە.",contactMessage:"سڵاو، دەمەوێت دەربارەی بانگهێشتنامەکانی دەرگای شادی بپرسم ❤️",
 event:{
 wedding:{title:"بانگهێشتنامەی هاوسەرگیری",small:"شادیی ژیان بە دیزاینێکی شایستە",singular:"بانگهێشتنامەی هاوسەرگیری",description:"بانگهێشتنامەی هاوسەرگیریی کارلێککەر"},
 engagement:{title:"بانگهێشتنامەی گرێبەستی هاوسەرگیری",small:"دەستپێکی چیرۆکێکی نوێ",singular:"بانگهێشتنامەی گرێبەست",description:"بانگهێشتنامەی گرێبەست"},
@@ -195,7 +195,7 @@ graduation:{title:"بانگهێشتنامەی دەرچوون",small:"جەژن ب
 birthday:{title:"بانگهێشتنامەی لەدایکبوون",small:"ڕۆژەکەیان بکەنە یادگارییەکی خۆش",singular:"بانگهێشتنامەی لەدایکبوون",description:"بانگهێشتنامەی لەدایکبوون"}
 }},
 en:{
-dir:"ltr",contact:"Message us",heroBadge:"Your celebration deserves a special invitation",heroTitle:"Every celebration has a door… let us open a beautiful beginning",heroText:"Choose your occasion, browse published invitations, and preview the door design before contacting us to prepare your own invitation.",categoriesTitle:"Choose your occasion",categoriesHint:"Select an occasion to see its invitations",loadingCount:"Loading…",refresh:"↻ Refresh",refreshing:"Refreshing…",gallerySubtitle:"Choose the design you love",back:"↩ Back to occasions",loading:"Loading published invitations…",emptyTitle:"There are no published invitations in this category yet",emptyText:"Check back soon for new designs.",loadError:"Invitations could not be loaded",loadErrorText:"Please check the Bab Al Farah gallery database setup.",total:"published designs",available:"designs available",soon:"New designs coming soon",preview:"♡ Preview invitation",order:"Order via WhatsApp",genderTitle:"Baby Gender Reveal Cards",genderSmall:"Discover the surprise in a special way 🩷",genderSingular:"Baby gender reveal",genderSubtitle:"Choose a card and start the reveal",genderStart:"🩷 Start the reveal",genderContact:"Contact via WhatsApp",genderEmpty:"No published reveal cards yet",genderEmptyText:"Check back soon for new cards.",genderError:"Could not load reveal cards",aboutTitle:"Bab Al Farah… small details make big memories",aboutText:"We create interactive digital invitations for happy occasions, with varied designs and a special opening door. Choose the idea that suits your celebration and contact us to prepare your invitation.",contactTitle:"Contact details",contactText:"Have a question or want a custom invitation? We are happy to help.",call:"☎ Call us",whatsapp:"◉ WhatsApp us",footer:"Creating your beautiful moments with love",rights:"All rights reserved",noLoad:"Could not load invitations. Please check the database setup.",contactMessage:"Hello, I would like to ask about Bab Al Farah invitations ❤️",
+dir:"ltr",contact:"Message us",heroBadge:"Your celebration deserves a special invitation",heroTitle:"Every celebration has a door… let us open a beautiful beginning",heroText:"Choose your occasion, browse published invitations, and preview the door design before contacting us to prepare your own invitation.",categoriesTitle:"Choose your occasion",categoriesHint:"Select an occasion to see its invitations",loadingCount:"Loading…",refresh:"↻ Refresh",refreshing:"Refreshing…",gallerySubtitle:"Choose the design you love",back:"↩ Back to occasions",loading:"Loading published invitations…",emptyTitle:"There are no published invitations in this category yet",emptyText:"Check back soon for new designs.",loadError:"Invitations could not be loaded",loadErrorText:"Please check the Bab Al Farah gallery database setup.",total:"published designs",available:"designs available",soon:"New designs coming soon",preview:"♡ Preview invitation",order:"Order via WhatsApp",genderTitle:"Baby Gender Reveal Cards",genderSmall:"Discover the surprise in a special way 🩷",genderSingular:"Baby gender reveal",genderSubtitle:"Choose a card and start the reveal",genderStart:"🩷 Start the reveal",genderContact:"Send reveal via WhatsApp",genderEmpty:"No published reveal cards yet",genderEmptyText:"Check back soon for new cards.",genderError:"Could not load reveal cards",aboutTitle:"Bab Al Farah… small details make big memories",aboutText:"We create interactive digital invitations for happy occasions, with varied designs and a special opening door. Choose the idea that suits your celebration and contact us to prepare your invitation.",contactTitle:"Contact details",contactText:"Have a question or want a custom invitation? We are happy to help.",call:"☎ Call us",whatsapp:"◉ WhatsApp us",footer:"Creating your beautiful moments with love",rights:"All rights reserved",noLoad:"Could not load invitations. Please check the database setup.",contactMessage:"Hello, I would like to ask about Bab Al Farah invitations ❤️",
 event:{
 wedding:{title:"Wedding Invitations",small:"A lifetime celebration with a fitting design",singular:"Wedding invitation",description:"Interactive wedding invitations"},
 engagement:{title:"Marriage Contract Invitations",small:"The beginning of a new story",singular:"Marriage contract invitation",description:"Marriage contract invitations"},
@@ -224,6 +224,10 @@ const mediaObserver="IntersectionObserver" in window
 ?new IntersectionObserver(entries=>{
 entries.forEach(entry=>{
 const video=entry.target;
+if(!video.isConnected){
+mediaObserver.unobserve(video);
+return;
+}
 if(entry.isIntersecting){
 if(!video.src&&video.dataset.src){
 video.src=video.dataset.src;
@@ -238,7 +242,7 @@ if(p&&p.catch)p.catch(()=>{});
 video.pause();
 }
 });
-},{rootMargin:"150px 0px",threshold:0.01})
+},{rootMargin:"80px 0px",threshold:0.01})
 :null;
 
 function tr(key){return LANG[currentLang][key]||LANG.ar[key]||key}
@@ -266,8 +270,11 @@ const message=t.contactMessage+"\n"+t.event[eventType(item)].singular+": "+displ
 return"https://wa.me/"+OWNER_PHONE_WA+"?text="+encodeURIComponent(message);
 }
 
+/* زر واتساب للاختبار يرسل رابط الاختبار الخاص بالبطاقة نفسها */
 function makeGenderWhatsAppUrl(item){
-const message=LANG[currentLang].contactMessage+"\n"+LANG[currentLang].genderSingular+": "+String(item.title||LANG[currentLang].genderTitle);
+const url=genderUrl(item);
+const title=String(item.title||LANG[currentLang].genderSingular).trim();
+const message=LANG[currentLang].contactMessage+"\n"+LANG[currentLang].genderSingular+": "+title+"\n"+url;
 return"https://wa.me/"+OWNER_PHONE_WA+"?text="+encodeURIComponent(message);
 }
 
@@ -381,13 +388,14 @@ video.setAttribute("playsinline","");
 video.dataset.src=url;
 
 video.addEventListener("loadeddata",()=>{
-if(!mediaObserver||video.getBoundingClientRect().top<window.innerHeight+150){
+if(!mediaObserver||video.getBoundingClientRect().top<window.innerHeight+80){
 const p=video.play();
 if(p&&p.catch)p.catch(()=>{});
 }
 },{once:true});
 
 video.addEventListener("error",()=>{
+if(mediaObserver)mediaObserver.unobserve(video);
 if(typeof onError==="function")onError();
 },{once:true});
 
@@ -418,7 +426,7 @@ const video=document.createElement("video");
 video.setAttribute("aria-label",displayName(item));
 
 prepareLazyVideo(video,url,()=>{
-if(mediaObserver)mediaObserver.unobserve(video);
+if(!holder.isConnected)return;
 video.remove();
 if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item));
 });
@@ -430,11 +438,10 @@ img.src=url;
 img.alt=displayName(item);
 img.loading="lazy";
 img.decoding="async";
-img.fetchPriority="low";
 
 img.onerror=()=>{
 img.remove();
-if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item));
+if(holder.isConnected&&!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item));
 };
 
 holder.appendChild(img);
@@ -478,7 +485,7 @@ if(url&&/\.(mp4|webm|ogg)(?:$|[?#])/i.test(url)){
 const video=document.createElement("video");
 
 prepareLazyVideo(video,url,()=>{
-if(mediaObserver)mediaObserver.unobserve(video);
+if(!holder.isConnected)return;
 video.remove();
 if(!holder.querySelector(".media-fallback"))holder.appendChild(genderFallback(item));
 });
@@ -490,11 +497,10 @@ img.src=url;
 img.alt=item.title||LANG[currentLang].genderTitle;
 img.loading="lazy";
 img.decoding="async";
-img.fetchPriority="low";
 
 img.onerror=()=>{
 img.remove();
-if(!holder.querySelector(".media-fallback"))holder.appendChild(genderFallback(item));
+if(holder.isConnected&&!holder.querySelector(".media-fallback"))holder.appendChild(genderFallback(item));
 };
 
 holder.appendChild(img);
@@ -503,6 +509,25 @@ holder.appendChild(genderFallback(item));
 }
 
 return holder;
+}
+
+/* إيقاف ومراقبة الفيديوهات القديمة قبل تبديل القسم لتقليل استهلاك الذاكرة */
+function clearOldMedia(){
+const container=$("invitationCards");
+if(mediaObserver){
+container.querySelectorAll("video").forEach(video=>{
+mediaObserver.unobserve(video);
+video.pause();
+video.removeAttribute("src");
+video.removeAttribute("data-src");
+video.load();
+});
+}
+}
+
+function replaceCards(fragment){
+clearOldMedia();
+$("invitationCards").replaceChildren(fragment);
 }
 
 function renderGenderCards(container){
@@ -529,7 +554,7 @@ p.style.margin="5px 0 0";
 
 empty.append(icon,strong,p);
 fragment.appendChild(empty);
-container.replaceChildren(fragment);
+replaceCards(fragment);
 return;
 }
 
@@ -569,7 +594,7 @@ card.appendChild(body);
 fragment.appendChild(card);
 }
 
-container.replaceChildren(fragment);
+replaceCards(fragment);
 }
 
 function renderCards(){
@@ -582,6 +607,8 @@ const categories=$("categoriesSection");
 if(!activeCategory){
 panel.classList.remove("open");
 categories.style.display="";
+clearOldMedia();
+container.replaceChildren();
 return;
 }
 
@@ -617,7 +644,7 @@ p.style.margin="5px 0 0";
 
 empty.append(icon,strong,p);
 fragment.appendChild(empty);
-container.replaceChildren(fragment);
+replaceCards(fragment);
 return;
 }
 
@@ -657,11 +684,13 @@ card.appendChild(body);
 fragment.appendChild(card);
 }
 
-container.replaceChildren(fragment);
+replaceCards(fragment);
 }
 
 async function loadCatalog(force=false){
 if(catalogPromise&&!force)return catalogPromise;
+if(catalogLoaded&&!force)return;
+
 const requestId=++loadRequest;
 const button=$("refreshBtn");
 
@@ -706,7 +735,7 @@ const p=document.createElement("p");
 p.textContent=tr("loadErrorText");
 
 box.append(strong,p);
-$("invitationCards").replaceChildren(box);
+replaceCards(box);
 }
 
 if(activeCategory!=="gender"){
@@ -727,6 +756,8 @@ return catalogPromise;
 /* تحميل بطاقات اختبار جنس الجنين عبر دالة Supabase الآمنة */
 async function loadGenderCards(force=false){
 if(genderPromise&&!force)return genderPromise;
+if(genderLoaded&&!force)return;
+
 const requestId=++genderLoadRequest;
 
 genderPromise=(async()=>{
@@ -768,7 +799,7 @@ const p=document.createElement("p");
 p.textContent=LANG[currentLang].loadErrorText;
 
 box.append(strong,p);
-container.replaceChildren(box);
+replaceCards(box);
 }
 }finally{
 if(requestId===genderLoadRequest)genderPromise=null;
@@ -805,6 +836,7 @@ document.querySelectorAll(".category").forEach(button=>button.classList.remove("
 
 $("galleryPanel").classList.remove("open");
 $("categoriesSection").style.display="";
+clearOldMedia();
 $("invitationCards").replaceChildren();
 
 scrollToElement($("categoriesSection"));
@@ -842,3 +874,4 @@ loadGenderCards()
 </script>
 </body>
 </html>
+```
