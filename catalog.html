@@ -219,19 +219,10 @@ let catalogLoaded=false;
 let genderLoaded=false;
 let catalogPromise=null;
 let genderPromise=null;
-
-/*
- * تحسين تشغيل فيديوهات البطاقات:
- * - فيديو واحد فقط يمكنه التحميل والتشغيل في كل مرة.
- * - تحميل الفيديو عندما يصبح ظاهرًا فعليًا.
- * - إيقاف الفيديو وتحرير مصدره عند خروجه من منطقة العرض.
- * - الاحتفاظ بالرابط في data-src حتى يمكن إعادة تشغيله عند الرجوع.
- */
 let activePreviewVideo=null;
 
 function releasePreviewVideo(video){
 if(!video)return;
-
 video.pause();
 
 if(video.hasAttribute("src")){
@@ -246,14 +237,9 @@ video.dataset.loading="";
 
 function stopOtherPreviewVideos(current){
 document.querySelectorAll("#invitationCards video").forEach(video=>{
-if(video!==current){
-releasePreviewVideo(video);
-}
+if(video!==current)releasePreviewVideo(video);
 });
-
-if(activePreviewVideo&&activePreviewVideo!==current){
-activePreviewVideo.pause();
-}
+if(activePreviewVideo&&activePreviewVideo!==current)activePreviewVideo.pause();
 }
 
 function activatePreviewVideo(video){
@@ -265,7 +251,6 @@ activePreviewVideo=video;
 if(!video.getAttribute("src")){
 const url=video.dataset.src;
 if(!url)return;
-
 video.dataset.loading="1";
 video.src=url;
 video.load();
@@ -273,9 +258,7 @@ video.load();
 
 if(video.readyState>=2){
 const playPromise=video.play();
-if(playPromise&&playPromise.catch){
-playPromise.catch(()=>{});
-}
+if(playPromise&&playPromise.catch)playPromise.catch(()=>{});
 }
 }
 
@@ -298,6 +281,17 @@ releasePreviewVideo(video);
 });
 },{rootMargin:"0px",threshold:[0,0.25,0.5]})
 :null;
+
+/* تتم مراقبة الفيديو بعد إضافته إلى الصفحة، حتى لا تُلغى مراقبته قبل تحميله. */
+function observePreviewVideo(video,url){
+if(mediaObserver){
+mediaObserver.observe(video);
+}else{
+video.dataset.src=url;
+video.src=url;
+video.load();
+}
+}
 
 function tr(key){return LANG[currentLang][key]||LANG.ar[key]||key}
 function eventType(item){return EVENT_TYPES[item.event_type]?item.event_type:"wedding"}
@@ -442,9 +436,9 @@ video.dataset.src=url;
 video.dataset.loading="";
 
 video.addEventListener("loadeddata",()=>{
-if(!video.isConnected)return;
-if(activePreviewVideo!==video)return;
-if(!mediaObserver||video.getBoundingClientRect().bottom>0&&video.getBoundingClientRect().top<window.innerHeight){
+if(!video.isConnected||activePreviewVideo!==video)return;
+const rect=video.getBoundingClientRect();
+if(!mediaObserver||(rect.bottom>0&&rect.top<window.innerHeight)){
 const playPromise=video.play();
 if(playPromise&&playPromise.catch)playPromise.catch(()=>{});
 }
@@ -456,13 +450,6 @@ if(activePreviewVideo===video)activePreviewVideo=null;
 releasePreviewVideo(video);
 if(typeof onError==="function")onError();
 },{once:true});
-
-if(mediaObserver){
-mediaObserver.observe(video);
-}else{
-video.src=url;
-video.load();
-}
 
 return video;
 }
@@ -490,6 +477,7 @@ if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(ite
 });
 
 holder.appendChild(video);
+observePreviewVideo(video,url);
 }else if(url){
 const img=document.createElement("img");
 img.src=url;
@@ -549,6 +537,7 @@ if(!holder.querySelector(".media-fallback"))holder.appendChild(genderFallback(it
 });
 
 holder.appendChild(video);
+observePreviewVideo(video,url);
 }else if(url){
 const img=document.createElement("img");
 img.src=url;
