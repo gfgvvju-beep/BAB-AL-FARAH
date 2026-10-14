@@ -1,12 +1,14 @@
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://bab-alfarah.pages.dev/</loc>
   </url>
   <url>
-    <loc>https://bab-alfarah.pages.dev/catalog.html</loc>
+    <loc>https://bab-alfarah.pages.dev/catalog</loc>
   </url>
   <url>
-    <loc>https://bab-alfarah.pages.dev/gender-reveal.html</loc>
+    <loc>https://bab-alfarah.pages.dev/gender-reveal</loc>
   </url>
 </urlset>
+```
