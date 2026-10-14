@@ -36,7 +36,6 @@ p{line-height:2;margin:8px 0;color:#795e6f}
 #opening,#game,#result{width:100%}
 #openingMedia,#gameMedia{width:100%;min-height:0}
 
-/* المقدمة واللعبة: الوسائط خلفية كاملة والكتابة فوقها */
 body.stage-active .app{width:100%;min-height:100svh;padding:0}
 body.stage-active .brand,body.stage-active .footer{display:none}
 body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-radius:0;box-shadow:none;background:transparent;backdrop-filter:none;overflow:visible}
@@ -53,7 +52,6 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 #opening .sparkle{color:#ffe1a0}
 #opening .btn{margin-top:12px;min-height:52px;padding:14px 27px;background:linear-gradient(135deg,#b36b8e,#e2a2bd);box-shadow:0 8px 28px #0004}
 
-/* إخفاء التعتيم عند عدم وجود صورة أو فيديو، مع الإبقاء على الخلفية الوردية */
 #opening.no-media,#game.no-media{background:radial-gradient(circle at 15% 15%,#ffe1ed,transparent 38%),radial-gradient(circle at 90% 85%,#d9efff,transparent 40%),linear-gradient(135deg,#fff0f6,#fce4ee 50%,#edf7ff)}
 #opening.no-media::before,#game.no-media::before{background:linear-gradient(145deg,#f7dbe8aa,#e4f2ff99)}
 #opening.no-media h1,#game.no-media h2{color:#8c4867;text-shadow:none}
@@ -62,7 +60,6 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 #opening.no-media .heart{filter:drop-shadow(0 8px 18px #e58db833)}
 #opening.no-media .sparkle{color:#c6a15e}
 
-/* البالونات */
 #game .game-art{margin:0 auto 6px;min-height:60px}
 #game .game-art span{filter:drop-shadow(0 3px 8px #0004)}
 #game .balloons{width:min(100%,420px);display:flex;justify-content:center;align-items:center;gap:clamp(24px,8vw,60px);margin:25px auto 22px}
@@ -82,7 +79,6 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 #game #gameIntro{margin-top:2px}
 #game.no-media .game-status{color:#795e6f;text-shadow:none}
 
-/* عرض التهنئة والتفاصيل فوق خلفية الوسائط نفسها، دون البطاقة الوردية */
 #game.reveal-mode{justify-content:flex-start;min-height:100dvh;padding-top:max(25px,env(safe-area-inset-top));padding-bottom:35px}
 #game.reveal-mode>#gameMedia{position:fixed}
 #game.reveal-mode>#result{position:relative;z-index:3;width:min(850px,100%);margin:22px auto 0;padding:clamp(16px,4vw,30px);border-radius:0;background:transparent;border:0;box-shadow:none;backdrop-filter:none;color:#fff}
@@ -106,7 +102,6 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 #game.reveal-mode.no-media>#result .result-card{background:#ffffff50;border-radius:18px}
 #game.reveal-mode>#result .btn{margin:10px 0}
 
-/* النتيجة العامة */
 #loading{padding:24px}
 #result{padding:clamp(16px,4vw,36px)}
 .result-icon{font-size:clamp(60px,15vw,105px);animation:float 2.5s infinite}
@@ -125,6 +120,8 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 .contact-call{background:#e9d3a2;color:#342719}
 .contact-wa{background:#238d58;color:#fff}
 .contact-site{background:#fff7e9;color:#594024}
+.share-invitation-btn{background:linear-gradient(135deg,#16894e,#25b766);box-shadow:0 9px 22px #16894e30}
+#shareInvitationBtn{width:min(100%,360px);margin:10px auto 8px;min-height:52px}
 
 @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
 @keyframes balloonFloat{0%,100%{translate:0 0;rotate:-2deg}50%{translate:0 -9px;rotate:2deg}}
@@ -193,6 +190,11 @@ body.stage-active .card{width:100%;min-height:100svh;padding:0;border:0;border-r
 <div class="prayer">اللهم أنبته نباتاً حسناً، واجعله قرة عين لوالديه، واحفظه وبارك لهما فيه</div>
 </div>
 <p>الله يجعلهم من مواليد السعادة والفرح 💗💙</p>
+
+<button class="btn share-invitation-btn" id="shareInvitationBtn" type="button">
+📲 إرسال الدعوة عبر واتساب
+</button>
+
 <button class="btn" id="replayBtn">إعادة مشاهدة التهنئة 🎉</button>
 
 <div class="contact-card">
@@ -261,8 +263,6 @@ function setCurrentStage(stage){
  currentStage=stage;
 }
 
-/* الموسيقى لا تتوقف بسبب إخفاء الصفحة مؤقتاً أو فتح تبويب آخر.
-   عند مغادرة الصفحة نهائياً، المتصفح قد يوقف الصوت حسب سياساته. */
 function stopAudio(){
  if(musicRetryTimer){
   clearTimeout(musicRetryTimer);
@@ -287,9 +287,7 @@ function attemptMusicResume(){
    if(p&&typeof p.then==="function"){
     p.then(()=>{
      musicWantsToPlay=true;
-    }).catch(()=>{
-     /* سيعاد المحاولة عند تفاعل المستخدم أو عودة الصفحة */
-    });
+    }).catch(()=>{});
    }
   }
  }catch(e){}
@@ -308,7 +306,6 @@ document.addEventListener("visibilitychange",()=>{
   lastVisibleAt=Date.now();
   scheduleMusicResume();
  }else{
-  /* لا نوقف الموسيقى يدوياً عند إخفاء التبويب */
   if(audioContext&&audioContext.state==="running"){
    try{audioContext.suspend()}catch(e){}
   }
@@ -325,12 +322,10 @@ window.addEventListener("pageshow",()=>{
 window.addEventListener("focus",scheduleMusicResume);
 window.addEventListener("online",scheduleMusicResume);
 
-/* نحافظ على الموسيقى عند مغادرة الرابط والعودة إليه عبر سجل المتصفح */
 window.addEventListener("pagehide",()=>{
  stopAudio();
 });
 
-/* إيقاف الموارد فقط عند الإغلاق النهائي للوثيقة */
 window.addEventListener("beforeunload",()=>{
  stopAudio();
 });
@@ -418,7 +413,6 @@ async function loadConfig(){
  }
 }
 
-/* تبدأ الموسيقى بعد ضغط المستخدم، وتستمر بين مراحل الاختبار والنتيجة */
 function startAudio(){
  musicWantsToPlay=true;
 
@@ -442,9 +436,7 @@ function startAudio(){
       scheduleMusicResume();
      }
     });
-    music.addEventListener("error",()=>{
-     /* لا نغيّر مرحلة الاختبار إذا تعذّر تحميل ملف الموسيقى */
-    });
+    music.addEventListener("error",()=>{});
    }catch(e){
     music=null;
    }
@@ -473,7 +465,6 @@ function unlockAudio(){
  }catch(e){}
 }
 
-/* صوت فرقعة البالون */
 function playPop(){
  try{
   const AC=window.AudioContext||window.webkitAudioContext;
@@ -571,7 +562,6 @@ async function beginGame(){
 
 $("startBtn").addEventListener("click",beginGame);
 
-/* استئناف الموسيقى عند أي تفاعل، لأن بعض المتصفحات تمنع التشغيل التلقائي */
 document.addEventListener("pointerdown",()=>{
  if(musicWantsToPlay)attemptMusicResume();
 },{passive:true});
@@ -623,7 +613,6 @@ function genderLabel(g){
 }
 
 function revealResult(data){
- /* إبقاء الاختبار والوسائط والموسيقى ضمن الصفحة نفسها */
  $("game").classList.add("reveal-mode");
  $("game").appendChild($("result"));
  show("result");
@@ -710,6 +699,21 @@ function confetti(){
   setTimeout(()=>e.remove(),7000);
  }
 }
+
+/* مشاركة رابط اختبار جنس الجنين نفسه عبر واتساب */
+function shareGenderRevealInvitation(){
+ const url=location.href;
+ const title=config?.title||"اختبار جنس الجنين";
+ const message=
+  "💗💙 "+title+"\n"+
+  "شاركونا لحظات الفرح واكتشفوا المفاجأة ويانا! 🎈👶\n"+
+  url;
+
+ const whatsappUrl="https://wa.me/?text="+encodeURIComponent(message);
+ window.open(whatsappUrl,"_blank","noopener,noreferrer");
+}
+
+$("shareInvitationBtn").addEventListener("click",shareGenderRevealInvitation);
 
 function setupContactLinks(){
  const phone=CONTACT_PHONE.replace(/\D/g,"");
