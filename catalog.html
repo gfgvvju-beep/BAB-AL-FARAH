@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -12,7 +11,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 :root{--gold:#d4af37;--gold-light:#f4dfa0;--bg:#080808;--panel:#11110e;--ink:#f5edda;--muted:#b9b09a;--line:#45381c;--shadow:0 14px 40px #0008}
 *{box-sizing:border-box}
@@ -221,17 +219,15 @@ let catalogPromise=null;
 let genderPromise=null;
 let activePreviewVideo=null;
 
+/*
+ * إصلاح معاينة الفيديو:
+ * نحتفظ بمصدر الفيديو بعد تحميله حتى لا يؤدي الخروج المؤقت من الشاشة
+ * إلى إلغاء التحميل وظهور مساحة سوداء عند الرجوع.
+ * نوقف الفيديو غير المرئي فقط، ونشغّل فيديو واحداً في كل مرة.
+ */
 function releasePreviewVideo(video){
 if(!video)return;
-video.pause();
-
-if(video.hasAttribute("src")){
-const source=video.getAttribute("src");
-if(source)video.dataset.src=source;
-video.removeAttribute("src");
-try{video.load()}catch(e){}
-}
-
+try{video.pause()}catch(e){}
 video.dataset.loading="";
 }
 
@@ -239,7 +235,15 @@ function stopOtherPreviewVideos(current){
 document.querySelectorAll("#invitationCards video").forEach(video=>{
 if(video!==current)releasePreviewVideo(video);
 });
-if(activePreviewVideo&&activePreviewVideo!==current)activePreviewVideo.pause();
+if(activePreviewVideo&&activePreviewVideo!==current){
+try{activePreviewVideo.pause()}catch(e){}
+}
+}
+
+function isVideoVisible(video){
+if(!video||!video.isConnected)return false;
+const rect=video.getBoundingClientRect();
+return rect.bottom>0&&rect.top<window.innerHeight&&rect.right>0&&rect.left<window.innerWidth;
 }
 
 function activatePreviewVideo(video){
@@ -266,30 +270,30 @@ const mediaObserver="IntersectionObserver" in window
 ?new IntersectionObserver(entries=>{
 entries.forEach(entry=>{
 const video=entry.target;
-
 if(!video.isConnected){
 mediaObserver.unobserve(video);
 return;
 }
 
-if(entry.isIntersecting&&entry.intersectionRatio>=0.25){
+if(entry.isIntersecting&&entry.intersectionRatio>0){
 activatePreviewVideo(video);
 }else{
 if(activePreviewVideo===video)activePreviewVideo=null;
 releasePreviewVideo(video);
 }
 });
-},{rootMargin:"0px",threshold:[0,0.25,0.5]})
+},{rootMargin:"100px 0px",threshold:[0,0.01,0.25]})
 :null;
 
-/* تتم مراقبة الفيديو بعد إضافته إلى الصفحة، حتى لا تُلغى مراقبته قبل تحميله. */
+/* يجب استدعاء هذه الدالة بعد إضافة الفيديو فعلياً إلى الصفحة. */
 function observePreviewVideo(video,url){
+if(!video||!video.isConnected)return;
+video.dataset.src=url;
+
 if(mediaObserver){
 mediaObserver.observe(video);
 }else{
-video.dataset.src=url;
-video.src=url;
-video.load();
+activatePreviewVideo(video);
 }
 }
 
@@ -302,6 +306,12 @@ try{
 const u=new URL(String(value||""));
 return["https:","http:"].includes(u.protocol)?u.href:"";
 }catch(e){return""}
+}
+
+function isVideoUrl(url,item){
+const path=(()=>{try{return new URL(url).pathname.toLowerCase()}catch(e){return String(url||"").toLowerCase()}})();
+const mediaType=String(item?.media_type||item?.mime_type||item?.content_type||"").toLowerCase();
+return /\.(mp4|webm|ogg|m4v|mov)$/.test(path)||mediaType.startsWith("video/");
 }
 
 function inviteUrl(item){return validHttpUrl(item.invitation_url)||"#"}
@@ -427,18 +437,31 @@ video.defaultMuted=true;
 video.loop=true;
 video.autoplay=false;
 video.playsInline=true;
-video.preload="none";
+video.preload="metadata";
 video.setAttribute("muted","");
 video.setAttribute("loop","");
 video.setAttribute("playsinline","");
+video.setAttribute("webkit-playsinline","");
 video.removeAttribute("autoplay");
 video.dataset.src=url;
 video.dataset.loading="";
 
+video.addEventListener("loadedmetadata",()=>{
+if(!video.isConnected)return;
+video.dataset.loading="metadata";
+});
+
 video.addEventListener("loadeddata",()=>{
 if(!video.isConnected||activePreviewVideo!==video)return;
-const rect=video.getBoundingClientRect();
-if(!mediaObserver||(rect.bottom>0&&rect.top<window.innerHeight)){
+if(isVideoVisible(video)){
+const playPromise=video.play();
+if(playPromise&&playPromise.catch)playPromise.catch(()=>{});
+}
+});
+
+video.addEventListener("canplay",()=>{
+if(!video.isConnected||activePreviewVideo!==video)return;
+if(isVideoVisible(video)){
 const playPromise=video.play();
 if(playPromise&&playPromise.catch)playPromise.catch(()=>{});
 }
@@ -447,7 +470,6 @@ if(playPromise&&playPromise.catch)playPromise.catch(()=>{});
 video.addEventListener("error",()=>{
 if(mediaObserver)mediaObserver.unobserve(video);
 if(activePreviewVideo===video)activePreviewVideo=null;
-releasePreviewVideo(video);
 if(typeof onError==="function")onError();
 },{once:true});
 
@@ -466,7 +488,7 @@ holder.appendChild(chip);
 
 const url=validHttpUrl(item.image_url||"");
 
-if(url&&/\.(mp4|webm|ogg)(?:$|[?#])/i.test(url)){
+if(url&&isVideoUrl(url,item)){
 const video=document.createElement("video");
 video.setAttribute("aria-label",displayName(item));
 
@@ -477,6 +499,7 @@ if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(ite
 });
 
 holder.appendChild(video);
+/* تبدأ المراقبة بعد الإضافة إلى DOM */
 observePreviewVideo(video,url);
 }else if(url){
 const img=document.createElement("img");
@@ -527,7 +550,7 @@ holder.appendChild(chip);
 
 const url=validHttpUrl(item.image_url||"");
 
-if(url&&/\.(mp4|webm|ogg)(?:$|[?#])/i.test(url)){
+if(url&&isVideoUrl(url,item)){
 const video=document.createElement("video");
 
 prepareLazyVideo(video,url,()=>{
@@ -537,6 +560,7 @@ if(!holder.querySelector(".media-fallback"))holder.appendChild(genderFallback(it
 });
 
 holder.appendChild(video);
+/* تبدأ المراقبة بعد الإضافة إلى DOM */
 observePreviewVideo(video,url);
 }else if(url){
 const img=document.createElement("img");
@@ -563,7 +587,7 @@ const container=$("invitationCards");
 
 container.querySelectorAll("video").forEach(video=>{
 if(mediaObserver)mediaObserver.unobserve(video);
-video.pause();
+try{video.pause()}catch(e){}
 video.removeAttribute("src");
 video.removeAttribute("data-src");
 video.dataset.loading="";
@@ -909,6 +933,21 @@ $("menuContact").href="https://wa.me/"+OWNER_PHONE_WA;
 
 document.querySelectorAll("[data-lang]").forEach(button=>{
 button.addEventListener("click",()=>applyLanguage(button.dataset.lang));
+});
+
+/* إيقاف المعاينة عند إخفاء الصفحة، ثم استئناف الفيديو الظاهر عند الرجوع. */
+document.addEventListener("visibilitychange",()=>{
+if(document.hidden){
+if(activePreviewVideo)releasePreviewVideo(activePreviewVideo);
+}else if(activePreviewVideo&&isVideoVisible(activePreviewVideo)){
+activatePreviewVideo(activePreviewVideo);
+}
+});
+
+window.addEventListener("pagehide",()=>{
+document.querySelectorAll("#invitationCards video").forEach(video=>{
+try{video.pause()}catch(e){}
+});
 });
 
 applyLanguage("ar");
