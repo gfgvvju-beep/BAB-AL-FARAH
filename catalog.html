@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -214,102 +215,156 @@ let currentLang="ar";
 let toastTimer=null;
 let loadRequest=0;
 let genderLoadRequest=0;
+let catalogLoaded=false;
+let genderLoaded=false;
+let catalogPromise=null;
+let genderPromise=null;
 
-const mediaObserver = "IntersectionObserver" in window
-  ? new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const video = entry.target;
-
-        if (entry.isIntersecting) {
-          if (!video.src && video.dataset.src) {
-            video.src = video.dataset.src;
-            video.removeAttribute("data-src");
-            video.load();
-          }
-
-          if (video.readyState >= 2) {
-            const playPromise = video.play();
-            if (playPromise && typeof playPromise.catch === "function") {
-              playPromise.catch(() => {});
-            }
-          }
-        } else {
-          video.pause();
-        }
-      });
-    }, { rootMargin: "300px 0px", threshold: 0.01 })
-  : null;
+const mediaObserver="IntersectionObserver" in window
+?new IntersectionObserver(entries=>{
+entries.forEach(entry=>{
+const video=entry.target;
+if(entry.isIntersecting){
+if(!video.src&&video.dataset.src){
+video.src=video.dataset.src;
+video.removeAttribute("data-src");
+video.load();
+}
+if(video.readyState>=2){
+const p=video.play();
+if(p&&p.catch)p.catch(()=>{});
+}
+}else{
+video.pause();
+}
+});
+},{rootMargin:"150px 0px",threshold:0.01})
+:null;
 
 function tr(key){return LANG[currentLang][key]||LANG.ar[key]||key}
 function eventType(item){return EVENT_TYPES[item.event_type]?item.event_type:"wedding"}
 function displayName(item){return String(item.title||LANG[currentLang].event[eventType(item)].singular).trim()}
 
 function validHttpUrl(value){
-try{const u=new URL(String(value||""));return["https:","http:"].includes(u.protocol)?u.href:""}catch(e){return""}
+try{
+const u=new URL(String(value||""));
+return["https:","http:"].includes(u.protocol)?u.href:"";
+}catch(e){return""}
 }
+
 function inviteUrl(item){return validHttpUrl(item.invitation_url)||"#"}
+
 function genderUrl(item){
 const token=String(item.public_token||"").trim();
 if(!token)return"#";
-return new URL("gender-reveal.html",location.href).href+"?token="+encodeURIComponent(token)
+return new URL("gender-reveal.html",location.href).href+"?token="+encodeURIComponent(token);
 }
+
 function makeWhatsAppUrl(item){
 const t=LANG[currentLang];
 const message=t.contactMessage+"\n"+t.event[eventType(item)].singular+": "+displayName(item)+"\n"+inviteUrl(item);
-return"https://wa.me/"+OWNER_PHONE_WA+"?text="+encodeURIComponent(message)
+return"https://wa.me/"+OWNER_PHONE_WA+"?text="+encodeURIComponent(message);
 }
+
 function makeGenderWhatsAppUrl(item){
 const message=LANG[currentLang].contactMessage+"\n"+LANG[currentLang].genderSingular+": "+String(item.title||LANG[currentLang].genderTitle);
-return"https://wa.me/"+OWNER_PHONE_WA+"?text="+encodeURIComponent(message)
+return"https://wa.me/"+OWNER_PHONE_WA+"?text="+encodeURIComponent(message);
 }
+
 function showToast(message){
-const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);
-toastTimer=setTimeout(()=>el.classList.remove("show"),2800)
+const el=$("toast");
+el.textContent=message;
+el.classList.add("show");
+clearTimeout(toastTimer);
+toastTimer=setTimeout(()=>el.classList.remove("show"),2800);
 }
+
 function updateCounts(){
 $("totalCount").textContent=(allInvitations.length+genderCards.length)+" "+tr("total");
+
 document.querySelectorAll(".category[data-category]").forEach(button=>{
-const key=button.dataset.category;const small=button.querySelector("small");
+const key=button.dataset.category;
+const small=button.querySelector("small");
 if(!small)return;
-if(key==="gender"){small.textContent=genderCards.length?genderCards.length+" "+tr("available"):tr("soon");return}
-const count=allInvitations.filter(item=>eventType(item)===key).length;
-small.textContent=count?count+" "+tr("available"):tr("soon")
-})
+
+if(key==="gender"){
+small.textContent=genderCards.length
+?genderCards.length+" "+tr("available")
+:(genderLoaded?tr("soon"):tr("loadingCount"));
+return;
 }
+
+const count=allInvitations.reduce((n,item)=>n+(eventType(item)===key?1:0),0);
+small.textContent=count
+?count+" "+tr("available")
+:(catalogLoaded?tr("soon"):tr("loadingCount"));
+});
+}
+
 function applyLanguage(lang){
 if(!LANG[lang])return;
-currentLang=lang;const t=LANG[lang];
-document.documentElement.lang=lang;document.documentElement.dir=t.dir;
+currentLang=lang;
+const t=LANG[lang];
+
+document.documentElement.lang=lang;
+document.documentElement.dir=t.dir;
+
 document.querySelectorAll("[data-lang]").forEach(button=>{
-button.classList.toggle("active",button.dataset.lang===lang);
-button.setAttribute("aria-pressed",String(button.dataset.lang===lang))
+const selected=button.dataset.lang===lang;
+button.classList.toggle("active",selected);
+button.setAttribute("aria-pressed",String(selected));
 });
-$("topWhatsappText").textContent=t.contact;$("menuContact").setAttribute("aria-label",t.contact);
-$("heroBadge").textContent=t.heroBadge;$("heroTitle").textContent=t.heroTitle;$("heroText").textContent=t.heroText;
-$("categoriesTitle").textContent=t.categoriesTitle;$("categoriesHint").textContent=t.categoriesHint;
-$("refreshBtn").textContent=t.refresh;$("backCategoriesBtn").textContent=t.back;
-$("aboutTitle").textContent=t.aboutTitle;$("aboutText").textContent=t.aboutText;
-$("contactTitle").textContent=t.contactTitle;$("contactText").textContent=t.contactText;
-$("callBtn").textContent=t.call;$("whatsappBtn").textContent=t.whatsapp;
-$("footerText").textContent=t.footer;$("rightsText").textContent=t.rights;
+
+$("topWhatsappText").textContent=t.contact;
+$("menuContact").setAttribute("aria-label",t.contact);
+$("heroBadge").textContent=t.heroBadge;
+$("heroTitle").textContent=t.heroTitle;
+$("heroText").textContent=t.heroText;
+$("categoriesTitle").textContent=t.categoriesTitle;
+$("categoriesHint").textContent=t.categoriesHint;
+$("refreshBtn").textContent=$("refreshBtn").disabled?t.refreshing:t.refresh;
+$("backCategoriesBtn").textContent=t.back;
+$("aboutTitle").textContent=t.aboutTitle;
+$("aboutText").textContent=t.aboutText;
+$("contactTitle").textContent=t.contactTitle;
+$("contactText").textContent=t.contactText;
+$("callBtn").textContent=t.call;
+$("whatsappBtn").textContent=t.whatsapp;
+$("footerText").textContent=t.footer;
+$("rightsText").textContent=t.rights;
+
 document.querySelectorAll(".category[data-category]").forEach(button=>{
 const key=button.dataset.category;
 if(key==="gender"){
 button.querySelector("strong").textContent=t.genderTitle;
-button.querySelector("small").textContent=t.genderSmall;
-button.setAttribute("aria-label",t.genderTitle);return
+button.setAttribute("aria-label",t.genderTitle);
+}else if(t.event[key]){
+button.querySelector("strong").textContent=t.event[key].title;
+button.setAttribute("aria-label",t.event[key].title);
 }
-if(t.event[key]){button.querySelector("strong").textContent=t.event[key].title;button.setAttribute("aria-label",t.event[key].title)}
 });
-updateCounts();renderCards()
+
+updateCounts();
+renderCards();
 }
 
 function fallbackMedia(item){
-const key=eventType(item);const wrap=document.createElement("div");wrap.className="media-fallback";
-const icon=document.createElement("span");icon.className="big-icon";icon.textContent=EVENT_TYPES[key].icon;
-const title=document.createElement("strong");title.textContent="باب الفرح";
-const small=document.createElement("small");small.textContent=LANG[currentLang].event[key].singular;
-wrap.append(icon,title,small);return wrap
+const key=eventType(item);
+const wrap=document.createElement("div");
+wrap.className="media-fallback";
+
+const icon=document.createElement("span");
+icon.className="big-icon";
+icon.textContent=EVENT_TYPES[key].icon;
+
+const title=document.createElement("strong");
+title.textContent="باب الفرح";
+
+const small=document.createElement("small");
+small.textContent=LANG[currentLang].event[key].singular;
+
+wrap.append(icon,title,small);
+return wrap;
 }
 
 function prepareLazyVideo(video,url,onError){
@@ -326,15 +381,15 @@ video.setAttribute("playsinline","");
 video.dataset.src=url;
 
 video.addEventListener("loadeddata",()=>{
-if(!mediaObserver||video.getBoundingClientRect().top<window.innerHeight+300){
+if(!mediaObserver||video.getBoundingClientRect().top<window.innerHeight+150){
 const p=video.play();
-if(p&&typeof p.catch==="function")p.catch(()=>{});
+if(p&&p.catch)p.catch(()=>{});
 }
-});
+},{once:true});
 
 video.addEventListener("error",()=>{
 if(typeof onError==="function")onError();
-});
+},{once:true});
 
 if(mediaObserver){
 mediaObserver.observe(video);
@@ -361,10 +416,13 @@ const url=validHttpUrl(item.image_url||"");
 if(url&&/\.(mp4|webm|ogg)(?:$|[?#])/i.test(url)){
 const video=document.createElement("video");
 video.setAttribute("aria-label",displayName(item));
+
 prepareLazyVideo(video,url,()=>{
+if(mediaObserver)mediaObserver.unobserve(video);
 video.remove();
 if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item));
 });
+
 holder.appendChild(video);
 }else if(url){
 const img=document.createElement("img");
@@ -373,23 +431,36 @@ img.alt=displayName(item);
 img.loading="lazy";
 img.decoding="async";
 img.fetchPriority="low";
+
 img.onerror=()=>{
 img.remove();
 if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item));
 };
+
 holder.appendChild(img);
 }else{
 holder.appendChild(fallbackMedia(item));
 }
+
 return holder;
 }
 
 function genderFallback(item){
-const wrap=document.createElement("div");wrap.className="media-fallback";
-const icon=document.createElement("span");icon.className="big-icon";icon.textContent="🩷";
-const title=document.createElement("strong");title.textContent=item.title||"باب الفرح";
-const small=document.createElement("small");small.textContent=LANG[currentLang].genderSingular;
-wrap.append(icon,title,small);return wrap
+const wrap=document.createElement("div");
+wrap.className="media-fallback";
+
+const icon=document.createElement("span");
+icon.className="big-icon";
+icon.textContent="🩷";
+
+const title=document.createElement("strong");
+title.textContent=item.title||"باب الفرح";
+
+const small=document.createElement("small");
+small.textContent=LANG[currentLang].genderSingular;
+
+wrap.append(icon,title,small);
+return wrap;
 }
 
 function genderCardMedia(item){
@@ -405,10 +476,13 @@ const url=validHttpUrl(item.image_url||"");
 
 if(url&&/\.(mp4|webm|ogg)(?:$|[?#])/i.test(url)){
 const video=document.createElement("video");
+
 prepareLazyVideo(video,url,()=>{
+if(mediaObserver)mediaObserver.unobserve(video);
 video.remove();
 if(!holder.querySelector(".media-fallback"))holder.appendChild(genderFallback(item));
 });
+
 holder.appendChild(video);
 }else if(url){
 const img=document.createElement("img");
@@ -417,28 +491,46 @@ img.alt=item.title||LANG[currentLang].genderTitle;
 img.loading="lazy";
 img.decoding="async";
 img.fetchPriority="low";
+
 img.onerror=()=>{
 img.remove();
 if(!holder.querySelector(".media-fallback"))holder.appendChild(genderFallback(item));
 };
+
 holder.appendChild(img);
 }else{
 holder.appendChild(genderFallback(item));
 }
+
 return holder;
 }
 
 function renderGenderCards(container){
-const t=LANG[currentLang];container.replaceChildren();
+const t=LANG[currentLang];
+const fragment=document.createDocumentFragment();
+
 $("galleryTitle").textContent=t.genderTitle;
 $("gallerySubtitle").textContent=t.genderSubtitle+" · "+genderCards.length;
 
 if(!genderCards.length){
-const empty=document.createElement("div");empty.className="empty";
-const icon=document.createElement("span");icon.className="empty-icon";icon.textContent="🩷";
-const strong=document.createElement("strong");strong.textContent=t.genderEmpty;
-const p=document.createElement("p");p.textContent=t.genderEmptyText;p.style.margin="5px 0 0";
-empty.append(icon,strong,p);container.appendChild(empty);return
+const empty=document.createElement("div");
+empty.className=genderLoaded?"empty":"loading";
+
+const icon=document.createElement("span");
+icon.className="empty-icon";
+icon.textContent="🩷";
+
+const strong=document.createElement("strong");
+strong.textContent=genderLoaded?t.genderEmpty:t.loading;
+
+const p=document.createElement("p");
+p.textContent=genderLoaded?t.genderEmptyText:"";
+p.style.margin="5px 0 0";
+
+empty.append(icon,strong,p);
+fragment.appendChild(empty);
+container.replaceChildren(fragment);
+return;
 }
 
 for(const item of genderCards){
@@ -446,8 +538,11 @@ const card=document.createElement("article");
 card.className="invite-card";
 card.appendChild(genderCardMedia(item));
 
-const body=document.createElement("div");body.className="card-body";
-const actions=document.createElement("div");actions.className="card-actions";
+const body=document.createElement("div");
+body.className="card-body";
+
+const actions=document.createElement("div");
+actions.className="card-actions";
 
 const start=document.createElement("a");
 start.className="btn btn-primary";
@@ -455,7 +550,11 @@ start.href=genderUrl(item);
 start.textContent=t.genderStart;
 start.target="_blank";
 start.rel="noopener noreferrer";
-if(start.href==="#"){start.style.pointerEvents="none";start.setAttribute("aria-disabled","true")}
+
+if(start.getAttribute("href")==="#"){
+start.style.pointerEvents="none";
+start.setAttribute("aria-disabled","true");
+}
 
 const contact=document.createElement("a");
 contact.className="btn btn-secondary";
@@ -467,16 +566,16 @@ contact.textContent=t.genderContact;
 actions.append(start,contact);
 body.appendChild(actions);
 card.appendChild(body);
-container.appendChild(card);
+fragment.appendChild(card);
 }
+
+container.replaceChildren(fragment);
 }
 
 function renderCards(){
 const container=$("invitationCards");
 if(!container)return;
 
-container.replaceChildren();
-const t=LANG[currentLang];
 const panel=$("galleryPanel");
 const categories=$("categoriesSection");
 
@@ -494,17 +593,31 @@ renderGenderCards(container);
 return;
 }
 
+const t=LANG[currentLang];
 const items=allInvitations.filter(item=>eventType(item)===activeCategory);
+const fragment=document.createDocumentFragment();
+
 $("galleryTitle").textContent=t.event[activeCategory].title;
 $("gallerySubtitle").textContent=t.gallerySubtitle+" · "+items.length;
 
 if(!items.length){
-const empty=document.createElement("div");empty.className="empty";
-const icon=document.createElement("span");icon.className="empty-icon";icon.textContent="♡";
-const strong=document.createElement("strong");strong.textContent=t.emptyTitle;
-const p=document.createElement("p");p.textContent=t.emptyText;p.style.margin="5px 0 0";
+const empty=document.createElement("div");
+empty.className=catalogLoaded?"empty":"loading";
+
+const icon=document.createElement("span");
+icon.className="empty-icon";
+icon.textContent="♡";
+
+const strong=document.createElement("strong");
+strong.textContent=catalogLoaded?t.emptyTitle:t.loading;
+
+const p=document.createElement("p");
+p.textContent=catalogLoaded?t.emptyText:"";
+p.style.margin="5px 0 0";
+
 empty.append(icon,strong,p);
-container.appendChild(empty);
+fragment.appendChild(empty);
+container.replaceChildren(fragment);
 return;
 }
 
@@ -513,8 +626,11 @@ const card=document.createElement("article");
 card.className="invite-card";
 card.appendChild(cardMedia(item));
 
-const body=document.createElement("div");body.className="card-body";
-const actions=document.createElement("div");actions.className="card-actions";
+const body=document.createElement("div");
+body.className="card-body";
+
+const actions=document.createElement("div");
+actions.className="card-actions";
 
 const view=document.createElement("a");
 view.className="btn btn-primary";
@@ -522,7 +638,11 @@ view.href=inviteUrl(item);
 view.target="_blank";
 view.rel="noopener noreferrer";
 view.textContent=t.preview;
-if(view.href==="#"){view.style.pointerEvents="none";view.setAttribute("aria-disabled","true")}
+
+if(view.getAttribute("href")==="#"){
+view.style.pointerEvents="none";
+view.setAttribute("aria-disabled","true");
+}
 
 const order=document.createElement("a");
 order.className="btn btn-secondary";
@@ -534,13 +654,17 @@ order.textContent=t.order;
 actions.append(view,order);
 body.appendChild(actions);
 card.appendChild(body);
-container.appendChild(card);
-}
+fragment.appendChild(card);
 }
 
-async function loadCatalog(){
+container.replaceChildren(fragment);
+}
+
+async function loadCatalog(force=false){
+if(catalogPromise&&!force)return catalogPromise;
 const requestId=++loadRequest;
 const button=$("refreshBtn");
+
 button.disabled=true;
 button.textContent=tr("refreshing");
 
@@ -548,6 +672,7 @@ if(activeCategory&&activeCategory!=="gender"){
 $("invitationCards").innerHTML='<div class="loading">'+tr("loading")+'</div>';
 }
 
+catalogPromise=(async()=>{
 try{
 const {data,error}=await db.rpc("get_public_invitation_catalog");
 if(error)throw error;
@@ -563,6 +688,7 @@ return row;
 .filter(item=>item&&item.is_visible===true&&validHttpUrl(item.invitation_url))
 .sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
 
+catalogLoaded=true;
 updateCounts();
 renderCards();
 }catch(error){
@@ -570,12 +696,17 @@ if(requestId!==loadRequest)return;
 console.error("Catalog load error:",error);
 
 if(activeCategory&&activeCategory!=="gender"){
-$("invitationCards").replaceChildren();
-const box=document.createElement("div");box.className="error";
-const strong=document.createElement("strong");strong.textContent=tr("loadError");
-const p=document.createElement("p");p.textContent=tr("loadErrorText");
+const box=document.createElement("div");
+box.className="error";
+
+const strong=document.createElement("strong");
+strong.textContent=tr("loadError");
+
+const p=document.createElement("p");
+p.textContent=tr("loadErrorText");
+
 box.append(strong,p);
-$("invitationCards").appendChild(box);
+$("invitationCards").replaceChildren(box);
 }
 
 if(activeCategory!=="gender"){
@@ -586,14 +717,19 @@ showToast(tr("noLoad"));
 if(requestId===loadRequest){
 button.disabled=false;
 button.textContent=tr("refresh");
+catalogPromise=null;
 }
 }
+})();
+return catalogPromise;
 }
 
 /* تحميل بطاقات اختبار جنس الجنين عبر دالة Supabase الآمنة */
-async function loadGenderCards(){
+async function loadGenderCards(force=false){
+if(genderPromise&&!force)return genderPromise;
 const requestId=++genderLoadRequest;
 
+genderPromise=(async()=>{
 try{
 const {data,error}=await db.rpc("get_public_gender_reveal_catalog_cards");
 if(error)throw error;
@@ -606,23 +742,22 @@ try{return JSON.parse(row)}catch(e){return null}
 }
 return row;
 })
-.filter(item=>item&&item.is_visible===true&&item.public_token);
+.filter(item=>item&&item.is_visible===true&&item.public_token)
+.sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
 
-genderCards.sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
-
+genderLoaded=true;
 updateCounts();
 renderCards();
 }catch(error){
 if(requestId!==genderLoadRequest)return;
 
 console.error("Gender reveal cards load error:",error);
+genderLoaded=true;
 genderCards=[];
 updateCounts();
 
 if(activeCategory==="gender"){
 const container=$("invitationCards");
-container.replaceChildren();
-
 const box=document.createElement("div");
 box.className="error";
 
@@ -633,9 +768,13 @@ const p=document.createElement("p");
 p.textContent=LANG[currentLang].loadErrorText;
 
 box.append(strong,p);
-container.appendChild(box);
+container.replaceChildren(box);
 }
+}finally{
+if(requestId===genderLoadRequest)genderPromise=null;
 }
+})();
+return genderPromise;
 }
 
 function scrollToElement(element){
@@ -653,6 +792,10 @@ button.classList.toggle("active",button.dataset.category===key);
 });
 
 renderCards();
+
+if(key==="gender"&&!genderLoaded)loadGenderCards();
+if(key!=="gender"&&!catalogLoaded)loadCatalog();
+
 scrollToElement($("galleryPanel"));
 }
 
@@ -672,11 +815,12 @@ button.addEventListener("click",()=>chooseCategory(button.dataset.category));
 });
 
 $("refreshBtn").addEventListener("click",()=>{
-loadCatalog();
-loadGenderCards();
+loadCatalog(true);
+loadGenderCards(true);
 });
 
 $("backCategoriesBtn").addEventListener("click",backToCategories);
+
 $("year").textContent=String(new Date().getFullYear());
 $("phoneText").textContent=OWNER_PHONE_DISPLAY;
 $("phoneText").href="tel:"+OWNER_PHONE_DISPLAY.replace(/[^\d+]/g,"");
@@ -689,8 +833,12 @@ button.addEventListener("click",()=>applyLanguage(button.dataset.lang));
 });
 
 applyLanguage("ar");
-loadCatalog();
-loadGenderCards();
+
+/* تحميل بيانات الكتالوج وبطاقات اختبار الجنين بالتوازي */
+Promise.allSettled([
+loadCatalog(),
+loadGenderCards()
+]);
 </script>
 </body>
 </html>
