@@ -117,7 +117,7 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
  <div class="arch" id="arch" role="button" tabindex="0" aria-label="اضغط ثلاث مرات لفتح الدعوة">
   <div class="door" id="door"><div class="leaf left"></div><div class="leaf right"></div></div>
  </div>
- <video id="doorVideo" playsinline webkit-playsinline preload="auto" muted></video>
+ <video id="doorVideo" playsinline webkit-playsinline preload="auto" fetchpriority="high" muted></video>
 </div>
 <button id="start" disabled>جارٍ التحقق من الدعوة...</button>
 <div class="hint" id="hint">يرجى الانتظار لحظة</div>
@@ -234,6 +234,8 @@ function setDoorImage(imageUrl){
   video.playsInline=true;
   video.setAttribute("playsinline","");
   video.setAttribute("webkit-playsinline","");
+  video.setAttribute("preload","auto");
+  video.setAttribute("fetchpriority","high");
   video.style.display="block";
   video.src=url;
   video.load();
@@ -543,7 +545,7 @@ async function loadInvitation(){
   const template=item.template_id||item.template||1;
   applyTemplate(template);
 
-  // تحميل ملف الباب بالكامل قبل السماح للزائر بالطرق.
+  // بدء تحميل صورة أو فيديو الباب بأسرع وقت.
   const direct=extractDoorImage(item);
   if(direct){
    setDoorImage(direct);
@@ -551,7 +553,7 @@ async function loadInvitation(){
    await loadTemplateDoor(template,currentEventType);
   }
 
-  // انتظار تجهيز الصورة أو الفيديو قبل تفعيل زر فتح الدعوة.
+  // الحفاظ على جاهزية وسيلة فتح الباب قبل تفعيل الزر.
   await doorMediaLoadPromise;
 
   configureAudio(item.audio_type||"song",item.audio_url||"");
@@ -606,6 +608,7 @@ function stopDoorVideo(){
 }
 async function startDoorVideo(){
  const video=$("doorVideo");
+
  if(!isVideoUrl(selectedDoorImageUrl)){
   finishOpening();
   return;
@@ -617,39 +620,64 @@ async function startDoorVideo(){
  video.playsInline=true;
  video.setAttribute("playsinline","");
  video.setAttribute("webkit-playsinline","");
+ video.preload="auto";
  video.loop=false;
  video.autoplay=false;
  video.muted=true;
- video.pause();
 
  let finishedPlayback=false;
+ let playbackStarted=false;
+ let playbackTimeout=null;
+
+ const cleanup=()=>{
+  if(playbackTimeout){
+   clearTimeout(playbackTimeout);
+   playbackTimeout=null;
+  }
+  video.removeEventListener("canplay",tryPlayback);
+  video.removeEventListener("loadeddata",tryPlayback);
+  video.removeEventListener("error",failPlayback);
+ };
+
  const failPlayback=()=>{
   if(!doorVideoActive||openingFinished||finishedPlayback)return;
+
   finishedPlayback=true;
+  cleanup();
   doorVideoActive=false;
   video.pause();
   video.style.display="none";
+
   $("start").disabled=false;
   $("start").textContent="تعذر تشغيل الفيديو — اضغط للمحاولة";
   $("hint").textContent="تحقق من اتصال الإنترنت ثم اضغط للمحاولة";
+
   openingStarted=false;
   knockCount=0;
   $("arch").classList.remove("knock");
  };
 
- const beginPlayback=async()=>{
-  if(!doorVideoActive||openingFinished||finishedPlayback)return;
-  if(!video.currentSrc&&!video.src){
-   failPlayback();
-   return;
-  }
+ async function tryPlayback(){
+  if(
+   !doorVideoActive||
+   openingFinished||
+   finishedPlayback||
+   playbackStarted
+  )return;
+
+  if(video.readyState<2)return;
+
+  playbackStarted=true;
+
   try{
    video.currentTime=0;
   }catch(e){}
+
   try{
    await video.play();
   }catch(firstError){
    if(!doorVideoActive||openingFinished)return;
+
    try{
     video.muted=true;
     await video.play();
@@ -658,31 +686,36 @@ async function startDoorVideo(){
     failPlayback();
    }
   }
- };
+ }
 
  video.onended=()=>{
   if(!doorVideoActive||openingFinished||finishedPlayback)return;
+
   finishedPlayback=true;
+  cleanup();
   doorVideoActive=false;
   video.style.display="none";
   finishOpening();
  };
- video.onerror=()=>{
-  console.warn("تعذر تحميل فيديو الباب",video.error);
-  failPlayback();
- };
 
- // إعادة تعيين موضع الفيديو وتجهيزه قبل التشغيل من نقرة المستخدم.
- try{video.currentTime=0}catch(e){}
+ video.addEventListener("error",failPlayback);
+ video.addEventListener("canplay",tryPlayback);
+ video.addEventListener("loadeddata",tryPlayback);
+
+ // الفيديو محمّل مسبقاً من وقت اختيار الدعوة.
+ // نتجنب إعادة video.load() حتى لا نعيد التحميل من الصفر.
  if(video.readyState>=2){
-  await beginPlayback();
+  tryPlayback();
  }else{
-  video.addEventListener("canplay",beginPlayback,{once:true});
-  video.addEventListener("error",failPlayback,{once:true});
-  video.load();
-  setTimeout(()=>{
-   if(doorVideoActive&&!openingFinished&&video.readyState<2)failPlayback();
-  },15000);
+  playbackTimeout=setTimeout(()=>{
+   if(
+    doorVideoActive&&
+    !openingFinished&&
+    !playbackStarted
+   ){
+    failPlayback();
+   }
+  },20000);
  }
 }
 function finishOpening(){
