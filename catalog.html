@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -55,8 +54,11 @@ h1,h2{font-family:Amiri,serif;color:var(--gl)}
 .card{min-width:0;padding:6px;background:#080808;border:1px solid #806522;border-radius:17px;overflow:hidden;contain:layout paint}
 .media{position:relative;width:100%;aspect-ratio:3/4;background:#17130a;border-radius:12px;overflow:hidden;isolation:isolate}
 .media:after{content:"";position:absolute;inset:8px;border:1px solid #d4af3780;border-radius:8px;z-index:4;pointer-events:none}
-.media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.media img,.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .media .poster{z-index:1;opacity:1}
+.media video{z-index:2;opacity:0;object-position:center;background:#17130a}
+.media video.ready{opacity:1}
+.media .poster.hidden{opacity:0}
 .chip{position:absolute;z-index:5;top:13px;right:13px;padding:5px 9px;background:#17130aeb;color:var(--gl);border:1px solid #8c6b1d;border-radius:20px;font-size:10px;max-width:calc(100% - 26px)}
 .fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:var(--gl);padding:15px;z-index:0}
 .fallback span{font-size:40px}.fallback strong{font:700 23px Amiri,serif}.fallback small{font-size:10px;color:#d9c78e}
@@ -164,7 +166,9 @@ en:{dir:"ltr",contact:"Message us",heroBadge:"Your celebration deserves a specia
 };
 
 let lang="ar",invitations=[],genderCards=[],active=null;
-let catalogLoaded=false,genderLoaded=false,request=0,genderRequest=0,toastTimer=null;
+let catalogLoaded=false,genderLoaded=false,request=0,genderRequest=0;
+let toastTimer=null;
+let videoObserver=null;
 
 function validUrl(v){
   try{
@@ -197,16 +201,18 @@ function isVideo(url,item={}){
     if(/\.(mp4|webm|ogg|m4v|mov|m3u8)$/.test(path))return true;
     if(/\.(jpg|jpeg|png|gif|webp|avif|bmp|svg)$/.test(path))return false;
   }catch{}
+
   const types=[
     item?.media_type,item?.mime_type,item?.content_type,
     item?.file_type,item?.mediaType,item?.type
   ].map(x=>String(x||"").toLowerCase().trim());
+
   if(types.some(t=>t==="video"||t==="mp4"||t==="webm"||t.startsWith("video/")))return true;
   if(types.some(t=>t==="image"||t.startsWith("image/")))return false;
   return false;
 }
 
-/* فصل صورة المعاينة عن ملف الفيديو؛ لا نحمّل الفيديو داخل الكتالوج */
+/* تحديد رابط الفيديو ورابط الصورة بشكل منفصل */
 function getMedia(item){
   const videoKeys=[
     "video_url","video_public_url","video_storage_url",
@@ -218,31 +224,27 @@ function getMedia(item){
     "image_url","image","cover_url","thumbnail"
   ];
 
-  const candidates=itemUrls(item,videoKeys);
-  const video=candidates.find(u=>isVideo(u,{}))||
-    candidates.find(u=>isVideo(u,item))||"";
+  const videoCandidates=itemUrls(item,videoKeys);
+  const video=videoCandidates.find(u=>isVideo(u,{}))||
+    videoCandidates.find(u=>isVideo(u,item))||"";
 
-  const images=itemUrls(item,imageKeys);
-  const poster=images.find(u=>!isVideo(u,{}))||"";
+  const imageCandidates=itemUrls(item,imageKeys);
+  const poster=imageCandidates.find(u=>!isVideo(u,{}))||"";
 
   if(video){
-    return{
-      url:video,
-      video:true,
-      poster:poster&&poster!==video?poster:""
-    };
+    return{url:video,video:true,poster:poster&&poster!==video?poster:""};
   }
 
-  const image=images.find(u=>!isVideo(u,{}))||
-    candidates.find(u=>!isVideo(u,{}))||
-    candidates.find(u=>!isVideo(u,item))||"";
+  const image=imageCandidates.find(u=>!isVideo(u,{}))||
+    videoCandidates.find(u=>!isVideo(u,{}))||
+    videoCandidates.find(u=>!isVideo(u,item))||"";
 
   if(image)return{url:image,video:false,poster:""};
 
   const generic=itemUrls(item,["media","file"]);
-  const fallback=generic.find(u=>!isVideo(u,{}))||"";
+  const fallback=generic.find(u=>isVideo(u,{}))||generic[0]||"";
 
-  return{url:fallback,video:false,poster:""};
+  return{url:fallback,video:isVideo(fallback,item),poster:""};
 }
 
 function eventType(item){return EVENTS[item?.event_type]?item.event_type:"wedding"}
@@ -277,51 +279,151 @@ function fallback(item,isGender=false){
 }
 
 /*
-  مهم لتخفيف الضغط:
-  - لا ننشئ عناصر video في الكتالوج إطلاقاً.
-  - لا نطلب ملفات الفيديو ولا نشغّلها عند ظهور البطاقات.
-  - نعرض صورة المعاينة الثابتة إن كانت موجودة.
-  - إذا لم تتوفر صورة، نظهر بطاقة احتياطية خفيفة.
-  - الفيديو الأصلي يبقى داخل صفحة الدعوة عند الضغط على معاينة الدعوة.
+  الفيديو داخل الكتالوج يبقى متوقفاً دائماً.
+  نحمل بياناته الأولية فقط عندما تدخل البطاقة مجال العرض،
+  ولا نستعمل play() أو autoplay.
 */
+function createVideoObserver(){
+  if(!("IntersectionObserver"in window))return null;
+
+  return new IntersectionObserver(entries=>{
+    for(const entry of entries){
+      const video=entry.target;
+      if(!video.isConnected)continue;
+
+      if(entry.isIntersecting){
+        if(video.dataset.loaded!=="1"&&video.dataset.src){
+          video.dataset.loaded="1";
+          video.preload="metadata";
+          video.src=video.dataset.src;
+          try{video.load()}catch{}
+        }
+      }else{
+        try{video.pause()}catch{}
+      }
+    }
+  },{rootMargin:"100px 0px",threshold:0.01});
+}
+
 function makeMedia(item,isGender=false){
   const box=document.createElement("div");
   box.className="media";
 
-  box.appendChild(fallback(item,isGender));
+  const media=getMedia(item);
+  const url=media.url;
+
+  /* الغلاف الاحتياطي يبقى ظاهراً إلى أن تظهر الصورة أو أول لقطة فيديو */
+  const cover=fallback(item,isGender);
+  box.appendChild(cover);
 
   const chip=document.createElement("span");
   chip.className="chip";
   chip.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];
   box.appendChild(chip);
 
-  const media=getMedia(item);
-  const imageUrl=media.video?media.poster:media.url;
+  let poster=null;
 
-  if(imageUrl){
+  if(media.poster){
+    poster=document.createElement("img");
+    poster.className="poster";
+    poster.alt="";
+    poster.loading="lazy";
+    poster.decoding="async";
+    poster.fetchPriority="low";
+    poster.addEventListener("load",()=>cover.remove(),{once:true});
+    poster.addEventListener("error",()=>{
+      poster.remove();
+      poster=null;
+    },{once:true});
+    poster.src=media.poster;
+    box.appendChild(poster);
+  }
+
+  if(url&&media.video){
+    const video=document.createElement("video");
+    video.className="invitation-video";
+    video.muted=true;
+    video.defaultMuted=true;
+    video.autoplay=false;
+    video.loop=false;
+    video.controls=false;
+    video.playsInline=true;
+    video.preload="none";
+    video.disablePictureInPicture=true;
+    video.setAttribute("muted","");
+    video.setAttribute("playsinline","");
+    video.setAttribute("webkit-playsinline","");
+    video.setAttribute("aria-label",eventName(item));
+    video.setAttribute("tabindex","-1");
+    video.dataset.src=url;
+    video.dataset.loaded="0";
+
+    if(media.poster)video.poster=media.poster;
+
+    video.addEventListener("loadeddata",()=>{
+      try{video.pause()}catch{}
+      video.classList.add("ready");
+      if(poster)poster.classList.add("hidden");
+      cover.remove();
+    });
+
+    video.addEventListener("seeked",()=>{
+      try{video.pause()}catch{}
+    });
+
+    video.addEventListener("play",()=>{
+      /* منع تشغيل الفيديو داخل الكتالوج حتى لو حاول المتصفح تشغيله */
+      try{video.pause()}catch{}
+    });
+
+    video.addEventListener("error",()=>{
+      video.classList.remove("ready");
+      try{video.pause()}catch{}
+      /* إذا فشل تحميل الفيديو تبقى صورة الغلاف أو اسم الدعوة ظاهرين */
+    });
+
+    box.appendChild(video);
+
+    if(videoObserver)videoObserver.observe(video);
+    else{
+      video.preload="metadata";
+      video.src=url;
+      try{video.load()}catch{}
+    }
+
+  }else if(url){
     const img=document.createElement("img");
     img.className="poster";
     img.alt=eventName(item);
     img.loading="lazy";
     img.decoding="async";
     img.fetchPriority="low";
-    img.width=360;
-    img.height=480;
-    img.addEventListener("load",()=>{
-      const f=box.querySelector(".fallback");
-      if(f)f.style.display="none";
-    },{once:true});
+    img.addEventListener("load",()=>cover.remove(),{once:true});
     img.addEventListener("error",()=>{
       img.remove();
     },{once:true});
-    img.src=imageUrl;
+    img.src=url;
     box.appendChild(img);
   }
 
   return box;
 }
 
+function clearVideos(){
+  if(videoObserver)videoObserver.disconnect();
+
+  document.querySelectorAll("#cards video").forEach(video=>{
+    try{video.pause()}catch{}
+    video.removeAttribute("src");
+    video.removeAttribute("poster");
+    try{video.load()}catch{}
+  });
+
+  videoObserver=createVideoObserver();
+}
+
 function replaceCards(fragment){
+  clearVideos();
   $("cards").replaceChildren(fragment);
 }
 
@@ -340,6 +442,7 @@ function render(){
   if(!active){
     gallery.classList.remove("open");
     categories.style.display="";
+    clearVideos();
     cards.replaceChildren();
     return;
   }
@@ -567,12 +670,23 @@ $("refreshBtn").addEventListener("click",()=>{
   if(active==="gender")loadGender(true);
 });
 
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){
+    document.querySelectorAll("#cards video").forEach(v=>{
+      try{v.pause()}catch{}
+    });
+  }
+});
+
+window.addEventListener("pagehide",clearVideos);
+
 $("year").textContent=new Date().getFullYear();
 $("phoneText").href="tel:"+PHONE;
 $("callBtn").href="tel:"+PHONE;
 $("whatsappBtn").href="https://wa.me/"+WA;
 $("menuContact").href="https://wa.me/"+WA;
 
+videoObserver=createVideoObserver();
 applyLang("ar");
 loadCatalog();
 </script>
