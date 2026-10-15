@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -117,11 +118,11 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
  <div class="arch" id="arch" role="button" tabindex="0" aria-label="اضغط ثلاث مرات لفتح الدعوة">
   <div class="door" id="door"><div class="leaf left"></div><div class="leaf right"></div></div>
  </div>
- <video id="doorVideo" playsinline webkit-playsinline preload="auto" fetchpriority="high" muted></video>
+ <video id="doorVideo" playsinline webkit-playsinline preload="metadata" muted></video>
 </div>
 <button id="start" disabled>جارٍ التحقق من الدعوة...</button>
 <div class="hint" id="hint">يرجى الانتظار لحظة</div>
-<audio id="invitationAudio" loop preload="none" playsinline></audio>
+<audio id="invitationAudio" loop preload="auto" playsinline></audio>
 <button class="audio-control" id="audioControl" type="button">🔊 تشغيل الصوت</button>
 
 <section class="invite design-1" id="invite">
@@ -226,7 +227,7 @@ function setDoorImage(imageUrl){
   video.onloadeddata=null;
   video.onerror=null;
   video.onended=null;
-  video.preload="auto";
+  video.preload="metadata";
   video.muted=true;
   video.controls=false;
   video.loop=false;
@@ -234,8 +235,7 @@ function setDoorImage(imageUrl){
   video.playsInline=true;
   video.setAttribute("playsinline","");
   video.setAttribute("webkit-playsinline","");
-  video.setAttribute("preload","auto");
-  video.setAttribute("fetchpriority","high");
+  video.setAttribute("preload","metadata");
   video.style.display="block";
   video.src=url;
   video.load();
@@ -252,7 +252,7 @@ function setDoorImage(imageUrl){
    video.onloadeddata=()=>done(true);
    video.onerror=()=>{console.warn("تعذر تحميل فيديو الباب",video.error);done(false)};
    if(video.readyState>=2)done(true);
-   setTimeout(()=>{if(video.readyState>=1)done(true);else done(false)},12000);
+   setTimeout(()=>{if(video.readyState>=1)done(true);else done(false)},8000);
   });
   return true;
  }
@@ -290,7 +290,7 @@ function setDoorImage(imageUrl){
   image.src=url;
   if(image.complete&&image.naturalWidth)fitDoorImage();
   window.addEventListener("resize",fitDoorImage);
-  setTimeout(()=>done(false),12000);
+  setTimeout(()=>done(false),8000);
  });
  return true;
 }
@@ -322,7 +322,6 @@ async function loadTemplateDoor(templateId,eventType=currentEventType){
   const media=extractDoorImage(data);
   if(media)return setDoorImage(media);
 
-  // توافق مع القوالب القديمة التي لم تُحفظ لها مناسبة محددة.
   if(String(eventType||"wedding").toLowerCase()==="wedding"){
    const fallback=await db.from("template_doors").select("*").eq("template_id",id).maybeSingle();
    if(!fallback.error){
@@ -372,21 +371,30 @@ function configureAudio(type,url){
  selectedAudioType=String(type||"song").toLowerCase().trim();
  selectedAudioUrl=String(url||"").trim();
  const audio=$("invitationAudio"),button=$("audioControl");
- audio.pause();audio.removeAttribute("src");
+ audio.pause();
+ audio.removeAttribute("src");
  if(selectedAudioType==="none"){audio.load();button.classList.remove("show");return}
  const source=selectedAudioUrl||(selectedAudioType==="quran"?QURAN_URL:selectedAudioType==="song"?SONG_URL:"");
  if(!source){audio.load();button.classList.remove("show");return}
  try{if(!["https:","http:"].includes(new URL(source).protocol))throw Error()}
  catch(e){button.classList.remove("show");return}
- audio.src=source;
  audio.preload="auto";
+ audio.src=source;
  button.textContent="🔊 تشغيل الصوت";
  button.classList.add("show");
+ audio.load();
 }
 async function playInvitationAudio(){
  if(selectedAudioType==="none"||invitationExpired||!invitationCheckComplete)return;
- try{await $("invitationAudio").play();$("audioControl").textContent="🔇 إيقاف الصوت"}
- catch(e){$("audioControl").textContent="▶️ تشغيل الصوت";$("audioControl").classList.add("show")}
+ const audio=$("invitationAudio");
+ try{
+  const result=audio.play();
+  if(result&&typeof result.then==="function")await result;
+  $("audioControl").textContent="🔇 إيقاف الصوت";
+ }catch(e){
+  $("audioControl").textContent="▶️ تشغيل الصوت";
+  $("audioControl").classList.add("show");
+ }
 }
 $("audioControl").addEventListener("click",async()=>{
  if(invitationExpired||!invitationCheckComplete)return;
@@ -476,7 +484,10 @@ async function loadInvitation(){
  configureAudio("none","");
 
  try{
-  const {data:expiry,error:expiryError}=await db.rpc("is_invitation_expired",{p_slug:slug});
+  const expiryRequest=db.rpc("is_invitation_expired",{p_slug:slug});
+  const invitationRequest=db.rpc("get_invitation_by_slug",{p_slug:slug});
+  const [{data:expiry,error:expiryError},{data,error}]=await Promise.all([expiryRequest,invitationRequest]);
+
   if(expiryError){
    console.error("تعذر التحقق من صلاحية الدعوة:",expiryError);
    showErrorInvitation("تعذر التحقق من الدعوة","لم نتمكن من التحقق من هذه الدعوة. حدّث الصفحة وحاول مرة أخرى.");
@@ -484,7 +495,6 @@ async function loadInvitation(){
   }
   if(expiry===true){showExpiredInvitation();return}
 
-  const {data,error}=await db.rpc("get_invitation_by_slug",{p_slug:slug});
   if(error){
    console.error("تعذر تحميل الدعوة:",error);
    showErrorInvitation("الدعوة غير متاحة","تعذر العثور على هذه الدعوة أو أنها حُذفت. تأكد من الرابط وحاول مرة أخرى.");
@@ -545,7 +555,12 @@ async function loadInvitation(){
   const template=item.template_id||item.template||1;
   applyTemplate(template);
 
-  // بدء تحميل صورة أو فيديو الباب بأسرع وقت.
+  // تهيئة الصوت فور وصول بيانات الدعوة، من دون انتظار تحميل فيديو أو صورة الباب.
+  configureAudio(item.audio_type||"song",item.audio_url||"");
+  if(item.day_name)$("date").textContent+=" — "+item.day_name;
+  setupWhatsAppShare();
+
+  // تحميل وسائط الباب بالخلفية حتى لا يتأخر زر الفتح بسبب تحميل الفيديو.
   const direct=extractDoorImage(item);
   if(direct){
    setDoorImage(direct);
@@ -553,13 +568,9 @@ async function loadInvitation(){
    await loadTemplateDoor(template,currentEventType);
   }
 
-  // الحفاظ على جاهزية وسيلة فتح الباب قبل تفعيل الزر.
-  await doorMediaLoadPromise;
-
-  configureAudio(item.audio_type||"song",item.audio_url||"");
-  if(item.day_name)$("date").textContent+=" — "+item.day_name;
-  setupWhatsAppShare();
+  // لا ننتظر اكتمال تنزيل ملف الوسائط؛ الفيديو والصورة يواصلان التحميل بالخلفية.
   enableInvitation();
+  doorMediaLoadPromise.catch(e=>console.warn("تعذر تجهيز وسائط الباب",e));
  }catch(e){
   console.error("Invitation loading error:",e);
   showErrorInvitation("تعذر تحميل الدعوة","حدث خطأ أثناء التحقق من الدعوة. حاول تحديث الصفحة، وإذا استمرت المشكلة فتحقق من اتصال قاعدة البيانات.");
@@ -641,43 +652,31 @@ async function startDoorVideo(){
 
  const failPlayback=()=>{
   if(!doorVideoActive||openingFinished||finishedPlayback)return;
-
   finishedPlayback=true;
   cleanup();
   doorVideoActive=false;
   video.pause();
   video.style.display="none";
-
   $("start").disabled=false;
   $("start").textContent="تعذر تشغيل الفيديو — اضغط للمحاولة";
   $("hint").textContent="تحقق من اتصال الإنترنت ثم اضغط للمحاولة";
-
   openingStarted=false;
   knockCount=0;
   $("arch").classList.remove("knock");
  };
 
  async function tryPlayback(){
-  if(
-   !doorVideoActive||
-   openingFinished||
-   finishedPlayback||
-   playbackStarted
-  )return;
-
+  if(!doorVideoActive||openingFinished||finishedPlayback||playbackStarted)return;
   if(video.readyState<2)return;
 
   playbackStarted=true;
-
-  try{
-   video.currentTime=0;
-  }catch(e){}
+  if(playbackTimeout){clearTimeout(playbackTimeout);playbackTimeout=null}
+  try{video.currentTime=0}catch(e){}
 
   try{
    await video.play();
   }catch(firstError){
    if(!doorVideoActive||openingFinished)return;
-
    try{
     video.muted=true;
     await video.play();
@@ -690,7 +689,6 @@ async function startDoorVideo(){
 
  video.onended=()=>{
   if(!doorVideoActive||openingFinished||finishedPlayback)return;
-
   finishedPlayback=true;
   cleanup();
   doorVideoActive=false;
@@ -702,20 +700,13 @@ async function startDoorVideo(){
  video.addEventListener("canplay",tryPlayback);
  video.addEventListener("loadeddata",tryPlayback);
 
- // الفيديو محمّل مسبقاً من وقت اختيار الدعوة.
- // نتجنب إعادة video.load() حتى لا نعيد التحميل من الصفر.
  if(video.readyState>=2){
   tryPlayback();
  }else{
+  video.load();
   playbackTimeout=setTimeout(()=>{
-   if(
-    doorVideoActive&&
-    !openingFinished&&
-    !playbackStarted
-   ){
-    failPlayback();
-   }
-  },20000);
+   if(doorVideoActive&&!openingFinished&&!playbackStarted)failPlayback();
+  },10000);
  }
 }
 function finishOpening(){
@@ -741,8 +732,6 @@ function finishOpening(){
 }
 function handleKnock(){
  if(!invitationCheckComplete||invitationExpired)return;
-
- // إذا فشل تشغيل الفيديو، يسمح للمستخدم بإعادة المحاولة من جديد.
  if(openingStarted&&doorVideoActive)return;
  if(openingStarted&&!doorVideoActive&&!openingFinished){
   openingStarted=false;
@@ -775,7 +764,10 @@ function handleKnock(){
   $("start").disabled=true;
   $("start").textContent="الباب ينفتح...";
   $("hint").textContent="أهلاً وسهلاً بكم ❤️";
+
+  // يبدأ تشغيل الموسيقى مباشرة مع الضغطة الثالثة، بالتزامن مع فيديو الباب.
   playInvitationAudio();
+
   if(isVideoUrl(selectedDoorImageUrl)){
    startDoorVideo();
   }else{
