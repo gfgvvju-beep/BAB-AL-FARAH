@@ -49,14 +49,15 @@ h1,h2{font-family:Amiri,serif;color:var(--gl)}
 .gallery-top p{font-size:11px;color:var(--m);margin:3px 0}
 .tools{display:flex;gap:6px}
 .tools button{padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#111;color:var(--gl);font-size:11px;font-weight:700;cursor:pointer}
-.tools button:disabled{opacity:.55;cursor:wait}
 .tools .back{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;border-color:var(--g)}
 #cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;content-visibility:auto;contain-intrinsic-size:auto 900px}
 .card{min-width:0;padding:6px;background:#080808;border:1px solid #806522;border-radius:17px;overflow:hidden;contain:layout paint}
 .media{position:relative;width:100%;aspect-ratio:3/4;background:#17130a;border-radius:12px;overflow:hidden;isolation:isolate}
 .media:after{content:"";position:absolute;inset:8px;border:1px solid #d4af3780;border-radius:8px;z-index:4;pointer-events:none}
-.media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.media .poster{z-index:1}
+.media img,.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.media .poster{z-index:1;opacity:1}
+.media video{z-index:2;opacity:0;object-position:center;background:#17130a;pointer-events:none}
+.media video.ready{opacity:1}
 .media .poster.hidden{opacity:0}
 .chip{position:absolute;z-index:5;top:13px;right:13px;padding:5px 9px;background:#17130aeb;color:var(--gl);border:1px solid #8c6b1d;border-radius:20px;font-size:10px;max-width:calc(100% - 26px)}
 .fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:var(--gl);padding:15px;z-index:0}
@@ -166,82 +167,234 @@ en:{dir:"ltr",contact:"Message us",heroBadge:"Your celebration deserves a specia
 
 let lang="ar",invitations=[],genderCards=[],active=null;
 let catalogLoaded=false,genderLoaded=false,request=0,genderRequest=0;
-let toastTimer=null,mediaObserver=null;
-const imageCache=new Map();
-const mediaJobs=new WeakMap();
+let toastTimer=null;
+let videoObserver=null;
+
+/* ---------- تصحيح كشف نوع الوسائط ---------- */
 
 function validUrl(v){
+  if(typeof v==="object"&&v!==null){
+    v=v.url||v.publicUrl||v.public_url||v.href||v.src||v.path||"";
+  }
   try{
-    const u=new URL(String(v||""),location.href);
+    const u=new URL(String(v||"").trim(),location.href);
     return["https:","http:"].includes(u.protocol)?u.href:"";
   }catch{return""}
 }
 
-function itemUrls(item,keys){
-  const out=[];
-  for(const k of keys){
-    const value=item?.[k];
-    if(Array.isArray(value)){
-      for(const entry of value){
-        const u=validUrl(typeof entry==="string"?entry:entry?.url);
-        if(u&&!out.includes(u))out.push(u);
-      }
-    }else{
-      const u=validUrl(value);
-      if(u&&!out.includes(u))out.push(u);
-    }
+function mediaPath(url){
+  try{
+    const u=new URL(url,location.href);
+    let p=u.pathname||"";
+    try{p=decodeURIComponent(p)}catch{}
+    return p.toLowerCase().split("/").pop()||"";
+  }catch{
+    return String(url||"").split(/[?#]/)[0].split("/").pop().toLowerCase();
   }
-  return out;
 }
 
-function isVideo(url,item={}){
-  if(!url)return false;
-  try{
-    const path=new URL(url,location.href).pathname.toLowerCase();
-    if(/\.(mp4|webm|ogg|m4v|mov|m3u8)$/.test(path))return true;
-    if(/\.(jpg|jpeg|png|gif|webp|avif|bmp|svg)$/.test(path))return false;
-  }catch{}
+function fileExtension(url){
+  const name=mediaPath(url);
+  const match=name.match(/\.([a-z0-9]{2,8})$/i);
+  return match?match[1].toLowerCase():"";
+}
 
-  const types=[
-    item?.media_type,item?.mime_type,item?.content_type,
-    item?.file_type,item?.mediaType,item?.type
-  ].map(x=>String(x||"").toLowerCase().trim());
+const VIDEO_EXTENSIONS=new Set(["mp4","webm","m4v","mov","ogv","ogg","m3u8","mpd"]);
+const IMAGE_EXTENSIONS=new Set(["jpg","jpeg","png","gif","webp","avif","bmp","svg","jfif","heic","heif","tif","tiff"]);
 
-  if(types.some(t=>t==="video"||t==="mp4"||t==="webm"||t.startsWith("video/")))return true;
-  if(types.some(t=>t==="image"||t.startsWith("image/")))return false;
+function normalizeMediaType(value){
+  if(value===null||value===undefined)return"";
+  if(typeof value==="object"){
+    return normalizeMediaType(
+      value.mime_type||value.mimeType||value.content_type||value.contentType||
+      value.media_type||value.mediaType||value.file_type||value.type||
+      value.format||value.extension||value.name||""
+    );
+  }
+  return String(value).trim().toLowerCase().split(";")[0].replace(/\s+/g,"");
+}
+
+function mediaTypeHint(item){
+  const keys=[
+    "media_type","mime_type","content_type","file_type","mediaType",
+    "mimeType","contentType","format","extension","media_format",
+    "asset_type","resource_type","kind"
+  ];
+  const values=[];
+  for(const key of keys){
+    const value=item?.[key];
+    if(value!==undefined&&value!==null)values.push(normalizeMediaType(value));
+  }
+
+  /* لا نستخدم حقل type وحده إلا إذا كانت قيمته واضحة لنوع الملف */
+  const type=normalizeMediaType(item?.type);
+  if(type)values.push(type);
+
+  if(values.some(t=>t.startsWith("video/")||["video","mp4","webm","mov","m4v","ogv","m3u8"].includes(t)))return"video";
+  if(values.some(t=>t.startsWith("image/")||["image","jpg","jpeg","png","gif","webp","avif","bmp","svg","heic","heif"].includes(t)))return"image";
+  return"";
+}
+
+function isVideo(url,item={},fieldHint=""){
+  const u=validUrl(url);
+  if(!u)return false;
+
+  const ext=fileExtension(u);
+  if(VIDEO_EXTENSIONS.has(ext))return true;
+  if(IMAGE_EXTENSIONS.has(ext))return false;
+
+  const hint=String(fieldHint||"").toLowerCase();
+  if(/(^|[_-])(poster|thumbnail|thumb|preview_image|cover|image)([_-]|$)/.test(hint))return false;
+  if(/(^|[_-])(video|movie|clip)([_-]|$)/.test(hint))return true;
+
+  const mime=mediaTypeHint(item);
+  if(mime==="video")return true;
+  if(mime==="image")return false;
+
   return false;
 }
 
-function getMedia(item){
-  const videoKeys=[
-    "video_url","video_public_url","video_storage_url",
-    "media_url","public_url","storage_url","file_url",
-    "url","image_url","image"
-  ];
-  const imageKeys=[
-    "thumbnail_url","poster_url","preview_image_url",
-    "image_url","image","cover_url","thumbnail"
-  ];
+function isImageUrl(url,item={},fieldHint=""){
+  const u=validUrl(url);
+  if(!u)return false;
 
-  const candidates=itemUrls(item,videoKeys);
-  const video=candidates.find(u=>isVideo(u,{}))||
-    candidates.find(u=>isVideo(u,item))||"";
+  const ext=fileExtension(u);
+  if(IMAGE_EXTENSIONS.has(ext))return true;
+  if(VIDEO_EXTENSIONS.has(ext))return false;
 
-  const images=itemUrls(item,imageKeys);
-  const poster=images.find(u=>!isVideo(u,{}))||"";
+  const hint=String(fieldHint||"").toLowerCase();
+  if(/(^|[_-])(poster|thumbnail|thumb|preview_image|cover|image)([_-]|$)/.test(hint))return true;
+  if(/(^|[_-])(video|movie|clip)([_-]|$)/.test(hint))return false;
 
-  if(video)return{url:video,video:true,poster:poster&&poster!==video?poster:""};
-
-  const image=images.find(u=>!isVideo(u,{}))||
-    candidates.find(u=>!isVideo(u,{}))||
-    candidates.find(u=>!isVideo(u,item))||"";
-
-  if(image)return{url:image,video:false,poster:""};
-
-  const generic=itemUrls(item,["media","file"]);
-  const fallback=generic.find(u=>isVideo(u,{}))||generic[0]||"";
-  return{url:fallback,video:isVideo(fallback,item),poster:""};
+  return mediaTypeHint(item)==="image";
 }
+
+/* قراءة الروابط حتى إذا كانت مخزونة ككائن أو مصفوفة */
+function collectMediaEntries(item,keys){
+  const out=[];
+  const add=(value,key)=>{
+    if(value===undefined||value===null||value==="")return;
+
+    if(Array.isArray(value)){
+      for(const entry of value)add(entry,key);
+      return;
+    }
+
+    if(typeof value==="object"){
+      const nestedUrl=value.url||value.publicUrl||value.public_url||
+        value.href||value.src||value.path||value.signedUrl||value.signed_url;
+      if(nestedUrl){
+        const url=validUrl(nestedUrl);
+        if(url&&!out.some(x=>x.url===url)){
+          out.push({url,key:key,meta:{...item,...value}});
+        }
+      }
+      return;
+    }
+
+    const url=validUrl(value);
+    if(url&&!out.some(x=>x.url===url)){
+      out.push({url,key,meta:item});
+    }
+  };
+
+  for(const key of keys)add(item?.[key],key);
+  return out;
+}
+
+function getMedia(item){
+  if(!item||typeof item!=="object")return{url:"",video:false,poster:""};
+
+  const videoKeys=[
+    "video_url","video_public_url","video_storage_url","video_path",
+    "video","movie_url","clip_url","media_url","media_path",
+    "public_url","storage_url","file_url","file_path","asset_url",
+    "url","image_url","image","media","file"
+  ];
+
+  const imageKeys=[
+    "poster_url","thumbnail_url","thumbnail","thumb_url","cover_url",
+    "preview_image_url","preview_url","poster","cover","image_url",
+    "image","media_url","public_url","storage_url","file_url","url"
+  ];
+
+  const videoEntries=collectMediaEntries(item,videoKeys);
+  const imageEntries=collectMediaEntries(item,imageKeys);
+
+  /* أولوية الحقول المخصصة للفيديو، حتى لو لم يظهر الامتداد في الرابط */
+  const explicitVideoKeys=new Set([
+    "video_url","video_public_url","video_storage_url","video_path",
+    "video","movie_url","clip_url"
+  ]);
+
+  let videoEntry=videoEntries.find(e=>
+    explicitVideoKeys.has(e.key)&&!isImageUrl(e.url,e.meta,e.key)
+  );
+
+  if(!videoEntry){
+    videoEntry=videoEntries.find(e=>isVideo(e.url,e.meta,e.key));
+  }
+
+  if(!videoEntry){
+    const hint=mediaTypeHint(item);
+    if(hint==="video"){
+      videoEntry=videoEntries.find(e=>
+        !/^(poster|thumbnail|thumb|preview_image|cover|image)$/.test(e.key)
+      );
+    }
+  }
+
+  /* الصور المخصصة للغلاف لا تُعامل على أنها فيديو */
+  let posterEntry=imageEntries.find(e=>
+    ["poster_url","thumbnail_url","thumbnail","thumb_url","cover_url",
+     "preview_image_url","poster","cover"].includes(e.key)&&
+    !isVideo(e.url,e.meta,e.key)
+  );
+
+  if(videoEntry){
+    if(!posterEntry){
+      posterEntry=imageEntries.find(e=>
+        e.url!==videoEntry.url&&isImageUrl(e.url,e.meta,e.key)
+      );
+    }
+    return{
+      url:videoEntry.url,
+      video:true,
+      poster:posterEntry&&posterEntry.url!==videoEntry.url?posterEntry.url:""
+    };
+  }
+
+  let imageEntry=imageEntries.find(e=>isImageUrl(e.url,e.meta,e.key));
+
+  if(!imageEntry){
+    imageEntry=videoEntries.find(e=>isImageUrl(e.url,e.meta,e.key));
+  }
+
+  if(!imageEntry){
+    const type=mediaTypeHint(item);
+    if(type==="image"){
+      imageEntry=imageEntries[0]||videoEntries.find(e=>
+        !/^(video|movie|clip)/i.test(e.key)
+      );
+    }
+  }
+
+  if(imageEntry){
+    return{url:imageEntry.url,video:false,poster:""};
+  }
+
+  /* رابط عام بلا امتداد: لا نعتبره فيديو إلا بوجود دليل من الحقل أو MIME */
+  const generic=collectMediaEntries(item,["media","file","asset","source"]);
+  const genericVideo=generic.find(e=>isVideo(e.url,e.meta,e.key));
+  if(genericVideo)return{url:genericVideo.url,video:true,poster:""};
+
+  const genericImage=generic.find(e=>isImageUrl(e.url,e.meta,e.key));
+  if(genericImage)return{url:genericImage.url,video:false,poster:""};
+
+  return{url:"",video:false,poster:""};
+}
+
+/* ---------- بقية الكتالوج ---------- */
 
 function eventType(item){return EVENTS[item?.event_type]?item.event_type:"wedding"}
 function eventName(item){return item?.title||EVENTS[eventType(item)][lang]||EVENTS[eventType(item)].ar}
@@ -274,140 +427,26 @@ function fallback(item,isGender=false){
   return d;
 }
 
-/*
-   نشغّل فيديوهات المعاينة ولا ننزّل الفيديو كاملاً.
-  إذا وفّرت لوحة الإدارة صورة غلاف، نعرضها مباشرة.
-  إذا لم تتوفر صورة غلاف، نحاول استخراج لقطة ثابتة من بداية
-  الفيديو عند ظهور البطاقة فقط، ثم نوقف تحميل الفيديو ونزيله.
-*/
-function createMediaObserver(){
+function createVideoObserver(){
   if(!("IntersectionObserver"in window))return null;
 
   return new IntersectionObserver(entries=>{
     for(const entry of entries){
-      if(!entry.isIntersecting)continue;
-      const box=entry.target;
-      mediaObserver?.unobserve(box);
-      const job=mediaJobs.get(box);
-      if(job)job();
+      const video=entry.target;
+      if(!video.isConnected)continue;
+
+      if(entry.isIntersecting){
+        if(video.dataset.loaded!=="1"&&video.dataset.src){
+          video.dataset.loaded="1";
+          video.preload="metadata";
+          video.src=video.dataset.src;
+          try{video.load()}catch{}
+        }
+      }else{
+        try{video.pause()}catch{}
+      }
     }
-  },{rootMargin:"160px 0px",threshold:0.01});
-}
-
-function addImage(box,url,alt,cover){
-  const img=document.createElement("img");
-  img.className="poster";
-  img.alt=alt||"";
-  img.loading="lazy";
-  img.decoding="async";
-  img.fetchPriority="low";
-
-  img.addEventListener("load",()=>{
-    if(cover?.isConnected)cover.remove();
-  },{once:true});
-
-  img.addEventListener("error",()=>{
-    img.remove();
-  },{once:true});
-
-  img.src=url;
-  box.appendChild(img);
-  return img;
-}
-
-function extractVideoPoster(url,box,item,cover){
-  if(!url||!box.isConnected)return;
-
-  const cached=imageCache.get(url);
-  if(cached){
-    if(cached.startsWith("data:image/"))addImage(box,cached,eventName(item),cover);
-    return;
-  }
-
-  const video=document.createElement("video");
-  let finished=false;
-  let timer=null;
-
-  const cleanup=()=>{
-    if(finished)return;
-    finished=true;
-    clearTimeout(timer);
-    video.removeEventListener("loadedmetadata",onMetadata);
-    video.removeEventListener("seeked",onSeeked);
-    video.removeEventListener("error",onError);
-    try{video.pause()}catch{}
-    video.removeAttribute("src");
-    try{video.load()}catch{}
-    video.remove();
-  };
-
-  const onError=()=>{
-    imageCache.set(url,"unavailable");
-    cleanup();
-  };
-
-  const onSeeked=()=>{
-    if(finished||!box.isConnected)return;
-    try{
-      video.pause();
-      const w=video.videoWidth,h=video.videoHeight;
-      if(!w||!h)throw new Error("No video frame");
-
-      const canvas=document.createElement("canvas");
-      const scale=Math.min(1,480/w,640/h);
-      canvas.width=Math.max(1,Math.round(w*scale));
-      canvas.height=Math.max(1,Math.round(h*scale));
-
-      const ctx=canvas.getContext("2d",{alpha:false});
-      if(!ctx)throw new Error("Canvas unavailable");
-
-      ctx.drawImage(video,0,0,canvas.width,canvas.height);
-      const poster=canvas.toDataURL("image/jpeg",0.78);
-      imageCache.set(url,poster);
-      addImage(box,poster,eventName(item),cover);
-      cleanup();
-    }catch(e){
-      console.warn("Invitation preview frame unavailable:",e);
-      imageCache.set(url,"unavailable");
-      cleanup();
-    }
-  };
-
-  const onMetadata=()=>{
-    if(finished)return;
-    try{
-      video.currentTime=Math.min(0.15,Math.max(0,video.duration||0));
-    }catch{
-      onError();
-    }
-  };
-
-  video.muted=true;
-  video.defaultMuted=true;
-  video.autoplay=false;
-  video.controls=false;
-  video.playsInline=true;
-  video.preload="auto";
-  video.setAttribute("muted","");
-  video.setAttribute("playsinline","");
-  video.setAttribute("webkit-playsinline","");
-  video.setAttribute("aria-hidden","true");
-
-  /* يسمح بالتقاط الصورة إذا كان خادم التخزين يدعم CORS */
-  video.crossOrigin="anonymous";
-  video.addEventListener("loadedmetadata",onMetadata);
-  video.addEventListener("seeked",onSeeked);
-  video.addEventListener("error",onError);
-
-  timer=setTimeout(()=>{
-    if(!finished){
-      imageCache.set(url,"unavailable");
-      cleanup();
-    }
-  },9000);
-
-  video.src=url;
-  try{video.load()}catch{onError()}
+  },{rootMargin:"100px 0px",threshold:0.01});
 }
 
 function makeMedia(item,isGender=false){
@@ -424,35 +463,96 @@ function makeMedia(item,isGender=false){
   chip.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];
   box.appendChild(chip);
 
+  let poster=null;
+
   if(media.poster){
-    addImage(box,media.poster,eventName(item),cover);
-  }else if(url&&!media.video){
-    addImage(box,url,eventName(item),cover);
-  }else if(url&&media.video){
-    const job=()=>{
-      if(!box.isConnected)return;
-      const cached=imageCache.get(url);
-      if(cached){
-        if(cached.startsWith("data:image/"))addImage(box,cached,eventName(item),cover);
-        return;
-      }
-      extractVideoPoster(url,box,item,cover);
-    };
-    mediaJobs.set(box,job);
-    if(mediaObserver)mediaObserver.observe(box);
-    else job();
+    poster=document.createElement("img");
+    poster.className="poster";
+    poster.alt="";
+    poster.loading="lazy";
+    poster.decoding="async";
+    poster.addEventListener("load",()=>cover.remove(),{once:true});
+    poster.addEventListener("error",()=>{
+      poster.remove();
+      poster=null;
+    },{once:true});
+    poster.src=media.poster;
+    box.appendChild(poster);
+  }
+
+  if(url&&media.video){
+    const video=document.createElement("video");
+    video.className="invitation-video";
+    video.muted=true;
+    video.defaultMuted=true;
+    video.autoplay=false;
+    video.loop=false;
+    video.controls=false;
+    video.playsInline=true;
+    video.preload="none";
+    video.disablePictureInPicture=true;
+    video.setAttribute("muted","");
+    video.setAttribute("playsinline","");
+    video.setAttribute("webkit-playsinline","");
+    video.setAttribute("aria-label",eventName(item));
+    video.setAttribute("tabindex","-1");
+    video.dataset.src=url;
+    video.dataset.loaded="0";
+
+    if(media.poster)video.poster=media.poster;
+
+    video.addEventListener("loadeddata",()=>{
+      try{video.pause()}catch{}
+      video.classList.add("ready");
+      if(poster)poster.classList.add("hidden");
+      cover.remove();
+    });
+
+    video.addEventListener("play",()=>{try{video.pause()}catch{}});
+    video.addEventListener("error",()=>{
+      video.classList.remove("ready");
+      try{video.pause()}catch{}
+    });
+
+    box.appendChild(video);
+
+    if(videoObserver)videoObserver.observe(video);
+    else{
+      video.preload="metadata";
+      video.src=url;
+      try{video.load()}catch{}
+    }
+
+  }else if(url){
+    const img=document.createElement("img");
+    img.className="poster";
+    img.alt=eventName(item);
+    img.loading="lazy";
+    img.decoding="async";
+    img.addEventListener("load",()=>cover.remove(),{once:true});
+    img.addEventListener("error",()=>img.remove(),{once:true});
+    img.src=url;
+    box.appendChild(img);
   }
 
   return box;
 }
 
-function clearMediaObservers(){
-  if(mediaObserver)mediaObserver.disconnect();
-  mediaObserver=createMediaObserver();
+function clearVideos(){
+  if(videoObserver)videoObserver.disconnect();
+
+  document.querySelectorAll("#cards video").forEach(video=>{
+    try{video.pause()}catch{}
+    video.removeAttribute("src");
+    video.removeAttribute("poster");
+    try{video.load()}catch{}
+  });
+
+  videoObserver=createVideoObserver();
 }
 
 function replaceCards(fragment){
-  clearMediaObservers();
+  clearVideos();
   $("cards").replaceChildren(fragment);
 }
 
@@ -466,12 +566,13 @@ function messageBox(title,sub=""){
 function render(){
   const gallery=$("gallery");
   const categories=$("categoriesSection");
+  const cards=$("cards");
 
   if(!active){
     gallery.classList.remove("open");
     categories.style.display="";
-    clearMediaObservers();
-    $("cards").replaceChildren();
+    clearVideos();
+    cards.replaceChildren();
     return;
   }
 
@@ -673,7 +774,7 @@ function choose(key){
   if(key==="gender"&&!genderLoaded)loadGender();
   if(key!=="gender"&&!catalogLoaded)loadCatalog();
 
-  $("gallery").scrollIntoView({behavior:"auto",block:"start"});
+  $("gallery").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 document.querySelectorAll("[data-category]").forEach(b=>{
@@ -688,23 +789,25 @@ $("backBtn").addEventListener("click",()=>{
   active=null;
   document.querySelectorAll("[data-category]").forEach(b=>b.classList.remove("active"));
   render();
-  $("categoriesSection").scrollIntoView({behavior:"auto",block:"start"});
+  $("categoriesSection").scrollIntoView({behavior:"smooth",block:"start"});
 });
 
 $("refreshBtn").addEventListener("click",()=>{
   catalogLoaded=false;
   genderLoaded=false;
-  imageCache.clear();
   loadCatalog(true);
   if(active==="gender")loadGender(true);
 });
 
 document.addEventListener("visibilitychange",()=>{
-  if(document.hidden)clearMediaObservers();
-  else if(active)render();
+  if(document.hidden){
+    document.querySelectorAll("#cards video").forEach(v=>{
+      try{v.pause()}catch{}
+    });
+  }
 });
 
-window.addEventListener("pagehide",clearMediaObservers);
+window.addEventListener("pagehide",clearVideos);
 
 $("year").textContent=new Date().getFullYear();
 $("phoneText").href="tel:"+PHONE;
@@ -712,10 +815,8 @@ $("callBtn").href="tel:"+PHONE;
 $("whatsappBtn").href="https://wa.me/"+WA;
 $("menuContact").href="https://wa.me/"+WA;
 
-mediaObserver=createMediaObserver();
+videoObserver=createVideoObserver();
 applyLang("ar");
-
-/* تحميل قائمة الدعوات في الخلفية؛ بطاقات المعاينة لا تشغّل الفيديو تلقائياً */
 loadCatalog();
 </script>
 </body>
