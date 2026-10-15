@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,8 +7,9 @@
 <meta name="theme-color" content="#080808">
 <meta name="description" content="باب الفرح — دعوات إلكترونية تفاعلية واختبار جنس الجنين">
 <title>باب الفرح | اختاروا فرحتكم</title>
-<link rel="preconnect" href="https://gnsnbretccdlwpmimuap.supabase.co">
+<link rel="preconnect" href="https://gnsnbretccdlwpmimuap.supabase.co" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -49,15 +51,16 @@ h1,h2{font-family:Amiri,serif;color:var(--gl)}
 .tools{display:flex;gap:6px}
 .tools button{padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#111;color:var(--gl);font-size:11px;font-weight:700;cursor:pointer}
 .tools .back{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;border-color:var(--g)}
-#cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
-.card{min-width:0;padding:6px;background:#080808;border:1px solid #806522;border-radius:17px;overflow:hidden}
+#cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;content-visibility:auto;contain-intrinsic-size:auto 900px}
+.card{min-width:0;padding:6px;background:#080808;border:1px solid #806522;border-radius:17px;overflow:hidden;contain:layout paint}
 .media{position:relative;width:100%;aspect-ratio:3/4;background:#17130a;border-radius:12px;overflow:hidden;isolation:isolate}
-.media:after{content:"";position:absolute;inset:8px;border:1px solid #d4af3780;border-radius:8px;z-index:3;pointer-events:none}
+.media:after{content:"";position:absolute;inset:8px;border:1px solid #d4af3780;border-radius:8px;z-index:4;pointer-events:none}
 .media img,.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.media img{z-index:1}
-.media video{z-index:2;opacity:0;transition:opacity .15s}
+.media .poster{z-index:1;opacity:1;transition:opacity .2s}
+.media video{z-index:2;opacity:0;transition:opacity .2s;object-position:center}
 .media video.ready{opacity:1}
-.chip{position:absolute;z-index:4;top:13px;right:13px;padding:5px 9px;background:#17130aeb;color:var(--gl);border:1px solid #8c6b1d;border-radius:20px;font-size:10px;max-width:calc(100% - 26px)}
+.media .poster.hidden{opacity:0}
+.chip{position:absolute;z-index:5;top:13px;right:13px;padding:5px 9px;background:#17130aeb;color:var(--gl);border:1px solid #8c6b1d;border-radius:20px;font-size:10px;max-width:calc(100% - 26px)}
 .fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:var(--gl);padding:15px;z-index:0}
 .fallback span{font-size:40px}.fallback strong{font:700 23px Amiri,serif}.fallback small{font-size:10px;color:#d9c78e}
 .card-body{padding:8px 1px 1px}
@@ -77,7 +80,7 @@ h1,h2{font-family:Amiri,serif;color:var(--gl)}
 .wa{background:#168653;color:white}
 footer{text-align:center;padding:20px 0 25px;border-top:1px solid #302714;color:#a79b78;font-size:11px;line-height:2}
 footer strong{display:block;color:var(--gl);font:700 20px Amiri,serif}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 16px;background:var(--g);color:#080808;border-radius:10px;display:none;z-index:20}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 16px;background:var(--g);color:#080808;border-radius:10px;display:none;z-index:20;max-width:calc(100% - 30px);text-align:center}
 .toast.show{display:block}
 html[dir=ltr] .category{text-align:left}
 html[dir=ltr] .arrow{margin-left:auto;margin-right:0}
@@ -139,10 +142,14 @@ html[dir=ltr] .chip{right:auto;left:13px}
 
 <script>
 "use strict";
+
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
-const PHONE="07867430232",WA="9647867430232", $=id=>document.getElementById(id);
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+  auth:{persistSession:false,autoRefreshToken:false},
+  global:{headers:{"X-Client-Info":"bab-alfarah-catalog"}}
+});
+const PHONE="07867430232",WA="9647867430232",$=id=>document.getElementById(id);
 
 const EVENTS={
 wedding:{icon:"💍",ar:"دعوة زفاف",ku:"بانگهێشتنامەی هاوسەرگیری",en:"Wedding invitation"},
@@ -152,151 +159,606 @@ circumcision:{icon:"🌙",ar:"دعوة مناسبة الختان",ku:"بانگه
 graduation:{icon:"🎓",ar:"دعوة حفلة التخرج",ku:"بانگهێشتنامەی دەرچوون",en:"Graduation invitation"},
 birthday:{icon:"🎂",ar:"دعوة عيد ميلاد",ku:"بانگهێشتنامەی لەدایکبوون",en:"Birthday invitation"}
 };
+
 const LANG={
 ar:{dir:"rtl",contact:"مراسلتنا",heroBadge:"فرحتكم تستاهل دعوة مميزة",heroTitle:"كل فرحة إلها باب… وإحنا نفتحلكم أحلى البدايات",heroText:"اختاروا مناسبتكم، تصفّحوا الدعوات المنشورة، وشوفوا تصميم الباب قبل ما تتواصلون ويانا لتجهيز دعوتكم الخاصة.",categoriesTitle:"اختاروا نوع الفرحة",categoriesHint:"اضغط على المناسبة حتى تشوف الدعوات الخاصة بيها",loading:"جارٍ تحميل الدعوات المنشورة…",refresh:"↻ تحديث",refreshing:"جارٍ التحديث…",back:"↩ رجوع للمناسبات",subtitle:"اختاروا التصميم اللي يعجبكم",empty:"ماكو دعوات منشورة بهذا القسم حالياً",emptyText:"تابعونا، راح نضيف تصاميم جديدة قريباً.",error:"تعذر تحميل الدعوات حالياً",preview:"♡ معاينة الدعوة",order:"طلب عبر واتساب",genderTitle:"اختبار جنس الجنين",genderSubtitle:"اختاروا البطاقة وابدؤوا الاختبار",genderStart:"🩷 ابدأ الاختبار",genderContact:"إرسال الاختبار عبر واتساب",genderEmpty:"ماكو بطاقات اختبار منشورة حالياً",aboutTitle:"باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة",aboutText:"نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.",contactTitle:"تفاصيلنا والتواصل ويانا",contactText:"عندك استفسار أو تريد تصمم دعوتك الخاصة؟ إحنا بالخدمة بكل حب.",call:"☎ اتصل بنا",whatsapp:"◉ تواصل واتساب",footer:"نصنع لحظاتكم الجميلة بكل حب",rights:"جميع الحقوق محفوظة",message:"السلام عليكم، أريد الاستفسار عن دعوات باب الفرح ❤️"},
 ku:{dir:"rtl",contact:"پەیوەندیمان پێوە بکە",heroBadge:"شادییەکەتان بانگهێشتنامەیەکی تایبەتی دەوێت",heroTitle:"هەر شادییەک دەرگایەکی هەیە…",heroText:"بۆنەکەتان هەڵبژێرن و بانگهێشتنامەکان ببینن.",categoriesTitle:"جۆری شادییەکەتان هەڵبژێرن",categoriesHint:"بۆ بینینی بانگهێشتنامەکان کرتە بکەن",loading:"بانگهێشتنامەکان بار دەکرێن…",refresh:"↻ نوێکردنەوە",refreshing:"نوێ دەکرێتەوە…",back:"↩ گەڕانەوە",subtitle:"دیزاینێک هەڵبژێرن",empty:"لە ئێستادا بانگهێشتنامە نییە",emptyText:"بەم زووانە دیزاینی نوێ زیاد دەکەین.",error:"بارکردن سەرکەوتوو نەبوو",preview:"♡ پیشاندانی بانگهێشتنامە",order:"داوا لە واتساپ",genderTitle:"تاقیکردنەوەی ڕەگەزی منداڵ",genderSubtitle:"کارتەکە هەڵبژێرن",genderStart:"🩷 دەستپێکردن",genderContact:"ناردن بە واتساپ",genderEmpty:"کارت نییە",aboutTitle:"دەرگای شادی… یادگارییە جوانەکان",aboutText:"بانگهێشتنامەی ئەلیکترۆنی بۆ بۆنە خۆشەکان ئامادە دەکەین.",contactTitle:"پەیوەندیمان",contactText:"بە خۆشحاڵی لە خزمەتداین.",call:"☎ پەیوەندی",whatsapp:"◉ واتساپ",footer:"بە خۆشەویستی",rights:"هەموو مافەکان پارێزراون",message:"سڵاو، دەمەوێت دەربارەی بانگهێشتنامەکان بپرسم ❤️"},
 en:{dir:"ltr",contact:"Message us",heroBadge:"Your celebration deserves a special invitation",heroTitle:"Every celebration has a door…",heroText:"Choose your occasion, browse invitations, and preview the designs.",categoriesTitle:"Choose your occasion",categoriesHint:"Select an occasion to see invitations",loading:"Loading invitations…",refresh:"↻ Refresh",refreshing:"Refreshing…",back:"↩ Back to occasions",subtitle:"Choose your favourite design",empty:"No published invitations in this category yet",emptyText:"New designs coming soon.",error:"Could not load invitations",preview:"♡ Preview invitation",order:"Order via WhatsApp",genderTitle:"Baby Gender Reveal",genderSubtitle:"Choose a card and start",genderStart:"🩷 Start reveal",genderContact:"Contact via WhatsApp",genderEmpty:"No published reveal cards yet",aboutTitle:"Bab Al Farah… small details make big memories",aboutText:"We create interactive digital invitations for your special occasions.",contactTitle:"Contact us",contactText:"Have a question or want a custom invitation? We are happy to help.",call:"☎ Call us",whatsapp:"◉ WhatsApp us",footer:"Creating beautiful moments with love",rights:"All rights reserved",message:"Hello, I would like to ask about Bab Al Farah invitations ❤️"}
 };
 
-let lang="ar",invitations=[],genderCards=[],active=null,catalogLoaded=false,genderLoaded=false,request=0,genderRequest=0;
+let lang="ar",invitations=[],genderCards=[],active=null;
+let catalogLoaded=false,genderLoaded=false,request=0,genderRequest=0;
 let activeVideo=null,toastTimer=null;
-const videoObserver=("IntersectionObserver"in window)?new IntersectionObserver(entries=>{
-for(const e of entries){
-const v=e.target;
-if(!v.isConnected)continue;
-if(e.isIntersecting&&e.intersectionRatio>.05)activateVideo(v);
-else if(activeVideo===v){pauseVideo(v);activeVideo=null;}
-}
-},{rootMargin:"100px 0px",threshold:.05}):null;
+const videoStates=new WeakMap();
 
-function validUrl(v){try{const u=new URL(String(v||""));return["https:","http:"].includes(u.protocol)?u.href:""}catch{return""}}
-function mediaUrl(item){for(const k of ["image_url","media_url","video_url","public_url","storage_url","file_url","url","image"]){const u=validUrl(item?.[k]);if(u)return u}return""}
-function isVideo(url,item){let path="";try{path=new URL(url).pathname.toLowerCase()}catch{}const type=String(item?.media_type||item?.mime_type||item?.content_type||"").toLowerCase();return /\.(mp4|webm|ogg|m4v|mov)$/.test(path)||type.startsWith("video/")}
+function validUrl(v){
+  try{
+    const u=new URL(String(v||""),location.href);
+    return["https:","http:"].includes(u.protocol)?u.href:"";
+  }catch{return""}
+}
+
+function itemUrls(item,keys){
+  const out=[];
+  for(const k of keys){
+    const value=item?.[k];
+    if(Array.isArray(value)){
+      for(const entry of value){
+        const u=validUrl(typeof entry==="string"?entry:entry?.url);
+        if(u&&!out.includes(u))out.push(u);
+      }
+    }else{
+      const u=validUrl(value);
+      if(u&&!out.includes(u))out.push(u);
+    }
+  }
+  return out;
+}
+
+function isVideo(url,item={}){
+  if(!url)return false;
+  const type=String(item?.media_type||item?.mime_type||item?.content_type||item?.file_type||"").toLowerCase().trim();
+  if(type.startsWith("video/"))return true;
+  if(type.startsWith("image/"))return false;
+  try{
+    const path=new URL(url).pathname.toLowerCase();
+    return /\.(mp4|webm|ogg|m4v|mov|m3u8)$/.test(path);
+  }catch{return false}
+}
+
+/* اختَر رابط الفيديو الفعلي أولاً، ولا تجعل صورة المعاينة تمنع ظهوره */
+function getMedia(item){
+  const videoKeys=["video_url","video_public_url","video_storage_url","media_url","public_url","storage_url","file_url","url","image_url","image"];
+  const imageKeys=["thumbnail_url","poster_url","preview_image_url","image_url","image","cover_url","thumbnail"];
+  const videoCandidates=itemUrls(item,videoKeys);
+  const video=videoCandidates.find(u=>isVideo(u,item))||"";
+  const imageCandidates=itemUrls(item,imageKeys);
+  const poster=imageCandidates.find(u=>!isVideo(u,{}))||"";
+  if(video)return{url:video,video:true,poster:poster&&poster!==video?poster:""};
+  const image=imageCandidates.find(u=>!isVideo(u,item))||videoCandidates.find(u=>!isVideo(u,item))||"";
+  if(image)return{url:image,video:false,poster:""};
+  const generic=itemUrls(item,["media","file"]);
+  const fallback=generic[0]||"";
+  return{url:fallback,video:isVideo(fallback,item),poster:""};
+}
+
+function mediaUrl(item){return getMedia(item).url}
 function eventType(item){return EVENTS[item?.event_type]?item.event_type:"wedding"}
 function eventName(item){return item?.title||EVENTS[eventType(item)][lang]||EVENTS[eventType(item)].ar}
 function inviteUrl(item){return validUrl(item.invitation_url)||"#"}
-function genderUrl(item){if(!item.public_token)return"#";return new URL("gender-reveal.html",location.href).href+"?token="+encodeURIComponent(item.public_token)}
-function waUrl(item,isGender=false){const url=isGender?genderUrl(item):inviteUrl(item);const title=eventName(item);return"https://wa.me/"+WA+"?text="+encodeURIComponent(LANG[lang].message+"\n"+title+"\n"+url)}
-function toast(s){$("toast").textContent=s;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2600)}
-function pauseVideo(v){try{v.pause()}catch{}}
-function visible(v){const r=v.getBoundingClientRect();return !document.hidden&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth}
+function genderUrl(item){
+  if(!item.public_token)return"#";
+  return new URL("gender-reveal.html",location.href).href+"?token="+encodeURIComponent(item.public_token);
+}
+function waUrl(item,isGender=false){
+  const url=isGender?genderUrl(item):inviteUrl(item);
+  const title=eventName(item);
+  return"https://wa.me/"+WA+"?text="+encodeURIComponent(LANG[lang].message+"\n"+title+"\n"+url);
+}
+function toast(s){
+  $("toast").textContent=s;
+  $("toast").classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2600);
+}
+function pauseVideo(v){
+  try{v.pause()}catch{}
+}
+function visible(v){
+  if(document.hidden||!v?.isConnected)return false;
+  const r=v.getBoundingClientRect();
+  return r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth;
+}
+function nearViewport(v){
+  if(document.hidden||!v?.isConnected)return false;
+  const r=v.getBoundingClientRect();
+  return r.bottom>-350&&r.top<innerHeight+350&&r.right>0&&r.left<innerWidth;
+}
+
+/* تحميل الفيديو عند اقترابه من الشاشة، وتشغيل فيديو واحد فقط */
+function prepareVideo(v){
+  if(!v?.isConnected||v.dataset.failed==="1")return;
+  if(v.dataset.loaded==="1")return;
+  const src=v.dataset.src;
+  if(!src)return;
+  v.dataset.loaded="1";
+  v.src=src;
+  try{v.load()}catch{}
+}
+
 function activateVideo(v){
-if(!v?.isConnected||!visible(v))return;
-document.querySelectorAll("#cards video").forEach(other=>{if(other!==v)pauseVideo(other)});
-activeVideo=v;
-if(!v.src){v.src=v.dataset.src;v.load()}
-if(v.readyState>=2)playVideo(v);
+  if(!v?.isConnected||!nearViewport(v))return;
+  prepareVideo(v);
+  if(!visible(v))return;
+
+  document.querySelectorAll("#cards video").forEach(other=>{
+    if(other!==v){
+      pauseVideo(other);
+      if(other===activeVideo)activeVideo=null;
+    }
+  });
+
+  activeVideo=v;
+  if(v.readyState>=2)playVideo(v);
 }
+
 function playVideo(v){
-if(v!==activeVideo||!visible(v)||document.hidden)return;
-v.play().then(()=>v.classList.add("ready")).catch(()=>{if(v.readyState<2)v.classList.remove("ready")});
+  if(v!==activeVideo||!visible(v)||document.hidden||v.dataset.failed==="1")return;
+  const p=v.play();
+  if(p&&typeof p.then==="function"){
+    p.then(()=>{
+      if(v===activeVideo&&visible(v))v.classList.add("ready");
+    }).catch(()=>{
+      if(v!==activeVideo)return;
+      if(v.readyState<2)v.classList.remove("ready");
+    });
+  }
 }
+
+const videoObserver=("IntersectionObserver"in window)?new IntersectionObserver(entries=>{
+  for(const e of entries){
+    const v=e.target;
+    if(!v.isConnected)continue;
+    if(e.isIntersecting){
+      prepareVideo(v);
+      if(visible(v))activateVideo(v);
+    }else if(v===activeVideo){
+      pauseVideo(v);
+      activeVideo=null;
+    }
+  }
+},{rootMargin:"300px 0px",threshold:0.01}):null;
+
 function fallback(item,isGender=false){
-const d=document.createElement("div");d.className="fallback";
-const icon=document.createElement("span");icon.textContent=isGender?"🩷":(EVENTS[eventType(item)]?.icon||"♡");
-const title=document.createElement("strong");title.textContent=item.title||"باب الفرح";
-const small=document.createElement("small");small.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];
-d.append(icon,title,small);return d;
+  const d=document.createElement("div");
+  d.className="fallback";
+  const icon=document.createElement("span");
+  icon.textContent=isGender?"🩷":(EVENTS[eventType(item)]?.icon||"♡");
+  const title=document.createElement("strong");
+  title.textContent=item.title||"باب الفرح";
+  const small=document.createElement("small");
+  small.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];
+  d.append(icon,title,small);
+  return d;
 }
+
 function makeMedia(item,isGender=false){
-const box=document.createElement("div");box.className="media";
-const chip=document.createElement("span");chip.className="chip";chip.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];box.appendChild(chip);
-const url=mediaUrl(item);
-box.appendChild(fallback(item,isGender));
-if(url&&isVideo(url,item)){
-const v=document.createElement("video");
-v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;v.autoplay=false;v.preload="none";
-v.setAttribute("muted","");v.setAttribute("playsinline","");v.setAttribute("webkit-playsinline","");
-v.setAttribute("aria-label",eventName(item));v.dataset.src=url;
-v.addEventListener("loadeddata",()=>{v.classList.add("ready");if(v===activeVideo)playVideo(v)},{once:true});
-v.addEventListener("canplay",()=>{if(v===activeVideo)playVideo(v)});
-v.addEventListener("playing",()=>v.classList.add("ready"));
-v.addEventListener("waiting",()=>{if(v.readyState<2)v.classList.remove("ready")});
-v.addEventListener("error",()=>{if(videoObserver)videoObserver.unobserve(v);if(activeVideo===v)activeVideo=null;pauseVideo(v);v.remove()},{once:true});
-box.appendChild(v);
-if(videoObserver)videoObserver.observe(v);else activateVideo(v);
-}else if(url){
-const img=document.createElement("img");
-img.alt=eventName(item);img.loading="lazy";img.decoding="async";
-img.addEventListener("error",()=>img.remove(),{once:true});
-img.src=url;box.appendChild(img);
+  const box=document.createElement("div");
+  box.className="media";
+
+  const chip=document.createElement("span");
+  chip.className="chip";
+  chip.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];
+  box.appendChild(fallback(item,isGender));
+  box.appendChild(chip);
+
+  const media=getMedia(item);
+  const url=media.url;
+  let poster=null;
+
+  /* صورة المعاينة تبقى خلف الفيديو حتى لا تظهر مساحة سوداء */
+  if(media.poster){
+    poster=document.createElement("img");
+    poster.className="poster";
+    poster.alt="";
+    poster.loading="lazy";
+    poster.decoding="async";
+    poster.fetchPriority="low";
+    poster.addEventListener("error",()=>{
+      poster.remove();
+      poster=null;
+    },{once:true});
+    poster.src=media.poster;
+    box.appendChild(poster);
+  }
+
+  if(url&&media.video){
+    const v=document.createElement("video");
+    v.className="invitation-video";
+    v.muted=true;
+    v.defaultMuted=true;
+    v.loop=true;
+    v.playsInline=true;
+    v.autoplay=false;
+    v.preload="none";
+    v.controls=false;
+    v.disablePictureInPicture=true;
+    v.setAttribute("muted","");
+    v.setAttribute("playsinline","");
+    v.setAttribute("webkit-playsinline","");
+    v.setAttribute("aria-label",eventName(item));
+    v.dataset.src=url;
+    v.dataset.loaded="0";
+    v.dataset.failed="0";
+
+    if(poster) v.poster=media.poster;
+
+    v.addEventListener("loadeddata",()=>{
+      if(v.readyState>=2){
+        if(v===activeVideo&&visible(v))playVideo(v);
+      }
+    });
+
+    v.addEventListener("canplay",()=>{
+      if(v===activeVideo&&visible(v))playVideo(v);
+    });
+
+    v.addEventListener("playing",()=>{
+      v.classList.add("ready");
+      if(poster)poster.classList.add("hidden");
+    });
+
+    v.addEventListener("waiting",()=>{
+      /* احتفظ بالإطار السابق وصورة المعاينة أثناء التخزين المؤقت */
+      if(v.readyState===0)v.classList.remove("ready");
+    });
+
+    v.addEventListener("stalled",()=>{
+      /* لا نحذف الفيديو بسبب توقف الشبكة المؤقت */
+    });
+
+    v.addEventListener("error",()=>{
+      if(v.dataset.failed==="1")return;
+
+      /* محاولة تحميل ثانية قبل عرض الصورة الاحتياطية */
+      if(v.dataset.retry!=="1"){
+        v.dataset.retry="1";
+        v.dataset.loaded="0";
+        v.removeAttribute("src");
+        try{v.load()}catch{}
+        if(nearViewport(v))prepareVideo(v);
+        return;
+      }
+
+      v.dataset.failed="1";
+      v.classList.remove("ready");
+      if(videoObserver)videoObserver.unobserve(v);
+      pauseVideo(v);
+      if(activeVideo===v)activeVideo=null;
+      v.removeAttribute("src");
+      try{v.load()}catch{}
+      v.remove();
+    });
+
+    box.appendChild(v);
+    if(videoObserver)videoObserver.observe(v);
+    else if(nearViewport(v))activateVideo(v);
+
+  }else if(url){
+    const img=document.createElement("img");
+    img.className="poster";
+    img.alt=eventName(item);
+    img.loading="lazy";
+    img.decoding="async";
+    img.fetchPriority="low";
+
+    img.addEventListener("load",()=>{
+      if(typeof img.decode==="function"){
+        img.decode().catch(()=>{});
+      }
+    });
+
+    img.addEventListener("error",()=>{
+      img.remove();
+    },{once:true});
+
+    img.src=url;
+    box.appendChild(img);
+  }
+
+  return box;
 }
-return box;
+
+function clearVideos(){
+  document.querySelectorAll("#cards video").forEach(v=>{
+    if(videoObserver)videoObserver.unobserve(v);
+    pauseVideo(v);
+    v.removeAttribute("src");
+    v.removeAttribute("poster");
+    try{v.load()}catch{}
+  });
+  activeVideo=null;
 }
-function clearVideos(){document.querySelectorAll("#cards video").forEach(v=>{if(videoObserver)videoObserver.unobserve(v);pauseVideo(v);v.removeAttribute("src");try{v.load()}catch{}});activeVideo=null}
-function replaceCards(fragment){clearVideos();$("cards").replaceChildren(fragment)}
-function messageBox(title,sub=""){const d=document.createElement("div");d.className="message";d.textContent=title+(sub?" — "+sub:"");return d}
+
+function replaceCards(fragment){
+  clearVideos();
+  $("cards").replaceChildren(fragment);
+}
+
+function messageBox(title,sub=""){
+  const d=document.createElement("div");
+  d.className="message";
+  d.textContent=title+(sub?" — "+sub:"");
+  return d;
+}
+
 function render(){
-const gallery=$("gallery"),categories=$("categoriesSection"),cards=$("cards");
-if(!active){gallery.classList.remove("open");categories.style.display="";clearVideos();cards.replaceChildren();return}
-categories.style.display="none";gallery.classList.add("open");
-const isGender=active==="gender",items=isGender?genderCards:invitations.filter(x=>eventType(x)===active),t=LANG[lang];
-$("galleryTitle").textContent=isGender?t.genderTitle:EVENTS[active][lang];
-$("gallerySubtitle").textContent=(isGender?t.genderSubtitle:t.subtitle)+" · "+items.length;
-const f=document.createDocumentFragment();
-if(!items.length){const loaded=isGender?genderLoaded:catalogLoaded;f.appendChild(messageBox(loaded?(isGender?t.genderEmpty:t.empty):t.loading,loaded?t.emptyText:""));replaceCards(f);return}
-for(const item of items){
-const card=document.createElement("article");card.className="card";card.appendChild(makeMedia(item,isGender));
-const body=document.createElement("div");body.className="card-body";
-const actions=document.createElement("div");actions.className="actions";
-const view=document.createElement("a");view.className="btn primary";view.href=isGender?genderUrl(item):inviteUrl(item);view.textContent=isGender?t.genderStart:t.preview;view.target="_blank";view.rel="noopener noreferrer";
-if(view.href.endsWith("#")){view.style.pointerEvents="none";view.setAttribute("aria-disabled","true")}
-const order=document.createElement("a");order.className="btn secondary";order.href=waUrl(item,isGender);order.textContent=isGender?t.genderContact:t.order;order.target="_blank";order.rel="noopener noreferrer";
-actions.append(view,order);body.appendChild(actions);card.appendChild(body);f.appendChild(card);
+  const gallery=$("gallery"),categories=$("categoriesSection"),cards=$("cards");
+
+  if(!active){
+    gallery.classList.remove("open");
+    categories.style.display="";
+    clearVideos();
+    cards.replaceChildren();
+    return;
+  }
+
+  categories.style.display="none";
+  gallery.classList.add("open");
+
+  const isGender=active==="gender";
+  const items=isGender?genderCards:invitations.filter(x=>eventType(x)===active);
+  const t=LANG[lang];
+
+  $("galleryTitle").textContent=isGender?t.genderTitle:EVENTS[active][lang];
+  $("gallerySubtitle").textContent=(isGender?t.genderSubtitle:t.subtitle)+" · "+items.length;
+
+  const f=document.createDocumentFragment();
+
+  if(!items.length){
+    const loaded=isGender?genderLoaded:catalogLoaded;
+    f.appendChild(messageBox(
+      loaded?(isGender?t.genderEmpty:t.empty):t.loading,
+      loaded?t.emptyText:""
+    ));
+    replaceCards(f);
+    return;
+  }
+
+  for(const item of items){
+    const card=document.createElement("article");
+    card.className="card";
+    card.appendChild(makeMedia(item,isGender));
+
+    const body=document.createElement("div");
+    body.className="card-body";
+
+    const actions=document.createElement("div");
+    actions.className="actions";
+
+    const view=document.createElement("a");
+    view.className="btn primary";
+    view.href=isGender?genderUrl(item):inviteUrl(item);
+    view.textContent=isGender?t.genderStart:t.preview;
+    view.target="_blank";
+    view.rel="noopener noreferrer";
+
+    if(view.href.endsWith("#")){
+      view.style.pointerEvents="none";
+      view.setAttribute("aria-disabled","true");
+    }
+
+    const order=document.createElement("a");
+    order.className="btn secondary";
+    order.href=waUrl(item,isGender);
+    order.textContent=isGender?t.genderContact:t.order;
+    order.target="_blank";
+    order.rel="noopener noreferrer";
+
+    actions.append(view,order);
+    body.appendChild(actions);
+    card.appendChild(body);
+    f.appendChild(card);
+  }
+
+  replaceCards(f);
 }
-replaceCards(f);
-}
+
 function updateCounts(){
-const total=invitations.length+genderCards.length;
-$("totalCount").textContent=total+" "+(lang==="en"?"designs":lang==="ku"?"دیزاین":"تصميم");
-document.querySelectorAll("[data-category]").forEach(b=>{
-const key=b.dataset.category,n=key==="gender"?genderCards.length:invitations.filter(x=>eventType(x)===key).length;
-b.querySelector("small").textContent=n?n+" "+(lang==="en"?"available":lang==="ku"?"بەردەستە":"تصميم متاح"):(key==="gender"?genderLoaded:catalogLoaded)?LANG[lang].emptyText:LANG[lang].loading;
-});
+  const total=invitations.length+genderCards.length;
+  $("totalCount").textContent=total+" "+(
+    lang==="en"?"designs":lang==="ku"?"دیزاین":"تصميم"
+  );
+
+  document.querySelectorAll("[data-category]").forEach(b=>{
+    const key=b.dataset.category;
+    const n=key==="gender"
+      ?genderCards.length
+      :invitations.filter(x=>eventType(x)===key).length;
+
+    b.querySelector("small").textContent=n
+      ?n+" "+(lang==="en"?"available":lang==="ku"?"بەردەستە":"تصميم متاح")
+      :(key==="gender"?genderLoaded:catalogLoaded)
+        ?LANG[lang].emptyText
+        :LANG[lang].loading;
+  });
 }
+
 function applyLang(code){
-if(!LANG[code])return;lang=code;const t=LANG[lang];
-document.documentElement.lang=code;document.documentElement.dir=t.dir;
-document.querySelectorAll("[data-lang]").forEach(b=>b.classList.toggle("active",b.dataset.lang===code));
-$("menuContact").textContent=t.contact;$("heroBadge").textContent=t.heroBadge;$("heroTitle").textContent=t.heroTitle;$("heroText").textContent=t.heroText;
-$("categoriesTitle").textContent=t.categoriesTitle;$("categoriesHint").textContent=t.categoriesHint;
-$("refreshBtn").textContent=t.refresh;$("backBtn").textContent=t.back;
-$("aboutTitle").textContent=t.aboutTitle;$("aboutText").textContent=t.aboutText;
-$("contactTitle").textContent=t.contactTitle;$("contactText").textContent=t.contactText;
-$("callBtn").textContent=t.call;$("whatsappBtn").textContent=t.whatsapp;
-$("footerText").textContent=t.footer;$("rightsText").textContent=t.rights;
-document.querySelectorAll("[data-category]").forEach(b=>{const k=b.dataset.category;b.querySelector("strong").textContent=k==="gender"?t.genderTitle:EVENTS[k][lang]});
-updateCounts();render();
+  if(!LANG[code])return;
+  lang=code;
+  const t=LANG[lang];
+
+  document.documentElement.lang=code;
+  document.documentElement.dir=t.dir;
+
+  document.querySelectorAll("[data-lang]").forEach(b=>{
+    b.classList.toggle("active",b.dataset.lang===code);
+  });
+
+  $("menuContact").textContent=t.contact;
+  $("heroBadge").textContent=t.heroBadge;
+  $("heroTitle").textContent=t.heroTitle;
+  $("heroText").textContent=t.heroText;
+  $("categoriesTitle").textContent=t.categoriesTitle;
+  $("categoriesHint").textContent=t.categoriesHint;
+  $("refreshBtn").textContent=t.refresh;
+  $("backBtn").textContent=t.back;
+  $("aboutTitle").textContent=t.aboutTitle;
+  $("aboutText").textContent=t.aboutText;
+  $("contactTitle").textContent=t.contactTitle;
+  $("contactText").textContent=t.contactText;
+  $("callBtn").textContent=t.call;
+  $("whatsappBtn").textContent=t.whatsapp;
+  $("footerText").textContent=t.footer;
+  $("rightsText").textContent=t.rights;
+
+  document.querySelectorAll("[data-category]").forEach(b=>{
+    const k=b.dataset.category;
+    b.querySelector("strong").textContent=k==="gender"?t.genderTitle:EVENTS[k][lang];
+  });
+
+  updateCounts();
+  render();
 }
+
 async function loadCatalog(force=false){
-if(catalogLoaded&&!force)return;
-const id=++request;$("refreshBtn").disabled=true;$("refreshBtn").textContent=LANG[lang].refreshing;
-try{
-const {data,error}=await db.rpc("get_public_invitation_catalog");if(error)throw error;if(id!==request)return;
-invitations=(Array.isArray(data)?data:[]).map(x=>typeof x==="string"?JSON.parse(x):x).filter(x=>x&&x.is_visible===true&&validUrl(x.invitation_url)).sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
-catalogLoaded=true;updateCounts();render();
-}catch(e){console.error("Catalog:",e);if(id===request){catalogLoaded=true;if(active&&active!=="gender"){const f=document.createDocumentFragment();f.appendChild(messageBox(LANG[lang].error));replaceCards(f)}toast(LANG[lang].error)}}
-finally{if(id===request){$("refreshBtn").disabled=false;$("refreshBtn").textContent=LANG[lang].refresh}}
+  if(catalogLoaded&&!force)return;
+
+  const id=++request;
+  $("refreshBtn").disabled=true;
+  $("refreshBtn").textContent=LANG[lang].refreshing;
+
+  try{
+    const {data,error}=await db.rpc("get_public_invitation_catalog");
+    if(error)throw error;
+    if(id!==request)return;
+
+    invitations=(Array.isArray(data)?data:[])
+      .map(x=>typeof x==="string"?JSON.parse(x):x)
+      .filter(x=>x&&x.is_visible===true&&validUrl(x.invitation_url))
+      .sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
+
+    catalogLoaded=true;
+    updateCounts();
+    render();
+
+  }catch(e){
+    console.error("Catalog:",e);
+
+    if(id===request){
+      catalogLoaded=true;
+
+      if(active&&active!=="gender"){
+        const f=document.createDocumentFragment();
+        f.appendChild(messageBox(LANG[lang].error));
+        replaceCards(f);
+      }
+
+      toast(LANG[lang].error);
+    }
+  }finally{
+    if(id===request){
+      $("refreshBtn").disabled=false;
+      $("refreshBtn").textContent=LANG[lang].refresh;
+    }
+  }
 }
+
 async function loadGender(force=false){
-if(genderLoaded&&!force)return;
-const id=++genderRequest;
-try{
-const {data,error}=await db.rpc("get_public_gender_reveal_catalog_cards");if(error)throw error;if(id!==genderRequest)return;
-genderCards=(Array.isArray(data)?data:[]).map(x=>typeof x==="string"?JSON.parse(x):x).filter(x=>x&&x.is_visible===true&&x.public_token).sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
-genderLoaded=true;updateCounts();render();
-}catch(e){console.error("Gender cards:",e);if(id===genderRequest){genderLoaded=true;genderCards=[];updateCounts();render()}}
+  if(genderLoaded&&!force)return;
+
+  const id=++genderRequest;
+
+  try{
+    const {data,error}=await db.rpc("get_public_gender_reveal_catalog_cards");
+    if(error)throw error;
+    if(id!==genderRequest)return;
+
+    genderCards=(Array.isArray(data)?data:[])
+      .map(x=>typeof x==="string"?JSON.parse(x):x)
+      .filter(x=>x&&x.is_visible===true&&x.public_token)
+      .sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
+
+    genderLoaded=true;
+    updateCounts();
+    render();
+
+  }catch(e){
+    console.error("Gender cards:",e);
+
+    if(id===genderRequest){
+      genderLoaded=true;
+      genderCards=[];
+      updateCounts();
+      render();
+    }
+  }
 }
-function choose(key){active=key;document.querySelectorAll("[data-category]").forEach(b=>b.classList.toggle("active",b.dataset.category===key));render();if(key==="gender"&&!genderLoaded)loadGender();if(key!=="gender"&&!catalogLoaded)loadCatalog();$("gallery").scrollIntoView({behavior:"smooth",block:"start"})}
-document.querySelectorAll("[data-category]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.category)));
-document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>applyLang(b.dataset.lang)));
-$("backBtn").addEventListener("click",()=>{active=null;document.querySelectorAll("[data-category]").forEach(b=>b.classList.remove("active"));render();$("categoriesSection").scrollIntoView({behavior:"smooth",block:"start"})});
-$("refreshBtn").addEventListener("click",()=>{catalogLoaded=false;genderLoaded=false;loadCatalog(true);loadGender(true)});
-document.addEventListener("visibilitychange",()=>{if(document.hidden){if(activeVideo)pauseVideo(activeVideo);return}document.querySelectorAll("#cards video").forEach(v=>{if(visible(v)){activateVideo(v)}})});
+
+function choose(key){
+  active=key;
+
+  document.querySelectorAll("[data-category]").forEach(b=>{
+    b.classList.toggle("active",b.dataset.category===key);
+  });
+
+  render();
+
+  if(key==="gender"&&!genderLoaded)loadGender();
+  if(key!=="gender"&&!catalogLoaded)loadCatalog();
+
+  $("gallery").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+document.querySelectorAll("[data-category]").forEach(b=>{
+  b.addEventListener("click",()=>choose(b.dataset.category));
+});
+
+document.querySelectorAll("[data-lang]").forEach(b=>{
+  b.addEventListener("click",()=>applyLang(b.dataset.lang));
+});
+
+$("backBtn").addEventListener("click",()=>{
+  active=null;
+  document.querySelectorAll("[data-category]").forEach(b=>b.classList.remove("active"));
+  render();
+  $("categoriesSection").scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+$("refreshBtn").addEventListener("click",()=>{
+  catalogLoaded=false;
+  genderLoaded=false;
+  loadCatalog(true);
+  loadGender(true);
+});
+
+/* إيقاف الفيديو عند مغادرة الصفحة وإعادة تشغيل الفيديو الظاهر فقط */
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){
+    if(activeVideo)pauseVideo(activeVideo);
+    return;
+  }
+
+  document.querySelectorAll("#cards video").forEach(v=>{
+    if(visible(v))activateVideo(v);
+  });
+});
+
 window.addEventListener("pagehide",clearVideos);
+
+window.addEventListener("scroll",()=>{
+  if(!active)return;
+
+  document.querySelectorAll("#cards video").forEach(v=>{
+    if(nearViewport(v)&&v.dataset.loaded!=="1"){
+      prepareVideo(v);
+    }
+
+    if(v===activeVideo&&!visible(v)){
+      pauseVideo(v);
+      activeVideo=null;
+    }else if(visible(v)&&v!==activeVideo){
+      activateVideo(v);
+    }
+  });
+},{passive:true});
+
+window.addEventListener("resize",()=>{
+  document.querySelectorAll("#cards video").forEach(v=>{
+    if(visible(v)&&v!==activeVideo)activateVideo(v);
+  });
+},{passive:true});
+
 $("year").textContent=new Date().getFullYear();
-$("phoneText").href="tel:"+PHONE;$("callBtn").href="tel:"+PHONE;$("whatsappBtn").href="https://wa.me/"+WA;$("menuContact").href="https://wa.me/"+WA;
-applyLang("ar");loadCatalog();loadGender();
+$("phoneText").href="tel:"+PHONE;
+$("callBtn").href="tel:"+PHONE;
+$("whatsappBtn").href="https://wa.me/"+WA;
+$("menuContact").href="https://wa.me/"+WA;
+
+applyLang("ar");
+loadCatalog();
+loadGender();
 </script>
 </body>
 </html>
