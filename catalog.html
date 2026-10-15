@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -9,11 +8,10 @@
 <title>باب الفرح | اختاروا فرحتكم</title>
 <link rel="preconnect" href="https://gnsnbretccdlwpmimuap.supabase.co">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--g:#d4af37;--gl:#f4dfa0;--ink:#f5edda;--m:#b9b09a;--line:#45381c}
+:root{--g:#d4af37;--gl:#f4dfa0;--bg:#080808;--p:#11110e;--ink:#f5edda;--m:#b9b09a;--line:#45381c}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:radial-gradient(ellipse at top,#211b0b,#0b0b0b 48%,#050505);color:var(--ink);font-family:Cairo,Tahoma,sans-serif;min-height:100vh}
@@ -32,43 +30,58 @@ h1,h2{font-family:Amiri,serif;color:var(--gl)}
 .hero h1{font-size:clamp(28px,4vw,42px);margin:12px 0 5px}
 .hero p{max-width:650px;margin:auto;color:var(--m);line-height:2;font-size:14px}
 .heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 0 18px}
-.heading h2{font-size:27px;margin:0}.heading p{font-size:12px;color:var(--m);margin:3px 0}
+.heading h2{font-size:27px;margin:0}
+.heading p{font-size:12px;color:var(--m);margin:3px 0}
 .count{font-size:11px;padding:7px 10px;border:1px solid var(--line);border-radius:25px;color:var(--gl)}
 .category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 .category{display:flex;align-items:center;gap:12px;text-align:right;min-height:100px;padding:15px;background:linear-gradient(145deg,#17150e,#0c0c0b);border:1px solid var(--line);border-radius:17px;color:var(--ink);cursor:pointer;width:100%}
 .category:hover,.category.active{border-color:var(--g)}
 .cat-icon{display:grid;place-items:center;flex:0 0 52px;width:52px;height:52px;border:1px solid #695522;border-radius:15px;background:#211b0b;font-size:26px}
-.cat-copy{min-width:0}.cat-copy strong{display:block;font-size:13px;color:var(--gl);line-height:1.8}.cat-copy small{display:block;font-size:10px;color:var(--m);line-height:1.7}
+.cat-copy{min-width:0}
+.cat-copy strong{display:block;font-size:13px;color:var(--gl);line-height:1.8}
+.cat-copy small{display:block;font-size:10px;color:var(--m);line-height:1.7}
 .arrow{margin-right:auto;color:var(--g);font-size:20px}
 #gallery{display:none;margin:22px 0 28px;padding:18px;background:linear-gradient(145deg,#151208,#0c0c0b);border:1px solid #72591f;border-radius:20px}
 #gallery.open{display:block}
 .gallery-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--line)}
-.gallery-top h2{font-size:clamp(23px,3vw,32px);margin:0}.gallery-top p{font-size:11px;color:var(--m);margin:3px 0}
-.tools{display:flex;gap:6px}.tools button{padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#111;color:var(--gl);font-size:11px;font-weight:700;cursor:pointer}.tools .back{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;border-color:var(--g)}
+.gallery-top h2{font-size:clamp(23px,3vw,32px);margin:0}
+.gallery-top p{font-size:11px;color:var(--m);margin:3px 0}
+.tools{display:flex;gap:6px}
+.tools button{padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#111;color:var(--gl);font-size:11px;font-weight:700;cursor:pointer}
+.tools .back{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;border-color:var(--g)}
 #cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
 .card{min-width:0;padding:6px;background:#080808;border:1px solid #806522;border-radius:17px;overflow:hidden}
-.media{position:relative;width:100%;aspect-ratio:3/4;background:#17130a;border-radius:12px;overflow:hidden;isolation:isolate;contain:paint}
+.media{position:relative;width:100%;aspect-ratio:3/4;background:#17130a;border-radius:12px;overflow:hidden;isolation:isolate}
 .media:after{content:"";position:absolute;inset:8px;border:1px solid #d4af3780;border-radius:8px;z-index:3;pointer-events:none}
 .media img,.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.media img{z-index:1}.media video{z-index:2;opacity:0;transition:opacity .12s}
+.media img{z-index:1}
+.media video{z-index:2;opacity:0;transition:opacity .15s}
 .media video.ready{opacity:1}
 .chip{position:absolute;z-index:4;top:13px;right:13px;padding:5px 9px;background:#17130aeb;color:var(--gl);border:1px solid #8c6b1d;border-radius:20px;font-size:10px;max-width:calc(100% - 26px)}
 .fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:var(--gl);padding:15px;z-index:0}
 .fallback span{font-size:40px}.fallback strong{font:700 23px Amiri,serif}.fallback small{font-size:10px;color:#d9c78e}
-.card-body{padding:8px 1px 1px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.card-body{padding:8px 1px 1px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:10px 5px;border-radius:10px;font-size:11px;font-weight:800;text-decoration:none;line-height:1.6}
-.primary{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705}.secondary{background:#14120c;color:var(--gl);border:1px solid #5a4820}
+.primary{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705}
+.secondary{background:#14120c;color:var(--gl);border:1px solid #5a4820}
 .message{grid-column:1/-1;padding:30px 15px;text-align:center;border:1px dashed #5a4820;border-radius:15px;color:var(--m);line-height:2}
 .about,.contact{margin:25px 0;padding:23px;background:linear-gradient(135deg,#090909,#211a0a);border:1px solid #6b531c;border-radius:20px}
-.about h2,.contact h2{font-size:26px;margin:0 0 6px}.about p,.contact p{color:#e0d5b5;font-size:13px;line-height:2;margin:0}
+.about h2,.contact h2{font-size:26px;margin:0 0 6px}
+.about p,.contact p{color:#e0d5b5;font-size:13px;line-height:2;margin:0}
 .contact{display:flex;align-items:center;justify-content:space-between;gap:15px;background:#111}
 .phone{display:inline-block;direction:ltr;text-decoration:none;color:var(--gl);font-size:20px;font-weight:800;margin-top:7px}
-.contact-actions{display:flex;gap:8px;flex-wrap:wrap}.contact-actions a{padding:11px 14px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:800}
-.call{background:#211b0b;border:1px solid #6a531c;color:var(--gl)}.wa{background:#168653;color:white}
+.contact-actions{display:flex;gap:8px;flex-wrap:wrap}
+.contact-actions a{padding:11px 14px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:800}
+.call{background:#211b0b;border:1px solid #6a531c;color:var(--gl)}
+.wa{background:#168653;color:white}
 footer{text-align:center;padding:20px 0 25px;border-top:1px solid #302714;color:#a79b78;font-size:11px;line-height:2}
 footer strong{display:block;color:var(--gl);font:700 20px Amiri,serif}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 16px;background:var(--g);color:#080808;border-radius:10px;display:none;z-index:20}.toast.show{display:block}
-html[dir=ltr] .category{text-align:left}html[dir=ltr] .arrow{margin-left:auto;margin-right:0}html[dir=ltr] .chip{right:auto;left:13px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 16px;background:var(--g);color:#080808;border-radius:10px;display:none;z-index:20}
+.toast.show{display:block}
+html[dir=ltr] .category{text-align:left}
+html[dir=ltr] .arrow{margin-left:auto;margin-right:0}
+html[dir=ltr] .chip{right:auto;left:13px}
 @media(max-width:850px){.category-grid,#cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.contact{align-items:flex-start;flex-direction:column}}
 @media(max-width:540px){.category-grid{grid-template-columns:1fr}.category{min-height:82px;padding:12px}.cat-icon{flex-basis:48px;width:48px;height:48px}.heading h2{font-size:23px}#gallery{padding:12px}.gallery-top{align-items:flex-start}.tools{flex-wrap:wrap}.tools button{padding:8px;font-size:10px}#cards{gap:8px}.card{padding:4px}.actions{gap:5px}.btn{font-size:10px;padding:9px 3px}.contact-actions{width:100%;flex-direction:column}.contact-actions a{text-align:center}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
@@ -82,7 +95,10 @@ html[dir=ltr] .category{text-align:left}html[dir=ltr] .arrow{margin-left:auto;ma
 <button class="lang-button" data-lang="en">🇬🇧 English</button>
 <a class="top-wa" id="menuContact" href="https://wa.me/9647867430232" target="_blank" rel="noopener">مراسلتنا</a>
 </nav>
-<a href="./catalog.html" style="text-decoration:none"><div class="brand">باب الفرح ♥</div><div class="brand-en">BAB AL FARAH · DIGITAL INVITATIONS</div></a>
+<a href="./catalog.html" style="text-decoration:none">
+<div class="brand">باب الفرح ♥</div>
+<div class="brand-en">BAB AL FARAH · DIGITAL INVITATIONS</div>
+</a>
 <div class="rule">✦ ❦ ✦</div>
 </header>
 
@@ -92,6 +108,7 @@ html[dir=ltr] .category{text-align:left}html[dir=ltr] .arrow{margin-left:auto;ma
 <h1 id="heroTitle">كل فرحة إلها باب… وإحنا نفتحلكم أحلى البدايات</h1>
 <p id="heroText">اختاروا مناسبتكم، تصفّحوا الدعوات المنشورة، وشوفوا تصميم الباب قبل ما تتواصلون ويانا لتجهيز دعوتكم الخاصة.</p>
 </section>
+
 <section id="categoriesSection">
 <div class="heading"><div><h2 id="categoriesTitle">اختاروا نوع الفرحة</h2><p id="categoriesHint">اضغط على المناسبة حتى تشوف الدعوات الخاصة بيها</p></div><span class="count" id="totalCount">جارٍ التحميل…</span></div>
 <div class="category-grid" id="categoryGrid">
@@ -104,11 +121,14 @@ html[dir=ltr] .category{text-align:left}html[dir=ltr] .arrow{margin-left:auto;ma
 <button class="category" data-category="gender"><span class="cat-icon">🩷</span><span class="cat-copy"><strong>اختبار جنس الجنين</strong><small>اكتشفوا المفاجأة بطريقة تفاعلية</small></span><span class="arrow">‹</span></button>
 </div>
 </section>
+
 <section id="gallery" aria-live="polite">
 <div class="gallery-top"><div><h2 id="galleryTitle">دعوات حفلات الزفاف</h2><p id="gallerySubtitle">اختاروا التصميم اللي يعجبكم</p></div><div class="tools"><button id="refreshBtn">↻ تحديث</button><button class="back" id="backBtn">↩ رجوع للمناسبات</button></div></div>
 <div id="cards"></div>
 </section>
+
 <section class="about"><h2 id="aboutTitle">باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة</h2><p id="aboutText">نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.</p></section>
+
 <section class="contact">
 <div><h2 id="contactTitle">تفاصيلنا والتواصل ويانا</h2><p id="contactText">عندك استفسار أو تريد تصمم دعوتك الخاصة؟ إحنا بالخدمة بكل حب.</p><a class="phone" id="phoneText" href="tel:07867430232">07867430232</a></div>
 <div class="contact-actions"><a class="call" id="callBtn" href="tel:07867430232">☎ اتصل بنا</a><a class="wa" id="whatsappBtn" href="https://wa.me/9647867430232" target="_blank" rel="noopener">◉ تواصل واتساب</a></div>
@@ -122,7 +142,7 @@ html[dir=ltr] .category{text-align:left}html[dir=ltr] .arrow{margin-left:auto;ma
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
-const PHONE="07867430232",WA="9647867430232",$=id=>document.getElementById(id);
+const PHONE="07867430232",WA="9647867430232", $=id=>document.getElementById(id);
 
 const EVENTS={
 wedding:{icon:"💍",ar:"دعوة زفاف",ku:"بانگهێشتنامەی هاوسەرگیری",en:"Wedding invitation"},
@@ -140,46 +160,36 @@ en:{dir:"ltr",contact:"Message us",heroBadge:"Your celebration deserves a specia
 
 let lang="ar",invitations=[],genderCards=[],active=null,catalogLoaded=false,genderLoaded=false,request=0,genderRequest=0;
 let activeVideo=null,toastTimer=null;
-
-const videoObserver="IntersectionObserver"in window?new IntersectionObserver(entries=>{
+const videoObserver=("IntersectionObserver"in window)?new IntersectionObserver(entries=>{
 for(const e of entries){
 const v=e.target;
 if(!v.isConnected)continue;
-if(e.isIntersecting&&e.intersectionRatio>.03)activateVideo(v);
-else if(activeVideo===v){pauseVideo(v);activeVideo=null;v.classList.remove("ready")}
+if(e.isIntersecting&&e.intersectionRatio>.05)activateVideo(v);
+else if(activeVideo===v){pauseVideo(v);activeVideo=null;}
 }
-},{rootMargin:"180px 0px",threshold:.03}):null;
+},{rootMargin:"100px 0px",threshold:.05}):null;
 
 function validUrl(v){try{const u=new URL(String(v||""));return["https:","http:"].includes(u.protocol)?u.href:""}catch{return""}}
 function mediaUrl(item){for(const k of ["image_url","media_url","video_url","public_url","storage_url","file_url","url","image"]){const u=validUrl(item?.[k]);if(u)return u}return""}
 function isVideo(url,item){let path="";try{path=new URL(url).pathname.toLowerCase()}catch{}const type=String(item?.media_type||item?.mime_type||item?.content_type||"").toLowerCase();return /\.(mp4|webm|ogg|m4v|mov)$/.test(path)||type.startsWith("video/")}
 function eventType(item){return EVENTS[item?.event_type]?item.event_type:"wedding"}
-function eventName(item){return item?.title||EVENTS[eventType(item)][lang]}
+function eventName(item){return item?.title||EVENTS[eventType(item)][lang]||EVENTS[eventType(item)].ar}
 function inviteUrl(item){return validUrl(item.invitation_url)||"#"}
 function genderUrl(item){if(!item.public_token)return"#";return new URL("gender-reveal.html",location.href).href+"?token="+encodeURIComponent(item.public_token)}
-function waUrl(item,isGender=false){const url=isGender?genderUrl(item):inviteUrl(item);return"https://wa.me/"+WA+"?text="+encodeURIComponent(LANG[lang].message+"\n"+eventName(item)+"\n"+url)}
+function waUrl(item,isGender=false){const url=isGender?genderUrl(item):inviteUrl(item);const title=eventName(item);return"https://wa.me/"+WA+"?text="+encodeURIComponent(LANG[lang].message+"\n"+title+"\n"+url)}
 function toast(s){$("toast").textContent=s;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2600)}
 function pauseVideo(v){try{v.pause()}catch{}}
 function visible(v){const r=v.getBoundingClientRect();return !document.hidden&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth}
-
 function activateVideo(v){
-if(!v?.isConnected||!visible(v)||document.hidden)return;
-if(activeVideo&&activeVideo!==v){pauseVideo(activeVideo);activeVideo.classList.remove("ready")}
-document.querySelectorAll("#cards video").forEach(other=>{
-if(other!==v){pauseVideo(other);other.classList.remove("ready")}
-});
+if(!v?.isConnected||!visible(v))return;
+document.querySelectorAll("#cards video").forEach(other=>{if(other!==v)pauseVideo(other)});
 activeVideo=v;
 if(!v.src){v.src=v.dataset.src;v.load()}
 if(v.readyState>=2)playVideo(v);
 }
 function playVideo(v){
-if(v!==activeVideo||!visible(v)||document.hidden||v.dataset.playing==="1")return;
-v.dataset.playing="1";
-const p=v.play();
-if(p&&p.then)p.then(()=>{if(v===activeVideo)v.classList.add("ready")}).catch(()=>{
-v.dataset.playing="0";
-if(v.readyState>=2&&visible(v))setTimeout(()=>{if(v===activeVideo)playVideo(v)},500);
-});
+if(v!==activeVideo||!visible(v)||document.hidden)return;
+v.play().then(()=>v.classList.add("ready")).catch(()=>{if(v.readyState<2)v.classList.remove("ready")});
 }
 function fallback(item,isGender=false){
 const d=document.createElement("div");d.className="fallback";
@@ -191,38 +201,31 @@ d.append(icon,title,small);return d;
 function makeMedia(item,isGender=false){
 const box=document.createElement("div");box.className="media";
 const chip=document.createElement("span");chip.className="chip";chip.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];box.appendChild(chip);
-const url=mediaUrl(item);box.appendChild(fallback(item,isGender));
+const url=mediaUrl(item);
+box.appendChild(fallback(item,isGender));
 if(url&&isVideo(url,item)){
 const v=document.createElement("video");
 v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;v.autoplay=false;v.preload="none";
 v.setAttribute("muted","");v.setAttribute("playsinline","");v.setAttribute("webkit-playsinline","");
-v.setAttribute("disablepictureinpicture","");v.setAttribute("aria-label",eventName(item));
-v.dataset.src=url;v.dataset.playing="0";
-v.addEventListener("loadeddata",()=>{if(v===activeVideo&&visible(v))v.classList.add("ready")});
+v.setAttribute("aria-label",eventName(item));v.dataset.src=url;
+v.addEventListener("loadeddata",()=>{v.classList.add("ready");if(v===activeVideo)playVideo(v)},{once:true});
 v.addEventListener("canplay",()=>{if(v===activeVideo)playVideo(v)});
-v.addEventListener("playing",()=>{if(v===activeVideo)v.classList.add("ready")});
+v.addEventListener("playing",()=>v.classList.add("ready"));
 v.addEventListener("waiting",()=>{if(v.readyState<2)v.classList.remove("ready")});
-v.addEventListener("pause",()=>{v.dataset.playing="0"});
-v.addEventListener("error",()=>{if(videoObserver)videoObserver.unobserve(v);if(activeVideo===v)activeVideo=null;pauseVideo(v);v.classList.remove("ready")});
+v.addEventListener("error",()=>{if(videoObserver)videoObserver.unobserve(v);if(activeVideo===v)activeVideo=null;pauseVideo(v);v.remove()},{once:true});
 box.appendChild(v);
 if(videoObserver)videoObserver.observe(v);else activateVideo(v);
 }else if(url){
 const img=document.createElement("img");
-img.alt=eventName(item);img.loading="lazy";img.decoding="async";img.fetchPriority="low";
-img.addEventListener("error",()=>img.remove(),{once:true});img.src=url;box.appendChild(img);
+img.alt=eventName(item);img.loading="lazy";img.decoding="async";
+img.addEventListener("error",()=>img.remove(),{once:true});
+img.src=url;box.appendChild(img);
 }
 return box;
 }
-function clearVideos(){
-document.querySelectorAll("#cards video").forEach(v=>{
-if(videoObserver)videoObserver.unobserve(v);
-pauseVideo(v);v.removeAttribute("src");v.load();
-});
-activeVideo=null;
-}
+function clearVideos(){document.querySelectorAll("#cards video").forEach(v=>{if(videoObserver)videoObserver.unobserve(v);pauseVideo(v);v.removeAttribute("src");try{v.load()}catch{}});activeVideo=null}
 function replaceCards(fragment){clearVideos();$("cards").replaceChildren(fragment)}
 function messageBox(title,sub=""){const d=document.createElement("div");d.className="message";d.textContent=title+(sub?" — "+sub:"");return d}
-
 function render(){
 const gallery=$("gallery"),categories=$("categoriesSection"),cards=$("cards");
 if(!active){gallery.classList.remove("open");categories.style.display="";clearVideos();cards.replaceChildren();return}
@@ -231,26 +234,18 @@ const isGender=active==="gender",items=isGender?genderCards:invitations.filter(x
 $("galleryTitle").textContent=isGender?t.genderTitle:EVENTS[active][lang];
 $("gallerySubtitle").textContent=(isGender?t.genderSubtitle:t.subtitle)+" · "+items.length;
 const f=document.createDocumentFragment();
-if(!items.length){
-const loaded=isGender?genderLoaded:catalogLoaded;
-f.appendChild(messageBox(loaded?(isGender?t.genderEmpty:t.empty):t.loading,loaded?t.emptyText:""));
-replaceCards(f);return;
-}
+if(!items.length){const loaded=isGender?genderLoaded:catalogLoaded;f.appendChild(messageBox(loaded?(isGender?t.genderEmpty:t.empty):t.loading,loaded?t.emptyText:""));replaceCards(f);return}
 for(const item of items){
 const card=document.createElement("article");card.className="card";card.appendChild(makeMedia(item,isGender));
 const body=document.createElement("div");body.className="card-body";
 const actions=document.createElement("div");actions.className="actions";
-const view=document.createElement("a");view.className="btn primary";
-view.href=isGender?genderUrl(item):inviteUrl(item);
-view.textContent=isGender?t.genderStart:t.preview;view.target="_blank";view.rel="noopener noreferrer";
+const view=document.createElement("a");view.className="btn primary";view.href=isGender?genderUrl(item):inviteUrl(item);view.textContent=isGender?t.genderStart:t.preview;view.target="_blank";view.rel="noopener noreferrer";
 if(view.href.endsWith("#")){view.style.pointerEvents="none";view.setAttribute("aria-disabled","true")}
-const order=document.createElement("a");order.className="btn secondary";order.href=waUrl(item,isGender);
-order.textContent=isGender?t.genderContact:t.order;order.target="_blank";order.rel="noopener noreferrer";
+const order=document.createElement("a");order.className="btn secondary";order.href=waUrl(item,isGender);order.textContent=isGender?t.genderContact:t.order;order.target="_blank";order.rel="noopener noreferrer";
 actions.append(view,order);body.appendChild(actions);card.appendChild(body);f.appendChild(card);
 }
 replaceCards(f);
 }
-
 function updateCounts(){
 const total=invitations.length+genderCards.length;
 $("totalCount").textContent=total+" "+(lang==="en"?"designs":lang==="ku"?"دیزاین":"تصميم");
@@ -273,67 +268,34 @@ $("footerText").textContent=t.footer;$("rightsText").textContent=t.rights;
 document.querySelectorAll("[data-category]").forEach(b=>{const k=b.dataset.category;b.querySelector("strong").textContent=k==="gender"?t.genderTitle:EVENTS[k][lang]});
 updateCounts();render();
 }
-
 async function loadCatalog(force=false){
 if(catalogLoaded&&!force)return;
 const id=++request;$("refreshBtn").disabled=true;$("refreshBtn").textContent=LANG[lang].refreshing;
 try{
-const {data,error}=await db.rpc("get_public_invitation_catalog");
-if(error)throw error;if(id!==request)return;
-invitations=(Array.isArray(data)?data:[]).map(x=>typeof x==="string"?JSON.parse(x):x)
-.filter(x=>x&&x.is_visible===true&&validUrl(x.invitation_url))
-.sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
+const {data,error}=await db.rpc("get_public_invitation_catalog");if(error)throw error;if(id!==request)return;
+invitations=(Array.isArray(data)?data:[]).map(x=>typeof x==="string"?JSON.parse(x):x).filter(x=>x&&x.is_visible===true&&validUrl(x.invitation_url)).sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
 catalogLoaded=true;updateCounts();render();
-}catch(e){
-console.error("Catalog:",e);
-if(id===request){catalogLoaded=true;if(active&&active!=="gender"){const f=document.createDocumentFragment();f.appendChild(messageBox(LANG[lang].error));replaceCards(f)}toast(LANG[lang].error)}
-}finally{
-if(id===request){$("refreshBtn").disabled=false;$("refreshBtn").textContent=LANG[lang].refresh}
-}
+}catch(e){console.error("Catalog:",e);if(id===request){catalogLoaded=true;if(active&&active!=="gender"){const f=document.createDocumentFragment();f.appendChild(messageBox(LANG[lang].error));replaceCards(f)}toast(LANG[lang].error)}}
+finally{if(id===request){$("refreshBtn").disabled=false;$("refreshBtn").textContent=LANG[lang].refresh}}
 }
 async function loadGender(force=false){
 if(genderLoaded&&!force)return;
 const id=++genderRequest;
 try{
-const {data,error}=await db.rpc("get_public_gender_reveal_catalog_cards");
-if(error)throw error;if(id!==genderRequest)return;
-genderCards=(Array.isArray(data)?data:[]).map(x=>typeof x==="string"?JSON.parse(x):x)
-.filter(x=>x&&x.is_visible===true&&x.public_token)
-.sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
+const {data,error}=await db.rpc("get_public_gender_reveal_catalog_cards");if(error)throw error;if(id!==genderRequest)return;
+genderCards=(Array.isArray(data)?data:[]).map(x=>typeof x==="string"?JSON.parse(x):x).filter(x=>x&&x.is_visible===true&&x.public_token).sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
 genderLoaded=true;updateCounts();render();
-}catch(e){
-console.error("Gender cards:",e);
-if(id===genderRequest){genderLoaded=true;genderCards=[];updateCounts();render()}
+}catch(e){console.error("Gender cards:",e);if(id===genderRequest){genderLoaded=true;genderCards=[];updateCounts();render()}}
 }
-}
-function choose(key){
-active=key;document.querySelectorAll("[data-category]").forEach(b=>b.classList.toggle("active",b.dataset.category===key));
-render();if(key==="gender"&&!genderLoaded)loadGender();if(key!=="gender"&&!catalogLoaded)loadCatalog();
-$("gallery").scrollIntoView({behavior:"smooth",block:"start"});
-}
-
+function choose(key){active=key;document.querySelectorAll("[data-category]").forEach(b=>b.classList.toggle("active",b.dataset.category===key));render();if(key==="gender"&&!genderLoaded)loadGender();if(key!=="gender"&&!catalogLoaded)loadCatalog();$("gallery").scrollIntoView({behavior:"smooth",block:"start"})}
 document.querySelectorAll("[data-category]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.category)));
 document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>applyLang(b.dataset.lang)));
-$("backBtn").addEventListener("click",()=>{
-active=null;document.querySelectorAll("[data-category]").forEach(b=>b.classList.remove("active"));
-render();$("categoriesSection").scrollIntoView({behavior:"smooth",block:"start"});
-});
+$("backBtn").addEventListener("click",()=>{active=null;document.querySelectorAll("[data-category]").forEach(b=>b.classList.remove("active"));render();$("categoriesSection").scrollIntoView({behavior:"smooth",block:"start"})});
 $("refreshBtn").addEventListener("click",()=>{catalogLoaded=false;genderLoaded=false;loadCatalog(true);loadGender(true)});
-
-document.addEventListener("visibilitychange",()=>{
-if(document.hidden){
-document.querySelectorAll("#cards video").forEach(pauseVideo);activeVideo=null;return;
-}
-document.querySelectorAll("#cards video").forEach(v=>{if(visible(v)){activateVideo(v);return}});
-});
+document.addEventListener("visibilitychange",()=>{if(document.hidden){if(activeVideo)pauseVideo(activeVideo);return}document.querySelectorAll("#cards video").forEach(v=>{if(visible(v)){activateVideo(v)}})});
 window.addEventListener("pagehide",clearVideos);
-window.addEventListener("scroll",()=>{
-if(activeVideo&&!visible(activeVideo)){pauseVideo(activeVideo);activeVideo.classList.remove("ready");activeVideo=null}
-},{passive:true});
-
 $("year").textContent=new Date().getFullYear();
-$("phoneText").href="tel:"+PHONE;$("callBtn").href="tel:"+PHONE;
-$("whatsappBtn").href="https://wa.me/"+WA;$("menuContact").href="https://wa.me/"+WA;
+$("phoneText").href="tel:"+PHONE;$("callBtn").href="tel:"+PHONE;$("whatsappBtn").href="https://wa.me/"+WA;$("menuContact").href="https://wa.me/"+WA;
 applyLang("ar");loadCatalog();loadGender();
 </script>
 </body>
