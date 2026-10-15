@@ -55,11 +55,8 @@ h1,h2{font-family:Amiri,serif;color:var(--gl)}
 .card{min-width:0;padding:6px;background:#080808;border:1px solid #806522;border-radius:17px;overflow:hidden;contain:layout paint}
 .media{position:relative;width:100%;aspect-ratio:3/4;background:#17130a;border-radius:12px;overflow:hidden;isolation:isolate}
 .media:after{content:"";position:absolute;inset:8px;border:1px solid #d4af3780;border-radius:8px;z-index:4;pointer-events:none}
-.media img,.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .media .poster{z-index:1;opacity:1}
-.media video{z-index:2;opacity:0;object-position:center}
-.media video.ready{opacity:1}
-.media .poster.hidden{opacity:0}
 .chip{position:absolute;z-index:5;top:13px;right:13px;padding:5px 9px;background:#17130aeb;color:var(--gl);border:1px solid #8c6b1d;border-radius:20px;font-size:10px;max-width:calc(100% - 26px)}
 .fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:var(--gl);padding:15px;z-index:0}
 .fallback span{font-size:40px}.fallback strong{font:700 23px Amiri,serif}.fallback small{font-size:10px;color:#d9c78e}
@@ -167,8 +164,7 @@ en:{dir:"ltr",contact:"Message us",heroBadge:"Your celebration deserves a specia
 };
 
 let lang="ar",invitations=[],genderCards=[],active=null;
-let catalogLoaded=false,genderLoaded=false,request=0,genderRequest=0;
-let activeVideo=null,toastTimer=null;
+let catalogLoaded=false,genderLoaded=false,request=0,genderRequest=0,toastTimer=null;
 
 function validUrl(v){
   try{
@@ -194,32 +190,23 @@ function itemUrls(item,keys){
   return out;
 }
 
-/* تحديد نوع الملف من امتداده أولاً حتى لا تمنع بيانات الصورة ظهور رابط فيديو صحيح */
 function isVideo(url,item={}){
   if(!url)return false;
-
   try{
     const path=new URL(url,location.href).pathname.toLowerCase();
     if(/\.(mp4|webm|ogg|m4v|mov|m3u8)$/.test(path))return true;
     if(/\.(jpg|jpeg|png|gif|webp|avif|bmp|svg)$/.test(path))return false;
   }catch{}
-
   const types=[
-    item?.media_type,
-    item?.mime_type,
-    item?.content_type,
-    item?.file_type,
-    item?.mediaType,
-    item?.type
+    item?.media_type,item?.mime_type,item?.content_type,
+    item?.file_type,item?.mediaType,item?.type
   ].map(x=>String(x||"").toLowerCase().trim());
-
   if(types.some(t=>t==="video"||t==="mp4"||t==="webm"||t.startsWith("video/")))return true;
   if(types.some(t=>t==="image"||t.startsWith("image/")))return false;
-
   return false;
 }
 
-/* فصل الفيديو عن صورة المعاينة، مع دعم أسماء الحقول المختلفة */
+/* فصل صورة المعاينة عن ملف الفيديو؛ لا نحمّل الفيديو داخل الكتالوج */
 function getMedia(item){
   const videoKeys=[
     "video_url","video_public_url","video_storage_url",
@@ -231,12 +218,12 @@ function getMedia(item){
     "image_url","image","cover_url","thumbnail"
   ];
 
-  const videoCandidates=itemUrls(item,videoKeys);
-  const video=videoCandidates.find(u=>isVideo(u,{}))||
-    videoCandidates.find(u=>isVideo(u,item))||"";
+  const candidates=itemUrls(item,videoKeys);
+  const video=candidates.find(u=>isVideo(u,{}))||
+    candidates.find(u=>isVideo(u,item))||"";
 
-  const imageCandidates=itemUrls(item,imageKeys);
-  const poster=imageCandidates.find(u=>!isVideo(u,{}))||"";
+  const images=itemUrls(item,imageKeys);
+  const poster=images.find(u=>!isVideo(u,{}))||"";
 
   if(video){
     return{
@@ -246,23 +233,18 @@ function getMedia(item){
     };
   }
 
-  const image=imageCandidates.find(u=>!isVideo(u,{}))||
-    videoCandidates.find(u=>!isVideo(u,{}))||
-    videoCandidates.find(u=>!isVideo(u,item))||"";
+  const image=images.find(u=>!isVideo(u,{}))||
+    candidates.find(u=>!isVideo(u,{}))||
+    candidates.find(u=>!isVideo(u,item))||"";
 
   if(image)return{url:image,video:false,poster:""};
 
   const generic=itemUrls(item,["media","file"]);
-  const fallback=generic.find(u=>isVideo(u,{}))||generic[0]||"";
+  const fallback=generic.find(u=>!isVideo(u,{}))||"";
 
-  return{
-    url:fallback,
-    video:isVideo(fallback,item),
-    poster:""
-  };
+  return{url:fallback,video:false,poster:""};
 }
 
-function mediaUrl(item){return getMedia(item).url}
 function eventType(item){return EVENTS[item?.event_type]?item.event_type:"wedding"}
 function eventName(item){return item?.title||EVENTS[eventType(item)][lang]||EVENTS[eventType(item)].ar}
 function inviteUrl(item){return validUrl(item.invitation_url)||"#"}
@@ -272,8 +254,7 @@ function genderUrl(item){
 }
 function waUrl(item,isGender=false){
   const url=isGender?genderUrl(item):inviteUrl(item);
-  const title=eventName(item);
-  return"https://wa.me/"+WA+"?text="+encodeURIComponent(LANG[lang].message+"\n"+title+"\n"+url);
+  return"https://wa.me/"+WA+"?text="+encodeURIComponent(LANG[lang].message+"\n"+eventName(item)+"\n"+url);
 }
 function toast(s){
   $("toast").textContent=s;
@@ -281,247 +262,66 @@ function toast(s){
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2600);
 }
-function pauseVideo(v){
-  try{v.pause()}catch{}
-}
-function visible(v){
-  if(document.hidden||!v?.isConnected)return false;
-  const r=v.getBoundingClientRect();
-  return r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth;
-}
-
-/* لا نحمل الفيديو إلا عندما تصبح بطاقته ظاهرة فعلياً */
-function prepareVideo(v){
-  if(!v?.isConnected||v.dataset.failed==="1"||v.dataset.loaded==="1")return;
-
-  const src=v.dataset.src;
-  if(!src)return;
-
-  v.dataset.loaded="1";
-  v.src=src;
-
-  try{v.load()}catch{}
-}
-
-/* تشغيل فيديو واحد فقط لتقليل استهلاك الإنترنت والذاكرة */
-function activateVideo(v){
-  if(!v?.isConnected||!visible(v))return;
-
-  document.querySelectorAll("#cards video").forEach(other=>{
-    if(other!==v){
-      pauseVideo(other);
-      if(other===activeVideo)activeVideo=null;
-    }
-  });
-
-  activeVideo=v;
-  prepareVideo(v);
-
-  if(v.readyState>=2)playVideo(v);
-}
-
-function playVideo(v){
-  if(v!==activeVideo||!visible(v)||document.hidden||v.dataset.failed==="1")return;
-  if(v.dataset.playing==="1")return;
-
-  const p=v.play();
-
-  if(p&&typeof p.then==="function"){
-    p.then(()=>{
-      v.dataset.playing="1";
-      if(v===activeVideo&&visible(v))v.classList.add("ready");
-      else pauseVideo(v);
-    }).catch(()=>{
-      v.dataset.playing="0";
-      if(v!==activeVideo)return;
-      if(v.readyState<2)v.classList.remove("ready");
-    });
-  }
-}
-
-const videoObserver=("IntersectionObserver"in window)
-  ?new IntersectionObserver(entries=>{
-    for(const e of entries){
-      const v=e.target;
-      if(!v.isConnected)continue;
-
-      if(e.isIntersecting&&visible(v)){
-        activateVideo(v);
-      }else if(v===activeVideo){
-        pauseVideo(v);
-        v.dataset.playing="0";
-        activeVideo=null;
-      }
-    }
-  },{rootMargin:"40px 0px",threshold:0.05})
-  :null;
 
 function fallback(item,isGender=false){
   const d=document.createElement("div");
   d.className="fallback";
-
   const icon=document.createElement("span");
   icon.textContent=isGender?"🩷":(EVENTS[eventType(item)]?.icon||"♡");
-
   const title=document.createElement("strong");
   title.textContent=item.title||"باب الفرح";
-
   const small=document.createElement("small");
   small.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];
-
   d.append(icon,title,small);
   return d;
 }
 
+/*
+  مهم لتخفيف الضغط:
+  - لا ننشئ عناصر video في الكتالوج إطلاقاً.
+  - لا نطلب ملفات الفيديو ولا نشغّلها عند ظهور البطاقات.
+  - نعرض صورة المعاينة الثابتة إن كانت موجودة.
+  - إذا لم تتوفر صورة، نظهر بطاقة احتياطية خفيفة.
+  - الفيديو الأصلي يبقى داخل صفحة الدعوة عند الضغط على معاينة الدعوة.
+*/
 function makeMedia(item,isGender=false){
   const box=document.createElement("div");
   box.className="media";
 
+  box.appendChild(fallback(item,isGender));
+
   const chip=document.createElement("span");
   chip.className="chip";
   chip.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];
-
-  box.appendChild(fallback(item,isGender));
   box.appendChild(chip);
 
   const media=getMedia(item);
-  const url=media.url;
-  let poster=null;
+  const imageUrl=media.video?media.poster:media.url;
 
-  if(media.poster){
-    poster=document.createElement("img");
-    poster.className="poster";
-    poster.alt="";
-    poster.loading="lazy";
-    poster.decoding="async";
-    poster.fetchPriority="low";
-
-    poster.addEventListener("error",()=>{
-      poster.remove();
-      poster=null;
-    },{once:true});
-
-    poster.src=media.poster;
-    box.appendChild(poster);
-  }
-
-  if(url&&media.video){
-    const v=document.createElement("video");
-
-    v.className="invitation-video";
-    v.muted=true;
-    v.defaultMuted=true;
-    v.loop=true;
-    v.playsInline=true;
-    v.autoplay=false;
-    v.preload="none";
-    v.controls=false;
-    v.disablePictureInPicture=true;
-
-    v.setAttribute("muted","");
-    v.setAttribute("playsinline","");
-    v.setAttribute("webkit-playsinline","");
-    v.setAttribute("aria-label",eventName(item));
-
-    v.dataset.src=url;
-    v.dataset.loaded="0";
-    v.dataset.failed="0";
-    v.dataset.playing="0";
-
-    if(media.poster)v.poster=media.poster;
-
-    v.addEventListener("loadeddata",()=>{
-      if(v.readyState>=2&&v===activeVideo&&visible(v))playVideo(v);
-    });
-
-    v.addEventListener("canplay",()=>{
-      if(v===activeVideo&&visible(v))playVideo(v);
-    });
-
-    v.addEventListener("playing",()=>{
-      v.dataset.playing="1";
-      v.classList.add("ready");
-      if(poster)poster.classList.add("hidden");
-    });
-
-    v.addEventListener("pause",()=>{
-      v.dataset.playing="0";
-    });
-
-    v.addEventListener("waiting",()=>{
-      /* تبقى صورة المعاينة ظاهرة إذا لم يبدأ الفيديو بعد */
-      if(v.readyState<2&&!poster)v.classList.remove("ready");
-    });
-
-    v.addEventListener("error",()=>{
-      if(v.dataset.failed==="1")return;
-
-      if(v.dataset.retry!=="1"){
-        v.dataset.retry="1";
-        v.dataset.loaded="0";
-        v.dataset.playing="0";
-        v.removeAttribute("src");
-
-        try{v.load()}catch{}
-
-        if(visible(v))prepareVideo(v);
-        return;
-      }
-
-      v.dataset.failed="1";
-      v.classList.remove("ready");
-      if(videoObserver)videoObserver.unobserve(v);
-      pauseVideo(v);
-
-      if(activeVideo===v)activeVideo=null;
-
-      v.removeAttribute("src");
-      try{v.load()}catch{}
-      v.remove();
-    });
-
-    box.appendChild(v);
-
-    if(videoObserver)videoObserver.observe(v);
-    else if(visible(v))activateVideo(v);
-
-  }else if(url){
+  if(imageUrl){
     const img=document.createElement("img");
-
     img.className="poster";
     img.alt=eventName(item);
     img.loading="lazy";
     img.decoding="async";
     img.fetchPriority="low";
-
+    img.width=360;
+    img.height=480;
+    img.addEventListener("load",()=>{
+      const f=box.querySelector(".fallback");
+      if(f)f.style.display="none";
+    },{once:true});
     img.addEventListener("error",()=>{
       img.remove();
     },{once:true});
-
-    img.src=url;
+    img.src=imageUrl;
     box.appendChild(img);
   }
 
   return box;
 }
 
-function clearVideos(){
-  document.querySelectorAll("#cards video").forEach(v=>{
-    if(videoObserver)videoObserver.unobserve(v);
-
-    pauseVideo(v);
-    v.dataset.playing="0";
-    v.removeAttribute("src");
-    v.removeAttribute("poster");
-
-    try{v.load()}catch{}
-  });
-
-  activeVideo=null;
-}
-
 function replaceCards(fragment){
-  clearVideos();
   $("cards").replaceChildren(fragment);
 }
 
@@ -540,7 +340,6 @@ function render(){
   if(!active){
     gallery.classList.remove("open");
     categories.style.display="";
-    clearVideos();
     cards.replaceChildren();
     return;
   }
@@ -559,12 +358,10 @@ function render(){
 
   if(!items.length){
     const loaded=isGender?genderLoaded:catalogLoaded;
-
     f.appendChild(messageBox(
       loaded?(isGender?t.genderEmpty:t.empty):t.loading,
       loaded?t.emptyText:""
     ));
-
     replaceCards(f);
     return;
   }
@@ -572,7 +369,6 @@ function render(){
   for(const item of items){
     const card=document.createElement("article");
     card.className="card";
-
     card.appendChild(makeMedia(item,isGender));
 
     const body=document.createElement("div");
@@ -611,14 +407,12 @@ function render(){
 
 function updateCounts(){
   const total=invitations.length+genderCards.length;
-
   $("totalCount").textContent=total+" "+(
     lang==="en"?"designs":lang==="ku"?"دیزاین":"تصميم"
   );
 
   document.querySelectorAll("[data-category]").forEach(b=>{
     const key=b.dataset.category;
-
     const n=key==="gender"
       ?genderCards.length
       :invitations.filter(x=>eventType(x)===key).length;
@@ -633,7 +427,6 @@ function updateCounts(){
 
 function applyLang(code){
   if(!LANG[code])return;
-
   lang=code;
   const t=LANG[lang];
 
@@ -663,7 +456,6 @@ function applyLang(code){
 
   document.querySelectorAll("[data-category]").forEach(b=>{
     const k=b.dataset.category;
-
     b.querySelector("strong").textContent=
       k==="gender"?t.genderTitle:EVENTS[k][lang];
   });
@@ -674,7 +466,6 @@ function applyLang(code){
 
 async function loadCatalog(force=false){
   if(catalogLoaded&&!force)return;
-
   const id=++request;
 
   $("refreshBtn").disabled=true;
@@ -693,22 +484,17 @@ async function loadCatalog(force=false){
     catalogLoaded=true;
     updateCounts();
     render();
-
   }catch(e){
     console.error("Catalog:",e);
-
     if(id===request){
       catalogLoaded=true;
-
       if(active&&active!=="gender"){
         const f=document.createDocumentFragment();
         f.appendChild(messageBox(LANG[lang].error));
         replaceCards(f);
       }
-
       toast(LANG[lang].error);
     }
-
   }finally{
     if(id===request){
       $("refreshBtn").disabled=false;
@@ -719,7 +505,6 @@ async function loadCatalog(force=false){
 
 async function loadGender(force=false){
   if(genderLoaded&&!force)return;
-
   const id=++genderRequest;
 
   try{
@@ -735,10 +520,8 @@ async function loadGender(force=false){
     genderLoaded=true;
     updateCounts();
     render();
-
   }catch(e){
     console.error("Gender cards:",e);
-
     if(id===genderRequest){
       genderLoaded=true;
       genderCards=[];
@@ -750,7 +533,6 @@ async function loadGender(force=false){
 
 function choose(key){
   active=key;
-
   document.querySelectorAll("[data-category]").forEach(b=>{
     b.classList.toggle("active",b.dataset.category===key);
   });
@@ -773,9 +555,7 @@ document.querySelectorAll("[data-lang]").forEach(b=>{
 
 $("backBtn").addEventListener("click",()=>{
   active=null;
-
   document.querySelectorAll("[data-category]").forEach(b=>b.classList.remove("active"));
-
   render();
   $("categoriesSection").scrollIntoView({behavior:"smooth",block:"start"});
 });
@@ -783,36 +563,9 @@ $("backBtn").addEventListener("click",()=>{
 $("refreshBtn").addEventListener("click",()=>{
   catalogLoaded=false;
   genderLoaded=false;
-
   loadCatalog(true);
-
   if(active==="gender")loadGender(true);
 });
-
-/* إيقاف الفيديو عند مغادرة الصفحة */
-document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){
-    if(activeVideo){
-      pauseVideo(activeVideo);
-      activeVideo.dataset.playing="0";
-    }
-    return;
-  }
-
-  const v=activeVideo;
-  if(v&&visible(v))activateVideo(v);
-});
-
-window.addEventListener("pagehide",clearVideos);
-
-/* مراقبة خفيفة للشاشة عند تغيير حجمها؛ لا نفحص كل الفيديوهات أثناء كل حركة تمرير */
-window.addEventListener("resize",()=>{
-  if(activeVideo&&!visible(activeVideo)){
-    pauseVideo(activeVideo);
-    activeVideo.dataset.playing="0";
-    activeVideo=null;
-  }
-},{passive:true});
 
 $("year").textContent=new Date().getFullYear();
 $("phoneText").href="tel:"+PHONE;
