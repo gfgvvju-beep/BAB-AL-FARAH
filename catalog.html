@@ -1,823 +1,844 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080808">
-<meta name="description" content="باب الفرح — دعوات إلكترونية تفاعلية واختبار جنس الجنين">
+<meta name="description" content="باب الفرح — دعوات إلكترونية تفاعلية لمناسباتكم السعيدة واختبار جنس الجنين.">
 <title>باب الفرح | اختاروا فرحتكم</title>
-<link rel="preconnect" href="https://gnsnbretccdlwpmimuap.supabase.co" crossorigin>
+<link rel="preconnect" href="https://gnsnbretccdlwpmimuap.supabase.co">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--g:#d4af37;--gl:#f4dfa0;--bg:#080808;--p:#11110e;--ink:#f5edda;--m:#b9b09a;--line:#45381c}
+:root{--gold:#d4af37;--gold-light:#f4dfa0;--bg:#080808;--panel:#11110e;--ink:#f5edda;--muted:#b9b09a;--line:#45381c;--shadow:0 14px 40px #0008}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(ellipse at top,#211b0b,#0b0b0b 48%,#050505);color:var(--ink);font-family:Cairo,Tahoma,sans-serif;min-height:100vh}
-button,a{font:inherit}a{color:inherit}
-.wrap{width:min(1160px,calc(100% - 28px));margin:auto}
-header{text-align:center;padding:15px 0}
-.top-actions{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:14px}
-.lang-button,.top-wa{padding:8px 12px;border:1px solid #51421f;border-radius:11px;background:#111;color:var(--gl);font-size:12px;font-weight:800;cursor:pointer;text-decoration:none}
-.lang-button.active{border-color:var(--g);background:#29200d}
-.brand{font:700 clamp(35px,5vw,52px) Amiri,serif;color:var(--gl)}
-.brand-en{font-size:10px;letter-spacing:3px;color:#b8a56c;direction:ltr}
-.rule{color:var(--g);margin-top:12px}
-.hero{text-align:center;padding:22px 0 27px}
-.badge{display:inline-block;padding:7px 15px;border:1px solid #695522;border-radius:30px;background:#1b170a;color:var(--gl);font-size:12px}
-h1,h2{font-family:Amiri,serif;color:var(--gl)}
-.hero h1{font-size:clamp(28px,4vw,42px);margin:12px 0 5px}
-.hero p{max-width:650px;margin:auto;color:var(--m);line-height:2;font-size:14px}
-.heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 0 18px}
-.heading h2{font-size:27px;margin:0}
-.heading p{font-size:12px;color:var(--m);margin:3px 0}
-.count{font-size:11px;padding:7px 10px;border:1px solid var(--line);border-radius:25px;color:var(--gl)}
-.category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.category{display:flex;align-items:center;gap:12px;text-align:right;min-height:100px;padding:15px;background:linear-gradient(145deg,#17150e,#0c0c0b);border:1px solid var(--line);border-radius:17px;color:var(--ink);cursor:pointer;width:100%}
-.category:hover,.category.active{border-color:var(--g)}
-.cat-icon{display:grid;place-items:center;flex:0 0 52px;width:52px;height:52px;border:1px solid #695522;border-radius:15px;background:#211b0b;font-size:26px}
-.cat-copy{min-width:0}
-.cat-copy strong{display:block;font-size:13px;color:var(--gl);line-height:1.8}
-.cat-copy small{display:block;font-size:10px;color:var(--m);line-height:1.7}
-.arrow{margin-right:auto;color:var(--g);font-size:20px}
-#gallery{display:none;margin:22px 0 28px;padding:18px;background:linear-gradient(145deg,#151208,#0c0c0b);border:1px solid #72591f;border-radius:20px}
-#gallery.open{display:block}
-.gallery-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--line)}
-.gallery-top h2{font-size:clamp(23px,3vw,32px);margin:0}
-.gallery-top p{font-size:11px;color:var(--m);margin:3px 0}
-.tools{display:flex;gap:6px}
-.tools button{padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#111;color:var(--gl);font-size:11px;font-weight:700;cursor:pointer}
-.tools .back{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;border-color:var(--g)}
-#cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;content-visibility:auto;contain-intrinsic-size:auto 900px}
-.card{min-width:0;padding:6px;background:#080808;border:1px solid #806522;border-radius:17px;overflow:hidden;contain:layout paint}
-.media{position:relative;width:100%;aspect-ratio:3/4;background:#17130a;border-radius:12px;overflow:hidden;isolation:isolate}
-.media:after{content:"";position:absolute;inset:8px;border:1px solid #d4af3780;border-radius:8px;z-index:4;pointer-events:none}
-.media img,.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.media .poster{z-index:1;opacity:1}
-.media video{z-index:2;opacity:0;object-position:center;background:#17130a;pointer-events:none}
-.media video.ready{opacity:1}
-.media .poster.hidden{opacity:0}
-.chip{position:absolute;z-index:5;top:13px;right:13px;padding:5px 9px;background:#17130aeb;color:var(--gl);border:1px solid #8c6b1d;border-radius:20px;font-size:10px;max-width:calc(100% - 26px)}
-.fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:var(--gl);padding:15px;z-index:0}
-.fallback span{font-size:40px}.fallback strong{font:700 23px Amiri,serif}.fallback small{font-size:10px;color:#d9c78e}
-.card-body{padding:8px 1px 1px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:10px 5px;border-radius:10px;font-size:11px;font-weight:800;text-decoration:none;line-height:1.6}
-.primary{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705}
-.secondary{background:#14120c;color:var(--gl);border:1px solid #5a4820}
-.message{grid-column:1/-1;padding:30px 15px;text-align:center;border:1px dashed #5a4820;border-radius:15px;color:var(--m);line-height:2}
-.about,.contact{margin:25px 0;padding:23px;background:linear-gradient(135deg,#090909,#211a0a);border:1px solid #6b531c;border-radius:20px}
-.about h2,.contact h2{font-size:26px;margin:0 0 6px}
-.about p,.contact p{color:#e0d5b5;font-size:13px;line-height:2;margin:0}
-.contact{display:flex;align-items:center;justify-content:space-between;gap:15px;background:#111}
-.phone{display:inline-block;direction:ltr;text-decoration:none;color:var(--gl);font-size:20px;font-weight:800;margin-top:7px}
-.contact-actions{display:flex;gap:8px;flex-wrap:wrap}
-.contact-actions a{padding:11px 14px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:800}
-.call{background:#211b0b;border:1px solid #6a531c;color:var(--gl)}
-.wa{background:#168653;color:white}
-footer{text-align:center;padding:20px 0 25px;border-top:1px solid #302714;color:#a79b78;font-size:11px;line-height:2}
-footer strong{display:block;color:var(--gl);font:700 20px Amiri,serif}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 16px;background:var(--g);color:#080808;border-radius:10px;display:none;z-index:20;max-width:calc(100% - 30px);text-align:center}
-.toast.show{display:block}
-html[dir=ltr] .category{text-align:left}
-html[dir=ltr] .arrow{margin-left:auto;margin-right:0}
-html[dir=ltr] .chip{right:auto;left:13px}
-@media(max-width:850px){.category-grid,#cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.contact{align-items:flex-start;flex-direction:column}}
-@media(max-width:540px){.category-grid{grid-template-columns:1fr}.category{min-height:82px;padding:12px}.cat-icon{flex-basis:48px;width:48px;height:48px}.heading h2{font-size:23px}#gallery{padding:12px}.gallery-top{align-items:flex-start}.tools{flex-wrap:wrap}.tools button{padding:8px;font-size:10px}#cards{gap:8px}.card{padding:4px}.actions{gap:5px}.btn{font-size:10px;padding:9px 3px}.contact-actions{width:100%;flex-direction:column}.contact-actions a{text-align:center}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{margin:0;background:radial-gradient(ellipse at top,#211b0b 0,#0b0b0b 48%,#050505 100%);color:var(--ink);font-family:'Cairo',Tahoma,Arial,sans-serif;min-height:100vh}
+a{color:inherit}button{font:inherit}
+.wrap{width:min(1160px,calc(100% - 36px));margin-inline:auto}
+.topbar{position:relative;padding:20px 0 15px;text-align:center}
+.brand{display:inline-flex;align-items:center;justify-content:center;gap:12px;color:var(--gold-light);font-family:'Amiri',serif;font-weight:700;font-size:clamp(34px,5vw,52px);line-height:1.2}
+.brand-heart{font-family:Arial,sans-serif;color:var(--gold);font-size:.68em}
+.brand-en{font-size:10px;letter-spacing:4px;color:#b8a56c;margin-top:5px;direction:ltr}
+.gold-rule{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--gold);margin:15px auto 0;font-size:12px}
+.gold-rule:before,.gold-rule:after{content:"";height:1px;width:74px;background:linear-gradient(90deg,transparent,var(--gold))}
+.gold-rule:after{transform:rotate(180deg)}
+.top-actions{display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;margin:0 auto 17px;direction:rtl}
+.lang-button,.top-whatsapp{display:inline-flex;justify-content:center;align-items:center;gap:6px;min-height:39px;padding:7px 13px;border:1px solid #51421f;border-radius:12px;background:#111;color:#e6d8ae;font-size:12px;font-weight:800;cursor:pointer;transition:.2s}
+.lang-button:hover,.lang-button.active{border-color:var(--gold);background:linear-gradient(135deg,#30250d,#171208);color:var(--gold-light)}
+.top-whatsapp{gap:7px;background:#17130a;color:var(--gold-light);text-decoration:none;border-color:#5d4820}
+.top-whatsapp:hover{background:#29200d;border-color:var(--gold)}
+.top-whatsapp svg{width:19px;height:19px;fill:currentColor;flex-shrink:0}
+.hero{text-align:center;padding:26px 0 28px}
+.eyebrow{display:inline-block;color:var(--gold-light);background:#1b170a;border:1px solid #695522;border-radius:50px;padding:7px 16px;font-size:12px;font-weight:700}
+.hero h1{font-family:'Amiri',serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:var(--gold-light);margin:13px 0 5px}
+.hero p{margin:0 auto;max-width:650px;line-height:2;color:var(--muted);font-size:15px}
+.heart-divider{color:var(--gold);margin-top:14px;font-size:17px}
+.section-heading{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:12px 0 18px}
+.section-heading h2{font-family:'Amiri',serif;color:var(--gold-light);font-size:27px;margin:0}
+.section-heading p{margin:3px 0 0;color:var(--muted);font-size:13px;line-height:1.8}
+.count{font-size:12px;background:#15130d;border:1px solid var(--line);padding:7px 12px;border-radius:40px;color:var(--gold-light);white-space:nowrap}
+.category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.category{position:relative;display:flex;align-items:center;gap:15px;text-align:right;padding:20px 18px;min-height:112px;background:linear-gradient(145deg,#17150e,#0c0c0b);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;color:var(--ink);overflow:hidden;width:100%}
+.category:after{content:"";position:absolute;inset:auto -18px -32px auto;width:105px;height:105px;border-radius:50%;background:#d4af3710;z-index:0}
+.category:hover,.category.active{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 15px 34px #d4af3712}
+.category-icon{position:relative;z-index:1;flex:0 0 60px;width:60px;height:60px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(145deg,#29210d,#15130c);border:1px solid #695522;font-size:29px}
+.category-copy{position:relative;z-index:1;min-width:0}
+.category-copy strong{display:block;font-size:15px;color:var(--gold-light);line-height:1.7}
+.category-copy small{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.7}
+.category-arrow{position:relative;z-index:1;margin-right:auto;color:var(--gold);font-size:20px}
+#categoriesSection{scroll-margin-top:20px}
+.gallery-panel{display:none;margin:24px 0 30px;padding:23px;background:linear-gradient(145deg,#151208,#0c0c0b);border:1px solid #72591f;border-radius:23px;box-shadow:0 18px 48px #0008;scroll-margin-top:18px;animation:panelIn .25s ease-out}
+.gallery-panel.open{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.gallery-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid #45381c}
+.gallery-title-wrap{min-width:0}
+.gallery-title-wrap h2{font-family:'Amiri',serif;color:var(--gold-light);font-size:clamp(24px,3.5vw,34px);margin:0;line-height:1.6}
+.gallery-title-wrap p{color:var(--muted);font-size:12px;margin:3px 0 0;line-height:1.8}
+.gallery-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.refresh,.back-categories{border:1px solid var(--line);background:#111;color:var(--gold-light);border-radius:12px;padding:10px 13px;cursor:pointer;font-weight:700;font-size:12px}
+.refresh:disabled{opacity:.65;cursor:wait}
+.back-categories{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;border-color:#d4af37}
+.back-categories:hover{filter:brightness(1.1)}
+.refresh:hover{border-color:var(--gold);background:#211b0b}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding-bottom:5px}
+.invite-card{background:#080808;border:1px solid #806522;border-radius:19px;overflow:hidden;box-shadow:0 14px 40px #0009;transition:transform .22s,box-shadow .22s;min-width:0;padding:7px}
+.invite-card:hover{transform:translateY(-3px);box-shadow:0 20px 45px #d4af3718}
+.card-media{width:100%;aspect-ratio:3/4;position:relative;background:linear-gradient(145deg,#050505,#30250c 55%,#b28a22);overflow:hidden;display:grid;place-items:center;border-radius:13px}
+.card-media:before{content:"";position:absolute;inset:9px;border:1px solid #d4af3780;border-radius:9px;pointer-events:none;z-index:2}
+.card-media img,.card-media video{position:absolute;width:100%;height:100%;inset:0;object-fit:cover;display:block;background:#080808}
+.card-media video{pointer-events:none}
+.media-fallback{position:relative;z-index:1;color:#fff1c4;text-align:center;padding:22px}
+.media-fallback .big-icon{display:block;font-size:46px;margin-bottom:7px}
+.media-fallback strong{font-family:'Amiri',serif;font-size:24px}
+.media-fallback small{display:block;font-size:11px;color:#d9c78e;margin-top:3px}
+.media-chip{position:absolute;z-index:3;top:15px;right:15px;background:#17130aeb;color:var(--gold-light);border:1px solid #8c6b1d;border-radius:30px;padding:6px 11px;font-size:11px;font-weight:800;max-width:calc(100% - 30px)}
+.card-body{padding:9px 2px 2px}
+.card-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;border-radius:11px;padding:12px 8px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid transparent;transition:filter .15s;line-height:1.7;text-align:center;min-width:0}
+.btn:hover{filter:brightness(1.12)}
+.btn-primary{background:linear-gradient(135deg,#8a6a12,#d4af37);color:#080705;box-shadow:0 5px 14px #d4af3720}
+.btn-secondary{background:#14120c;color:var(--gold-light);border-color:#5a4820}
+.empty,.loading,.error{grid-column:1/-1;text-align:center;background:#111;border:1px dashed #5a4820;border-radius:18px;padding:38px 20px;color:var(--muted);line-height:2}
+.empty .empty-icon{display:block;font-size:37px;margin-bottom:7px;color:var(--gold)}
+.error{color:#f1b6a7}
+.about{background:linear-gradient(135deg,#090909,#211a0a);border:1px solid #6b531c;color:#fff;border-radius:24px;padding:30px;margin:0 auto 32px;position:relative;overflow:hidden}
+.about:after{content:"♥";position:absolute;left:20px;bottom:-58px;font-size:170px;color:#ffffff09;pointer-events:none}
+.about h2{font-family:'Amiri',serif;font-size:28px;margin:0 0 7px;color:var(--gold-light)}
+.about p{color:#e0d5b5;line-height:2;margin:0;max-width:650px;font-size:14px}
+.contact-panel{background:#111;border:1px solid var(--line);border-radius:20px;padding:23px;margin-bottom:30px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:var(--shadow)}
+.contact-copy h2{font-family:'Amiri',serif;color:var(--gold-light);font-size:25px;margin:0 0 5px}
+.contact-copy p{color:var(--muted);font-size:13px;margin:0;line-height:1.9}
+.phone{direction:ltr;display:inline-block;color:var(--gold-light);font-weight:800;font-size:20px;text-decoration:none;margin-top:8px}
+.contact-actions{display:flex;gap:10px;flex-wrap:wrap}
+.contact-actions .btn{min-width:132px;padding:13px 17px;font-size:13px}
+.btn-call{background:#211b0b;color:var(--gold-light);border-color:#6a531c}
+.btn-wa{background:#168653;color:#fff}
+.footer{text-align:center;padding:20px 0 27px;border-top:1px solid #302714;color:#a79b78;font-size:11px;line-height:2}
+.footer strong{color:var(--gold-light);font-family:'Amiri',serif;font-size:19px;display:block}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--gold);color:#090909;padding:12px 18px;border-radius:12px;font-size:13px;box-shadow:0 8px 25px #0002;transition:.2s;z-index:100;max-width:calc(100% - 30px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+html[dir="ltr"] .category{text-align:left}
+html[dir="ltr"] .category-arrow{margin-left:auto;margin-right:0}
+html[dir="ltr"] .category:after{inset:auto auto -32px -18px}
+html[dir="ltr"] .media-chip{right:auto;left:15px}
+html[dir="ltr"] .top-actions{direction:ltr}
+html[dir="ltr"] .gallery-title-wrap{text-align:left}
+html[dir="ltr"] .gallery-tools{direction:ltr}
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
+@media(max-width:850px){.category-grid,.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.contact-panel{align-items:flex-start;flex-direction:column}.contact-actions{width:100%}.contact-actions .btn{flex:1}.gallery-panel{padding:18px}}
+@media(max-width:540px){.wrap{width:calc(100% - 24px)}.topbar{padding-top:15px}.top-actions{gap:6px;margin-bottom:14px}.lang-button{padding:7px 9px;font-size:11px;min-height:37px}.top-whatsapp{padding:7px 10px;font-size:11px;min-height:37px}.top-whatsapp svg{width:17px;height:17px}.hero{padding:20px 0 23px}.hero p{font-size:13px}.section-heading h2{font-size:24px}.category-grid{grid-template-columns:1fr;gap:10px}.category{min-height:88px;padding:13px}.category-icon{width:53px;height:53px;flex-basis:53px;font-size:25px}.gallery-panel{margin-top:20px;padding:14px;border-radius:18px}.gallery-top{align-items:flex-start;gap:8px}.gallery-title-wrap h2{font-size:23px}.gallery-title-wrap p{font-size:11px}.gallery-tools{gap:5px;flex-wrap:wrap}.refresh,.back-categories{padding:9px;font-size:11px}.cards{grid-template-columns:1fr;gap:17px}.invite-card{padding:7px}.card-media{aspect-ratio:3/4}.card-body{padding:8px 1px 1px}.contact-panel{padding:19px}.contact-actions{flex-direction:column}.contact-actions .btn{width:100%}.about{padding:23px 20px}.brand{font-size:38px}.card-actions{gap:7px}.btn{font-size:11px;padding:12px 6px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-<header class="wrap">
-<nav class="top-actions">
-<button class="lang-button active" data-lang="ar">🇮🇶 العربية</button>
-<button class="lang-button" data-lang="ku">☀️ کوردی</button>
-<button class="lang-button" data-lang="en">🇬🇧 English</button>
-<a class="top-wa" id="menuContact" href="https://wa.me/9647867430232" target="_blank" rel="noopener">مراسلتنا</a>
+<header class="topbar wrap">
+<nav class="top-actions" aria-label="Language and contact">
+<button class="lang-button active" type="button" data-lang="ar" aria-label="العربية" aria-pressed="true">🇮🇶 العربية</button>
+<button class="lang-button" type="button" data-lang="ku" aria-label="کوردی" aria-pressed="false">☀️ کوردی</button>
+<button class="lang-button" type="button" data-lang="en" aria-label="English" aria-pressed="false">🇬🇧 English</button>
+<a class="top-whatsapp" id="menuContact" href="https://wa.me/9647867430232" target="_blank" rel="noopener noreferrer" aria-label="مراسلتنا عبر واتساب">
+<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 .8A15.1 15.1 0 0 0 3.05 23.67L1 31l7.5-1.97A15.1 15.1 0 1 0 16 .8Zm0 27.45c-2.2 0-4.35-.59-6.25-1.72l-.45-.27-4.45 1.17 1.19-4.34-.29-.46A12.36 12.36 0 1 1 16 28.25Zm6.79-9.25c-.37-.19-2.2-1.09-2.54-1.21-.34-.12-.59-.19-.84.19-.25.37-.96 1.21-1.18 1.46-.22.25-.44.28-.81.09-.37-.19-1.57-.58-2.99-1.85-1.1-.98-1.85-2.2-2.07-2.57-.22-.37-.02-.58.17-.76.17-.17.37-.44.56-.66.19-.22.25-.37.37-.62.12-.25.06-.47-.03-.66-.09-.19-.84-2.02-1.15-2.77-.3-.72-.61-.62-.84-.63h-.72c-.25 0-.66.09-1 .47-.34.37-1.31 1.28-1.31 3.11s1.34 3.61 1.53 3.86c.19.25 2.64 4.03 6.4 5.65.9.39 1.6.62 2.14.79.9.29 1.72.25 2.37.15.72-.11 2.2-.9 2.51-1.77.31-.87.31-1.61.22-1.77-.09-.15-.34-.25-.72-.44Z"/></svg>
+<span id="topWhatsappText">مراسلتنا</span></a>
 </nav>
-<a href="./catalog.html" style="text-decoration:none">
-<div class="brand">باب الفرح ♥</div>
-<div class="brand-en">BAB AL FARAH · DIGITAL INVITATIONS</div>
-</a>
-<div class="rule">✦ ❦ ✦</div>
+<a href="./catalog.html" style="text-decoration:none" aria-label="باب الفرح"><div class="brand"><span>باب الفرح</span><span class="brand-heart" aria-hidden="true">♥</span></div><div class="brand-en">BAB AL FARAH · DIGITAL INVITATIONS</div></a>
+<div class="gold-rule" aria-hidden="true">✦ ❦ ✦</div>
 </header>
 
 <main class="wrap">
 <section class="hero">
-<span class="badge" id="heroBadge">فرحتكم تستاهل دعوة مميزة</span>
+<span class="eyebrow" id="heroBadge">فرحتكم تستاهل دعوة مميزة</span>
 <h1 id="heroTitle">كل فرحة إلها باب… وإحنا نفتحلكم أحلى البدايات</h1>
 <p id="heroText">اختاروا مناسبتكم، تصفّحوا الدعوات المنشورة، وشوفوا تصميم الباب قبل ما تتواصلون ويانا لتجهيز دعوتكم الخاصة.</p>
+<div class="heart-divider" aria-hidden="true">♡ ─── ♥ ─── ♡</div>
 </section>
 
-<section id="categoriesSection">
-<div class="heading"><div><h2 id="categoriesTitle">اختاروا نوع الفرحة</h2><p id="categoriesHint">اضغط على المناسبة حتى تشوف الدعوات الخاصة بيها</p></div><span class="count" id="totalCount">جارٍ التحميل…</span></div>
+<section aria-labelledby="categoriesTitle" id="categoriesSection">
+<div class="section-heading"><div><h2 id="categoriesTitle">اختاروا نوع الفرحة</h2><p id="categoriesHint">اضغط على المناسبة حتى تشوف الدعوات الخاصة بيها</p></div><span class="count" id="totalCount">جارٍ التحميل…</span></div>
 <div class="category-grid" id="categoryGrid">
-<button class="category" data-category="wedding"><span class="cat-icon">💍</span><span class="cat-copy"><strong>دعوات حفلات الزفاف</strong><small>فرحة العمر بتصميم يليق بيها</small></span><span class="arrow">‹</span></button>
-<button class="category" data-category="engagement"><span class="cat-icon">💞</span><span class="cat-copy"><strong>دعوات عقد القران</strong><small>بداية حكاية جديدة</small></span><span class="arrow">‹</span></button>
-<button class="category" data-category="henna"><span class="cat-icon">🌿</span><span class="cat-copy"><strong>دعوات حفلات الحنّة</strong><small>ليلة مليانة محبة وفرح</small></span><span class="arrow">‹</span></button>
-<button class="category" data-category="circumcision"><span class="cat-icon">🌙</span><span class="cat-copy"><strong>دعوات مناسبة الختان</strong><small>مناسبة غالية على القلب</small></span><span class="arrow">‹</span></button>
-<button class="category" data-category="graduation"><span class="cat-icon">🎓</span><span class="cat-copy"><strong>دعوات حفلات التخرج</strong><small>احتفال بإنجاز يستاهل</small></span><span class="arrow">‹</span></button>
-<button class="category" data-category="birthday"><span class="cat-icon">🎂</span><span class="cat-copy"><strong>دعوات أعياد الميلاد</strong><small>خلّوا يومهم ذكرى حلوة</small></span><span class="arrow">‹</span></button>
-<button class="category" data-category="gender"><span class="cat-icon">🩷</span><span class="cat-copy"><strong>اختبار جنس الجنين</strong><small>اكتشفوا المفاجأة بطريقة تفاعلية</small></span><span class="arrow">‹</span></button>
+<button class="category" type="button" data-category="wedding"><span class="category-icon">💍</span><span class="category-copy"><strong>دعوات حفلات الزفاف</strong><small>فرحة العمر بتصميم يليق بيها</small></span><span class="category-arrow">‹</span></button>
+<button class="category" type="button" data-category="engagement"><span class="category-icon">💞</span><span class="category-copy"><strong>دعوات عقد القران</strong><small>بداية حكاية جديدة</small></span><span class="category-arrow">‹</span></button>
+<button class="category" type="button" data-category="henna"><span class="category-icon">🌿</span><span class="category-copy"><strong>دعوات حفلات الحنّة</strong><small>ليلة مليانة محبة وفرح</small></span><span class="category-arrow">‹</span></button>
+<button class="category" type="button" data-category="circumcision"><span class="category-icon">🌙</span><span class="category-copy"><strong>دعوات مناسبة الختان</strong><small>مناسبة غالية على القلب</small></span><span class="category-arrow">‹</span></button>
+<button class="category" type="button" data-category="graduation"><span class="category-icon">🎓</span><span class="category-copy"><strong>دعوات حفلات التخرج</strong><small>احتفال بإنجاز يستاهل</small></span><span class="category-arrow">‹</span></button>
+<button class="category" type="button" data-category="birthday"><span class="category-icon">🎂</span><span class="category-copy"><strong>دعوات أعياد الميلاد</strong><small>خلّوا يومهم ذكرى حلوة</small></span><span class="category-arrow">‹</span></button>
+<button class="category" type="button" data-category="gender"><span class="category-icon">🩷</span><span class="category-copy"><strong>بطاقات اختبار جنس الجنين</strong><small>اكتشفوا المفاجأة بطريقة تفاعلية</small></span><span class="category-arrow">‹</span></button>
 </div>
 </section>
 
-<section id="gallery" aria-live="polite">
-<div class="gallery-top"><div><h2 id="galleryTitle">دعوات حفلات الزفاف</h2><p id="gallerySubtitle">اختاروا التصميم اللي يعجبكم</p></div><div class="tools"><button id="refreshBtn">↻ تحديث</button><button class="back" id="backBtn">↩ رجوع للمناسبات</button></div></div>
-<div id="cards"></div>
+<section class="gallery-panel" id="galleryPanel" aria-labelledby="galleryTitle" aria-live="polite">
+<div class="gallery-top"><div class="gallery-title-wrap"><h2 id="galleryTitle">دعوات حفلات الزفاف</h2><p id="gallerySubtitle">اختاروا التصميم اللي يعجبكم</p></div><div class="gallery-tools"><button class="refresh" id="refreshBtn" type="button">↻ تحديث</button><button class="back-categories" id="backCategoriesBtn" type="button">↩ رجوع للمناسبات</button></div></div>
+<div class="cards" id="invitationCards"></div>
 </section>
 
-<section class="about"><h2 id="aboutTitle">باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة</h2><p id="aboutText">نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.</p></section>
+<section class="about" aria-labelledby="aboutTitle"><h2 id="aboutTitle">باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة</h2><p id="aboutText">نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.</p></section>
 
-<section class="contact">
-<div><h2 id="contactTitle">تفاصيلنا والتواصل ويانا</h2><p id="contactText">عندك استفسار أو تريد تصمم دعوتك الخاصة؟ إحنا بالخدمة بكل حب.</p><a class="phone" id="phoneText" href="tel:07867430232">07867430232</a></div>
-<div class="contact-actions"><a class="call" id="callBtn" href="tel:07867430232">☎ اتصل بنا</a><a class="wa" id="whatsappBtn" href="https://wa.me/9647867430232" target="_blank" rel="noopener">◉ تواصل واتساب</a></div>
-</section>
+<section class="contact-panel" id="contact" aria-labelledby="contactTitle"><div class="contact-copy"><h2 id="contactTitle">تفاصيلنا والتواصل ويانا</h2><p id="contactText">عندك استفسار أو تريد تصمم دعوتك الخاصة؟ إحنا بالخدمة بكل حب.</p><a class="phone" id="phoneText" href="tel:07867430232">07867430232</a></div><div class="contact-actions"><a class="btn btn-call" id="callBtn" href="tel:07867430232">☎ اتصل بنا</a><a class="btn btn-wa" id="whatsappBtn" href="https://wa.me/9647867430232" target="_blank" rel="noopener noreferrer">◉ تواصل واتساب</a></div></section>
 </main>
-<footer><div class="wrap"><strong>باب الفرح ♥</strong><span id="footerText">نصنع لحظاتكم الجميلة بكل حب</span><br><span id="rightsText">جميع الحقوق محفوظة</span> © <span id="year"></span> باب الفرح</div></footer>
-<div class="toast" id="toast" role="status"></div>
+
+<footer class="footer"><div class="wrap"><strong>باب الفرح ♥</strong><span id="footerText">نصنع لحظاتكم الجميلة بكل حب</span><br><span id="rightsText">جميع الحقوق محفوظة</span> © <span id="year"></span> باب الفرح</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
 
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
-  auth:{persistSession:false,autoRefreshToken:false},
-  global:{headers:{"X-Client-Info":"bab-alfarah-catalog"}}
-});
-const PHONE="07867430232",WA="9647867430232",$=id=>document.getElementById(id);
-
-const EVENTS={
-wedding:{icon:"💍",ar:"دعوة زفاف",ku:"بانگهێشتنامەی هاوسەرگیری",en:"Wedding invitation"},
-engagement:{icon:"💞",ar:"دعوة عقد قران",ku:"بانگهێشتنامەی گرێبەست",en:"Marriage contract invitation"},
-henna:{icon:"🌿",ar:"دعوة حفلة الحنّة",ku:"بانگهێشتنامەی حەنە",en:"Henna party invitation"},
-circumcision:{icon:"🌙",ar:"دعوة مناسبة الختان",ku:"بانگهێشتنامەی خەتەنە",en:"Circumcision invitation"},
-graduation:{icon:"🎓",ar:"دعوة حفلة التخرج",ku:"بانگهێشتنامەی دەرچوون",en:"Graduation invitation"},
-birthday:{icon:"🎂",ar:"دعوة عيد ميلاد",ku:"بانگهێشتنامەی لەدایکبوون",en:"Birthday invitation"}
-};
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+const OWNER_PHONE_DISPLAY="07867430232";
+const OWNER_PHONE_WA="9647867430232";
+const $=id=>document.getElementById(id);
 
 const LANG={
-ar:{dir:"rtl",contact:"مراسلتنا",heroBadge:"فرحتكم تستاهل دعوة مميزة",heroTitle:"كل فرحة إلها باب… وإحنا نفتحلكم أحلى البدايات",heroText:"اختاروا مناسبتكم، تصفّحوا الدعوات المنشورة، وشوفوا تصميم الباب قبل ما تتواصلون ويانا لتجهيز دعوتكم الخاصة.",categoriesTitle:"اختاروا نوع الفرحة",categoriesHint:"اضغط على المناسبة حتى تشوف الدعوات الخاصة بيها",loading:"جارٍ تحميل الدعوات المنشورة…",refresh:"↻ تحديث",refreshing:"جارٍ التحديث…",back:"↩ رجوع للمناسبات",subtitle:"اختاروا التصميم اللي يعجبكم",empty:"ماكو دعوات منشورة بهذا القسم حالياً",emptyText:"تابعونا، راح نضيف تصاميم جديدة قريباً.",error:"تعذر تحميل الدعوات حالياً",preview:"♡ معاينة الدعوة",order:"طلب عبر واتساب",genderTitle:"اختبار جنس الجنين",genderSubtitle:"اختاروا البطاقة وابدؤوا الاختبار",genderStart:"🩷 ابدأ الاختبار",genderContact:"إرسال الاختبار عبر واتساب",genderEmpty:"ماكو بطاقات اختبار منشورة حالياً",aboutTitle:"باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة",aboutText:"نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.",contactTitle:"تفاصيلنا والتواصل ويانا",contactText:"عندك استفسار أو تريد تصمم دعوتك الخاصة؟ إحنا بالخدمة بكل حب.",call:"☎ اتصل بنا",whatsapp:"◉ تواصل واتساب",footer:"نصنع لحظاتكم الجميلة بكل حب",rights:"جميع الحقوق محفوظة",message:"السلام عليكم، أريد الاستفسار عن دعوات باب الفرح ❤️"},
-ku:{dir:"rtl",contact:"پەیوەندیمان پێوە بکە",heroBadge:"شادییەکەتان بانگهێشتنامەیەکی تایبەتی دەوێت",heroTitle:"هەر شادییەک دەرگایەکی هەیە…",heroText:"بۆنەکەتان هەڵبژێرن و بانگهێشتنامەکان ببینن.",categoriesTitle:"جۆری شادییەکەتان هەڵبژێرن",categoriesHint:"بۆ بینینی بانگهێشتنامەکان کرتە بکەن",loading:"بانگهێشتنامەکان بار دەکرێن…",refresh:"↻ نوێکردنەوە",refreshing:"نوێ دەکرێتەوە…",back:"↩ گەڕانەوە",subtitle:"دیزاینێک هەڵبژێرن",empty:"لە ئێستادا بانگهێشتنامە نییە",emptyText:"بەم زووانە دیزاینی نوێ زیاد دەکەین.",error:"بارکردن سەرکەوتوو نەبوو",preview:"♡ پیشاندانی بانگهێشتنامە",order:"داوا لە واتساپ",genderTitle:"تاقیکردنەوەی ڕەگەزی منداڵ",genderSubtitle:"کارتەکە هەڵبژێرن",genderStart:"🩷 دەستپێکردن",genderContact:"ناردن بە واتساپ",genderEmpty:"کارت نییە",aboutTitle:"دەرگای شادی… یادگارییە جوانەکان",aboutText:"بانگهێشتنامەی ئەلیکترۆنی بۆ بۆنە خۆشەکان ئامادە دەکەین.",contactTitle:"پەیوەندیمان",contactText:"بە خۆشحاڵی لە خزمەتداین.",call:"☎ پەیوەندی",whatsapp:"◉ واتساپ",footer:"بە خۆشەویستی",rights:"هەموو مافەکان پارێزراون",message:"سڵاو، دەمەوێت دەربارەی بانگهێشتنامەکان بپرسم ❤️"},
-en:{dir:"ltr",contact:"Message us",heroBadge:"Your celebration deserves a special invitation",heroTitle:"Every celebration has a door…",heroText:"Choose your occasion, browse invitations, and preview the designs.",categoriesTitle:"Choose your occasion",categoriesHint:"Select an occasion to see invitations",loading:"Loading invitations…",refresh:"↻ Refresh",refreshing:"Refreshing…",back:"↩ Back to occasions",subtitle:"Choose your favourite design",empty:"No published invitations in this category yet",emptyText:"New designs coming soon.",error:"Could not load invitations",preview:"♡ Preview invitation",order:"Order via WhatsApp",genderTitle:"Baby Gender Reveal",genderSubtitle:"Choose a card and start",genderStart:"🩷 Start reveal",genderContact:"Contact via WhatsApp",genderEmpty:"No published reveal cards yet",aboutTitle:"Bab Al Farah… small details make big memories",aboutText:"We create interactive digital invitations for your special occasions.",contactTitle:"Contact us",contactText:"Have a question or want a custom invitation? We are happy to help.",call:"☎ Call us",whatsapp:"◉ WhatsApp us",footer:"Creating beautiful moments with love",rights:"All rights reserved",message:"Hello, I would like to ask about Bab Al Farah invitations ❤️"}
+ar:{
+dir:"rtl",contact:"مراسلتنا",heroBadge:"فرحتكم تستاهل دعوة مميزة",heroTitle:"كل فرحة إلها باب… وإحنا نفتحلكم أحلى البدايات",heroText:"اختاروا مناسبتكم، تصفّحوا الدعوات المنشورة، وشوفوا تصميم الباب قبل ما تتواصلون ويانا لتجهيز دعوتكم الخاصة.",categoriesTitle:"اختاروا نوع الفرحة",categoriesHint:"اضغط على المناسبة حتى تشوف الدعوات الخاصة بيها",loadingCount:"جارٍ التحميل…",refresh:"↻ تحديث",refreshing:"جارٍ التحديث…",gallerySubtitle:"اختاروا التصميم اللي يعجبكم",back:"↩ رجوع للمناسبات",loading:"جارٍ تحميل الدعوات المنشورة…",emptyTitle:"ماكو دعوات منشورة بهذا القسم حالياً",emptyText:"تابعونا، راح نضيف تصاميم جديدة قريباً.",loadError:"تعذر تحميل الدعوات حالياً",loadErrorText:"تأكد من إعداد قاعدة البيانات الخاص بمعرض باب الفرح.",total:"تصميم منشور",available:"تصميم متاح",soon:"تُضاف التصاميم قريباً",preview:"♡ معاينة الدعوة",order:"طلب عبر واتساب",genderTitle:"بطاقات اختبار جنس الجنين",genderSmall:"اكتشفوا المفاجأة بطريقة تفاعلية 🩷",genderSingular:"اختبار جنس الجنين",genderSubtitle:"اختاروا البطاقة وابدؤوا الاختبار",genderStart:"🩷 ابدأ الاختبار",genderContact:"مراسلة عبر واتساب",genderEmpty:"ماكو بطاقات اختبار منشورة حالياً",genderEmptyText:"تابعونا، راح نضيف بطاقات جديدة قريباً.",genderError:"تعذر تحميل بطاقات الاختبار حالياً",aboutTitle:"باب الفرح… تفاصيل صغيرة تصنع ذكرى كبيرة",aboutText:"نجهّز لكم دعوات إلكترونية تفاعلية للمناسبات السعيدة، بتصاميم متنوعة وباب ينفتح بطريقة مميزة. اختاروا الفكرة اللي تناسب فرحتكم وتواصلوا ويانا حتى نجهز دعوتكم.",contactTitle:"تفاصيلنا والتواصل ويانا",contactText:"عندك استفسار أو تريد تصمم دعوتك الخاصة؟ إحنا بالخدمة بكل حب.",call:"☎ اتصل بنا",whatsapp:"◉ تواصل واتساب",footer:"نصنع لحظاتكم الجميلة بكل حب",rights:"جميع الحقوق محفوظة",noLoad:"تعذر تحميل الدعوات؛ تأكد من إعداد قاعدة البيانات.",contactMessage:"السلام عليكم، أريد الاستفسار عن دعوات باب الفرح ❤️",
+event:{
+wedding:{title:"دعوات حفلات الزفاف",small:"فرحة العمر بتصميم يليق بيها",singular:"دعوة زفاف",description:"دعوات زفاف تفاعلية"},
+engagement:{title:"دعوات عقد القران",small:"بداية حكاية جديدة",singular:"دعوة عقد قران",description:"دعوات عقد القران"},
+henna:{title:"دعوات حفلات الحنّة",small:"ليلة مليانة محبة وفرح",singular:"دعوة حفلة الحنّة",description:"دعوات حفلات الحنّة"},
+circumcision:{title:"دعوات مناسبة الختان",small:"مناسبة غالية على القلب",singular:"دعوة مناسبة الختان",description:"دعوات مناسبة الختان"},
+graduation:{title:"دعوات حفلات التخرج",small:"احتفال بإنجاز يستاهل",singular:"دعوة حفلة التخرج",description:"دعوات حفلات التخرج"},
+birthday:{title:"دعوات أعياد الميلاد",small:"خلّوا يومهم ذكرى حلوة",singular:"دعوة عيد ميلاد",description:"دعوات أعياد الميلاد"}
+}},
+ku:{
+dir:"rtl",contact:"پەیوەندیمان پێوە بکە",heroBadge:"شادییەکەتان بانگهێشتنامەیەکی تایبەتی دەوێت",heroTitle:"هەر شادییەک دەرگایەکی هەیە… ئێمە جوانترین دەستپێک بۆتان دەکەینەوە",heroText:"جۆری بۆنەکەتان هەڵبژێرن، بانگهێشتنامە بڵاوکراوەکان ببینن و دیزاینی دەرگاکە ببینن پێش ئەوەی پەیوەندیمان پێوە بکەن.",categoriesTitle:"جۆری شادییەکەتان هەڵبژێرن",categoriesHint:"بۆ بینینی بانگهێشتنامەکانی هەر بۆنەیەک کرتە لەسەری بکەن",loadingCount:"بارکردن…",refresh:"↻ نوێکردنەوە",refreshing:"نوێ دەکرێتەوە…",gallerySubtitle:"ئەو دیزاینە هەڵبژێرن کە پێتان خۆشە",back:"↩ گەڕانەوە بۆ بۆنەکان",loading:"بانگهێشتنامە بڵاوکراوەکان بار دەکرێن…",emptyTitle:"لە ئێستادا بانگهێشتنامەی بڵاوکراوە لەم بەشەدا نییە",emptyText:"بەردەوام بن، دیزاینی نوێ زیاد دەکەین.",loadError:"لە ئێستادا نەتوانرا بانگهێشتنامەکان بار بکرێن",loadErrorText:"تکایە ڕێکخستنی بنکەدراوەی گەلەری دەرگای شادی بپشکنن.",total:"دیزاینی بڵاوکراوە",available:"دیزاین بەردەستە",soon:"دیزاینەکان بەم زووانە زیاد دەکرێن",preview:"♡ پیشاندانی بانگهێشتنامە",order:"داوای لە واتساپ بکە",genderTitle:"کارتەکانی تاقیکردنەوەی ڕەگەزی منداڵ",genderSmall:"بە شێوەیەکی تایبەت نهێنییەکە بدۆزنەوە 🩷",genderSingular:"تاقیکردنەوەی ڕەگەزی منداڵ",genderSubtitle:"کارتەکە هەڵبژێرن و تاقیکردنەوەکە دەست پێ بکەن",genderStart:"🩷 دەستپێکردنی تاقیکردنەوە",genderContact:"پەیوەندی بە واتساپ",genderEmpty:"لە ئێستادا کارتی تاقیکردنەوەی بڵاوکراوە نییە",genderEmptyText:"بەردەوام بن، کارتی نوێ زیاد دەکەین.",genderError:"بارکردنی کارتەکانی تاقیکردنەوە سەرکەوتوو نەبوو",aboutTitle:"دەرگای شادی… وردەکارییە بچووکەکان یادگاریی گەورە دروست دەکەن",aboutText:"بانگهێشتنامەی ئەلیکترۆنی کارلێککەر بۆ بۆنە خۆشەکان ئامادە دەکەین، بە دیزاینی جۆراوجۆر و دەرگایەکی تایبەت. ئەو بیرۆکەیە هەڵبژێرن کە لەگەڵ شادییەکەتان دەگونجێت و پەیوەندیمان پێوە بکەن.",contactTitle:"زانیاری و پەیوەندیمان",contactText:"پرسیارتان هەیە یان دەتەوێت بانگهێشتنامەی تایبەت دروست بکەیت؟ بە خۆشحاڵی لە خزمەتداین.",call:"☎ پەیوەندی تەلەفۆنی",whatsapp:"◉ واتساپ",footer:"بە خۆشەویستی ساتە جوانەکانتان دروست دەکەین",rights:"هەموو مافەکان پارێزراون",noLoad:"بارکردنی بانگهێشتنامەکان سەرکەوتوو نەبوو؛ ڕێکخستنی بنکەدراوە بپشکنە.",contactMessage:"سڵاو، دەمەوێت دەربارەی بانگهێشتنامەکانی دەرگای شادی بپرسم ❤️",
+event:{
+wedding:{title:"بانگهێشتنامەی هاوسەرگیری",small:"شادیی ژیان بە دیزاینێکی شایستە",singular:"بانگهێشتنامەی هاوسەرگیری",description:"بانگهێشتنامەی هاوسەرگیریی کارلێککەر"},
+engagement:{title:"بانگهێشتنامەی گرێبەستی هاوسەرگیری",small:"دەستپێکی چیرۆکێکی نوێ",singular:"بانگهێشتنامەی گرێبەست",description:"بانگهێشتنامەی گرێبەست"},
+henna:{title:"بانگهێشتنامەی شەوی حەنە",small:"شەوێک پڕ لە خۆشەویستی و شادی",singular:"بانگهێشتنامەی حەنە",description:"بانگهێشتنامەی حەنە"},
+circumcision:{title:"بانگهێشتنامەی خەتەنە",small:"بۆنەیەکی خۆشەویست",singular:"بانگهێشتنامەی خەتەنە",description:"بانگهێشتنامەی خەتەنە"},
+graduation:{title:"بانگهێشتنامەی دەرچوون",small:"جەژن بۆ دەستکەوتێکی گرنگ",singular:"بانگهێشتنامەی دەرچوون",description:"بانگهێشتنامەی دەرچوون"},
+birthday:{title:"بانگهێشتنامەی لەدایکبوون",small:"ڕۆژەکەیان بکەنە یادگارییەکی خۆش",singular:"بانگهێشتنامەی لەدایکبوون",description:"بانگهێشتنامەی لەدایکبوون"}
+}},
+en:{
+dir:"ltr",contact:"Message us",heroBadge:"Your celebration deserves a special invitation",heroTitle:"Every celebration has a door… let us open a beautiful beginning",heroText:"Choose your occasion, browse published invitations, and preview the door design before contacting us to prepare your own invitation.",categoriesTitle:"Choose your occasion",categoriesHint:"Select an occasion to see its invitations",loadingCount:"Loading…",refresh:"↻ Refresh",refreshing:"Refreshing…",gallerySubtitle:"Choose the design you love",back:"↩ Back to occasions",loading:"Loading published invitations…",emptyTitle:"There are no published invitations in this category yet",emptyText:"Check back soon for new designs.",loadError:"Invitations could not be loaded",loadErrorText:"Please check the Bab Al Farah gallery database setup.",total:"published designs",available:"designs available",soon:"New designs coming soon",preview:"♡ Preview invitation",order:"Order via WhatsApp",genderTitle:"Baby Gender Reveal Cards",genderSmall:"Discover the surprise in a special way 🩷",genderSingular:"Baby gender reveal",genderSubtitle:"Choose a card and start the reveal",genderStart:"🩷 Start the reveal",genderContact:"Contact via WhatsApp",genderEmpty:"No published reveal cards yet",genderEmptyText:"Check back soon for new cards.",genderError:"Could not load reveal cards",aboutTitle:"Bab Al Farah… small details make big memories",aboutText:"We create interactive digital invitations for happy occasions, with varied designs and a special opening door. Choose the idea that suits your celebration and contact us to prepare your invitation.",contactTitle:"Contact details",contactText:"Have a question or want a custom invitation? We are happy to help.",call:"☎ Call us",whatsapp:"◉ WhatsApp us",footer:"Creating your beautiful moments with love",rights:"All rights reserved",noLoad:"Could not load invitations. Please check the database setup.",contactMessage:"Hello, I would like to ask about Bab Al Farah invitations ❤️",
+event:{
+wedding:{title:"Wedding Invitations",small:"A lifetime celebration with a fitting design",singular:"Wedding invitation",description:"Interactive wedding invitations"},
+engagement:{title:"Marriage Contract Invitations",small:"The beginning of a new story",singular:"Marriage contract invitation",description:"Marriage contract invitations"},
+henna:{title:"Henna Party Invitations",small:"A night full of love and joy",singular:"Henna party invitation",description:"Henna party invitations"},
+circumcision:{title:"Circumcision Invitations",small:"A precious family occasion",singular:"Circumcision invitation",description:"Circumcision invitations"},
+graduation:{title:"Graduation Invitations",small:"Celebrate a well-earned achievement",singular:"Graduation invitation",description:"Graduation invitations"},
+birthday:{title:"Birthday Invitations",small:"Make their day a lovely memory",singular:"Birthday invitation",description:"Birthday invitations"}
+}}
 };
 
-let lang="ar",invitations=[],genderCards=[],active=null;
-let catalogLoaded=false,genderLoaded=false,request=0,genderRequest=0;
+const EVENT_TYPES={wedding:{icon:"💍"},engagement:{icon:"💞"},henna:{icon:"🌿"},circumcision:{icon:"🌙"},graduation:{icon:"🎓"},birthday:{icon:"🎂"}};
+
+let allInvitations=[];
+let genderCards=[];
+let activeCategory=null;
+let currentLang="ar";
 let toastTimer=null;
-let videoObserver=null;
+let loadRequest=0;
+let genderLoadRequest=0;
+let catalogLoaded=false;
+let genderLoaded=false;
+let catalogPromise=null;
+let genderPromise=null;
 
-/* ---------- تصحيح كشف نوع الوسائط ---------- */
+const mediaObserver="IntersectionObserver" in window
+?new IntersectionObserver(entries=>{
+entries.forEach(entry=>{
+const video=entry.target;
+if(entry.isIntersecting){
+if(!video.src&&video.dataset.src){
+video.src=video.dataset.src;
+video.removeAttribute("data-src");
+video.load();
+}
+if(video.readyState>=2){
+const p=video.play();
+if(p&&p.catch)p.catch(()=>{});
+}
+}else{
+video.pause();
+}
+});
+},{rootMargin:"150px 0px",threshold:0.01})
+:null;
 
-function validUrl(v){
-  if(typeof v==="object"&&v!==null){
-    v=v.url||v.publicUrl||v.public_url||v.href||v.src||v.path||"";
-  }
-  try{
-    const u=new URL(String(v||"").trim(),location.href);
-    return["https:","http:"].includes(u.protocol)?u.href:"";
-  }catch{return""}
+function tr(key){return LANG[currentLang][key]||LANG.ar[key]||key}
+function eventType(item){return EVENT_TYPES[item.event_type]?item.event_type:"wedding"}
+function displayName(item){return String(item.title||LANG[currentLang].event[eventType(item)].singular).trim()}
+
+function validHttpUrl(value){
+try{
+const u=new URL(String(value||""));
+return["https:","http:"].includes(u.protocol)?u.href:"";
+}catch(e){return""}
 }
 
-function mediaPath(url){
-  try{
-    const u=new URL(url,location.href);
-    let p=u.pathname||"";
-    try{p=decodeURIComponent(p)}catch{}
-    return p.toLowerCase().split("/").pop()||"";
-  }catch{
-    return String(url||"").split(/[?#]/)[0].split("/").pop().toLowerCase();
-  }
-}
+function inviteUrl(item){return validHttpUrl(item.invitation_url)||"#"}
 
-function fileExtension(url){
-  const name=mediaPath(url);
-  const match=name.match(/\.([a-z0-9]{2,8})$/i);
-  return match?match[1].toLowerCase():"";
-}
-
-const VIDEO_EXTENSIONS=new Set(["mp4","webm","m4v","mov","ogv","ogg","m3u8","mpd"]);
-const IMAGE_EXTENSIONS=new Set(["jpg","jpeg","png","gif","webp","avif","bmp","svg","jfif","heic","heif","tif","tiff"]);
-
-function normalizeMediaType(value){
-  if(value===null||value===undefined)return"";
-  if(typeof value==="object"){
-    return normalizeMediaType(
-      value.mime_type||value.mimeType||value.content_type||value.contentType||
-      value.media_type||value.mediaType||value.file_type||value.type||
-      value.format||value.extension||value.name||""
-    );
-  }
-  return String(value).trim().toLowerCase().split(";")[0].replace(/\s+/g,"");
-}
-
-function mediaTypeHint(item){
-  const keys=[
-    "media_type","mime_type","content_type","file_type","mediaType",
-    "mimeType","contentType","format","extension","media_format",
-    "asset_type","resource_type","kind"
-  ];
-  const values=[];
-  for(const key of keys){
-    const value=item?.[key];
-    if(value!==undefined&&value!==null)values.push(normalizeMediaType(value));
-  }
-
-  /* لا نستخدم حقل type وحده إلا إذا كانت قيمته واضحة لنوع الملف */
-  const type=normalizeMediaType(item?.type);
-  if(type)values.push(type);
-
-  if(values.some(t=>t.startsWith("video/")||["video","mp4","webm","mov","m4v","ogv","m3u8"].includes(t)))return"video";
-  if(values.some(t=>t.startsWith("image/")||["image","jpg","jpeg","png","gif","webp","avif","bmp","svg","heic","heif"].includes(t)))return"image";
-  return"";
-}
-
-function isVideo(url,item={},fieldHint=""){
-  const u=validUrl(url);
-  if(!u)return false;
-
-  const ext=fileExtension(u);
-  if(VIDEO_EXTENSIONS.has(ext))return true;
-  if(IMAGE_EXTENSIONS.has(ext))return false;
-
-  const hint=String(fieldHint||"").toLowerCase();
-  if(/(^|[_-])(poster|thumbnail|thumb|preview_image|cover|image)([_-]|$)/.test(hint))return false;
-  if(/(^|[_-])(video|movie|clip)([_-]|$)/.test(hint))return true;
-
-  const mime=mediaTypeHint(item);
-  if(mime==="video")return true;
-  if(mime==="image")return false;
-
-  return false;
-}
-
-function isImageUrl(url,item={},fieldHint=""){
-  const u=validUrl(url);
-  if(!u)return false;
-
-  const ext=fileExtension(u);
-  if(IMAGE_EXTENSIONS.has(ext))return true;
-  if(VIDEO_EXTENSIONS.has(ext))return false;
-
-  const hint=String(fieldHint||"").toLowerCase();
-  if(/(^|[_-])(poster|thumbnail|thumb|preview_image|cover|image)([_-]|$)/.test(hint))return true;
-  if(/(^|[_-])(video|movie|clip)([_-]|$)/.test(hint))return false;
-
-  return mediaTypeHint(item)==="image";
-}
-
-/* قراءة الروابط حتى إذا كانت مخزونة ككائن أو مصفوفة */
-function collectMediaEntries(item,keys){
-  const out=[];
-  const add=(value,key)=>{
-    if(value===undefined||value===null||value==="")return;
-
-    if(Array.isArray(value)){
-      for(const entry of value)add(entry,key);
-      return;
-    }
-
-    if(typeof value==="object"){
-      const nestedUrl=value.url||value.publicUrl||value.public_url||
-        value.href||value.src||value.path||value.signedUrl||value.signed_url;
-      if(nestedUrl){
-        const url=validUrl(nestedUrl);
-        if(url&&!out.some(x=>x.url===url)){
-          out.push({url,key:key,meta:{...item,...value}});
-        }
-      }
-      return;
-    }
-
-    const url=validUrl(value);
-    if(url&&!out.some(x=>x.url===url)){
-      out.push({url,key,meta:item});
-    }
-  };
-
-  for(const key of keys)add(item?.[key],key);
-  return out;
-}
-
-function getMedia(item){
-  if(!item||typeof item!=="object")return{url:"",video:false,poster:""};
-
-  const videoKeys=[
-    "video_url","video_public_url","video_storage_url","video_path",
-    "video","movie_url","clip_url","media_url","media_path",
-    "public_url","storage_url","file_url","file_path","asset_url",
-    "url","image_url","image","media","file"
-  ];
-
-  const imageKeys=[
-    "poster_url","thumbnail_url","thumbnail","thumb_url","cover_url",
-    "preview_image_url","preview_url","poster","cover","image_url",
-    "image","media_url","public_url","storage_url","file_url","url"
-  ];
-
-  const videoEntries=collectMediaEntries(item,videoKeys);
-  const imageEntries=collectMediaEntries(item,imageKeys);
-
-  /* أولوية الحقول المخصصة للفيديو، حتى لو لم يظهر الامتداد في الرابط */
-  const explicitVideoKeys=new Set([
-    "video_url","video_public_url","video_storage_url","video_path",
-    "video","movie_url","clip_url"
-  ]);
-
-  let videoEntry=videoEntries.find(e=>
-    explicitVideoKeys.has(e.key)&&!isImageUrl(e.url,e.meta,e.key)
-  );
-
-  if(!videoEntry){
-    videoEntry=videoEntries.find(e=>isVideo(e.url,e.meta,e.key));
-  }
-
-  if(!videoEntry){
-    const hint=mediaTypeHint(item);
-    if(hint==="video"){
-      videoEntry=videoEntries.find(e=>
-        !/^(poster|thumbnail|thumb|preview_image|cover|image)$/.test(e.key)
-      );
-    }
-  }
-
-  /* الصور المخصصة للغلاف لا تُعامل على أنها فيديو */
-  let posterEntry=imageEntries.find(e=>
-    ["poster_url","thumbnail_url","thumbnail","thumb_url","cover_url",
-     "preview_image_url","poster","cover"].includes(e.key)&&
-    !isVideo(e.url,e.meta,e.key)
-  );
-
-  if(videoEntry){
-    if(!posterEntry){
-      posterEntry=imageEntries.find(e=>
-        e.url!==videoEntry.url&&isImageUrl(e.url,e.meta,e.key)
-      );
-    }
-    return{
-      url:videoEntry.url,
-      video:true,
-      poster:posterEntry&&posterEntry.url!==videoEntry.url?posterEntry.url:""
-    };
-  }
-
-  let imageEntry=imageEntries.find(e=>isImageUrl(e.url,e.meta,e.key));
-
-  if(!imageEntry){
-    imageEntry=videoEntries.find(e=>isImageUrl(e.url,e.meta,e.key));
-  }
-
-  if(!imageEntry){
-    const type=mediaTypeHint(item);
-    if(type==="image"){
-      imageEntry=imageEntries[0]||videoEntries.find(e=>
-        !/^(video|movie|clip)/i.test(e.key)
-      );
-    }
-  }
-
-  if(imageEntry){
-    return{url:imageEntry.url,video:false,poster:""};
-  }
-
-  /* رابط عام بلا امتداد: لا نعتبره فيديو إلا بوجود دليل من الحقل أو MIME */
-  const generic=collectMediaEntries(item,["media","file","asset","source"]);
-  const genericVideo=generic.find(e=>isVideo(e.url,e.meta,e.key));
-  if(genericVideo)return{url:genericVideo.url,video:true,poster:""};
-
-  const genericImage=generic.find(e=>isImageUrl(e.url,e.meta,e.key));
-  if(genericImage)return{url:genericImage.url,video:false,poster:""};
-
-  return{url:"",video:false,poster:""};
-}
-
-/* ---------- بقية الكتالوج ---------- */
-
-function eventType(item){return EVENTS[item?.event_type]?item.event_type:"wedding"}
-function eventName(item){return item?.title||EVENTS[eventType(item)][lang]||EVENTS[eventType(item)].ar}
-function inviteUrl(item){return validUrl(item.invitation_url)||"#"}
 function genderUrl(item){
-  if(!item.public_token)return"#";
-  return new URL("gender-reveal.html",location.href).href+"?token="+encodeURIComponent(item.public_token);
-}
-function waUrl(item,isGender=false){
-  const url=isGender?genderUrl(item):inviteUrl(item);
-  return"https://wa.me/"+WA+"?text="+encodeURIComponent(LANG[lang].message+"\n"+eventName(item)+"\n"+url);
-}
-function toast(s){
-  $("toast").textContent=s;
-  $("toast").classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2600);
+const token=String(item.public_token||"").trim();
+if(!token)return"#";
+return new URL("gender-reveal.html",location.href).href+"?token="+encodeURIComponent(token);
 }
 
-function fallback(item,isGender=false){
-  const d=document.createElement("div");
-  d.className="fallback";
-  const icon=document.createElement("span");
-  icon.textContent=isGender?"🩷":(EVENTS[eventType(item)]?.icon||"♡");
-  const title=document.createElement("strong");
-  title.textContent=item.title||"باب الفرح";
-  const small=document.createElement("small");
-  small.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];
-  d.append(icon,title,small);
-  return d;
+function makeWhatsAppUrl(item){
+const t=LANG[currentLang];
+const message=t.contactMessage+"\n"+t.event[eventType(item)].singular+": "+displayName(item)+"\n"+inviteUrl(item);
+return"https://wa.me/"+OWNER_PHONE_WA+"?text="+encodeURIComponent(message);
 }
 
-function createVideoObserver(){
-  if(!("IntersectionObserver"in window))return null;
-
-  return new IntersectionObserver(entries=>{
-    for(const entry of entries){
-      const video=entry.target;
-      if(!video.isConnected)continue;
-
-      if(entry.isIntersecting){
-        if(video.dataset.loaded!=="1"&&video.dataset.src){
-          video.dataset.loaded="1";
-          video.preload="metadata";
-          video.src=video.dataset.src;
-          try{video.load()}catch{}
-        }
-      }else{
-        try{video.pause()}catch{}
-      }
-    }
-  },{rootMargin:"100px 0px",threshold:0.01});
+function makeGenderWhatsAppUrl(item){
+const message=LANG[currentLang].contactMessage+"\n"+LANG[currentLang].genderSingular+": "+String(item.title||LANG[currentLang].genderTitle);
+return"https://wa.me/"+OWNER_PHONE_WA+"?text="+encodeURIComponent(message);
 }
 
-function makeMedia(item,isGender=false){
-  const box=document.createElement("div");
-  box.className="media";
-
-  const media=getMedia(item);
-  const url=media.url;
-  const cover=fallback(item,isGender);
-  box.appendChild(cover);
-
-  const chip=document.createElement("span");
-  chip.className="chip";
-  chip.textContent=isGender?LANG[lang].genderTitle:EVENTS[eventType(item)][lang];
-  box.appendChild(chip);
-
-  let poster=null;
-
-  if(media.poster){
-    poster=document.createElement("img");
-    poster.className="poster";
-    poster.alt="";
-    poster.loading="lazy";
-    poster.decoding="async";
-    poster.addEventListener("load",()=>cover.remove(),{once:true});
-    poster.addEventListener("error",()=>{
-      poster.remove();
-      poster=null;
-    },{once:true});
-    poster.src=media.poster;
-    box.appendChild(poster);
-  }
-
-  if(url&&media.video){
-    const video=document.createElement("video");
-    video.className="invitation-video";
-    video.muted=true;
-    video.defaultMuted=true;
-    video.autoplay=false;
-    video.loop=false;
-    video.controls=false;
-    video.playsInline=true;
-    video.preload="none";
-    video.disablePictureInPicture=true;
-    video.setAttribute("muted","");
-    video.setAttribute("playsinline","");
-    video.setAttribute("webkit-playsinline","");
-    video.setAttribute("aria-label",eventName(item));
-    video.setAttribute("tabindex","-1");
-    video.dataset.src=url;
-    video.dataset.loaded="0";
-
-    if(media.poster)video.poster=media.poster;
-
-    video.addEventListener("loadeddata",()=>{
-      try{video.pause()}catch{}
-      video.classList.add("ready");
-      if(poster)poster.classList.add("hidden");
-      cover.remove();
-    });
-
-    video.addEventListener("play",()=>{try{video.pause()}catch{}});
-    video.addEventListener("error",()=>{
-      video.classList.remove("ready");
-      try{video.pause()}catch{}
-    });
-
-    box.appendChild(video);
-
-    if(videoObserver)videoObserver.observe(video);
-    else{
-      video.preload="metadata";
-      video.src=url;
-      try{video.load()}catch{}
-    }
-
-  }else if(url){
-    const img=document.createElement("img");
-    img.className="poster";
-    img.alt=eventName(item);
-    img.loading="lazy";
-    img.decoding="async";
-    img.addEventListener("load",()=>cover.remove(),{once:true});
-    img.addEventListener("error",()=>img.remove(),{once:true});
-    img.src=url;
-    box.appendChild(img);
-  }
-
-  return box;
-}
-
-function clearVideos(){
-  if(videoObserver)videoObserver.disconnect();
-
-  document.querySelectorAll("#cards video").forEach(video=>{
-    try{video.pause()}catch{}
-    video.removeAttribute("src");
-    video.removeAttribute("poster");
-    try{video.load()}catch{}
-  });
-
-  videoObserver=createVideoObserver();
-}
-
-function replaceCards(fragment){
-  clearVideos();
-  $("cards").replaceChildren(fragment);
-}
-
-function messageBox(title,sub=""){
-  const d=document.createElement("div");
-  d.className="message";
-  d.textContent=title+(sub?" — "+sub:"");
-  return d;
-}
-
-function render(){
-  const gallery=$("gallery");
-  const categories=$("categoriesSection");
-  const cards=$("cards");
-
-  if(!active){
-    gallery.classList.remove("open");
-    categories.style.display="";
-    clearVideos();
-    cards.replaceChildren();
-    return;
-  }
-
-  categories.style.display="none";
-  gallery.classList.add("open");
-
-  const isGender=active==="gender";
-  const items=isGender?genderCards:invitations.filter(x=>eventType(x)===active);
-  const t=LANG[lang];
-
-  $("galleryTitle").textContent=isGender?t.genderTitle:EVENTS[active][lang];
-  $("gallerySubtitle").textContent=(isGender?t.genderSubtitle:t.subtitle)+" · "+items.length;
-
-  const f=document.createDocumentFragment();
-
-  if(!items.length){
-    const loaded=isGender?genderLoaded:catalogLoaded;
-    f.appendChild(messageBox(
-      loaded?(isGender?t.genderEmpty:t.empty):t.loading,
-      loaded?t.emptyText:""
-    ));
-    replaceCards(f);
-    return;
-  }
-
-  for(const item of items){
-    const card=document.createElement("article");
-    card.className="card";
-    card.appendChild(makeMedia(item,isGender));
-
-    const body=document.createElement("div");
-    body.className="card-body";
-
-    const actions=document.createElement("div");
-    actions.className="actions";
-
-    const view=document.createElement("a");
-    view.className="btn primary";
-    view.href=isGender?genderUrl(item):inviteUrl(item);
-    view.textContent=isGender?t.genderStart:t.preview;
-    view.target="_blank";
-    view.rel="noopener noreferrer";
-
-    if(view.href.endsWith("#")){
-      view.style.pointerEvents="none";
-      view.setAttribute("aria-disabled","true");
-    }
-
-    const order=document.createElement("a");
-    order.className="btn secondary";
-    order.href=waUrl(item,isGender);
-    order.textContent=isGender?t.genderContact:t.order;
-    order.target="_blank";
-    order.rel="noopener noreferrer";
-
-    actions.append(view,order);
-    body.appendChild(actions);
-    card.appendChild(body);
-    f.appendChild(card);
-  }
-
-  replaceCards(f);
+function showToast(message){
+const el=$("toast");
+el.textContent=message;
+el.classList.add("show");
+clearTimeout(toastTimer);
+toastTimer=setTimeout(()=>el.classList.remove("show"),2800);
 }
 
 function updateCounts(){
-  const total=invitations.length+genderCards.length;
-  $("totalCount").textContent=total+" "+(
-    lang==="en"?"designs":lang==="ku"?"دیزاین":"تصميم"
-  );
+$("totalCount").textContent=(allInvitations.length+genderCards.length)+" "+tr("total");
 
-  document.querySelectorAll("[data-category]").forEach(b=>{
-    const key=b.dataset.category;
-    const n=key==="gender"
-      ?genderCards.length
-      :invitations.filter(x=>eventType(x)===key).length;
+document.querySelectorAll(".category[data-category]").forEach(button=>{
+const key=button.dataset.category;
+const small=button.querySelector("small");
+if(!small)return;
 
-    b.querySelector("small").textContent=n
-      ?n+" "+(lang==="en"?"available":lang==="ku"?"بەردەستە":"تصميم متاح")
-      :(key==="gender"?genderLoaded:catalogLoaded)
-        ?LANG[lang].emptyText
-        :LANG[lang].loading;
-  });
+if(key==="gender"){
+small.textContent=genderCards.length
+?genderCards.length+" "+tr("available")
+:(genderLoaded?tr("soon"):tr("loadingCount"));
+return;
 }
 
-function applyLang(code){
-  if(!LANG[code])return;
-  lang=code;
-  const t=LANG[lang];
+const count=allInvitations.reduce((n,item)=>n+(eventType(item)===key?1:0),0);
+small.textContent=count
+?count+" "+tr("available")
+:(catalogLoaded?tr("soon"):tr("loadingCount"));
+});
+}
 
-  document.documentElement.lang=code;
-  document.documentElement.dir=t.dir;
+function applyLanguage(lang){
+if(!LANG[lang])return;
+currentLang=lang;
+const t=LANG[lang];
 
-  document.querySelectorAll("[data-lang]").forEach(b=>{
-    b.classList.toggle("active",b.dataset.lang===code);
-  });
+document.documentElement.lang=lang;
+document.documentElement.dir=t.dir;
 
-  $("menuContact").textContent=t.contact;
-  $("heroBadge").textContent=t.heroBadge;
-  $("heroTitle").textContent=t.heroTitle;
-  $("heroText").textContent=t.heroText;
-  $("categoriesTitle").textContent=t.categoriesTitle;
-  $("categoriesHint").textContent=t.categoriesHint;
-  $("refreshBtn").textContent=t.refresh;
-  $("backBtn").textContent=t.back;
-  $("aboutTitle").textContent=t.aboutTitle;
-  $("aboutText").textContent=t.aboutText;
-  $("contactTitle").textContent=t.contactTitle;
-  $("contactText").textContent=t.contactText;
-  $("callBtn").textContent=t.call;
-  $("whatsappBtn").textContent=t.whatsapp;
-  $("footerText").textContent=t.footer;
-  $("rightsText").textContent=t.rights;
+document.querySelectorAll("[data-lang]").forEach(button=>{
+const selected=button.dataset.lang===lang;
+button.classList.toggle("active",selected);
+button.setAttribute("aria-pressed",String(selected));
+});
 
-  document.querySelectorAll("[data-category]").forEach(b=>{
-    const k=b.dataset.category;
-    b.querySelector("strong").textContent=
-      k==="gender"?t.genderTitle:EVENTS[k][lang];
-  });
+$("topWhatsappText").textContent=t.contact;
+$("menuContact").setAttribute("aria-label",t.contact);
+$("heroBadge").textContent=t.heroBadge;
+$("heroTitle").textContent=t.heroTitle;
+$("heroText").textContent=t.heroText;
+$("categoriesTitle").textContent=t.categoriesTitle;
+$("categoriesHint").textContent=t.categoriesHint;
+$("refreshBtn").textContent=$("refreshBtn").disabled?t.refreshing:t.refresh;
+$("backCategoriesBtn").textContent=t.back;
+$("aboutTitle").textContent=t.aboutTitle;
+$("aboutText").textContent=t.aboutText;
+$("contactTitle").textContent=t.contactTitle;
+$("contactText").textContent=t.contactText;
+$("callBtn").textContent=t.call;
+$("whatsappBtn").textContent=t.whatsapp;
+$("footerText").textContent=t.footer;
+$("rightsText").textContent=t.rights;
 
-  updateCounts();
-  render();
+document.querySelectorAll(".category[data-category]").forEach(button=>{
+const key=button.dataset.category;
+if(key==="gender"){
+button.querySelector("strong").textContent=t.genderTitle;
+button.setAttribute("aria-label",t.genderTitle);
+}else if(t.event[key]){
+button.querySelector("strong").textContent=t.event[key].title;
+button.setAttribute("aria-label",t.event[key].title);
+}
+});
+
+updateCounts();
+renderCards();
+}
+
+function fallbackMedia(item){
+const key=eventType(item);
+const wrap=document.createElement("div");
+wrap.className="media-fallback";
+
+const icon=document.createElement("span");
+icon.className="big-icon";
+icon.textContent=EVENT_TYPES[key].icon;
+
+const title=document.createElement("strong");
+title.textContent="باب الفرح";
+
+const small=document.createElement("small");
+small.textContent=LANG[currentLang].event[key].singular;
+
+wrap.append(icon,title,small);
+return wrap;
+}
+
+function prepareLazyVideo(video,url,onError){
+video.muted=true;
+video.defaultMuted=true;
+video.loop=true;
+video.autoplay=true;
+video.playsInline=true;
+video.preload="none";
+video.setAttribute("muted","");
+video.setAttribute("autoplay","");
+video.setAttribute("loop","");
+video.setAttribute("playsinline","");
+video.dataset.src=url;
+
+video.addEventListener("loadeddata",()=>{
+if(!mediaObserver||video.getBoundingClientRect().top<window.innerHeight+150){
+const p=video.play();
+if(p&&p.catch)p.catch(()=>{});
+}
+},{once:true});
+
+video.addEventListener("error",()=>{
+if(typeof onError==="function")onError();
+},{once:true});
+
+if(mediaObserver){
+mediaObserver.observe(video);
+}else{
+video.src=url;
+video.removeAttribute("data-src");
+video.load();
+}
+return video;
+}
+
+function cardMedia(item){
+const key=eventType(item);
+const holder=document.createElement("div");
+holder.className="card-media";
+
+const chip=document.createElement("span");
+chip.className="media-chip";
+chip.textContent=LANG[currentLang].event[key].singular;
+holder.appendChild(chip);
+
+const url=validHttpUrl(item.image_url||"");
+
+if(url&&/\.(mp4|webm|ogg)(?:$|[?#])/i.test(url)){
+const video=document.createElement("video");
+video.setAttribute("aria-label",displayName(item));
+
+prepareLazyVideo(video,url,()=>{
+if(mediaObserver)mediaObserver.unobserve(video);
+video.remove();
+if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item));
+});
+
+holder.appendChild(video);
+}else if(url){
+const img=document.createElement("img");
+img.src=url;
+img.alt=displayName(item);
+img.loading="lazy";
+img.decoding="async";
+img.fetchPriority="low";
+
+img.onerror=()=>{
+img.remove();
+if(!holder.querySelector(".media-fallback"))holder.appendChild(fallbackMedia(item));
+};
+
+holder.appendChild(img);
+}else{
+holder.appendChild(fallbackMedia(item));
+}
+
+return holder;
+}
+
+function genderFallback(item){
+const wrap=document.createElement("div");
+wrap.className="media-fallback";
+
+const icon=document.createElement("span");
+icon.className="big-icon";
+icon.textContent="🩷";
+
+const title=document.createElement("strong");
+title.textContent=item.title||"باب الفرح";
+
+const small=document.createElement("small");
+small.textContent=LANG[currentLang].genderSingular;
+
+wrap.append(icon,title,small);
+return wrap;
+}
+
+function genderCardMedia(item){
+const holder=document.createElement("div");
+holder.className="card-media";
+
+const chip=document.createElement("span");
+chip.className="media-chip";
+chip.textContent=LANG[currentLang].genderSingular;
+holder.appendChild(chip);
+
+const url=validHttpUrl(item.image_url||"");
+
+if(url&&/\.(mp4|webm|ogg)(?:$|[?#])/i.test(url)){
+const video=document.createElement("video");
+
+prepareLazyVideo(video,url,()=>{
+if(mediaObserver)mediaObserver.unobserve(video);
+video.remove();
+if(!holder.querySelector(".media-fallback"))holder.appendChild(genderFallback(item));
+});
+
+holder.appendChild(video);
+}else if(url){
+const img=document.createElement("img");
+img.src=url;
+img.alt=item.title||LANG[currentLang].genderTitle;
+img.loading="lazy";
+img.decoding="async";
+img.fetchPriority="low";
+
+img.onerror=()=>{
+img.remove();
+if(!holder.querySelector(".media-fallback"))holder.appendChild(genderFallback(item));
+};
+
+holder.appendChild(img);
+}else{
+holder.appendChild(genderFallback(item));
+}
+
+return holder;
+}
+
+function renderGenderCards(container){
+const t=LANG[currentLang];
+const fragment=document.createDocumentFragment();
+
+$("galleryTitle").textContent=t.genderTitle;
+$("gallerySubtitle").textContent=t.genderSubtitle+" · "+genderCards.length;
+
+if(!genderCards.length){
+const empty=document.createElement("div");
+empty.className=genderLoaded?"empty":"loading";
+
+const icon=document.createElement("span");
+icon.className="empty-icon";
+icon.textContent="🩷";
+
+const strong=document.createElement("strong");
+strong.textContent=genderLoaded?t.genderEmpty:t.loading;
+
+const p=document.createElement("p");
+p.textContent=genderLoaded?t.genderEmptyText:"";
+p.style.margin="5px 0 0";
+
+empty.append(icon,strong,p);
+fragment.appendChild(empty);
+container.replaceChildren(fragment);
+return;
+}
+
+for(const item of genderCards){
+const card=document.createElement("article");
+card.className="invite-card";
+card.appendChild(genderCardMedia(item));
+
+const body=document.createElement("div");
+body.className="card-body";
+
+const actions=document.createElement("div");
+actions.className="card-actions";
+
+const start=document.createElement("a");
+start.className="btn btn-primary";
+start.href=genderUrl(item);
+start.textContent=t.genderStart;
+start.target="_blank";
+start.rel="noopener noreferrer";
+
+if(start.getAttribute("href")==="#"){
+start.style.pointerEvents="none";
+start.setAttribute("aria-disabled","true");
+}
+
+const contact=document.createElement("a");
+contact.className="btn btn-secondary";
+contact.href=makeGenderWhatsAppUrl(item);
+contact.target="_blank";
+contact.rel="noopener noreferrer";
+contact.textContent=t.genderContact;
+
+actions.append(start,contact);
+body.appendChild(actions);
+card.appendChild(body);
+fragment.appendChild(card);
+}
+
+container.replaceChildren(fragment);
+}
+
+function renderCards(){
+const container=$("invitationCards");
+if(!container)return;
+
+const panel=$("galleryPanel");
+const categories=$("categoriesSection");
+
+if(!activeCategory){
+panel.classList.remove("open");
+categories.style.display="";
+return;
+}
+
+categories.style.display="none";
+panel.classList.add("open");
+
+if(activeCategory==="gender"){
+renderGenderCards(container);
+return;
+}
+
+const t=LANG[currentLang];
+const items=allInvitations.filter(item=>eventType(item)===activeCategory);
+const fragment=document.createDocumentFragment();
+
+$("galleryTitle").textContent=t.event[activeCategory].title;
+$("gallerySubtitle").textContent=t.gallerySubtitle+" · "+items.length;
+
+if(!items.length){
+const empty=document.createElement("div");
+empty.className=catalogLoaded?"empty":"loading";
+
+const icon=document.createElement("span");
+icon.className="empty-icon";
+icon.textContent="♡";
+
+const strong=document.createElement("strong");
+strong.textContent=catalogLoaded?t.emptyTitle:t.loading;
+
+const p=document.createElement("p");
+p.textContent=catalogLoaded?t.emptyText:"";
+p.style.margin="5px 0 0";
+
+empty.append(icon,strong,p);
+fragment.appendChild(empty);
+container.replaceChildren(fragment);
+return;
+}
+
+for(const item of items){
+const card=document.createElement("article");
+card.className="invite-card";
+card.appendChild(cardMedia(item));
+
+const body=document.createElement("div");
+body.className="card-body";
+
+const actions=document.createElement("div");
+actions.className="card-actions";
+
+const view=document.createElement("a");
+view.className="btn btn-primary";
+view.href=inviteUrl(item);
+view.target="_blank";
+view.rel="noopener noreferrer";
+view.textContent=t.preview;
+
+if(view.getAttribute("href")==="#"){
+view.style.pointerEvents="none";
+view.setAttribute("aria-disabled","true");
+}
+
+const order=document.createElement("a");
+order.className="btn btn-secondary";
+order.href=makeWhatsAppUrl(item);
+order.target="_blank";
+order.rel="noopener noreferrer";
+order.textContent=t.order;
+
+actions.append(view,order);
+body.appendChild(actions);
+card.appendChild(body);
+fragment.appendChild(card);
+}
+
+container.replaceChildren(fragment);
 }
 
 async function loadCatalog(force=false){
-  if(catalogLoaded&&!force)return;
-  const id=++request;
+if(catalogPromise&&!force)return catalogPromise;
+const requestId=++loadRequest;
+const button=$("refreshBtn");
 
-  $("refreshBtn").disabled=true;
-  $("refreshBtn").textContent=LANG[lang].refreshing;
+button.disabled=true;
+button.textContent=tr("refreshing");
 
-  try{
-    const {data,error}=await db.rpc("get_public_invitation_catalog");
-    if(error)throw error;
-    if(id!==request)return;
-
-    invitations=(Array.isArray(data)?data:[])
-      .map(x=>typeof x==="string"?JSON.parse(x):x)
-      .filter(x=>x&&x.is_visible===true&&validUrl(x.invitation_url))
-      .sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
-
-    catalogLoaded=true;
-    updateCounts();
-    render();
-  }catch(e){
-    console.error("Catalog:",e);
-    if(id===request){
-      catalogLoaded=true;
-      if(active&&active!=="gender"){
-        const f=document.createDocumentFragment();
-        f.appendChild(messageBox(LANG[lang].error));
-        replaceCards(f);
-      }
-      toast(LANG[lang].error);
-    }
-  }finally{
-    if(id===request){
-      $("refreshBtn").disabled=false;
-      $("refreshBtn").textContent=LANG[lang].refresh;
-    }
-  }
+if(activeCategory&&activeCategory!=="gender"){
+$("invitationCards").innerHTML='<div class="loading">'+tr("loading")+'</div>';
 }
 
-async function loadGender(force=false){
-  if(genderLoaded&&!force)return;
-  const id=++genderRequest;
+catalogPromise=(async()=>{
+try{
+const {data,error}=await db.rpc("get_public_invitation_catalog");
+if(error)throw error;
+if(requestId!==loadRequest)return;
 
-  try{
-    const {data,error}=await db.rpc("get_public_gender_reveal_catalog_cards");
-    if(error)throw error;
-    if(id!==genderRequest)return;
+allInvitations=(Array.isArray(data)?data:[])
+.map(row=>{
+if(typeof row==="string"){
+try{return JSON.parse(row)}catch(e){return null}
+}
+return row;
+})
+.filter(item=>item&&item.is_visible===true&&validHttpUrl(item.invitation_url))
+.sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
 
-    genderCards=(Array.isArray(data)?data:[])
-      .map(x=>typeof x==="string"?JSON.parse(x):x)
-      .filter(x=>x&&x.is_visible===true&&x.public_token)
-      .sort((a,b)=>(+a.sort_order||0)-(+b.sort_order||0));
+catalogLoaded=true;
+updateCounts();
+renderCards();
+}catch(error){
+if(requestId!==loadRequest)return;
+console.error("Catalog load error:",error);
 
-    genderLoaded=true;
-    updateCounts();
-    render();
-  }catch(e){
-    console.error("Gender cards:",e);
-    if(id===genderRequest){
-      genderLoaded=true;
-      genderCards=[];
-      updateCounts();
-      render();
-    }
-  }
+if(activeCategory&&activeCategory!=="gender"){
+const box=document.createElement("div");
+box.className="error";
+
+const strong=document.createElement("strong");
+strong.textContent=tr("loadError");
+
+const p=document.createElement("p");
+p.textContent=tr("loadErrorText");
+
+box.append(strong,p);
+$("invitationCards").replaceChildren(box);
 }
 
-function choose(key){
-  active=key;
-  document.querySelectorAll("[data-category]").forEach(b=>{
-    b.classList.toggle("active",b.dataset.category===key);
-  });
-
-  render();
-
-  if(key==="gender"&&!genderLoaded)loadGender();
-  if(key!=="gender"&&!catalogLoaded)loadCatalog();
-
-  $("gallery").scrollIntoView({behavior:"smooth",block:"start"});
+if(activeCategory!=="gender"){
+$("totalCount").textContent=tr("loadError");
+showToast(tr("noLoad"));
+}
+}finally{
+if(requestId===loadRequest){
+button.disabled=false;
+button.textContent=tr("refresh");
+catalogPromise=null;
+}
+}
+})();
+return catalogPromise;
 }
 
-document.querySelectorAll("[data-category]").forEach(b=>{
-  b.addEventListener("click",()=>choose(b.dataset.category));
+/* تحميل بطاقات اختبار جنس الجنين عبر دالة Supabase الآمنة */
+async function loadGenderCards(force=false){
+if(genderPromise&&!force)return genderPromise;
+const requestId=++genderLoadRequest;
+
+genderPromise=(async()=>{
+try{
+const {data,error}=await db.rpc("get_public_gender_reveal_catalog_cards");
+if(error)throw error;
+if(requestId!==genderLoadRequest)return;
+
+genderCards=(Array.isArray(data)?data:[])
+.map(row=>{
+if(typeof row==="string"){
+try{return JSON.parse(row)}catch(e){return null}
+}
+return row;
+})
+.filter(item=>item&&item.is_visible===true&&item.public_token)
+.sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
+
+genderLoaded=true;
+updateCounts();
+renderCards();
+}catch(error){
+if(requestId!==genderLoadRequest)return;
+
+console.error("Gender reveal cards load error:",error);
+genderLoaded=true;
+genderCards=[];
+updateCounts();
+
+if(activeCategory==="gender"){
+const container=$("invitationCards");
+const box=document.createElement("div");
+box.className="error";
+
+const strong=document.createElement("strong");
+strong.textContent=LANG[currentLang].genderError;
+
+const p=document.createElement("p");
+p.textContent=LANG[currentLang].loadErrorText;
+
+box.append(strong,p);
+container.replaceChildren(box);
+}
+}finally{
+if(requestId===genderLoadRequest)genderPromise=null;
+}
+})();
+return genderPromise;
+}
+
+function scrollToElement(element){
+if(!element)return;
+const reduceMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+element.scrollIntoView({behavior:reduceMotion?"auto":"smooth",block:"start"});
+}
+
+function chooseCategory(key){
+if(key!=="gender"&&!EVENT_TYPES[key])return;
+activeCategory=key;
+
+document.querySelectorAll(".category[data-category]").forEach(button=>{
+button.classList.toggle("active",button.dataset.category===key);
 });
 
-document.querySelectorAll("[data-lang]").forEach(b=>{
-  b.addEventListener("click",()=>applyLang(b.dataset.lang));
-});
+renderCards();
 
-$("backBtn").addEventListener("click",()=>{
-  active=null;
-  document.querySelectorAll("[data-category]").forEach(b=>b.classList.remove("active"));
-  render();
-  $("categoriesSection").scrollIntoView({behavior:"smooth",block:"start"});
+if(key==="gender"&&!genderLoaded)loadGenderCards();
+if(key!=="gender"&&!catalogLoaded)loadCatalog();
+
+scrollToElement($("galleryPanel"));
+}
+
+function backToCategories(){
+activeCategory=null;
+document.querySelectorAll(".category").forEach(button=>button.classList.remove("active"));
+
+$("galleryPanel").classList.remove("open");
+$("categoriesSection").style.display="";
+$("invitationCards").replaceChildren();
+
+scrollToElement($("categoriesSection"));
+}
+
+document.querySelectorAll(".category[data-category]").forEach(button=>{
+button.addEventListener("click",()=>chooseCategory(button.dataset.category));
 });
 
 $("refreshBtn").addEventListener("click",()=>{
-  catalogLoaded=false;
-  genderLoaded=false;
-  loadCatalog(true);
-  if(active==="gender")loadGender(true);
+loadCatalog(true);
+loadGenderCards(true);
 });
 
-document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){
-    document.querySelectorAll("#cards video").forEach(v=>{
-      try{v.pause()}catch{}
-    });
-  }
+$("backCategoriesBtn").addEventListener("click",backToCategories);
+
+$("year").textContent=String(new Date().getFullYear());
+$("phoneText").textContent=OWNER_PHONE_DISPLAY;
+$("phoneText").href="tel:"+OWNER_PHONE_DISPLAY.replace(/[^\d+]/g,"");
+$("callBtn").href="tel:"+OWNER_PHONE_DISPLAY.replace(/[^\d+]/g,"");
+$("whatsappBtn").href="https://wa.me/"+OWNER_PHONE_WA;
+$("menuContact").href="https://wa.me/"+OWNER_PHONE_WA;
+
+document.querySelectorAll("[data-lang]").forEach(button=>{
+button.addEventListener("click",()=>applyLanguage(button.dataset.lang));
 });
 
-window.addEventListener("pagehide",clearVideos);
+applyLanguage("ar");
 
-$("year").textContent=new Date().getFullYear();
-$("phoneText").href="tel:"+PHONE;
-$("callBtn").href="tel:"+PHONE;
-$("whatsappBtn").href="https://wa.me/"+WA;
-$("menuContact").href="https://wa.me/"+WA;
-
-videoObserver=createVideoObserver();
-applyLang("ar");
-loadCatalog();
+/* تحميل بيانات الكتالوج وبطاقات اختبار الجنين بالتوازي */
+Promise.allSettled([
+loadCatalog(),
+loadGenderCards()
+]);
 </script>
 </body>
 </html>
