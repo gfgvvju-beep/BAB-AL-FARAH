@@ -849,7 +849,10 @@ url.searchParams.set("invite",String(slug||""));
 url.searchParams.set("opening_prompt",openingPrompt==="tap"?"tap":"knock");
 return url.href;
 }
+function 
 function featuredInvitationUrl(slug){
+  return new URL("/catalog.html", SITE_URL).href;
+}
 const url=new URL("/",SITE_URL);
 url.searchParams.set("featured",String(slug||""));
 return url.href;
