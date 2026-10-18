@@ -7,17 +7,26 @@
 <title>إدارة الدعوات المميزة القصيرة | باب الفرح</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#100d0a;color:#f4e4bd;font-family:Tahoma,Arial,sans-serif;padding:18px}
-main{max-width:950px;margin:auto}h1,h2{color:#d9b76b}.panel{background:#1c1711;border:1px solid #70562d;border-radius:15px;padding:18px;margin:15px 0}
+*{box-sizing:border-box}
+body{margin:0;background:#100d0a;color:#f4e4bd;font-family:Tahoma,Arial,sans-serif;padding:18px}
+main{max-width:950px;margin:auto}
+h1,h2{color:#d9b76b}
+.panel{background:#1c1711;border:1px solid #70562d;border-radius:15px;padding:18px;margin:15px 0}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 label{display:block;font-size:13px;margin-bottom:6px;color:#e7d4a6}
 input,select,textarea{width:100%;padding:11px;border-radius:8px;border:1px solid #70562d;background:#100d0a;color:#fff;font:inherit}
-textarea{min-height:75px}.full{grid-column:1/-1}
+textarea{min-height:75px}
+.full{grid-column:1/-1}
 button,.btn{border:0;border-radius:8px;padding:11px 15px;background:#c6a15a;color:#17110a;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block;margin:5px 3px}
-.secondary{background:#393027;color:#fff}.danger{background:#702b2b;color:#fff}
-small{color:#c8bda5;line-height:1.8}.notice{padding:12px;background:#292319;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}
+button:disabled{opacity:.6;cursor:wait}
+.secondary{background:#393027;color:#fff}
+.danger{background:#702b2b;color:#fff}
+small{color:#c8bda5;line-height:1.8}
+.notice{padding:12px;background:#292319;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8;margin-top:12px}
 .item{padding:13px;border:1px solid #55442a;border-radius:10px;margin:10px 0;overflow-wrap:anywhere}
-.item a{color:#e4c478}.hidden{display:none!important}
+.item a{color:#e4c478}
+.hidden{display:none!important}
+.hint{font-size:12px;color:#b9a985;line-height:1.8}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
 </style>
 </head>
@@ -30,58 +39,153 @@ small{color:#c8bda5;line-height:1.8}.notice{padding:12px;background:#292319;bord
 <h2>دخول الإدارة</h2>
 <form id="loginForm">
 <div class="grid">
-<div><label>البريد الإلكتروني</label><input id="email" type="email" required autocomplete="username"></div>
-<div><label>كلمة المرور</label><input id="password" type="password" required autocomplete="current-password"></div>
+<div>
+<label for="email">البريد الإلكتروني</label>
+<input id="email" type="email" required autocomplete="username">
 </div>
-<button>دخول</button>
+<div>
+<label for="password">كلمة المرور</label>
+<input id="password" type="password" required autocomplete="current-password">
+</div>
+</div>
+<button type="submit">دخول</button>
 </form>
 <div id="loginMsg" class="notice hidden"></div>
 </section>
 
 <div id="app" class="hidden">
 <section class="panel">
-<button id="logout" class="secondary">تسجيل الخروج</button>
+<button type="button" id="logout" class="secondary">تسجيل الخروج</button>
 <h2 id="formTitle">إنشاء دعوة جديدة</h2>
+
 <form id="inviteForm">
 <input id="id" type="hidden">
+
 <div class="grid">
-<div><label>اسم التصميم</label><input id="title" required placeholder="مثلاً: ظرف ذهبي"></div>
-<div><label>نوع التصميم</label>
-<select id="design">
+<div>
+<label for="title">اسم التصميم</label>
+<input id="title" required placeholder="مثلاً: ظرف ذهبي">
+</div>
+
+<div>
+<label for="design">شكل الدعوة</label>
+<select id="design" required>
 <option value="envelope">ظرف ينفتح</option>
 <option value="book">كتاب ينفتح</option>
 <option value="video">دعوة فيديو</option>
-</select></div>
-<div><label>نوع المناسبة</label><input id="occasion" placeholder="زفاف، عقد قران، تخرج..."></div>
-<div><label>الاسم الأول</label><input id="host"></div>
-<div><label>الاسم الثاني (اختياري)</label><input id="second"></div>
-<div><label>التاريخ</label><input id="date" placeholder="اليوم والتاريخ"></div>
-<div><label>الوقت</label><input id="time" placeholder="الساعة"></div>
-<div><label>اسم المكان</label><input id="venue" placeholder="اسم القاعة أو المكان"></div>
-<div class="full"><label>رابط الموقع على الخريطة</label><input id="map" type="url" placeholder="https://..."></div>
-<div class="full"><label>نص التهنئة أو المقدمة</label><textarea id="greeting"></textarea></div>
-<div class="full"><label>نص الدعوة</label><textarea id="mainText" placeholder="النص الذي يظهر داخل الظرف أو الكتاب أو الفيديو"></textarea></div>
-<div class="full"><label>ملاحظات إضافية</label><textarea id="notes"></textarea></div>
-
-<div class="full"><label>صورة الغلاف (اختياري)</label><input id="cover" type="file" accept="image/*"></div>
-<div class="full"><label>فيديو أو صورة الحركة الافتتاحية (اختياري)</label><input id="opening" type="file" accept="image/*,video/mp4,video/webm"></div>
-<div class="full"><label>الأغنية أو الموسيقى (اختياري)</label><input id="music" type="file" accept="audio/*"></div>
-
-<div><label>لون الخلفية</label><input id="bg" type="color" value="#080808"></div>
-<div><label>لون الكتابة</label><input id="fg" type="color" value="#f4dfa0"></div>
-<div><label>ترتيب العرض</label><input id="sort" type="number" value="0"></div>
-<div><label>حالة الدعوة</label><select id="visible"><option value="false">مخفية حتى الاختبار</option><option value="true">منشورة</option></select></div>
+</select>
 </div>
+
+<div>
+<label for="occasion">نوع المناسبة</label>
+<select id="occasion" required>
+<option value="">اختر نوع المناسبة</option>
+<option value="دعوة زفاف">دعوة زفاف</option>
+<option value="دعوة عقد قران">دعوة عقد قران</option>
+<option value="دعوة حفلة الحنّة">دعوة حفلة الحنّة</option>
+<option value="دعوة مناسبة الختان">دعوة مناسبة الختان</option>
+<option value="دعوة حفلة التخرج">دعوة حفلة التخرج</option>
+<option value="دعوة مناسبة عيد ميلاد">دعوة مناسبة عيد ميلاد</option>
+</select>
+</div>
+
+<div>
+<label for="host">الاسم الأول</label>
+<input id="host" placeholder="الاسم">
+</div>
+
+<div>
+<label for="second">الاسم الثاني (اختياري)</label>
+<input id="second" placeholder="الاسم الثاني">
+</div>
+
+<div>
+<label for="date">التاريخ</label>
+<input id="date" placeholder="اليوم والتاريخ">
+</div>
+
+<div>
+<label for="time">الوقت</label>
+<input id="time" placeholder="الساعة">
+</div>
+
+<div>
+<label for="venue">اسم المكان</label>
+<input id="venue" placeholder="اسم القاعة أو المكان">
+</div>
+
+<div class="full">
+<label for="map">رابط الموقع على الخريطة</label>
+<input id="map" type="url" placeholder="https://...">
+</div>
+
+<div class="full">
+<label for="greeting">نص التهنئة أو المقدمة</label>
+<textarea id="greeting" placeholder="يتجهز تلقائياً حسب نوع المناسبة، وتكدر تعدّله"></textarea>
+<p class="hint">يتغيّر النص تلقائياً عند اختيار مناسبة جديدة، ويمكنك تعديله بنفسك.</p>
+</div>
+
+<div class="full">
+<label for="mainText">نص الدعوة</label>
+<textarea id="mainText" placeholder="النص الذي يظهر داخل الظرف أو الكتاب أو الفيديو"></textarea>
+</div>
+
+<div class="full">
+<label for="notes">ملاحظات إضافية</label>
+<textarea id="notes"></textarea>
+</div>
+
+<div class="full">
+<label for="cover">صورة الغلاف (اختياري)</label>
+<input id="cover" type="file" accept="image/*">
+</div>
+
+<div class="full">
+<label for="opening">فيديو أو صورة الحركة الافتتاحية (اختياري)</label>
+<input id="opening" type="file" accept="image/*,video/mp4,video/webm">
+</div>
+
+<div class="full">
+<label for="music">الأغنية أو الموسيقى (اختياري)</label>
+<input id="music" type="file" accept="audio/*">
+</div>
+
+<div>
+<label for="bg">لون الخلفية</label>
+<input id="bg" type="color" value="#080808">
+</div>
+
+<div>
+<label for="fg">لون الكتابة</label>
+<input id="fg" type="color" value="#f4dfa0">
+</div>
+
+<div>
+<label for="sort">ترتيب العرض</label>
+<input id="sort" type="number" value="0">
+</div>
+
+<div>
+<label for="visible">حالة الدعوة</label>
+<select id="visible">
+<option value="false">مخفية حتى الاختبار</option>
+<option value="true">منشورة</option>
+</select>
+</div>
+</div>
+
 <p><small>الملفات تُرفع إلى مخزن catalog-images الموجود. أنواع الملفات وحجمها تخضع لحدود Supabase وإعدادات التخزين.</small></p>
-<button id="save">حفظ الدعوة</button>
-<button type="button" id="reset" class="secondary">دعوة جديدة</button>
+
+<button type="submit" id="save">حفظ الدعوة</button>
+<button type="button" id="resetBtn" class="secondary">دعوة جديدة</button>
 </form>
+
 <div id="formMsg" class="notice hidden"></div>
 </section>
 
 <section class="panel">
 <h2>الدعوات المحفوظة</h2>
-<button id="refresh" class="secondary">تحديث القائمة</button>
+<button type="button" id="refresh" class="secondary">تحديث القائمة</button>
 <div id="items">جارٍ التحميل...</div>
 </section>
 </div>
@@ -89,155 +193,443 @@ small{color:#c8bda5;line-height:1.8}.notice{padding:12px;background:#292319;bord
 
 <script>
 "use strict";
+
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
-let currentUser=null,records=[];
+
+let currentUser=null;
+let records=[];
+let saving=false;
+
+const greetings={
+ "دعوة زفاف":"بكل الحب والفرح، نتشرف بدعوتكم لمشاركتنا فرحة زفافنا.",
+ "دعوة عقد قران":"بكل المحبة والسرور، ندعوكم لمشاركتنا فرحة عقد قراننا.",
+ "دعوة حفلة الحنّة":"بكل الحب والفرح، ندعوكم لمشاركتنا فرحة حفلة الحنّة.",
+ "دعوة مناسبة الختان":"يسعدنا دعوتكم لمشاركتنا فرحة هذه المناسبة السعيدة.",
+ "دعوة حفلة التخرج":"بكل الفخر والفرح، ندعوكم لمشاركتنا فرحة التخرج.",
+ "دعوة مناسبة عيد ميلاد":"يسعدنا دعوتكم لمشاركتنا فرحة عيد الميلاد."
+};
 
 function message(id,text,error=false){
- const el=$(id);el.textContent=text;el.classList.remove("hidden");
+ const el=$(id);
+ el.textContent=text;
+ el.classList.remove("hidden");
  el.style.color=error?"#ffaaaa":"#d9eac9";
 }
-function clearMessage(id){$(id).classList.add("hidden")}
-function safeUrl(value){
- try{const u=new URL(value);return ["https:","http:"].includes(u.protocol)?u.href:""}
- catch{return ""}
+
+function clearMessage(id){
+ $(id).classList.add("hidden");
+ $(id).textContent="";
 }
+
+function safeUrl(value){
+ try{
+  const u=new URL(value);
+  return ["https:","http:"].includes(u.protocol)?u.href:"";
+ }catch{
+  return "";
+ }
+}
+
+function value(id){
+ return $(id).value.trim();
+}
+
+function setValue(id,v){
+ $(id).value=v??"";
+}
+
+function defaultGreeting(){
+ const occasion=value("occasion");
+ if(greetings[occasion]){
+  $("greeting").value=greetings[occasion];
+ }else{
+  $("greeting").value="";
+ }
+}
+
+$("occasion").addEventListener("change",()=>{
+ defaultGreeting();
+});
+
 async function checkUser(user){
- if(!user){showLogin();return}
- const {data,error}=await db.from("catalog_admins").select("user_id").eq("user_id",user.id).maybeSingle();
+ if(!user){
+  showLogin();
+  return;
+ }
+
+ const {data,error}=await db
+  .from("catalog_admins")
+  .select("user_id")
+  .eq("user_id",user.id)
+  .maybeSingle();
+
  if(error||!data){
   await db.auth.signOut();
   showLogin();
   message("loginMsg","هذا الحساب غير مخوّل لإدارة باب الفرح.",true);
   return;
  }
+
  currentUser=user;
  $("loginPanel").classList.add("hidden");
  $("app").classList.remove("hidden");
  await loadItems();
 }
+
 function showLogin(){
  currentUser=null;
  $("loginPanel").classList.remove("hidden");
  $("app").classList.add("hidden");
 }
+
 $("loginForm").addEventListener("submit",async e=>{
- e.preventDefault();clearMessage("loginMsg");
+ e.preventDefault();
+ clearMessage("loginMsg");
+
  const {data,error}=await db.auth.signInWithPassword({
-  email:$("email").value.trim(),password:$("password").value
+  email:value("email"),
+  password:$("password").value
  });
- if(error){message("loginMsg",error.message,true);return}
+
+ if(error){
+  message("loginMsg",error.message,true);
+  return;
+ }
+
  await checkUser(data.user);
 });
-$("logout").onclick=async()=>{await db.auth.signOut();showLogin()};
+
+$("logout").addEventListener("click",async()=>{
+ await db.auth.signOut();
+ showLogin();
+});
+
 async function uploadFile(file,prefix){
  if(!file)return null;
- const allowed=["image/jpeg","image/png","image/webp","image/gif","video/mp4","video/webm","audio/mpeg","audio/mp3","audio/mp4","audio/wav","audio/ogg","audio/aac"];
- if(!allowed.includes(file.type))throw Error("نوع الملف غير مدعوم: "+file.name);
- const ext=(file.name.split(".").pop()||"bin").toLowerCase().replace(/[^a-z0-9]/g,"");
+
+ const allowed=[
+  "image/jpeg","image/png","image/webp","image/gif",
+  "video/mp4","video/webm",
+  "audio/mpeg","audio/mp3","audio/mp4",
+  "audio/wav","audio/ogg","audio/aac"
+ ];
+
+ if(!allowed.includes(file.type)){
+  throw Error("نوع الملف غير مدعوم: "+file.name);
+ }
+
+ const ext=(file.name.split(".").pop()||"bin")
+  .toLowerCase().replace(/[^a-z0-9]/g,"");
+
  const path="short-invitations/"+prefix+"/"+crypto.randomUUID()+"."+ext;
- const {error}=await db.storage.from("catalog-images").upload(path,file,{upsert:false,contentType:file.type});
+
+ const {error}=await db.storage
+  .from("catalog-images")
+  .upload(path,file,{
+   upsert:false,
+   contentType:file.type
+  });
+
  if(error)throw error;
+
  const {data}=db.storage.from("catalog-images").getPublicUrl(path);
  return data.publicUrl;
 }
-function value(id){return $(id).value.trim()}
-function setValue(id,v){$(id).value=v??""}
+
 function resetForm(){
- $("inviteForm").reset();$("id").value="";
- $("bg").value="#080808";$("fg").value="#f4dfa0";
- $("sort").value="0";$("visible").value="false";
+ // إصلاح التعارض بين اسم زر إعادة الضبط ودالة reset الخاصة بالنموذج.
+ HTMLFormElement.prototype.reset.call($("inviteForm"));
+
+ $("id").value="";
+ $("bg").value="#080808";
+ $("fg").value="#f4dfa0";
+ $("sort").value="0";
+ $("visible").value="false";
+
  $("formTitle").textContent="إنشاء دعوة جديدة";
- $("save").textContent="حفظ الدعوة";clearMessage("formMsg");
+ $("save").textContent="حفظ الدعوة";
+
+ clearMessage("formMsg");
 }
-$("reset").onclick=resetForm;
+
+$("resetBtn").addEventListener("click",resetForm);
+
 $("inviteForm").addEventListener("submit",async e=>{
- e.preventDefault();clearMessage("formMsg");
- const btn=$("save");btn.disabled=true;btn.textContent="جارٍ الحفظ...";
+ e.preventDefault();
+
+ if(saving)return;
+ clearMessage("formMsg");
+
+ if(!currentUser){
+  message("formMsg","انتهت جلسة الإدارة. سجّل الدخول مرة أخرى.",true);
+  return;
+ }
+
+ if(!value("title")){
+  message("formMsg","اكتب اسم التصميم.",true);
+  return;
+ }
+
+ if(!value("occasion")){
+  message("formMsg","اختار نوع المناسبة من القائمة.",true);
+  return;
+ }
+
+ if(value("map")&&!safeUrl(value("map"))){
+  message("formMsg","رابط الخريطة غير صحيح.",true);
+  return;
+ }
+
+ saving=true;
+ const btn=$("save");
+ btn.disabled=true;
+ btn.textContent="جارٍ الحفظ...";
+
  try{
-  const old=records.find(x=>x.id===$("id").value);
-  const cover=await uploadFile($("cover").files[0],"covers");
-  const opening=await uploadFile($("opening").files[0],"opening");
-  const music=await uploadFile($("music").files[0],"music");
+  const recordId=$("id").value;
+  const old=records.find(x=>x.id===recordId);
+
+  const coverFile=$("cover").files[0];
   const openingFile=$("opening").files[0];
+  const musicFile=$("music").files[0];
+
+  const cover=await uploadFile(coverFile,"covers");
+  const opening=await uploadFile(openingFile,"opening");
+  const music=await uploadFile(musicFile,"music");
+
   const payload={
-   title:value("title"),design_type:$("design").value,
-   occasion:value("occasion")||null,host_name:value("host")||null,
-   second_name:value("second")||null,greeting:value("greeting")||null,
-   main_text:value("mainText")||null,event_date:value("date")||null,
-   event_time:value("time")||null,venue_name:value("venue")||null,
+   title:value("title"),
+   design_type:$("design").value,
+   occasion:value("occasion"),
+   host_name:value("host")||null,
+   second_name:value("second")||null,
+   greeting:value("greeting")||null,
+   main_text:value("mainText")||null,
+   event_date:value("date")||null,
+   event_time:value("time")||null,
+   venue_name:value("venue")||null,
    map_url:value("map")?safeUrl(value("map")):null,
    notes:value("notes")||null,
+
    cover_media_url:cover||old?.cover_media_url||null,
-   cover_media_type:cover?$("cover").files[0].type:old?.cover_media_type||null,
+   cover_media_type:cover?coverFile.type:old?.cover_media_type||null,
+
    opening_media_url:opening||old?.opening_media_url||null,
    opening_media_type:opening?openingFile.type:old?.opening_media_type||null,
+
    music_url:music||old?.music_url||null,
-   background_color:$("bg").value,text_color:$("fg").value,
+
+   background_color:$("bg").value,
+   text_color:$("fg").value,
    sort_order:Number($("sort").value)||0,
    is_visible:$("visible").value==="true",
    updated_at:new Date().toISOString()
   };
-  if(!payload.title)throw Error("اكتب اسم الدعوة.");
-  if(value("map")&&!payload.map_url)throw Error("رابط الخريطة غير صحيح.");
+
   let result;
-  if($("id").value){
-   result=await db.from("short_invitations").update(payload).eq("id",$("id").value).select().single();
+
+  if(recordId){
+   result=await db
+    .from("short_invitations")
+    .update(payload)
+    .eq("id",recordId)
+    .select()
+    .single();
   }else{
    payload.created_by=currentUser.id;
-   result=await db.from("short_invitations").insert(payload).select().single();
+
+   result=await db
+    .from("short_invitations")
+    .insert(payload)
+    .select()
+    .single();
   }
+
   if(result.error)throw result.error;
-  const link=location.origin+location.pathname.replace("short-invitations-admin.html","short-invitations.html")+"?invite="+result.data.public_token;
-  message("formMsg","تم الحفظ.\nرابط الدعوة:\n"+link);
-  resetForm();await loadItems();
- }catch(err){message("formMsg","تعذر الحفظ: "+(err.message||"خطأ غير معروف"),true)}
- finally{btn.disabled=false;btn.textContent="حفظ الدعوة"}
+
+  const basePath=location.pathname.replace(
+   /short-invitations-admin\.html$/,
+   "short-invitations.html"
+  );
+
+  const link=location.origin+basePath+
+   "?invite="+encodeURIComponent(result.data.public_token);
+
+  message("formMsg","تم حفظ الدعوة بنجاح.\nرابط الدعوة:\n"+link);
+
+  resetForm();
+  await loadItems();
+
+ }catch(err){
+  console.error("Short invitation save error:",err);
+  message(
+   "formMsg",
+   "تعذر الحفظ: "+(err.message||"حدث خطأ غير معروف"),
+   true
+  );
+ }finally{
+  saving=false;
+  btn.disabled=false;
+  btn.textContent=$("id").value?"حفظ التعديلات":"حفظ الدعوة";
+ }
 });
+
 async function loadItems(){
  $("items").textContent="جارٍ التحميل...";
- const {data,error}=await db.from("short_invitations").select("*").order("sort_order").order("created_at",{ascending:false});
- if(error){$("items").textContent="خطأ: "+error.message;return}
- records=data||[];renderItems();
+
+ const {data,error}=await db
+  .from("short_invitations")
+  .select("*")
+  .order("sort_order")
+  .order("created_at",{ascending:false});
+
+ if(error){
+  $("items").textContent="تعذر تحميل الدعوات: "+error.message;
+  return;
+ }
+
+ records=data||[];
+ renderItems();
 }
+
 function renderItems(){
- const root=$("items");root.replaceChildren();
- if(!records.length){root.textContent="ماكو دعوات محفوظة بعد.";return}
+ const root=$("items");
+ root.replaceChildren();
+
+ if(!records.length){
+  root.textContent="ماكو دعوات محفوظة بعد.";
+  return;
+ }
+
  for(const r of records){
-  const box=document.createElement("div");box.className="item";
-  const h=document.createElement("h3");h.textContent=r.title;
-  const p=document.createElement("p");p.textContent=(r.design_type==="book"?"كتاب":r.design_type==="video"?"فيديو":"ظرف")+" — "+(r.is_visible?"منشورة":"مخفية");
+  const box=document.createElement("div");
+  box.className="item";
+
+  const h=document.createElement("h3");
+  h.textContent=r.title;
+
+  const p=document.createElement("p");
+  const designName=
+   r.design_type==="book"?"كتاب":
+   r.design_type==="video"?"فيديو":"ظرف";
+
+  p.textContent=designName+" — "+(r.occasion||"")+
+   " — "+(r.is_visible?"منشورة":"مخفية");
+
   const link=document.createElement("a");
   link.href="short-invitations.html?invite="+encodeURIComponent(r.public_token);
-  link.textContent="رابط الدعوة";link.target="_blank";link.rel="noopener noreferrer";
-  const edit=document.createElement("button");edit.textContent="تعديل";edit.onclick=()=>editItem(r);
-  const toggle=document.createElement("button");toggle.textContent=r.is_visible?"إخفاء":"نشر";
-  toggle.className="secondary";toggle.onclick=()=>toggleItem(r);
-  const del=document.createElement("button");del.textContent="حذف";del.className="danger";del.onclick=()=>deleteItem(r);
-  box.append(h,p,link,edit,toggle,del);root.append(box);
+  link.textContent="رابط الدعوة";
+  link.target="_blank";
+  link.rel="noopener noreferrer";
+
+  const edit=document.createElement("button");
+  edit.type="button";
+  edit.textContent="تعديل";
+  edit.onclick=()=>editItem(r);
+
+  const toggle=document.createElement("button");
+  toggle.type="button";
+  toggle.textContent=r.is_visible?"إخفاء":"نشر";
+  toggle.className="secondary";
+  toggle.onclick=()=>toggleItem(r);
+
+  const del=document.createElement("button");
+  del.type="button";
+  del.textContent="حذف";
+  del.className="danger";
+  del.onclick=()=>deleteItem(r);
+
+  box.append(h,p,link,edit,toggle,del);
+  root.append(box);
  }
 }
+
 function editItem(r){
  $("id").value=r.id;
- const fields={title:r.title,design:r.design_type,occasion:r.occasion,host:r.host_name,second:r.second_name,date:r.event_date,time:r.event_time,venue:r.venue_name,map:r.map_url,greeting:r.greeting,mainText:r.main_text,notes:r.notes,bg:r.background_color,fg:r.text_color,sort:r.sort_order,visible:String(r.is_visible)};
- for(const [k,v] of Object.entries(fields))setValue(k,v);
+
+ const fields={
+  title:r.title,
+  design:r.design_type,
+  occasion:r.occasion,
+  host:r.host_name,
+  second:r.second_name,
+  date:r.event_date,
+  time:r.event_time,
+  venue:r.venue_name,
+  map:r.map_url,
+  greeting:r.greeting,
+  mainText:r.main_text,
+  notes:r.notes,
+  bg:r.background_color||"#080808",
+  fg:r.text_color||"#f4dfa0",
+  sort:r.sort_order,
+  visible:String(r.is_visible)
+ };
+
+ for(const [k,v] of Object.entries(fields)){
+  setValue(k,v);
+ }
+
  $("formTitle").textContent="تعديل الدعوة";
  $("save").textContent="حفظ التعديلات";
+ clearMessage("formMsg");
+
  window.scrollTo({top:0,behavior:"smooth"});
 }
+
 async function toggleItem(r){
- const {error}=await db.from("short_invitations").update({is_visible:!r.is_visible,updated_at:new Date().toISOString()}).eq("id",r.id);
- if(error){alert(error.message);return}await loadItems();
+ const {error}=await db
+  .from("short_invitations")
+  .update({
+   is_visible:!r.is_visible,
+   updated_at:new Date().toISOString()
+  })
+  .eq("id",r.id);
+
+ if(error){
+  alert("تعذر تغيير حالة الدعوة: "+error.message);
+  return;
+ }
+
+ await loadItems();
 }
+
 async function deleteItem(r){
  if(!confirm("حذف الدعوة "+r.title+"؟"))return;
- const {error}=await db.from("short_invitations").delete().eq("id",r.id);
- if(error){alert(error.message);return}await loadItems();
+
+ const {error}=await db
+  .from("short_invitations")
+  .delete()
+  .eq("id",r.id);
+
+ if(error){
+  alert("تعذر حذف الدعوة: "+error.message);
+  return;
+ }
+
+ await loadItems();
 }
-$("refresh").onclick=loadItems;
-(async()=>{const {data}=await db.auth.getSession();if(data.session)await checkUser(data.session.user)})();
+
+$("refresh").addEventListener("click",loadItems);
+
+(async()=>{
+ const {data,error}=await db.auth.getSession();
+
+ if(error){
+  showLogin();
+  message("loginMsg","تعذر التحقق من جلسة الدخول.",true);
+  return;
+ }
+
+ if(data.session){
+  await checkUser(data.session.user);
+ }else{
+  showLogin();
+ }
+})();
 </script>
 </body>
 </html>
