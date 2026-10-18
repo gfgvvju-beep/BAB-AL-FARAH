@@ -20,9 +20,10 @@ button{cursor:pointer}
 .brand small{display:block;font:10px Cairo,sans-serif;letter-spacing:4px;direction:ltr;color:#b7a16a}
 .shell{width:min(620px,100%);margin:auto}
 .stage{position:relative;margin:24px auto 18px;min-height:360px;display:flex;align-items:center;justify-content:center;perspective:1200px}
-.visual{position:relative;width:min(420px,100%);min-height:330px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #8c6c2d;border-radius:20px;background:linear-gradient(145deg,#21190b,#080808 75%);box-shadow:0 20px 65px #0009}
+.visual{position:relative;width:min(420px,100%);min-height:330px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #8c6c2d;border-radius:20px;background:linear-gradient(145deg,#21190b,#080808 75%);background-size:cover;background-position:center;box-shadow:0 20px 65px #0009}
 .visual img,.visual video{width:100%;max-height:70vh;object-fit:contain;display:block}
 .visual video{background:#050505}
+.visual .opening-media{width:100%;height:auto;max-height:70vh;object-fit:contain}
 .envelope{position:relative;width:min(340px,90%);height:220px;cursor:pointer;filter:drop-shadow(0 18px 20px #0008);transition:transform .6s}
 .env-back{position:absolute;inset:30px 0 0;background:linear-gradient(140deg,#4b3510,#bd994a,#5d4315);border-radius:9px}
 .env-paper{position:absolute;left:9%;right:9%;top:22px;height:155px;background:linear-gradient(120deg,#fff3d0,#d8bd7a);color:#4c3510;text-align:center;padding:22px 8px;font-family:Amiri,serif;font-size:25px;line-height:1.5;box-shadow:0 3px 10px #0004;transition:transform .9s;z-index:1}
@@ -125,6 +126,7 @@ let invitation=null;
 let audio=null;
 let openingVideo=null;
 let opened=false;
+let openingMediaShown=false;
 
 function showError(text){
  const status=$("status");
@@ -147,20 +149,44 @@ function safeWebUrl(value){
   return ["https:","http:"].includes(u.protocol)?u.href:"";
  }catch{
   return "";
- }
+}
+
+}
+
+function detectedMediaType(url,type){
+ const given=(type||"").toLowerCase().split(";")[0].trim();
+ if(given.startsWith("video/"))return "video";
+ if(given.startsWith("image/"))return "image";
+
+ try{
+  const path=new URL(url).pathname.toLowerCase();
+  if(/\.(mp4|webm|mov|m4v|ogv)$/.test(path))return "video";
+  if(/\.(jpg|jpeg|png|webp|gif|avif|bmp|svg)$/.test(path))return "image";
+ }catch{}
+
+ return "image";
 }
 
 function mediaElement(url,type){
  const safe=safeWebUrl(url);
  if(!safe)return null;
 
- if(type&&type.startsWith("video/")){
+ const kind=detectedMediaType(safe,type);
+
+ if(kind==="video"){
   const v=document.createElement("video");
   v.src=safe;
   v.controls=true;
   v.playsInline=true;
   v.preload="metadata";
+  v.setAttribute("playsinline","");
+  v.setAttribute("webkit-playsinline","");
   v.setAttribute("aria-label","فيديو الدعوة");
+  v.style.cssText="width:100%;max-height:70vh;object-fit:contain;background:#050505";
+  v.onerror=()=>{
+   console.error("فشل تحميل فيديو الدعوة:",safe);
+   v.setAttribute("data-media-error","true");
+  };
   return v;
  }
 
@@ -168,8 +194,43 @@ function mediaElement(url,type){
  img.src=safe;
  img.alt="تصميم الدعوة";
  img.loading="eager";
- img.onerror=()=>img.remove();
+ img.decoding="async";
+ img.style.cssText="width:100%;max-height:70vh;object-fit:contain";
+ img.onerror=()=>{
+  console.error("فشل تحميل صورة الدعوة:",safe);
+  img.setAttribute("data-media-error","true");
+  img.alt="تعذر تحميل الصورة. تحقق من رابط الملف وصلاحيات مخزن Supabase.";
+ };
  return img;
+}
+
+function setCoverBackground(d){
+ const root=$("visual");
+ const coverUrl=safeWebUrl(d.cover_media_url);
+ if(coverUrl){
+  root.style.backgroundImage=
+   "linear-gradient(#08080820,#08080820),url("+JSON.stringify(coverUrl)+")";
+  root.style.backgroundSize="cover";
+  root.style.backgroundPosition="center";
+  root.style.backgroundRepeat="no-repeat";
+ }else{
+  root.style.backgroundImage="";
+ }
+}
+
+function renderOpeningMedia(d){
+ const root=$("visual");
+ const media=mediaElement(d.opening_media_url,d.opening_media_type);
+ if(!media)return false;
+
+ root.replaceChildren(media);
+ root.style.backgroundImage="";
+ root.style.backgroundSize="";
+ root.style.backgroundPosition="";
+ root.style.backgroundRepeat="";
+ openingVideo=media.tagName==="VIDEO"?media:null;
+ openingMediaShown=true;
+ return true;
 }
 
 function renderVisual(d){
@@ -178,7 +239,9 @@ function renderVisual(d){
  root.style.backgroundImage="";
  root.style.backgroundSize="";
  root.style.backgroundPosition="";
+ root.style.backgroundRepeat="";
  openingVideo=null;
+ openingMediaShown=false;
 
  if(d.design_type==="video"){
   const media=mediaElement(d.opening_media_url,d.opening_media_type);
@@ -186,15 +249,21 @@ function renderVisual(d){
   if(media){
    root.append(media);
    if(media.tagName==="VIDEO")openingVideo=media;
+   openingMediaShown=true;
   }else{
    const cover=mediaElement(d.cover_media_url,d.cover_media_type);
    if(cover)root.append(cover);
-   else root.textContent="♥";
+   else{
+    setCoverBackground(d);
+    root.textContent="♥";
+   }
   }
 
   $("openBtn").textContent="عرض تفاصيل الدعوة ♥";
   return;
  }
+
+ setCoverBackground(d);
 
  if(d.design_type==="book"){
   const book=document.createElement("div");
@@ -230,14 +299,6 @@ function renderVisual(d){
   book.append(left,right,cover);
   root.append(book);
 
-  const bg=safeWebUrl(d.cover_media_url);
-  if(bg){
-   root.style.backgroundImage=
-    "linear-gradient(#08080866,#08080866),url("+JSON.stringify(bg)+")";
-   root.style.backgroundSize="cover";
-   root.style.backgroundPosition="center";
-  }
-
   $("openBtn").textContent="افتح الكتاب ♥";
   return;
  }
@@ -264,15 +325,6 @@ function renderVisual(d){
 
  env.append(back,paper,flap,front,seal);
  root.append(env);
-
- const cover=mediaElement(d.cover_media_url,d.cover_media_type);
- if(cover){
-  const holder=document.createElement("div");
-  holder.style.cssText="position:absolute;inset:0;opacity:.22;pointer-events:none";
-  cover.style.cssText="width:100%;height:100%;object-fit:cover";
-  holder.append(cover);
-  root.append(holder);
- }
 
  $("openBtn").textContent="افتح الظرف ♥";
 }
@@ -309,7 +361,6 @@ function fillDetails(d){
   mapLink.classList.add("hidden");
  }
 
- // إصلاح الخطأ: تحديد بطاقة التفاصيل مباشرة بواسطة id ثابت.
  const card=$("detailsCard");
  if(card)card.style.backgroundColor=d.background_color||"#080808";
 
@@ -321,9 +372,7 @@ function fillDetails(d){
 
  $("shareBtn").href=
   "https://wa.me/?text="+
-  encodeURIComponent(
-   (d.occasion||d.title||"دعوة مميزة قصيرة")+" "+location.href
-  );
+  encodeURIComponent((d.occasion||d.title||"دعوة مميزة قصيرة")+" "+location.href);
 }
 
 async function startMusic(){
@@ -354,11 +403,18 @@ async function openInvitation(){
  opened=true;
  await startMusic();
 
- if(invitation.design_type==="video"&&openingVideo){
+ if(invitation.design_type!=="video"&&invitation.opening_media_url){
+  const shown=renderOpeningMedia(invitation);
+  if(!shown){
+   console.warn("رابط الافتتاحية غير صالح أو غير موجود.");
+  }
+ }
+
+ if(openingVideo){
   try{
    await openingVideo.play();
   }catch(e){
-   console.warn("تعذر تشغيل الفيديو:",e);
+   console.warn("تعذر تشغيل الفيديو تلقائياً؛ استخدم زر التشغيل داخل الفيديو:",e);
   }
  }
 
@@ -366,12 +422,15 @@ async function openInvitation(){
  $("openBtn").disabled=true;
  $("openBtn").textContent="جاري فتح الدعوة…";
 
+ const isVideo=!!openingVideo;
+ const delay=isVideo?700:1000;
+
  setTimeout(()=>{
   $("details").classList.add("show");
   $("openBtn").disabled=false;
   $("openBtn").textContent="عرض تفاصيل الدعوة";
   $("details").scrollIntoView({behavior:"smooth",block:"start"});
- },invitation.design_type==="video"?350:1100);
+ },delay);
 }
 
 $("openBtn").addEventListener("click",openInvitation);
@@ -392,7 +451,6 @@ $("openBtn").addEventListener("click",openInvitation);
 
   if(error){
    console.error("Supabase RPC error:",error);
-
    const errorDetails=[
     error.message||"خطأ غير معروف",
     error.code?"Code: "+error.code:"",
@@ -415,6 +473,14 @@ $("openBtn").addEventListener("click",openInvitation);
    showError("لم يتم العثور على بيانات الدعوة.");
    return;
   }
+
+  console.log("بيانات الوسائط المستلمة:",{
+   design_type:invitation.design_type,
+   cover_media_url:invitation.cover_media_url,
+   cover_media_type:invitation.cover_media_type,
+   opening_media_url:invitation.opening_media_url,
+   opening_media_type:invitation.opening_media_type
+  });
 
   document.title=(invitation.title||"دعوة مميزة قصيرة")+" | باب الفرح";
 
