@@ -1,0 +1,728 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<title>إدارة الدعوات المميزة | باب الفرح</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800&family=Aref+Ruqaa:wght@400;700&family=Reem+Kufi:wght@400;500;600;700&display=swap');
+:root{--gold:#d8b568;--bg:#090909;--panel:#151515;--line:#373025;--muted:#aaa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#fff;font-family:Cairo,sans-serif}
+header{padding:18px 16px;border-bottom:1px solid var(--line);background:#101010;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{color:var(--gold);font-family:Amiri,serif;font-size:25px;font-weight:bold}
+header small{display:block;color:#aaa;font-size:11px}
+main{max-width:1200px;margin:auto;padding:16px}
+h2,h3{color:var(--gold);margin:5px 0 15px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{min-width:0}
+label{display:block;font-size:12px;color:#d8c9a7;margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px;background:#090909;color:white;border:1px solid #484034;border-radius:9px;font:inherit;font-size:13px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{min-height:85px;resize:vertical}
+button,.button{font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;border:1px solid var(--gold);border-radius:9px;padding:11px 15px;background:var(--gold);color:#17120a;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+button.secondary,.button.secondary{background:#1b1b1b;color:var(--gold)}
+button.danger{border-color:#a64b4b;background:#351818;color:#ffb9b9}
+button:disabled{opacity:.5;cursor:wait}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.muted{font-size:12px;color:var(--muted);line-height:1.8}
+.hidden{display:none!important}
+#status{white-space:pre-wrap;margin:10px 0;font-size:13px;color:var(--gold)}
+.invite-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.invite-item{border:1px solid #38312a;border-radius:12px;padding:13px;background:#101010;min-width:0}
+.invite-item strong{display:block;color:var(--gold);margin-bottom:5px;overflow-wrap:anywhere}
+.invite-item p{font-size:12px;color:#bbb;overflow-wrap:anywhere}
+.media-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.preview-wrap{background:#000;border:1px solid #57482b;border-radius:12px;overflow:hidden;position:relative;min-height:340px;aspect-ratio:9/14;max-width:380px;margin:auto}
+.preview-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.preview-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.8),rgba(0,0,0,.1) 65%,rgba(0,0,0,.2))}
+.preview-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;gap:12px;overflow:hidden}
+.preview-copy>*{max-width:100%;overflow-wrap:anywhere;text-shadow:0 2px 8px #000}
+.preview-name{font-family:Amiri,serif;font-size:28px;color:#f6d88b}
+.preview-greeting{font-family:Aref Ruqaa,serif;font-size:24px}
+.preview-details{font-size:13px;line-height:2}
+.preview-badge{font-size:10px;border:1px solid #d8b568;border-radius:30px;padding:5px 12px}
+#previewButtons{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+#previewButtons span{border:1px solid #d8b568;border-radius:20px;padding:5px 9px;font-size:10px}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+@media(max-width:650px){main{padding:10px}.grid{grid-template-columns:1fr}.panel{padding:13px}header{padding:13px}.brand{font-size:21px}.preview-wrap{max-width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">باب الفرح | الدعوات المميزة</div>
+    <small>لوحة مستقلة لإدارة الدعوات الإلكترونية</small>
+  </div>
+  <button id="logoutBtn" class="secondary hidden" type="button">تسجيل الخروج</button>
+</header>
+
+<main>
+  <div id="status" role="status"></div>
+
+  <section id="authPanel" class="panel">
+    <h2>دخول الإدارة</h2>
+    <p class="muted">سجّل الدخول بحساب Supabase الخاص بك. إذا ما عندك حساب، أنشئ حساباً أولاً.</p>
+    <div class="grid">
+      <div class="field">
+        <label for="authEmail">البريد الإلكتروني</label>
+        <input id="authEmail" type="email" autocomplete="username" placeholder="البريد الإلكتروني" required>
+      </div>
+      <div class="field">
+        <label for="authPassword">كلمة المرور</label>
+        <input id="authPassword" type="password" autocomplete="current-password" placeholder="كلمة المرور" required>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="loginBtn" type="button">تسجيل الدخول</button>
+      <button id="signupBtn" type="button" class="secondary">إنشاء حساب جديد</button>
+    </div>
+    <p class="muted">ملاحظة: قد يتطلب الحساب الجديد تأكيد البريد الإلكتروني حسب إعدادات Supabase.</p>
+  </section>
+
+  <section id="appPanel" class="hidden">
+    <section class="panel">
+      <h2>دعواتي المميزة</h2>
+      <div class="actions">
+        <button id="newBtn" type="button">＋ إنشاء دعوة جديدة</button>
+        <button id="refreshBtn" type="button" class="secondary">تحديث القائمة</button>
+      </div>
+      <div id="inviteList" class="invite-list" style="margin-top:14px"></div>
+    </section>
+
+    <section id="editor" class="panel hidden">
+      <h2 id="editorTitle">إنشاء دعوة مميزة</h2>
+      <p class="muted">املأ التفاصيل وارفع الملفات، ثم عاين الدعوة قبل حفظها. رابط الضيف يفتح الدعوة نفسها مباشرة.</p>
+
+      <input id="inviteId" type="hidden">
+      <input id="inviteSlug" type="hidden">
+
+      <h3>١. معلومات الدعوة</h3>
+      <div class="grid">
+        <div class="field">
+          <label for="title">عنوان الدعوة للإدارة</label>
+          <input id="title" placeholder="مثال: دعوة زفاف أحمد">
+        </div>
+        <div class="field">
+          <label for="eventType">نوع المناسبة</label>
+          <select id="eventType">
+            <option value="wedding">دعوة زفاف</option>
+            <option value="engagement">عقد قران</option>
+            <option value="henna">حفلة حنّة</option>
+            <option value="circumcision">ختان</option>
+            <option value="graduation">تخرج</option>
+            <option value="birthday">عيد ميلاد</option>
+            <option value="other">مناسبة أخرى</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="hostNames">الأسماء الظاهرة بالدعوة</label>
+          <input id="hostNames" placeholder="أحمد و زهراء">
+        </div>
+        <div class="field">
+          <label for="eventDate">تاريخ المناسبة</label>
+          <input id="eventDate" placeholder="الجمعة ٢٠٢٦/١١/٢٠">
+        </div>
+        <div class="field">
+          <label for="eventTime">وقت المناسبة</label>
+          <input id="eventTime" placeholder="الساعة السابعة مساءً">
+        </div>
+        <div class="field">
+          <label for="eventLocation">مكان المناسبة</label>
+          <input id="eventLocation" placeholder="اسم القاعة أو العنوان">
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label for="greeting">عبارة التهنئة</label>
+          <textarea id="greeting">بكل الحب والفرح ندعوكم لمشاركتنا أجمل لحظاتنا</textarea>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label for="invitationText">نص الدعوة الكامل</label>
+          <textarea id="invitationText" placeholder="اكتب نص الدعوة والتفاصيل التي تريد ظهورها..."></textarea>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label for="mapUrl">رابط موقع المناسبة على الخريطة (اختياري)</label>
+          <input id="mapUrl" type="url" placeholder="https://maps.google.com/...">
+        </div>
+      </div>
+
+      <hr>
+      <h3>٢. الباب والمشاهد</h3>
+      <p class="muted">ارفع فيديو الباب، ثم المشهد الأول والثاني. ملفاتك تُحفظ في مساحة التخزين الخاصة بهذا النظام.</p>
+
+      <div class="field">
+        <label>فيديو الباب (MP4 أو WEBM)</label>
+        <div class="media-row">
+          <input id="doorFile" type="file" accept="video/mp4,video/webm">
+          <button type="button" class="secondary" data-clear="doorVideoUrl">إزالة</button>
+        </div>
+        <input id="doorVideoUrl" type="url" placeholder="أو رابط فيديو الباب">
+      </div>
+
+      <div class="grid" style="margin-top:13px">
+        <div class="field">
+          <label>المشهد الأول (صورة أو فيديو)</label>
+          <input id="sceneOneFile" type="file" accept="image/*,video/mp4,video/webm">
+          <input id="sceneOneUrl" type="url" placeholder="أو رابط المشهد الأول" style="margin-top:7px">
+          <label for="sceneOneType" style="margin-top:9px">نوع المشهد الأول</label>
+          <select id="sceneOneType"><option value="image">صورة</option><option value="video">فيديو</option></select>
+        </div>
+        <div class="field">
+          <label>المشهد الثاني (صورة أو فيديو)</label>
+          <input id="sceneTwoFile" type="file" accept="image/*,video/mp4,video/webm">
+          <input id="sceneTwoUrl" type="url" placeholder="أو رابط المشهد الثاني" style="margin-top:7px">
+          <label for="sceneTwoType" style="margin-top:9px">نوع المشهد الثاني</label>
+          <select id="sceneTwoType"><option value="image">صورة</option><option value="video">فيديو</option></select>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:13px">
+        <label>أغنية الدعوة (MP3)</label>
+        <input id="musicFile" type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg">
+        <input id="musicUrl" type="url" placeholder="أو رابط ملف الصوت" style="margin-top:7px">
+      </div>
+
+      <hr>
+      <h3>٣. تصميم النصوص فوق الصورة أو الفيديو</h3>
+      <p class="muted">غيّر الخط واللون والحجم والمحاذاة وموضع النص من أعلى أو وسط أو أسفل المشهد. تظهر التغييرات في المعاينة مباشرة.</p>
+      <div class="grid">
+        <div class="field">
+          <label for="fontFamily">الخط العربي</label>
+          <select id="fontFamily">
+            <option value="Amiri">Amiri — أميري</option>
+            <option value="Aref Ruqaa">Aref Ruqaa — رقعة</option>
+            <option value="Cairo">Cairo — كايرو</option>
+            <option value="Reem Kufi">Reem Kufi — ريم كوفي</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="textColor">لون النص</label>
+          <input id="textColor" type="color" value="#ffffff">
+        </div>
+        <div class="field">
+          <label for="nameColor">لون الأسماء</label>
+          <input id="nameColor" type="color" value="#f6d88b">
+        </div>
+        <div class="field">
+          <label for="greetingSize">حجم التهنئة</label>
+          <input id="greetingSize" type="range" min="14" max="42" value="24">
+        </div>
+        <div class="field">
+          <label for="nameSize">حجم الأسماء</label>
+          <input id="nameSize" type="range" min="18" max="52" value="28">
+        </div>
+        <div class="field">
+          <label for="detailsSize">حجم التفاصيل</label>
+          <input id="detailsSize" type="range" min="10" max="25" value="13">
+        </div>
+        <div class="field">
+          <label for="textPosition">موضع النص</label>
+          <select id="textPosition">
+            <option value="center">الوسط</option>
+            <option value="top">الأعلى</option>
+            <option value="bottom">الأسفل</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="textAlign">محاذاة النص</label>
+          <select id="textAlign">
+            <option value="center">وسط</option>
+            <option value="right">يمين</option>
+            <option value="left">يسار</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="overlay">شدة تعتيم الخلفية</label>
+          <input id="overlay" type="range" min="0" max="85" value="35">
+        </div>
+        <div class="field">
+          <label for="showBadge">إظهار عبارة الدعوة</label>
+          <select id="showBadge"><option value="true">نعم</option><option value="false">لا</option></select>
+        </div>
+      </div>
+
+      <hr>
+      <h3>٤. روابط التواصل</h3>
+      <div class="grid">
+        <div class="field">
+          <label for="whatsapp">رابط واتساب</label>
+          <input id="whatsapp" type="url" placeholder="https://wa.me/964...">
+        </div>
+        <div class="field">
+          <label for="phone">رقم الاتصال</label>
+          <input id="phone" placeholder="07867430232">
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label for="instagram">رابط إنستغرام</label>
+          <input id="instagram" type="url" placeholder="https://instagram.com/...">
+        </div>
+      </div>
+
+      <hr>
+      <h3>٥. المعاينة المباشرة</h3>
+      <div class="preview-wrap" id="preview">
+        <div class="preview-shade" id="previewShade"></div>
+        <div class="preview-copy" id="previewCopy">
+          <div class="preview-badge" id="previewBadge">دعوة مميزة</div>
+          <div class="preview-greeting" id="previewGreeting">بكل الحب والفرح</div>
+          <div class="preview-name" id="previewNames">أحمد و زهراء</div>
+          <div class="preview-details" id="previewDetails">موعد المناسبة ومكانها</div>
+          <div id="previewBody" style="font-size:12px;line-height:1.9"></div>
+          <div id="previewButtons"><span>واتساب</span><span>اتصال</span><span>إنستغرام</span></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="saveBtn" type="button">حفظ الدعوة</button>
+        <button id="publishBtn" type="button" class="secondary">حفظ ونشر الدعوة</button>
+        <button id="previewLinkBtn" type="button" class="secondary">فتح رابط الدعوة</button>
+        <button id="cancelBtn" type="button" class="secondary">إلغاء</button>
+      </div>
+      <p class="muted">النشر يجعل الدعوة متاحة لمن يمتلك رابطها. احتفظ بالرابط الخاص ولا تنشره علناً إذا كان مخصصاً لشخص معين.</p>
+    </section>
+  </section>
+</main>
+
+<script>
+(() => {
+'use strict';
+
+const SUPABASE_URL = 'https://gnsnbretccdlwpmimuap.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU';
+const BUCKET = 'premium-invitations';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const $ = id => document.getElementById(id);
+let currentUser = null;
+let currentInvitation = null;
+let busy = false;
+
+function status(message, error=false) {
+  $('status').textContent = message || '';
+  $('status').style.color = error ? '#ff9b9b' : '#d8b568';
+}
+function setBusy(value) {
+  busy = value;
+  document.querySelectorAll('button').forEach(b => b.disabled = value);
+}
+function randomSlug() {
+  return 'premium-' + crypto.randomUUID().replaceAll('-', '').slice(0,20);
+}
+function safeUrl(value) {
+  if (!value) return '';
+  try {
+    const u = new URL(value);
+    return ['https:', 'http:'].includes(u.protocol) ? u.href : '';
+  } catch { return ''; }
+}
+function fileIsVideo(file) {
+  return !!file && file.type.startsWith('video/');
+}
+function fileIsImage(file) {
+  return !!file && file.type.startsWith('image/');
+}
+function inferMediaType(file, fallback='image') {
+  return fileIsVideo(file) ? 'video' : fileIsImage(file) ? 'image' : fallback;
+}
+function publicInvitationUrl(slug) {
+  return new URL('premium-invitation.html?slug=' + encodeURIComponent(slug), location.href).href;
+}
+function setEditorVisible(show) {
+  $('editor').classList.toggle('hidden', !show);
+  if (show) $('editor').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function val(id) { return $(id).value.trim(); }
+function setVal(id, value) { $(id).value = value ?? ''; }
+
+async function login() {
+  if (busy) return;
+  const email = val('authEmail');
+  const password = $('authPassword').value;
+  if (!email || !password) return status('أدخل البريد الإلكتروني وكلمة المرور.', true);
+  setBusy(true);
+  try {
+    const {error} = await db.auth.signInWithPassword({email,password});
+    if (error) throw error;
+    status('تم تسجيل الدخول.');
+    await initSession();
+  } catch(e) { status('تعذر تسجيل الدخول: ' + e.message, true); }
+  finally { setBusy(false); }
+}
+async function signup() {
+  if (busy) return;
+  const email = val('authEmail');
+  const password = $('authPassword').value;
+  if (!email || password.length < 8) return status('أدخل البريد وكلمة مرور لا تقل عن 8 أحرف.', true);
+  setBusy(true);
+  try {
+    const {data,error} = await db.auth.signUp({email,password});
+    if (error) throw error;
+    if (data.session) {
+      status('تم إنشاء الحساب وتسجيل الدخول.');
+      await initSession();
+    } else {
+      status('تم إرسال طلب إنشاء الحساب. إذا كان تأكيد البريد مفعّلاً، افتح رسالة التأكيد ثم سجّل الدخول.');
+    }
+  } catch(e) { status('تعذر إنشاء الحساب: ' + e.message, true); }
+  finally { setBusy(false); }
+}
+async function logout() {
+  setBusy(true);
+  try {
+    const {error} = await db.auth.signOut();
+    if (error) throw error;
+    currentUser = null;
+    $('appPanel').classList.add('hidden');
+    $('authPanel').classList.remove('hidden');
+    $('logoutBtn').classList.add('hidden');
+    status('تم تسجيل الخروج.');
+  } catch(e) { status('تعذر تسجيل الخروج: ' + e.message, true); }
+  finally { setBusy(false); }
+}
+async function initSession() {
+  const {data,error} = await db.auth.getSession();
+  if (error) { status(error.message,true); return; }
+  currentUser = data.session?.user || null;
+  $('authPanel').classList.toggle('hidden', !!currentUser);
+  $('appPanel').classList.toggle('hidden', !currentUser);
+  $('logoutBtn').classList.toggle('hidden', !currentUser);
+  if (currentUser) await loadInvitations();
+}
+
+async function loadInvitations() {
+  if (!currentUser) return;
+  status('جارٍ تحميل الدعوات...');
+  try {
+    const {data,error} = await db.from('premium_invitations')
+      .select('*').eq('owner_id', currentUser.id).order('created_at',{ascending:false});
+    if (error) throw error;
+    const list = $('inviteList');
+    list.replaceChildren();
+    if (!data || !data.length) {
+      list.innerHTML = '<p class="muted">ما عندك دعوات حالياً. اضغط «إنشاء دعوة جديدة» للبدء.</p>';
+    } else {
+      data.forEach(inv => list.appendChild(makeInvitationCard(inv)));
+    }
+    status('عدد الدعوات: ' + (data?.length || 0));
+  } catch(e) {
+    status('تعذر تحميل الدعوات: ' + e.message, true);
+  }
+}
+function makeInvitationCard(inv) {
+  const card = document.createElement('div');
+  card.className = 'invite-item';
+  const title = document.createElement('strong');
+  title.textContent = inv.title || 'دعوة مميزة';
+  const details = document.createElement('p');
+  details.textContent = (inv.host_names || 'بدون أسماء') + ' — ' + (inv.is_published ? 'منشورة' : 'مسودة');
+  const link = document.createElement('p');
+  link.textContent = publicInvitationUrl(inv.slug);
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+  const edit = document.createElement('button');
+  edit.type = 'button'; edit.textContent = 'تعديل';
+  edit.onclick = () => populateEditor(inv);
+  const open = document.createElement('button');
+  open.type = 'button'; open.className = 'secondary'; open.textContent = 'فتح الرابط';
+  open.onclick = () => window.open(publicInvitationUrl(inv.slug),'_blank','noopener');
+  const copy = document.createElement('button');
+  copy.type = 'button'; copy.className = 'secondary'; copy.textContent = 'نسخ الرابط';
+  copy.onclick = async () => {
+    try { await navigator.clipboard.writeText(publicInvitationUrl(inv.slug)); status('تم نسخ الرابط.'); }
+    catch { status('تعذر النسخ تلقائياً. انسخ الرابط الظاهر أعلاه.',true); }
+  };
+  const pub = document.createElement('button');
+  pub.type = 'button'; pub.className = 'secondary'; pub.textContent = inv.is_published ? 'إلغاء النشر' : 'نشر';
+  pub.onclick = () => togglePublish(inv);
+  const del = document.createElement('button');
+  del.type = 'button'; del.className = 'danger'; del.textContent = 'حذف';
+  del.onclick = () => deleteInvitation(inv);
+  actions.append(edit,open,copy,pub,del);
+  card.append(title,details,link,actions);
+  return card;
+}
+function resetEditor() {
+  currentInvitation = null;
+  $('editorTitle').textContent = 'إنشاء دعوة مميزة';
+  $('inviteId').value = '';
+  $('inviteSlug').value = randomSlug();
+  const defaults = {
+    title:'',eventType:'wedding',hostNames:'',eventDate:'',eventTime:'',
+    eventLocation:'',greeting:'بكل الحب والفرح ندعوكم لمشاركتنا أجمل لحظاتنا',
+    invitationText:'',mapUrl:'',doorVideoUrl:'',sceneOneUrl:'',sceneTwoUrl:'',
+    sceneOneType:'image',sceneTwoType:'image',musicUrl:'',fontFamily:'Amiri',
+    textColor:'#ffffff',nameColor:'#f6d88b',greetingSize:'24',nameSize:'28',
+    detailsSize:'13',textPosition:'center',textAlign:'center',overlay:'35',
+    showBadge:'true',whatsapp:'',phone:'07867430232',instagram:''
+  };
+  Object.entries(defaults).forEach(([id,value]) => setVal(id,value));
+  ['doorFile','sceneOneFile','sceneTwoFile','musicFile'].forEach(id => $(id).value = '');
+  updatePreview();
+}
+function populateEditor(inv) {
+  currentInvitation = inv;
+  $('editorTitle').textContent = 'تعديل الدعوة';
+  setVal('inviteId',inv.id);
+  setVal('inviteSlug',inv.slug);
+  const fields = {
+    title:'title',eventType:'event_type',hostNames:'host_names',eventDate:'event_date',
+    eventTime:'event_time',eventLocation:'event_location',greeting:'greeting',
+    invitationText:'invitation_text',mapUrl:'map_url',doorVideoUrl:'door_video_url',
+    sceneOneUrl:'scene_one_url',sceneTwoUrl:'scene_two_url',
+    sceneOneType:'scene_one_type',sceneTwoType:'scene_two_type',musicUrl:'music_url'
+  };
+  Object.entries(fields).forEach(([element,column]) => setVal(element,inv[column]));
+  const design = inv.design || {};
+  const designFields = {
+    fontFamily:'fontFamily',textColor:'textColor',nameColor:'nameColor',
+    greetingSize:'greetingSize',nameSize:'nameSize',detailsSize:'detailsSize',
+    textPosition:'textPosition',textAlign:'textAlign',overlay:'overlay',showBadge:'showBadge'
+  };
+  Object.entries(designFields).forEach(([element,key]) => {
+    if (design[key] !== undefined) setVal(element, String(design[key]));
+  });
+  const social = inv.social_links || {};
+  setVal('whatsapp',social.whatsapp || '');
+  setVal('phone',social.phone || '');
+  setVal('instagram',social.instagram || '');
+  ['doorFile','sceneOneFile','sceneTwoFile','musicFile'].forEach(id => $(id).value = '');
+  updatePreview();
+  setEditorVisible(true);
+}
+async function uploadFile(file, kind) {
+  if (!file) return '';
+  if (!currentUser) throw new Error('سجّل الدخول أولاً.');
+  const maxSize = file.type.startsWith('video/') ? 500*1024*1024 : 30*1024*1024;
+  if (file.size > maxSize) throw new Error('حجم الملف أكبر من الحد المسموح: ' + file.name);
+  const allowed = file.type.startsWith('image/') ||
+    ['video/mp4','video/webm','audio/mpeg','audio/mp3','audio/wav','audio/ogg'].includes(file.type);
+  if (!allowed) throw new Error('نوع الملف غير مدعوم: ' + file.name);
+  const cleanName = file.name.normalize('NFKD').replace(/[^\w.-]+/g,'-').replace(/-+/g,'-').slice(-100);
+  const path = currentUser.id + '/' + (val('inviteSlug') || randomSlug()) + '/' +
+    kind + '-' + crypto.randomUUID() + '-' + cleanName;
+  status('جارٍ رفع الملف: ' + file.name);
+  const {error} = await db.storage.from(BUCKET).upload(path,file,{
+    cacheControl:'3600',upsert:false,contentType:file.type || undefined
+  });
+  if (error) throw error;
+  const {data} = db.storage.from(BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+async function getMediaValue(fileId,urlId,kind,fallbackType) {
+  const file = $(fileId).files[0];
+  if (!file) return {url:safeUrl(val(urlId)),type:fallbackType};
+  const url = await uploadFile(file,kind);
+  return {url,type:inferMediaType(file,fallbackType)};
+}
+function getDesign() {
+  return {
+    fontFamily:val('fontFamily'),
+    textColor:val('textColor'),
+    nameColor:val('nameColor'),
+    greetingSize:Number(val('greetingSize')) || 24,
+    nameSize:Number(val('nameSize')) || 28,
+    detailsSize:Number(val('detailsSize')) || 13,
+    textPosition:val('textPosition'),
+    textAlign:val('textAlign'),
+    overlay:Number(val('overlay')) || 0,
+    showBadge:val('showBadge') === 'true'
+  };
+}
+function getSocial() {
+  return {
+    whatsapp:safeUrl(val('whatsapp')),
+    phone:val('phone').replace(/[^\d+]/g,''),
+    instagram:safeUrl(val('instagram'))
+  };
+}
+async function saveInvitation(publish) {
+  if (busy) return;
+  if (!currentUser) return status('سجّل الدخول أولاً.',true);
+  if (!val('title')) return status('اكتب عنوان الدعوة أولاً.',true);
+  setBusy(true);
+  try {
+    const door = await getMediaValue('doorFile','doorVideoUrl','door','video');
+    const one = await getMediaValue('sceneOneFile','sceneOneUrl','scene-one',val('sceneOneType'));
+    const two = await getMediaValue('sceneTwoFile','sceneTwoUrl','scene-two',val('sceneTwoType'));
+    const musicFile = $('musicFile').files[0];
+    const musicUrl = musicFile ? await uploadFile(musicFile,'music') : safeUrl(val('musicUrl'));
+
+    const payload = {
+      owner_id:currentUser.id,
+      slug:val('inviteSlug') || randomSlug(),
+      title:val('title'),
+      event_type:val('eventType'),
+      is_published:publish,
+      host_names:val('hostNames'),
+      greeting:val('greeting'),
+      invitation_text:val('invitationText'),
+      event_date:val('eventDate'),
+      event_time:val('eventTime'),
+      event_location:val('eventLocation'),
+      map_url:safeUrl(val('mapUrl')),
+      door_video_url:door.url,
+      scene_one_url:one.url,
+      scene_one_type:one.type,
+      scene_two_url:two.url,
+      scene_two_type:two.type,
+      music_url:musicUrl,
+      design:getDesign(),
+      social_links:getSocial()
+    };
+    let result;
+    const id = val('inviteId');
+    if (id) {
+      result = await db.from('premium_invitations').update(payload)
+        .eq('id',id).eq('owner_id',currentUser.id).select().single();
+    } else {
+      result = await db.from('premium_invitations').insert(payload).select().single();
+    }
+    if (result.error) throw result.error;
+    currentInvitation = result.data;
+    setVal('inviteId',result.data.id);
+    setVal('inviteSlug',result.data.slug);
+    status(publish ? 'تم حفظ الدعوة ونشرها بنجاح.' : 'تم حفظ الدعوة كمسودة.');
+    await loadInvitations();
+    setEditorVisible(true);
+  } catch(e) {
+    status('تعذر حفظ الدعوة: ' + e.message, true);
+  } finally {
+    setBusy(false);
+  }
+}
+async function togglePublish(inv) {
+  if (busy) return;
+  setBusy(true);
+  try {
+    const {error} = await db.from('premium_invitations')
+      .update({is_published:!inv.is_published})
+      .eq('id',inv.id).eq('owner_id',currentUser.id);
+    if (error) throw error;
+    status(inv.is_published ? 'تم إلغاء نشر الدعوة.' : 'تم نشر الدعوة.');
+    await loadInvitations();
+  } catch(e) { status('تعذر تغيير حالة النشر: '+e.message,true); }
+  finally { setBusy(false); }
+}
+async function deleteInvitation(inv) {
+  if (busy || !confirm('متأكد تريد حذف الدعوة؟ هذا الإجراء لا يمكن التراجع عنه.')) return;
+  setBusy(true);
+  try {
+    const {error} = await db.from('premium_invitations')
+      .delete().eq('id',inv.id).eq('owner_id',currentUser.id);
+    if (error) throw error;
+    status('تم حذف الدعوة من قاعدة البيانات. الملفات المرفوعة قد تبقى في التخزين.');
+    if (val('inviteId') === inv.id) { resetEditor(); setEditorVisible(false); }
+    await loadInvitations();
+  } catch(e) { status('تعذر حذف الدعوة: '+e.message,true); }
+  finally { setBusy(false); }
+}
+function updatePreview() {
+  const design = getDesign();
+  $('previewGreeting').textContent = val('greeting') || '';
+  $('previewNames').textContent = val('hostNames') || 'الأسماء';
+  $('previewDetails').textContent =
+    [val('eventDate'),val('eventTime'),val('eventLocation')].filter(Boolean).join(' • ') ||
+    'موعد المناسبة ومكانها';
+  $('previewBody').textContent = val('invitationText');
+  $('previewBadge').textContent = val('title') || 'دعوة مميزة';
+  $('previewBadge').style.display = design.showBadge ? '' : 'none';
+  $('previewGreeting').style.fontFamily = '"' + design.fontFamily + '",serif';
+  $('previewNames').style.fontFamily = '"' + design.fontFamily + '",serif';
+  $('previewGreeting').style.fontSize = design.greetingSize + 'px';
+  $('previewNames').style.fontSize = design.nameSize + 'px';
+  $('previewDetails').style.fontSize = design.detailsSize + 'px';
+  $('previewGreeting').style.color = design.textColor;
+  $('previewDetails').style.color = design.textColor;
+  $('previewBody').style.color = design.textColor;
+  $('previewNames').style.color = design.nameColor;
+  $('previewCopy').style.textAlign = design.textAlign;
+  $('previewCopy').style.justifyContent =
+    design.textPosition === 'top' ? 'flex-start' :
+    design.textPosition === 'bottom' ? 'flex-end' : 'center';
+  $('previewCopy').style.paddingTop = design.textPosition === 'top' ? '35px' : '20px';
+  $('previewCopy').style.paddingBottom = design.textPosition === 'bottom' ? '35px' : '20px';
+  $('previewShade').style.background =
+    'linear-gradient(0deg,rgba(0,0,0,'+(design.overlay/100)+'),rgba(0,0,0,'+(design.overlay/200)+'))';
+  updatePreviewMedia();
+}
+function updatePreviewMedia() {
+  const wrap = $('preview');
+  const old = wrap.querySelector('.preview-media');
+  if (old) old.remove();
+  const file = $('sceneOneFile').files[0] || $('sceneTwoFile').files[0];
+  let src = '';
+  let type = 'image';
+  if (file) {
+    src = URL.createObjectURL(file);
+    type = inferMediaType(file);
+  } else {
+    src = safeUrl(val('sceneOneUrl')) || safeUrl(val('sceneTwoUrl'));
+    type = safeUrl(val('sceneOneUrl')) ? val('sceneOneType') : val('sceneTwoType');
+  }
+  if (!src) return;
+  const media = document.createElement(type === 'video' ? 'video' : 'img');
+  media.className = 'preview-media';
+  if (type === 'video') { media.muted = true; media.loop = true; media.autoplay = true; media.playsInline = true; }
+  media.src = src;
+  if (file) media.dataset.objectUrl = src;
+  wrap.prepend(media);
+}
+function openInvitationLink() {
+  const slug = val('inviteSlug');
+  if (!slug) return status('احفظ الدعوة أولاً لإنشاء رابطها.',true);
+  window.open(publicInvitationUrl(slug),'_blank','noopener');
+}
+
+$('loginBtn').addEventListener('click',login);
+$('signupBtn').addEventListener('click',signup);
+$('logoutBtn').addEventListener('click',logout);
+$('refreshBtn').addEventListener('click',loadInvitations);
+$('newBtn').addEventListener('click',() => { resetEditor(); setEditorVisible(true); });
+$('cancelBtn').addEventListener('click',() => setEditorVisible(false));
+$('saveBtn').addEventListener('click',() => saveInvitation(false));
+$('publishBtn').addEventListener('click',() => saveInvitation(true));
+$('previewLinkBtn').addEventListener('click',openInvitationLink);
+document.querySelectorAll('[data-clear]').forEach(btn => btn.addEventListener('click',() => {
+  setVal(btn.dataset.clear,'');
+  updatePreview();
+}));
+[
+'title','eventType','hostNames','eventDate','eventTime','eventLocation','greeting',
+'invitationText','mapUrl','doorVideoUrl','sceneOneUrl','sceneTwoUrl','sceneOneType',
+'sceneTwoType','fontFamily','textColor','nameColor','greetingSize','nameSize',
+'detailsSize','textPosition','textAlign','overlay','showBadge','whatsapp','phone','instagram'
+].forEach(id => $(id).addEventListener('input',updatePreview));
+['sceneOneFile','sceneTwoFile'].forEach(id => $(id).addEventListener('change',() => {
+  const file = $(id).files[0];
+  if (file) {
+    const target = id === 'sceneOneFile' ? 'sceneOneType' : 'sceneTwoType';
+    setVal(target,inferMediaType(file));
+  }
+  updatePreview();
+}));
+$('doorFile').addEventListener('change',() => {
+  const file = $('doorFile').files[0];
+  if (file) status('تم اختيار فيديو الباب: ' + file.name + '. سيُرفع عند حفظ الدعوة.');
+});
+$('musicFile').addEventListener('change',() => {
+  const file = $('musicFile').files[0];
+  if (file) status('تم اختيار الموسيقى: ' + file.name + '. ستُرفع عند حفظ الدعوة.');
+});
+
+db.auth.onAuthStateChange((_event, session) => {
+  currentUser = session?.user || null;
+  $('authPanel').classList.toggle('hidden',!!currentUser);
+  $('appPanel').classList.toggle('hidden',!currentUser);
+  $('logoutBtn').classList.toggle('hidden',!currentUser);
+  if (currentUser) setTimeout(() => loadInvitations(),0);
+});
+resetEditor();
+initSession();
+})();
+</script>
+</body>
+</html>
