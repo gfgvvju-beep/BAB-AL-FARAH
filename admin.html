@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -125,32 +126,10 @@ details.settings[open]>summary:after{content:"−"}
 hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 #status{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}
 #librarySongFile{margin-bottom:8px}
-
-/* قسم الدعوات المميزة */
-.featured-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);gap:14px;align-items:start}
-.featured-preview{position:relative;min-height:470px;height: min(72vh,680px);overflow:hidden;border-radius:14px;background:#111;color:#fff;border:1px solid #d8dce1;isolation:isolate}
-.featured-preview-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
-.featured-preview-shade{position:absolute;inset:0;background:linear-gradient(180deg,#0003,#0008);z-index:-1;pointer-events:none}
-.featured-preview-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;gap:10px;pointer-events:none}
-.featured-preview-content.frame{inset:6%;border:2px solid #d4af37;outline:1px solid #d4af3766;outline-offset:5px}
-.featured-greeting{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:90%;width:max-content;max-width:90%;font-weight:bold;line-height:1.7;text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;text-shadow:0 2px 8px #000b;cursor:grab;touch-action:none;pointer-events:auto;user-select:none;padding:5px 10px;border-radius:5px}
-.featured-greeting:active{cursor:grabbing}
-.featured-detail-line{font-size:13px;line-height:1.9;text-shadow:0 2px 5px #000}
-.featured-preview-hint{position:absolute;bottom:10px;right:10px;left:10px;text-align:center;color:#fff;background:#0008;border-radius:8px;padding:7px;font-size:10px;pointer-events:none}
-.featured-upload-preview{display:block;width:100%;max-width:300px;max-height:220px;object-fit:contain;margin:10px auto;border-radius:9px;background:#111}
-.featured-color-row{display:flex;gap:10px;align-items:center}
-.featured-color-row input[type=color]{width:58px;height:42px;padding:2px;border:1px solid var(--border);border-radius:8px;background:white}
-.featured-slider{width:100%;accent-color:var(--green)}
-.featured-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.featured-list .item{margin:0}
-.featured-link{display:block;overflow-wrap:anywhere;font-size:11px;margin-top:8px}
-.featured-preview-title{font-size:19px;font-weight:bold;text-shadow:0 2px 8px #000}
-.featured-preview-names{font-size:24px;font-weight:bold;text-shadow:0 2px 8px #000}
-@media(max-width:950px){.featured-layout{grid-template-columns:1fr}.featured-preview{height:560px}}
 .mobile-nav{display:none}
 @media(min-width:1000px){.form-grid.compact-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:850px){.layout{grid-template-columns:1fr;padding:13px;gap:13px}.sidebar{position:static;display:flex;gap:5px;overflow-x:auto;padding:7px}.nav-heading,.sidebar-note{display:none}.nav-btn{width:auto;white-space:nowrap;justify-content:center;padding:9px 12px;margin:0}.nav-icon{width:auto}.topbar{padding:0 14px}.stats{gap:8px}.stat-card{padding:10px;gap:8px}.stat-icon{width:34px;height:34px}.stat-number{font-size:20px}}
-@media(max-width:520px){body{font-size:13px}.topbar{height:58px}.brand{font-size:15px}.brand-icon{width:34px;height:34px}.topbar-sub{display:none}.topbar-actions .secondary-btn{padding:8px}.layout{padding:9px}.page-heading h1{font-size:19px}.stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat-card{display:block;padding:9px 7px}.stat-icon{width:29px;height:29px;font-size:15px;margin-bottom:5px}.stat-label{font-size:10px}.stat-number{font-size:19px}.card-body{padding:12px}.card-head{padding:12px}.form-grid,.choice-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.invitation-categories{grid-template-columns:repeat(2,minmax(0,1fr))}.item-top{display:block}.item-top .badge{margin-top:6px}.form-actions button{min-width:100%}.search-row{grid-template-columns:1fr}.audio-library-item{grid-template-columns:1fr}.audio-actions button{flex:1}.audio-library-item audio{grid-column:auto}.featured-list{grid-template-columns:1fr}.featured-preview{height:500px;min-height:430px}}
+@media(max-width:520px){body{font-size:13px}.topbar{height:58px}.brand{font-size:15px}.brand-icon{width:34px;height:34px}.topbar-sub{display:none}.topbar-actions .secondary-btn{padding:8px}.layout{padding:9px}.page-heading h1{font-size:19px}.stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat-card{display:block;padding:9px 7px}.stat-icon{width:29px;height:29px;font-size:15px;margin-bottom:5px}.stat-label{font-size:10px}.stat-number{font-size:19px}.card-body{padding:12px}.card-head{padding:12px}.form-grid,.choice-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.invitation-categories{grid-template-columns:repeat(2,minmax(0,1fr))}.item-top{display:block}.item-top .badge{margin-top:6px}.form-actions button{min-width:100%}.search-row{grid-template-columns:1fr}.audio-library-item{grid-template-columns:1fr}.audio-actions button{flex:1}.audio-library-item audio{grid-column:auto}}
 </style>
 </head>
 <body>
@@ -183,7 +162,6 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 <button type="button" class="nav-btn active" data-view="dashboard"><span class="nav-icon">▦</span>الرئيسية</button>
 <button type="button" class="nav-btn" data-view="editor"><span class="nav-icon">✚</span>إضافة دعوة</button>
 <button type="button" class="nav-btn" data-view="invitations"><span class="nav-icon">✉</span>إدارة الدعوات</button>
-<button type="button" class="nav-btn" data-view="featured"><span class="nav-icon">⭐</span>دعوات مميزة</button>
 <button type="button" class="nav-btn" data-view="bookings"><span class="nav-icon">▤</span>الحجوزات</button>
 <div class="sidebar-note">✨ كل أدوات إدارة الدعوات بمكان واحد، مع الحفاظ على بياناتك الحالية.</div>
 </aside>
@@ -205,7 +183,6 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 <div class="card-body form-grid">
 <button type="button" class="light-btn" data-goto="editor">✚ إنشاء دعوة جديدة</button>
 <button type="button" class="light-btn" data-goto="invitations">✉ عرض الدعوات المحفوظة</button>
-<button type="button" class="light-btn" data-goto="featured">⭐ إدارة الدعوات المميزة</button>
 <button type="button" class="light-btn" data-goto="bookings">▤ متابعة الحجوزات</button>
 <button type="button" class="light-btn" id="dashboardAudioBtn">♫ إدارة مكتبة الأغاني</button>
 </div>
@@ -378,147 +355,6 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 </div>
 </section>
 
-<!-- قسم مستقل تماماً عن الدعوات العادية -->
-<section id="view-featured" class="view">
-<div class="page-heading">
-<div><h1>دعوات مميزة ⭐</h1><p>أنشئ دعوة مستقلة برابط خاص وخلفية وأغنية وكتابة قابلة للتحريك.</p></div>
-<button type="button" class="primary-btn" id="featuredNewBtn">＋ دعوة مميزة جديدة</button>
-</div>
-
-<div class="panel-card">
-<div class="card-head"><div><h2>الدعوات المميزة المحفوظة</h2><p>هذه القائمة منفصلة عن الدعوات العادية.</p></div><button type="button" class="light-btn" id="featuredRefreshBtn">↻ تحديث</button></div>
-<div class="card-body"><div id="featuredList" class="featured-list"><div class="empty-state">جارٍ تحميل الدعوات المميزة...</div></div></div>
-</div>
-
-<form id="featuredForm" novalidate>
-<div class="panel-card">
-<div class="card-head"><div><h2 id="featuredFormTitle">إنشاء دعوة مميزة</h2><p>بيانات هذا القسم تُحفظ في جدول featured_invitations فقط.</p></div><button type="button" class="secondary-btn" id="featuredResetBtn">دعوة مميزة جديدة</button></div>
-<div class="card-body">
-<div class="form-grid">
-<div class="field">
-<label for="featuredEventType">نوع المناسبة</label>
-<select id="featuredEventType">
-<option value="wedding">دعوة زفاف</option>
-<option value="engagement">دعوة عقد قران</option>
-<option value="henna">دعوة حفلة الحنّة</option>
-<option value="circumcision">دعوة مناسبة الختان</option>
-<option value="graduation">دعوة حفلة التخرج</option>
-<option value="birthday">دعوة مناسبة عيد ميلاد</option>
-</select>
-</div>
-<div class="field">
-<label for="featuredTemplate">تصميم الباب</label>
-<select id="featuredTemplate">
-<option value="1">1 — الملكي الذهبي</option><option value="2">2 — الأبيض الملكي</option>
-<option value="3">3 — التراثي الشرقي</option><option value="4">4 — الزجاجي الحديث</option>
-<option value="5">5 — الأخضر الملكي</option><option value="6">6 — الوردي الرومانسي</option>
-<option value="7">7 — الأزرق الليلي</option><option value="8">8 — الرخام الفخم</option>
-<option value="9">9 — القالب التاسع</option><option value="10">10 — القالب العاشر</option>
-<option value="11">11 — القالب الحادي عشر</option><option value="12">12 — القالب الثاني عشر</option>
-<option value="13">13 — القالب الثالث عشر</option><option value="14">14 — القالب الرابع عشر</option>
-</select>
-</div>
-<div class="field full"><label for="featuredSlug">رابط الدعوة المميز</label><input id="featuredSlug" readonly><p class="help">لكل دعوة مميزة رمز ورابط مستقل. تعديل الدعوة لا يغير رابطها.</p></div>
-<div class="field"><label for="featuredGroom">الاسم الأول / اسم صاحب المناسبة</label><input id="featuredGroom" placeholder="الاسم الأول"></div>
-<div class="field" id="featuredBrideGroup"><label for="featuredBride">الاسم الثاني</label><input id="featuredBride" placeholder="الاسم الثاني"></div>
-<div class="field"><label for="featuredDate">تاريخ المناسبة</label><input id="featuredDate" type="date"></div>
-<div class="field"><label for="featuredDay">يوم المناسبة</label><input id="featuredDay" placeholder="مثال: الخميس"></div>
-<div class="field"><label for="featuredTime">وقت المناسبة</label><input id="featuredTime" placeholder="مثال: الثامنة مساءً"></div>
-<div class="field"><label for="featuredVenue">القاعة أو المكان</label><input id="featuredVenue" placeholder="اسم المكان"></div>
-<div class="field"><label for="featuredPhone">رقم التواصل</label><input id="featuredPhone" type="tel" placeholder="رقم الهاتف"></div>
-<div class="field"><label for="featuredMap">رابط موقع المناسبة</label><input id="featuredMap" type="url" placeholder="https://maps.google.com/..."></div>
-<div class="field full"><label for="featuredNotes">ملاحظات إضافية</label><textarea id="featuredNotes" placeholder="ملاحظات الدعوة"></textarea></div>
-<div class="field full">
-<label for="featuredOpeningPrompt">طريقة فتح الباب</label>
-<select id="featuredOpeningPrompt"><option value="knock">الطرق على الباب 3 مرات</option><option value="tap">الضغط على الشاشة 3 مرات</option></select>
-</div>
-<div class="field full">
-<label for="featuredExpiry">انتهاء صلاحية الرابط (اختياري)</label>
-<input id="featuredExpiry" type="datetime-local">
-<p class="help">اتركه فارغاً إذا لا تريد تحديد موعد انتهاء.</p>
-</div>
-</div>
-</div>
-</div>
-
-<div class="featured-layout">
-<div>
-<div class="panel-card">
-<div class="card-head"><h2>الخلفية بعد فتح الباب</h2></div>
-<div class="card-body">
-<p class="section-tip">ارفع صورة أو فيديو ليملأ شاشة الدعوة بعد فتح الباب. هذا الملف مستقل عن ملفات الأبواب العادية.</p>
-<label for="featuredBackgroundFile">صورة أو فيديو الخلفية</label>
-<input id="featuredBackgroundFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,.mp4">
-<div id="featuredBackgroundStatus" class="help">لم يتم اختيار خلفية جديدة.</div>
-<div id="featuredBackgroundPreviewBox"></div>
-<label for="featuredOpeningFile">ملف باب مخصص لهذه الدعوة (اختياري)</label>
-<input id="featuredOpeningFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,.mp4">
-<div id="featuredOpeningStatus" class="help">لم يتم اختيار ملف باب جديد.</div>
-<div id="featuredOpeningPreviewBox"></div>
-<label for="featuredAudioFile">أغنية خاصة بهذه الدعوة (MP3، اختياري)</label>
-<input id="featuredAudioFile" type="file" accept=".mp3,audio/mpeg">
-<div id="featuredAudioStatus" class="help">لم يتم اختيار أغنية جديدة.</div>
-<label for="featuredAudioUrl">أو رابط أغنية محفوظة</label>
-<input id="featuredAudioUrl" type="url" placeholder="https://...">
-<p class="help">إذا رفعت ملف MP3 فسيُستخدم الملف المرفوع بدلاً من الرابط.</p>
-</div>
-</div>
-
-<div class="panel-card">
-<div class="card-head"><h2>كتابة التهنئة والتنسيق</h2></div>
-<div class="card-body">
-<label for="featuredGreeting">نص التهنئة الظاهر فوق الخلفية</label>
-<textarea id="featuredGreeting" rows="3" placeholder="اكتب عبارة التهنئة التي تريد ظهورها"></textarea>
-<div class="form-grid">
-<div class="field">
-<label for="featuredGreetingColor">لون الكتابة</label>
-<div class="featured-color-row"><input id="featuredGreetingColor" type="color" value="#d4af37"><span id="featuredColorLabel">ذهبي</span></div>
-</div>
-<div class="field">
-<label for="featuredGreetingSize">حجم الخط: <span id="featuredGreetingSizeLabel">28</span> px</label>
-<input class="featured-slider" id="featuredGreetingSize" type="range" min="12" max="60" value="28">
-</div>
-<div class="field full">
-<label for="featuredGreetingFrame">إطار حول النص</label>
-<div class="inline-check"><input id="featuredGreetingFrame" type="checkbox"><label for="featuredGreetingFrame">إظهار إطار زخرفي حول مساحة الدعوة</label></div>
-</div>
-</div>
-<p class="help">تقدر تحرك الكتابة مباشرة بالماوس أو اللمس داخل المعاينة الموجودة بجانب الإعدادات.</p>
-</div>
-</div>
-
-<div class="panel-card">
-<div class="card-body">
-<div class="inline-check"><input id="featuredPublished" type="checkbox"><label for="featuredPublished">نشر الدعوة المميزة وإتاحتها عبر رابطها</label></div>
-<div class="form-actions">
-<button type="submit" id="featuredSaveBtn" class="primary-btn">حفظ الدعوة المميزة</button>
-<button type="button" id="featuredPreviewBtn" class="light-btn">معاينة الدعوة</button>
-<button type="button" id="featuredDeleteBtn" class="danger-btn hidden">حذف الدعوة المميزة</button>
-<button type="button" id="featuredCancelBtn" class="secondary-btn hidden">إلغاء التعديل</button>
-</div>
-</div>
-</div>
-</div>
-
-<div class="panel-card">
-<div class="card-head"><div><h2>معاينة مباشرة</h2><p>المعاينة تقريبية لشكل الخلفية والنص بعد فتح الباب.</p></div></div>
-<div class="card-body">
-<div id="featuredPreview" class="featured-preview">
-<div class="featured-preview-shade"></div>
-<div id="featuredPreviewContent" class="featured-preview-content">
-<div id="featuredPreviewTitle" class="featured-preview-title">باب الفرح</div>
-<div id="featuredPreviewNames" class="featured-preview-names">الأسماء هنا</div>
-<div id="featuredPreviewDetails" class="featured-detail-line">تفاصيل المناسبة تظهر هنا</div>
-</div>
-<div id="featuredGreetingPreview" class="featured-greeting" role="button" tabindex="0" aria-label="اسحب لتحريك نص التهنئة">أجمل التهاني</div>
-<div class="featured-preview-hint">اسحب نص التهنئة بالماوس أو بإصبعك لتغيير موضعه</div>
-</div>
-</div>
-</div>
-</div>
-</form>
-</section>
-
 <section id="view-bookings" class="view">
 <div class="page-heading"><div><h1>إدارة الحجوزات</h1><p>متابعة الحجوزات وتحديث حالتها</p></div><button type="button" class="light-btn" id="refreshBookingsBtn">↻ تحديث الحجوزات</button></div>
 <div class="panel-card"><div class="card-body"><p class="help">يعرض هذا القسم الحجوزات إذا كان جدول bookings موجوداً ومهيأً في Supabase.</p><div id="bookingsList"></div></div></div>
@@ -535,6 +371,8 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+/* العنوان الرسمي للموقع؛ لا تستخدم location.origin لبناء روابط الدعوات */
 const SITE_URL="https://bab-alfarah.pages.dev";
 
 const $=id=>document.getElementById(id);
@@ -557,7 +395,7 @@ const audioNames={none:"بدون صوت",song:"أغنية",quran:"القرآن �
 
 function status(message){$("status").textContent=message}
 function navigate(view,scroll=true){
-if(!["dashboard","editor","invitations","featured","bookings"].includes(view))view="dashboard";
+if(!["dashboard","editor","invitations","bookings"].includes(view))view="dashboard";
 document.querySelectorAll(".view").forEach(el=>el.classList.toggle("active",el.id==="view-"+view));
 document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.view===view));
 if(scroll)window.scrollTo({top:0,behavior:"smooth"});
@@ -733,7 +571,7 @@ renderLibrarySelect();renderLibraryList();status("تم حذف الأغنية م�
 }catch(error){console.error("Delete library song:",error);status("تعذر حذف الأغنية: "+(error.message||"خطأ غير معروف"))}
 }
 
-/* إدارة ملفات الأبواب العادية — دون تغيير */
+/* إدارة ملفات الأبواب */
 async function loadDoorImage(templateId){
 const id=Number(templateId),eventType=getEventType(),requestId=++doorLoadRequest;
 currentDoorImageUrl="";currentDoorMediaType="";$("doorImageFile").value="";clearDoorPreview();
@@ -812,7 +650,7 @@ status("تمت إزالة الملف المخصص لمناسبة "+eventShortNam
 finally{doorImageBusy=false;$("deleteDoorImageBtn").disabled=false;$("saveDoorImageBtn").disabled=false}
 });
 
-/* إعدادات أغنية الدعوة العادية */
+/* إعدادات أغنية الدعوة */
 $("audioFile").addEventListener("change",()=>{
 const file=$("audioFile").files[0];
 if(!file){
@@ -843,17 +681,14 @@ $("currentSongStatus").textContent="لن تحتوي الدعوة على أغني
 renderLibraryList();status("تمت إزالة الأغنية من إعدادات الدعوة الحالية. اضغط حفظ الدعوة لتطبيق التغيير.");
 });
 
+/* إصلاح رابط الدعوة: استخدام النطاق الرسمي دائماً */
 function invitationUrl(slug,openingPrompt="knock"){
 const url=new URL("/",SITE_URL);
 url.searchParams.set("invite",String(slug||""));
 url.searchParams.set("opening_prompt",openingPrompt==="tap"?"tap":"knock");
 return url.href;
 }
-function featuredInvitationUrl(slug){
-const url=new URL("/",SITE_URL);
-url.searchParams.set("featured",String(slug||""));
-return url.href;
-}
+
 async function copyText(text){
 if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return}
 const field=document.createElement("textarea");field.value=text;field.style.position="fixed";field.style.opacity="0";
@@ -863,8 +698,6 @@ if(!ok)throw new Error("تعذر النسخ");
 function addText(parent,tag,text,className){
 const element=document.createElement(tag);element.textContent=text;if(className)element.className=className;parent.appendChild(element);return element;
 }
-
-/* إدارة الدعوات العادية — الوظائف الأصلية */
 function invitationDisplayName(item){
 const type=eventNames[item.event_type]?item.event_type:"wedding",first=item.groom_name||"بدون اسم";
 if(type==="wedding"||type==="engagement")return first+" و "+(item.bride_name||"بدون اسم");
@@ -976,21 +809,44 @@ $("doorPicker").open=false;$("audioSettings").open=false;
 $("deleteCurrentBtn").classList.remove("hidden");$("cancelEditBtn").classList.remove("hidden");$("saveBtn").textContent="حفظ التعديلات";
 renderLibraryList();navigate("editor");status("أنت تعدّل دعوة موجودة. رابطها سيبقى نفسه.");
 }
+
+/* حذف الدعوة */
 async function deleteInvitation(item){
 if(busy){status("انتظر حتى يكتمل الحفظ قبل حذف الدعوة.");return}
 const name=invitationDisplayName(item);
 if(!confirm("متأكد تريد حذف الدعوة "+name+"؟\nسيتم حذف سجل الدعوة من قاعدة البيانات، ولا يمكن التراجع عن الحذف."))return;
 status("جارٍ حذف الدعوة من قاعدة البيانات...");
 try{
-const {data,error}=await db.from("invitations").delete().eq("id",item.id).select("id,slug").maybeSingle();
-if(error){console.error("Delete invitation error:",error);status("فشل حذف الدعوة من قاعدة البيانات:\n"+error.message);return}
-if(!data){status("لم يتم حذف الدعوة: لم ترجع قاعدة البيانات سجلاً محذوفاً. قد تكون صلاحيات DELETE أو سياسة RLS تمنع الحذف، أو أن الدعوة محذوفة مسبقاً. لم نعرض الحذف على أنه ناجح.");await loadInvitations();return}
+const {data,error}=await db.from("invitations")
+.delete()
+.eq("id",item.id)
+.select("id,slug")
+.maybeSingle();
+
+if(error){
+console.error("Delete invitation error:",error);
+status("فشل حذف الدعوة من قاعدة البيانات:\n"+error.message);
+return;
+}
+
+if(!data){
+status("لم يتم حذف الدعوة: لم ترجع قاعدة البيانات سجلاً محذوفاً. قد تكون صلاحيات DELETE أو سياسة RLS تمنع الحذف، أو أن الدعوة محذوفة مسبقاً. لم نعرض الحذف على أنه ناجح.");
+await loadInvitations();
+return;
+}
+
 cachedInvitations=cachedInvitations.filter(invite=>String(invite.id)!==String(item.id));
 if(String(editingId)===String(item.id))resetForm();
-updateInvitationCounts();renderInvitationCategories();renderInvitationList();renderRecentInvitations();
+updateInvitationCounts();
+renderInvitationCategories();
+renderInvitationList();
+renderRecentInvitations();
 status("تم حذف الدعوة فعلياً من قاعدة البيانات.\nرمز الدعوة المحذوف: "+(data.slug||item.slug||"—")+"\nإذا بقيت صفحة قديمة مفتوحة، حدّثها؛ يجب ألا تُحمّل الدعوة بعد حذف سجلها.");
 await loadInvitations();
-}catch(e){console.error("Delete invitation exception:",e);status("حدث خطأ أثناء حذف الدعوة:\n"+(e?.message||String(e)))}
+}catch(e){
+console.error("Delete invitation exception:",e);
+status("حدث خطأ أثناء حذف الدعوة:\n"+(e?.message||String(e)));
+}
 }
 $("deleteCurrentBtn").onclick=async()=>{
 if(!editingId)return;
@@ -1002,6 +858,7 @@ await deleteInvitation(data);
 };
 $("cancelEditBtn").onclick=()=>{resetForm();navigate("invitations");status("تم إلغاء التعديل.")};
 
+/* حفظ الدعوة */
 async function saveInvitation(event){
 if(event){event.preventDefault();event.stopPropagation()}
 if(busy){status("الحفظ جارٍ بالفعل، انتظر حتى يكتمل.");return}
@@ -1133,470 +990,12 @@ card.appendChild(actions);box.appendChild(card);
 }
 $("refreshBookingsBtn").onclick=loadBookings;
 
-/* =============== الدعوات المميزة: وظائف مستقلة =============== */
-let cachedFeaturedInvitations=[];
-let featuredEditingId=null;
-let featuredExistingBackgroundUrl="",featuredExistingBackgroundType="";
-let featuredExistingOpeningUrl="",featuredExistingOpeningType="";
-let featuredExistingAudioUrl="";
-let featuredBackgroundObjectUrl="",featuredOpeningObjectUrl="";
-let featuredGreetingX=50,featuredGreetingY=50;
-let featuredDragging=false,featuredDragPointerId=null,featuredDragOffsetX=0,featuredDragOffsetY=0;
-
-function makeFeaturedSlug(){
-const bytes=new Uint8Array(10);crypto.getRandomValues(bytes);
-return "featured-"+Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
-}
-function updateFeaturedNameFields(){
-const type=$("featuredEventType").value;
-const single=["henna","circumcision","graduation","birthday"].includes(type);
-$("featuredBrideGroup").classList.toggle("hidden",single);
-$("featuredBride").required=!single;
-const nameLabels={wedding:"اسم العريس",engagement:"اسم الطرف الأول",henna:"اسم صاحبة الحنّة",circumcision:"اسم الطفل",graduation:"اسم الخريج أو الخريجة",birthday:"اسم صاحب عيد الميلاد"};
-$("featuredGroom").previousElementSibling.textContent=nameLabels[type]||"اسم صاحب المناسبة";
-$("featuredBride").previousElementSibling.textContent=type==="engagement"?"اسم الطرف الثاني":"اسم العروس";
-updateFeaturedPreview();
-}
-function featuredEventLabel(type){return eventNames[type]||"دعوة مميزة"}
-function featuredDisplayName(item){
-const first=item.groom_name||"بدون اسم";
-if(item.event_type==="wedding"||item.event_type==="engagement")return first+" و "+(item.bride_name||"بدون اسم");
-return first+" — "+featuredEventLabel(item.event_type);
-}
-function clearFeaturedObjectUrl(which){
-if(which==="background"&&featuredBackgroundObjectUrl){URL.revokeObjectURL(featuredBackgroundObjectUrl);featuredBackgroundObjectUrl=""}
-if(which==="opening"&&featuredOpeningObjectUrl){URL.revokeObjectURL(featuredOpeningObjectUrl);featuredOpeningObjectUrl=""}
-}
-function setFeaturedPreviewMedia(url,type){
-const preview=$("featuredPreview"),old=preview.querySelector(".featured-preview-media");
-if(old)old.remove();
-if(!url)return;
-let media;
-if(type==="video/mp4"||type==="video"){
-media=document.createElement("video");media.autoplay=true;media.loop=true;media.muted=true;media.playsInline=true;media.preload="metadata";
-}else{
-media=document.createElement("img");media.alt="خلفية الدعوة المميزة";
-}
-media.className="featured-preview-media";media.src=url;
-preview.prepend(media);
-if(media.tagName==="VIDEO")media.play().catch(()=>{});
-}
-function featuredGreetingDefault(type){
-const defaults={
-wedding:"بارك الله لكما وبارك عليكما وجمع بينكما في خير",
-engagement:"أجمل التهاني بمناسبة عقد القران",
-henna:"فرحتنا تكتمل بحضوركم ومشاركتكم",
-circumcision:"ألف مبارك، جعلها الله من الذرية الصالحة",
-graduation:"ألف مبارك التخرج ومنها للأعلى",
-birthday:"كل عام وأنتم بألف خير"
-};
-return defaults[type]||"أجمل التهاني وأطيب الأمنيات";
-}
-function updateFeaturedPreview(){
-const type=$("featuredEventType").value;
-const first=$("featuredGroom").value.trim();
-const second=$("featuredBride").value.trim();
-$("featuredPreviewTitle").textContent=featuredEventLabel(type);
-$("featuredPreviewNames").textContent=(first||"الاسم الأول")+
-((type==="wedding"||type==="engagement")?" و "+(second||"الاسم الثاني"):"");
-const parts=[];
-if($("featuredDate").value)parts.push($("featuredDate").value);
-if($("featuredDay").value)parts.push($("featuredDay").value);
-if($("featuredTime").value)parts.push($("featuredTime").value);
-if($("featuredVenue").value)parts.push($("featuredVenue").value);
-$("featuredPreviewDetails").textContent=parts.join(" • ")||"تفاصيل المناسبة تظهر هنا";
-const greeting=$("featuredGreetingPreview");
-greeting.textContent=$("featuredGreeting").value||"أجمل التهاني";
-greeting.style.color=$("featuredGreetingColor").value||"#d4af37";
-greeting.style.fontSize=$("featuredGreetingSize").value+"px";
-greeting.style.left=featuredGreetingX+"%";
-greeting.style.top=featuredGreetingY+"%";
-$("featuredGreetingSizeLabel").textContent=$("featuredGreetingSize").value;
-$("featuredColorLabel").textContent=$("featuredGreetingColor").value.toUpperCase();
-$("featuredPreviewContent").classList.toggle("frame",$("featuredGreetingFrame").checked);
-}
-function resetFeaturedForm(){
-featuredEditingId=null;
-featuredExistingBackgroundUrl="";featuredExistingBackgroundType="";
-featuredExistingOpeningUrl="";featuredExistingOpeningType="";
-featuredExistingAudioUrl="";
-featuredGreetingX=50;featuredGreetingY=50;
-clearFeaturedObjectUrl("background");clearFeaturedObjectUrl("opening");
-$("featuredForm").reset();
-$("featuredEventType").value="wedding";
-$("featuredTemplate").value="1";
-$("featuredSlug").value=makeFeaturedSlug();
-$("featuredOpeningPrompt").value="knock";
-$("featuredGreetingColor").value="#d4af37";
-$("featuredGreetingSize").value="28";
-$("featuredGreetingFrame").checked=false;
-$("featuredGreeting").value=featuredGreetingDefault("wedding");
-$("featuredBackgroundFile").value="";$("featuredOpeningFile").value="";$("featuredAudioFile").value="";
-$("featuredAudioUrl").value="";
-$("featuredBackgroundStatus").textContent="لم يتم اختيار خلفية جديدة.";
-$("featuredOpeningStatus").textContent="لم يتم اختيار ملف باب جديد.";
-$("featuredAudioStatus").textContent="لم يتم اختيار أغنية جديدة.";
-$("featuredBackgroundPreviewBox").replaceChildren();
-$("featuredOpeningPreviewBox").replaceChildren();
-$("featuredFormTitle").textContent="إنشاء دعوة مميزة";
-$("featuredSaveBtn").textContent="حفظ الدعوة المميزة";
-$("featuredDeleteBtn").classList.add("hidden");
-$("featuredCancelBtn").classList.add("hidden");
-$("featuredPublished").checked=false;
-updateFeaturedNameFields();
-setFeaturedPreviewMedia("","");
-updateFeaturedPreview();
-}
-function makeFeaturedFilePreview(boxId,file,type,kind){
-const box=$(boxId);box.replaceChildren();
-if(!file)return;
-let media;
-if(type==="video/mp4"){
-media=document.createElement("video");media.controls=true;media.muted=true;media.playsInline=true;
-}else{
-media=document.createElement("img");media.alt="معاينة الملف المختار";
-}
-media.className="featured-upload-preview";
-const objectUrl=URL.createObjectURL(file);
-if(kind==="background"){clearFeaturedObjectUrl("background");featuredBackgroundObjectUrl=objectUrl}
-if(kind==="opening"){clearFeaturedObjectUrl("opening");featuredOpeningObjectUrl=objectUrl}
-media.src=objectUrl;box.appendChild(media);
-}
-function validateFeaturedFile(file,kind){
-if(!file)return null;
-const type=mediaTypeFromFile(file);
-if(!allowedDoorImageTypes.includes(type))throw new Error("نوع الملف غير مدعوم. استخدم JPG أو PNG أو WEBP أو GIF أو MP4.");
-if(file.size>MAX_DOOR_IMAGE_SIZE)throw new Error("حجم الصورة أو الفيديو يجب ألا يتجاوز 50 ميغابايت.");
-if(kind==="audio"){
-if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3"))throw new Error("اختر ملف MP3 صحيحاً.");
-if(file.size>MAX_AUDIO_SIZE)throw new Error("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");
-}
-return type;
-}
-$("featuredEventType").addEventListener("change",()=>{
-$("featuredGreeting").value=featuredGreetingDefault($("featuredEventType").value);
-updateFeaturedNameFields();
-});
-["featuredGroom","featuredBride","featuredDate","featuredDay","featuredTime","featuredVenue","featuredGreeting"].forEach(id=>$(id).addEventListener("input",updateFeaturedPreview));
-$("featuredGreetingColor").addEventListener("input",updateFeaturedPreview);
-$("featuredGreetingSize").addEventListener("input",updateFeaturedPreview);
-$("featuredGreetingFrame").addEventListener("change",updateFeaturedPreview);
-$("featuredBackgroundFile").addEventListener("change",()=>{
-const file=$("featuredBackgroundFile").files[0];
-try{
-if(!file){$("featuredBackgroundStatus").textContent=featuredExistingBackgroundUrl?"توجد خلفية محفوظة.":"لم يتم اختيار خلفية جديدة.";return}
-const type=validateFeaturedFile(file,"background");
-makeFeaturedFilePreview("featuredBackgroundPreviewBox",file,type,"background");
-$("featuredBackgroundStatus").textContent="الخلفية المختارة: "+file.name+" ("+(file.size/1024/1024).toFixed(2)+" ميغابايت).";
-setFeaturedPreviewMedia(featuredBackgroundObjectUrl,type);
-}catch(error){$("featuredBackgroundFile").value="";$("featuredBackgroundStatus").textContent=error.message;status(error.message)}
-});
-$("featuredOpeningFile").addEventListener("change",()=>{
-const file=$("featuredOpeningFile").files[0];
-try{
-if(!file){$("featuredOpeningStatus").textContent=featuredExistingOpeningUrl?"يوجد ملف باب محفوظ.":"لم يتم اختيار ملف باب جديد.";return}
-const type=validateFeaturedFile(file,"opening");
-makeFeaturedFilePreview("featuredOpeningPreviewBox",file,type,"opening");
-$("featuredOpeningStatus").textContent="ملف الباب المختار: "+file.name;
-}catch(error){$("featuredOpeningFile").value="";$("featuredOpeningStatus").textContent=error.message;status(error.message)}
-});
-$("featuredAudioFile").addEventListener("change",()=>{
-const file=$("featuredAudioFile").files[0];
-try{
-if(!file){$("featuredAudioStatus").textContent=featuredExistingAudioUrl?"توجد أغنية محفوظة.":"لم يتم اختيار أغنية جديدة.";return}
-validateFeaturedFile(file,"audio");
-$("featuredAudioUrl").value="";
-$("featuredAudioStatus").textContent="الأغنية المختارة: "+file.name+" ("+(file.size/1024/1024).toFixed(2)+" ميغابايت).";
-}catch(error){$("featuredAudioFile").value="";$("featuredAudioStatus").textContent=error.message;status(error.message)}
-});
-$("featuredAudioUrl").addEventListener("input",()=>{
-if($("featuredAudioUrl").value.trim()){$("featuredAudioFile").value="";$("featuredAudioStatus").textContent="سيُستخدم رابط الأغنية الذي أدخلته."}
-});
-$("featuredPreviewBtn").addEventListener("click",()=>{
-updateFeaturedPreview();navigate("featured",false);
-$("featuredPreview").scrollIntoView({behavior:"smooth",block:"center"});
-status("هذه معاينة مباشرة داخل لوحة الإدارة. رابط الزائر يحتاج أن تكون صفحة الموقع مهيأة لعرض الدعوات المميزة.");
-});
-$("featuredResetBtn").addEventListener("click",()=>{
-if(featuredEditingId&&!confirm("إلغاء التعديل والبدء بدعوة مميزة جديدة؟"))return;
-resetFeaturedForm();status("تم تجهيز نموذج دعوة مميزة جديدة.");
-});
-$("featuredCancelBtn").addEventListener("click",()=>{
-resetFeaturedForm();status("تم إلغاء تعديل الدعوة المميزة.");
-});
-$("featuredNewBtn").addEventListener("click",()=>{
-resetFeaturedForm();$("featuredForm").scrollIntoView({behavior:"smooth",block:"start"});
-});
-$("featuredRefreshBtn").addEventListener("click",loadFeaturedInvitations);
-
-function clamp(value,min,max){return Math.min(max,Math.max(min,value))}
-function moveFeaturedGreetingFromPointer(event){
-const rect=$("featuredPreview").getBoundingClientRect();
-if(!rect.width||!rect.height)return;
-featuredGreetingX=clamp(((event.clientX-rect.left-featuredDragOffsetX)/rect.width)*100,5,95);
-featuredGreetingY=clamp(((event.clientY-rect.top-featuredDragOffsetY)/rect.height)*100,5,95);
-updateFeaturedPreview();
-}
-$("featuredGreetingPreview").addEventListener("pointerdown",event=>{
-if(event.button!==undefined&&event.button!==0)return;
-const rect=$("featuredGreetingPreview").getBoundingClientRect();
-featuredDragging=true;featuredDragPointerId=event.pointerId;
-featuredDragOffsetX=event.clientX-(rect.left+rect.width/2);
-featuredDragOffsetY=event.clientY-(rect.top+rect.height/2);
-$("featuredGreetingPreview").setPointerCapture?.(event.pointerId);
-event.preventDefault();
-});
-$("featuredGreetingPreview").addEventListener("pointermove",event=>{
-if(!featuredDragging||event.pointerId!==featuredDragPointerId)return;
-moveFeaturedGreetingFromPointer(event);
-});
-function endFeaturedDrag(event){
-if(!featuredDragging)return;
-if(event&&featuredDragPointerId!==null&&event.pointerId!==undefined&&event.pointerId!==featuredDragPointerId)return;
-featuredDragging=false;featuredDragPointerId=null;
-}
-$("featuredGreetingPreview").addEventListener("pointerup",endFeaturedDrag);
-$("featuredGreetingPreview").addEventListener("pointercancel",endFeaturedDrag);
-$("featuredGreetingPreview").addEventListener("keydown",event=>{
-const step=event.shiftKey?5:1;
-if(event.key==="ArrowLeft")featuredGreetingX=clamp(featuredGreetingX-step,5,95);
-else if(event.key==="ArrowRight")featuredGreetingX=clamp(featuredGreetingX+step,5,95);
-else if(event.key==="ArrowUp")featuredGreetingY=clamp(featuredGreetingY-step,5,95);
-else if(event.key==="ArrowDown")featuredGreetingY=clamp(featuredGreetingY+step,5,95);
-else return;
-event.preventDefault();updateFeaturedPreview();
-});
-
-async function uploadFeaturedFile(file,kind,slug){
-if(!file)return null;
-const type=kind==="audio"?"audio/mpeg":validateFeaturedFile(file,kind);
-const extension=kind==="audio"?"mp3":({"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif","video/mp4":"mp4"}[type]);
-const bucket=kind==="audio"?AUDIO_BUCKET:DOOR_BUCKET;
-const path="featured/"+slug+"/"+kind+"-"+Date.now()+"-"+crypto.randomUUID()+"."+extension;
-const {data,error}=await db.storage.from(bucket).upload(path,file,{cacheControl:"3600",upsert:false,contentType:type});
-if(error)throw new Error("تعذر رفع "+(kind==="audio"?"الأغنية":kind==="background"?"الخلفية":"ملف الباب")+": "+error.message);
-const {data:publicData}=db.storage.from(bucket).getPublicUrl(data.path);
-if(!publicData?.publicUrl)throw new Error("تم رفع الملف لكن تعذر الحصول على رابط عام.");
-return {url:publicData.publicUrl,type,path:data.path};
-}
-function featuredExpiryValue(){
-const value=$("featuredExpiry").value;
-if(!value)return null;
-const date=new Date(value);
-if(Number.isNaN(date.getTime()))throw new Error("تاريخ انتهاء الرابط غير صالح.");
-if(date.getTime()<=Date.now())throw new Error("اختَر وقت انتهاء في المستقبل.");
-return date.toISOString();
-}
-async function saveFeaturedInvitation(event){
-if(event){event.preventDefault();event.stopPropagation()}
-const button=$("featuredSaveBtn");
-if(button.disabled)return;
-let newUploads=[];
-try{
-const type=$("featuredEventType").value;
-const single=["henna","circumcision","graduation","birthday"].includes(type);
-const first=$("featuredGroom").value.trim(),second=$("featuredBride").value.trim();
-const slug=$("featuredSlug").value.trim();
-if(!slug)throw new Error("رمز الدعوة المميزة غير موجود. ابدأ دعوة مميزة جديدة.");
-if(!first)throw new Error("اكتب اسم صاحب المناسبة.");
-if(!single&&!second)throw new Error("اكتب الاسم الثاني.");
-const expiry=featuredExpiryValue();
-const backgroundFile=$("featuredBackgroundFile").files[0];
-const openingFile=$("featuredOpeningFile").files[0];
-const audioFile=$("featuredAudioFile").files[0];
-if(backgroundFile)validateFeaturedFile(backgroundFile,"background");
-if(openingFile)validateFeaturedFile(openingFile,"opening");
-if(audioFile)validateFeaturedFile(audioFile,"audio");
-const typedAudioUrl=$("featuredAudioUrl").value.trim();
-if(typedAudioUrl){
-let parsed;
-try{parsed=new URL(typedAudioUrl)}catch{throw new Error("رابط الأغنية غير صالح.")}
-if(!["https:","http:"].includes(parsed.protocol))throw new Error("رابط الأغنية يجب أن يبدأ بـ https أو http.");
-}
-button.disabled=true;button.textContent="جارٍ حفظ الدعوة المميزة...";
-status("جارٍ حفظ الدعوة المميزة بشكل مستقل عن الدعوات العادية...");
-let backgroundUrl=featuredExistingBackgroundUrl;
-let backgroundType=featuredExistingBackgroundType;
-let openingUrl=featuredExistingOpeningUrl;
-let openingType=featuredExistingOpeningType;
-let audioUrl=featuredExistingAudioUrl;
-if(backgroundFile){
-const uploaded=await uploadFeaturedFile(backgroundFile,"background",slug);
-newUploads.push({bucket:DOOR_BUCKET,path:uploaded.path});
-backgroundUrl=uploaded.url;backgroundType=uploaded.type;
-}
-if(openingFile){
-const uploaded=await uploadFeaturedFile(openingFile,"opening",slug);
-newUploads.push({bucket:DOOR_BUCKET,path:uploaded.path});
-openingUrl=uploaded.url;openingType=uploaded.type;
-}
-if(audioFile){
-const uploaded=await uploadFeaturedFile(audioFile,"audio",slug);
-newUploads.push({bucket:AUDIO_BUCKET,path:uploaded.path});
-audioUrl=uploaded.url;
-}else if(typedAudioUrl){audioUrl=typedAudioUrl}
-const record={
-slug,event_type:type,groom_name:first,bride_name:single?"":second,
-wedding_date:$("featuredDate").value||null,
-day_name:$("featuredDay").value.trim()||null,
-wedding_time:$("featuredTime").value.trim()||null,
-venue_name:$("featuredVenue").value.trim()||null,
-contact_phone:$("featuredPhone").value.trim()||null,
-map_url:$("featuredMap").value.trim()||null,
-notes:$("featuredNotes").value.trim()||null,
-opening_prompt:$("featuredOpeningPrompt").value==="tap"?"tap":"knock",
-opening_media_url:openingUrl||null,opening_media_type:openingType||null,
-background_media_url:backgroundUrl||null,background_media_type:backgroundType||null,
-audio_url:audioUrl||null,
-greeting_text:$("featuredGreeting").value.trim()||featuredGreetingDefault(type),
-greeting_color:$("featuredGreetingColor").value||"#d4af37",
-greeting_size:Number($("featuredGreetingSize").value)||28,
-greeting_x:featuredGreetingX,greeting_y:featuredGreetingY,
-greeting_frame:$("featuredGreetingFrame").checked,
-template_id:Number($("featuredTemplate").value)||1,
-is_published:$("featuredPublished").checked,
-expires_at:expiry,updated_at:new Date().toISOString()
-};
-let result;
-if(featuredEditingId){
-result=await db.from("featured_invitations").update(record).eq("id",featuredEditingId).select("*").maybeSingle();
-}else{
-result=await db.from("featured_invitations").insert(record).select("*").maybeSingle();
-}
-if(result.error)throw new Error("تعذر حفظ الدعوة المميزة في جدول featured_invitations: "+result.error.message);
-if(!result.data)throw new Error("لم ترجع قاعدة البيانات تأكيداً لحفظ الدعوة. تحقق من صلاحيات INSERT/UPDATE وسياسات RLS.");
-const saved=result.data;
-const savedUrl=featuredInvitationUrl(saved.slug||slug);
-resetFeaturedForm();
-await loadFeaturedInvitations();
-status("تم حفظ الدعوة المميزة بنجاح.\nالرابط الخاص:\n"+savedUrl+"\nتنبيه: عرض الرابط للزوار يتطلب أيضاً دعم featured داخل صفحة index.html.");
-$("featuredForm").scrollIntoView({behavior:"smooth",block:"start"});
-}catch(error){
-console.error("Save featured invitation:",error);
-status("تعذر حفظ الدعوة المميزة:\n"+(error?.message||String(error)));
-}finally{
-button.disabled=false;
-button.textContent=featuredEditingId?"حفظ التعديلات":"حفظ الدعوة المميزة";
-}
-}
-$("featuredForm").addEventListener("submit",saveFeaturedInvitation);
-
-async function loadFeaturedInvitations(){
-const box=$("featuredList");
-box.replaceChildren();
-addText(box,"div","جارٍ تحميل الدعوات المميزة...","empty-state");
-try{
-const {data,error}=await db.from("featured_invitations").select("*").order("created_at",{ascending:false});
-if(error)throw error;
-cachedFeaturedInvitations=data||[];
-box.replaceChildren();
-if(!cachedFeaturedInvitations.length){
-addText(box,"div","لا توجد دعوات مميزة محفوظة حتى الآن. أنشئ دعوة مميزة من النموذج أدناه.","empty-state");
-return;
-}
-for(const item of cachedFeaturedInvitations){
-const card=document.createElement("article");card.className="item";
-const top=document.createElement("div");top.className="item-top";
-addText(top,"strong",featuredDisplayName(item));
-addText(top,"span",item.is_published?"منشورة":"غير منشورة","badge"+(item.is_published?"":" pending"));
-card.appendChild(top);
-const details=document.createElement("p");details.className="item-details";
-details.textContent="المناسبة: "+featuredEventLabel(item.event_type)+
-"\nرمز الرابط: "+(item.slug||"—")+
-"\nالباب: "+(item.template_id||1)+
-"\nالخلفية: "+(item.background_media_url?"محفوظة":"غير مضافة")+
-"\nأغنية: "+(item.audio_url?"محفوظة":"غير مضافة")+
-"\nتاريخ المناسبة: "+(item.wedding_date||"غير محدد")+
-"\nانتهاء الرابط: "+formatExpiry(item.expires_at);
-card.appendChild(details);
-if(item.expires_at&&new Date(item.expires_at).getTime()<=Date.now())addText(card,"p","انتهت مدة الرابط المحددة","expired");
-const url=featuredInvitationUrl(item.slug||"");
-const link=document.createElement("a");link.className="featured-link";link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent=url;card.appendChild(link);
-const actions=document.createElement("div");actions.className="item-actions";
-const copy=addText(actions,"button","نسخ الرابط","light-btn");copy.type="button";
-copy.onclick=async()=>{try{await copyText(url);status("تم نسخ رابط الدعوة المميزة:\n"+url);copy.textContent="تم النسخ ✓"}catch(error){status("تعذر النسخ. الرابط:\n"+url)}};
-const edit=addText(actions,"button","تعديل","primary-btn");edit.type="button";edit.onclick=()=>fillFeaturedForm(item);
-const remove=addText(actions,"button","حذف","danger-btn");remove.type="button";remove.onclick=()=>deleteFeaturedInvitation(item);
-card.appendChild(actions);box.appendChild(card);
-}
-}catch(error){
-console.error("Load featured invitations:",error);
-box.replaceChildren();
-addText(box,"div","تعذر تحميل الدعوات المميزة: "+(error.message||"خطأ غير معروف")+". تأكد من وجود جدول featured_invitations وصلاحياته.","empty-state");
-}
-}
-function fillFeaturedForm(item){
-featuredEditingId=item.id;
-featuredExistingBackgroundUrl=item.background_media_url||"";
-featuredExistingBackgroundType=item.background_media_type||"";
-featuredExistingOpeningUrl=item.opening_media_url||"";
-featuredExistingOpeningType=item.opening_media_type||"";
-featuredExistingAudioUrl=item.audio_url||"";
-featuredGreetingX=Number.isFinite(Number(item.greeting_x))?Number(item.greeting_x):50;
-featuredGreetingY=Number.isFinite(Number(item.greeting_y))?Number(item.greeting_y):50;
-clearFeaturedObjectUrl("background");clearFeaturedObjectUrl("opening");
-$("featuredEventType").value=item.event_type||"wedding";
-$("featuredTemplate").value=String(item.template_id||1);
-$("featuredSlug").value=item.slug||"";
-$("featuredGroom").value=item.groom_name||"";
-$("featuredBride").value=item.bride_name||"";
-$("featuredDate").value=item.wedding_date||"";
-$("featuredDay").value=item.day_name||"";
-$("featuredTime").value=item.wedding_time||"";
-$("featuredVenue").value=item.venue_name||"";
-$("featuredPhone").value=item.contact_phone||"";
-$("featuredMap").value=item.map_url||"";
-$("featuredNotes").value=item.notes||"";
-$("featuredOpeningPrompt").value=item.opening_prompt==="tap"?"tap":"knock";
-$("featuredExpiry").value=toLocalDateTime(item.expires_at);
-$("featuredGreeting").value=item.greeting_text||featuredGreetingDefault(item.event_type||"wedding");
-$("featuredGreetingColor").value=item.greeting_color||"#d4af37";
-$("featuredGreetingSize").value=String(item.greeting_size||28);
-$("featuredGreetingFrame").checked=!!item.greeting_frame;
-$("featuredPublished").checked=!!item.is_published;
-$("featuredBackgroundFile").value="";$("featuredOpeningFile").value="";$("featuredAudioFile").value="";
-$("featuredAudioUrl").value=item.audio_url||"";
-$("featuredBackgroundStatus").textContent=featuredExistingBackgroundUrl?"الخلفية الحالية محفوظة. اختر ملفاً جديداً إذا تريد استبدالها.":"لا توجد خلفية محفوظة.";
-$("featuredOpeningStatus").textContent=featuredExistingOpeningUrl?"ملف الباب الحالي محفوظ. اختر ملفاً جديداً إذا تريد استبداله.":"لا يوجد ملف باب محفوظ.";
-$("featuredAudioStatus").textContent=featuredExistingAudioUrl?"رابط الأغنية الحالية محفوظ.":"لا توجد أغنية محفوظة.";
-$("featuredBackgroundPreviewBox").replaceChildren();
-$("featuredOpeningPreviewBox").replaceChildren();
-if(featuredExistingBackgroundUrl)setFeaturedPreviewMedia(featuredExistingBackgroundUrl,featuredExistingBackgroundType);
-else setFeaturedPreviewMedia("","");
-$("featuredFormTitle").textContent="تعديل الدعوة المميزة";
-$("featuredSaveBtn").textContent="حفظ التعديلات";
-$("featuredDeleteBtn").classList.remove("hidden");
-$("featuredCancelBtn").classList.remove("hidden");
-updateFeaturedNameFields();updateFeaturedPreview();
-$("featuredForm").scrollIntoView({behavior:"smooth",block:"start"});
-status("أنت تعدّل دعوة مميزة محفوظة. سيبقى رابطها نفسه.");
-}
-async function deleteFeaturedInvitation(item){
-if(!confirm("متأكد تريد حذف الدعوة المميزة «"+featuredDisplayName(item)+"»؟ لا يمكن التراجع عن الحذف."))return;
-try{
-const {data,error}=await db.from("featured_invitations").delete().eq("id",item.id).select("id,slug").maybeSingle();
-if(error)throw error;
-if(!data)throw new Error("لم تؤكد قاعدة البيانات حذف السجل. تحقق من صلاحيات DELETE وسياسة RLS.");
-if(String(featuredEditingId)===String(item.id))resetFeaturedForm();
-await loadFeaturedInvitations();
-status("تم حذف سجل الدعوة المميزة من قاعدة البيانات.");
-}catch(error){
-console.error("Delete featured invitation:",error);
-status("تعذر حذف الدعوة المميزة: "+(error.message||"خطأ غير معروف"));
-}
-}
-$("featuredDeleteBtn").addEventListener("click",()=>{
-const item=cachedFeaturedInvitations.find(row=>String(row.id)===String(featuredEditingId));
-if(item)deleteFeaturedInvitation(item);
-});
-/* =============== نهاية الدعوات المميزة =============== */
-
 function showSession(session){
 const signedIn=!!session;
 $("login").classList.toggle("hidden",signedIn);$("panel").classList.toggle("hidden",!signedIn);
 if(signedIn&&!loading){
 loading=true;
-Promise.all([loadInvitations(),loadBookings(),loadDoorImage($("template").value),loadAudioLibrary(),loadFeaturedInvitations()]).finally(()=>loading=false);
+Promise.all([loadInvitations(),loadBookings(),loadDoorImage($("template").value),loadAudioLibrary()]).finally(()=>loading=false);
 }
 }
 $("loginBtn").onclick=async()=>{
@@ -1614,8 +1013,8 @@ $("password").addEventListener("keydown",event=>{if(event.key==="Enter")$("login
 $("logoutBtn").onclick=async()=>{
 try{
 const {error}=await db.auth.signOut();if(error){status("تعذر تسجيل الخروج: "+error.message);return}
-resetForm();resetFeaturedForm();cachedInvitations=[];cachedBookings=[];cachedFeaturedInvitations=[];updateInvitationCounts();renderInvitationList();renderRecentInvitations();
-$("bookingsList").replaceChildren();$("statBookings").textContent="—";$("featuredList").replaceChildren();status("تم تسجيل الخروج.");
+resetForm();cachedInvitations=[];cachedBookings=[];updateInvitationCounts();renderInvitationList();renderRecentInvitations();
+$("bookingsList").replaceChildren();$("statBookings").textContent="—";status("تم تسجيل الخروج.");
 }catch(error){status("تعذر تسجيل الخروج: "+(error.message||"خطأ غير معروف"))}
 };
 window.addEventListener("error",event=>{
@@ -1628,7 +1027,6 @@ if($("status"))status("حدث خطأ أثناء التنفيذ: "+(event.reason?
 });
 
 selectDoor(1);setOpeningPrompt("knock");newUniqueSlug();updateEventFields();renderInvitationCategories();updateInvitationCounts();
-resetFeaturedForm();
 db.auth.onAuthStateChange((_event,session)=>{showSession(session)});
 (async()=>{
 try{const {data,error}=await db.auth.getSession();if(error){status("تعذر التحقق من جلسة الدخول: "+error.message);return}showSession(data.session)}
