@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<meta name="description" content="دعوة مميزة قصيرة من باب الفرح">
+<title>دعوة مميزة قصيرة | باب الفرح</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#080808;--gold:#e2c477;--ink:#fff5dc}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#30220c,var(--bg) 70%);color:var(--ink);font-family:Cairo,Tahoma,sans-serif}
+button,a{font:inherit}
+button{cursor:pointer}
+#app{min-height:100vh;padding:22px 14px 35px;display:flex;flex-direction:column;align-items:center}
+.brand{font-family:Amiri,serif;color:var(--gold);font-size:30px;font-weight:bold;text-align:center}
+.brand small{display:block;font:10px Cairo,sans-serif;letter-spacing:4px;direction:ltr;color:#b7a16a}
+.shell{width:min(620px,100%);margin:auto}
+.stage{position:relative;margin:24px auto 18px;min-height:360px;display:flex;align-items:center;justify-content:center;perspective:1200px}
+.visual{position:relative;width:min(420px,100%);min-height:330px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #8c6c2d;border-radius:20px;background:linear-gradient(145deg,#21190b,#080808 75%);box-shadow:0 20px 65px #0009}
+.visual img,.visual video{width:100%;max-height:70vh;object-fit:contain;display:block}
+.visual video{background:#050505}
+.envelope{position:relative;width:min(340px,90%);height:220px;cursor:pointer;filter:drop-shadow(0 18px 20px #0008);transition:transform .6s}
+.env-back{position:absolute;inset:30px 0 0;background:linear-gradient(140deg,#4b3510,#bd994a,#5d4315);border-radius:9px}
+.env-paper{position:absolute;left:9%;right:9%;top:22px;height:155px;background:linear-gradient(120deg,#fff3d0,#d8bd7a);color:#4c3510;text-align:center;padding:22px 8px;font-family:Amiri,serif;font-size:25px;line-height:1.5;box-shadow:0 3px 10px #0004;transition:transform .9s;z-index:1}
+.env-flap{position:absolute;left:0;right:0;top:30px;height:0;border-left:170px solid transparent;border-right:170px solid transparent;border-top:125px solid #c6a354;transform-origin:top;transition:transform .8s;z-index:3}
+.env-front{position:absolute;inset:30px 0 0;background:linear-gradient(145deg,#d4b15c,#76521b);clip-path:polygon(0 0,50% 60%,100% 0,100% 100%,0 100%);z-index:2;border-radius:0 0 9px 9px}
+.seal{position:absolute;z-index:4;top:104px;left:calc(50% - 24px);width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#5e1419;color:#ffe3a0;border:2px solid #e2c477;font-size:24px;transition:opacity .3s}
+.stage.open .env-flap{transform:rotateX(180deg);z-index:0}
+.stage.open .env-paper{transform:translateY(-95px);z-index:2}
+.stage.open .seal{opacity:0}
+.book{width:min(350px,95%);min-height:280px;display:grid;grid-template-columns:1fr 1fr;perspective:1000px;filter:drop-shadow(0 14px 18px #0008)}
+.book-page{min-height:270px;background:linear-gradient(100deg,#d9c38b,#fff2d0);color:#533c13;padding:22px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-family:Amiri,serif;border:2px solid #b3944e;overflow-wrap:anywhere}
+.book-page:first-child{border-radius:8px 0 0 8px}
+.book-page:last-child{border-radius:0 8px 8px 0}
+.book-page h2{font-size:24px;margin:0 0 10px}
+.book-page p{font-size:18px;margin:4px 0}
+.book-cover{position:absolute;inset:0;width:50%;transform-origin:right;transition:transform 1s;z-index:3;background:linear-gradient(120deg,#38240d,#bd9444,#53320e);border:3px solid #e1c477;border-radius:5px 0 0 5px;display:grid;place-items:center;text-align:center;font:30px Amiri,serif;color:#ffe7a3;backface-visibility:hidden}
+.stage.open .book-cover{transform:rotateY(-155deg)}
+.primary,.secondary{display:inline-flex;justify-content:center;align-items:center;gap:7px;padding:12px 20px;border-radius:12px;border:1px solid #b28c3d;font-weight:800;text-decoration:none}
+.primary{background:linear-gradient(135deg,#98701d,#f1d98d);color:#171006}
+.secondary{background:#17130b;color:#f1d98d}
+.actions{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:15px auto}
+#details{width:min(620px,100%);display:none;animation:appear .7s ease both}
+#details.show{display:block}
+.card{position:relative;overflow:hidden;border:1px solid #86672c;border-radius:20px;background:linear-gradient(150deg,#1a150b,#090909);padding:clamp(20px,5vw,35px);text-align:center;box-shadow:0 15px 45px #0008}
+.card:before{content:"";position:absolute;inset:9px;border:1px solid #b18b3e55;border-radius:13px;pointer-events:none}
+.kicker{color:var(--gold);font-size:13px}
+h1{font:700 clamp(29px,7vw,43px) Amiri,serif;color:var(--gold);margin:8px 0 12px;line-height:1.6}
+.names{font:700 clamp(25px,6vw,36px) Amiri,serif;color:#fff0bd;line-height:1.8;overflow-wrap:anywhere}
+.greeting,.maintext,.notes{white-space:pre-wrap;overflow-wrap:anywhere;line-height:2.1;font-size:15px}
+.rule{color:var(--gold);margin:15px}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.info div{background:#ffffff08;border:1px solid #72562166;border-radius:12px;padding:12px;min-width:0;overflow-wrap:anywhere}
+.info small{display:block;color:#c6b78e;margin-bottom:4px}
+.info strong{font-size:14px}
+.notes{border:1px solid #6e5528;border-radius:12px;padding:12px;margin-top:14px}
+.map{margin-top:15px}
+#status{text-align:center;color:#ddc989;line-height:2;padding:25px}
+#status.error{color:#ffb5a7}
+.footer{text-align:center;color:#a99a75;font-size:11px;margin-top:26px}
+.hidden{display:none!important}
+@keyframes appear{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:420px){.stage{min-height:290px}.visual{min-height:280px}.info{grid-template-columns:1fr}.env-flap{border-left-width:42vw;border-right-width:42vw}.book-page{min-height:230px;padding:12px 5px}.book-page h2{font-size:20px}.book-page p{font-size:15px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="brand">باب الفرح ♥<small>BAB AL FARAH</small></header>
+<main class="shell">
+<div id="status">جارٍ تحميل الدعوة…</div>
+
+<section id="invitation" class="hidden">
+<div class="stage" id="stage">
+<div id="visual" class="visual"></div>
+</div>
+<div class="actions" id="openActions">
+<button class="primary" id="openBtn">افتح دعوتك ♥</button>
+</div>
+
+<section id="details">
+<div class="card">
+<div class="kicker">بكل الحب والفرح ندعوكم</div>
+<h1 id="title"></h1>
+<div class="names" id="names"></div>
+<div class="greeting" id="greeting"></div>
+<div class="rule">✦ ─── ♥ ─── ✦</div>
+<div class="maintext" id="mainText"></div>
+<div class="info">
+<div id="dateBox"><small>📅 التاريخ</small><strong id="date"></strong></div>
+<div id="timeBox"><small>🕒 الوقت</small><strong id="time"></strong></div>
+<div id="venueBox" style="grid-column:1/-1"><small>📍 المكان</small><strong id="venue"></strong></div>
+</div>
+<div id="notes" class="notes hidden"></div>
+<div class="actions">
+<a id="mapLink" class="secondary hidden" target="_blank" rel="noopener noreferrer">📍 موقع المناسبة</a>
+<a id="shareBtn" class="primary" target="_blank" rel="noopener noreferrer">مشاركة الدعوة</a>
+<a class="secondary" href="https://wa.me/9647867430232" target="_blank" rel="noopener noreferrer">تواصل مع باب الفرح</a>
+</div>
+</div>
+</section>
+</section>
+</main>
+<footer class="footer">باب الفرح ♥ — نصنع لحظاتكم الجميلة بكل حب</footer>
+</div>
+
+<script>
+"use strict";
+const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
+const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+const $=id=>document.getElementById(id);
+let invitation=null,audio=null,openingVideo=null,opened=false;
+
+function showError(text){
+ $("status").textContent=text;
+ $("status").classList.add("error");
+}
+function putText(id,text){
+ const el=$(id);el.textContent=text||"";
+ el.classList.toggle("hidden",!text);
+}
+function safeWebUrl(value){
+ try{const u=new URL(value);return ["https:","http:"].includes(u.protocol)?u.href:""}
+ catch{return ""}
+}
+function mediaElement(url,type){
+ const safe=safeWebUrl(url);
+ if(!safe)return null;
+ if(type&&type.startsWith("video/")){
+  const v=document.createElement("video");
+  v.src=safe;v.controls=true;v.playsInline=true;v.preload="metadata";
+  v.setAttribute("aria-label","فيديو الدعوة");
+  return v;
+ }
+ const img=document.createElement("img");
+ img.src=safe;img.alt="تصميم الدعوة";img.loading="eager";
+ img.onerror=()=>{img.remove()};
+ return img;
+}
+function renderVisual(d){
+ const root=$("visual");root.replaceChildren();
+ const stage=$("stage");
+ if(d.design_type==="video"){
+  const media=mediaElement(d.opening_media_url,d.opening_media_type);
+  if(media){root.append(media);if(media.tagName==="VIDEO")openingVideo=media}
+  else{
+   const cover=mediaElement(d.cover_media_url,d.cover_media_type);
+   if(cover)root.append(cover);
+   else root.textContent="♥";
+  }
+  $("openBtn").textContent="عرض تفاصيل الدعوة ♥";
+  return;
+ }
+ if(d.design_type==="book"){
+  const book=document.createElement("div");book.className="book";
+  const left=document.createElement("div");left.className="book-page";
+  const lh=document.createElement("h2");lh.textContent=d.title||"دعوة مميزة";
+  const lp=document.createElement("p");lp.textContent=d.host_name||"بكل الحب";
+  left.append(lh,lp);
+  const right=document.createElement("div");right.className="book-page";
+  const rh=document.createElement("h2");rh.textContent="أهلاً وسهلاً";
+  const rp=document.createElement("p");rp.textContent="يسعدنا حضوركم";
+  right.append(rh,rp);
+  const cover=document.createElement("div");cover.className="book-cover";
+  const coverText=document.createElement("span");coverText.textContent=d.title||"دعوة خاصة ♥";
+  cover.append(coverText);
+  book.append(left,right,cover);root.append(book);
+  const bg=safeWebUrl(d.cover_media_url);
+  if(bg){root.style.backgroundImage="linear-gradient(#08080866,#08080866),url("+JSON.stringify(bg)+")";root.style.backgroundSize="cover";root.style.backgroundPosition="center"}
+  $("openBtn").textContent="افتح الكتاب ♥";
+  return;
+ }
+ const env=document.createElement("div");env.className="envelope";
+ const back=document.createElement("div");back.className="env-back";
+ const paper=document.createElement("div");paper.className="env-paper";
+ paper.textContent=d.host_name||d.title||"دعوة خاصة";
+ const flap=document.createElement("div");flap.className="env-flap";
+ const front=document.createElement("div");front.className="env-front";
+ const seal=document.createElement("div");seal.className="seal";seal.textContent="♥";
+ env.append(back,paper,flap,front,seal);root.append(env);
+ const cover=mediaElement(d.cover_media_url,d.cover_media_type);
+ if(cover){
+  const holder=document.createElement("div");
+  holder.style.cssText="position:absolute;inset:0;opacity:.22;pointer-events:none";
+  cover.style.cssText="width:100%;height:100%;object-fit:cover";
+  holder.append(cover);root.append(holder);
+ }
+ $("openBtn").textContent="افتح الظرف ♥";
+}
+function fillDetails(d){
+ putText("title",d.occasion||d.title||"دعوة مميزة قصيرة");
+ putText("names",[d.host_name,d.second_name].filter(Boolean).join(" ♥ "));
+ putText("greeting",d.greeting);
+ putText("mainText",d.main_text);
+ putText("date",d.event_date);
+ putText("time",d.event_time);
+ putText("venue",d.venue_name);
+ $("dateBox").classList.toggle("hidden",!d.event_date);
+ $("timeBox").classList.toggle("hidden",!d.event_time);
+ $("venueBox").classList.toggle("hidden",!d.venue_name);
+ if(d.notes){$("notes").textContent=d.notes;$("notes").classList.remove("hidden")}
+ const map=safeWebUrl(d.map_url);
+ if(map){$("mapLink").href=map;$("mapLink").classList.remove("hidden")}
+ $("title").style.color=d.text_color||"#e2c477";
+ $("names").style.color=d.text_color||"#fff0bd";
+ $("details .card").style.backgroundColor=d.background_color||"#080808";
+ $("shareBtn").href="https://wa.me/?text="+encodeURIComponent((d.occasion||d.title||"دعوة مميزة قصيرة")+" "+location.href);
+}
+async function startMusic(){
+ if(!invitation||!invitation.music_url)return;
+ if(!audio){audio=new Audio(safeWebUrl(invitation.music_url));audio.loop=true;audio.preload="none"}
+ try{await audio.play()}catch(e){}
+}
+async function openInvitation(){
+ if(opened){
+  $("details").classList.add("show");
+  $("details").scrollIntoView({behavior:"smooth",block:"start"});
+  return;
+ }
+ opened=true;
+ await startMusic();
+ if(invitation.design_type==="video"&&openingVideo){
+  try{await openingVideo.play()}catch(e){}
+ }
+ $("stage").classList.add("open");
+ $("openBtn").disabled=true;
+ $("openBtn").textContent="جاري فتح الدعوة…";
+ setTimeout(()=>{
+  $("details").classList.add("show");
+  $("openBtn").disabled=false;
+  $("openBtn").textContent="عرض تفاصيل الدعوة";
+  $("details").scrollIntoView({behavior:"smooth",block:"start"});
+ },invitation.design_type==="video"?350:1100);
+}
+$("openBtn").addEventListener("click",openInvitation);
+
+(async()=>{
+ try{
+  const token=new URLSearchParams(location.search).get("invite");
+  if(!token||!/^[0-9a-f-]{36}$/i.test(token)){
+   showError("رابط الدعوة غير صحيح أو ناقص.");
+   return;
+  }
+  const {data,error}=await db.rpc("get_short_invitation_by_token",{p_token:token});
+  if(error)throw error;
+  if(!data){
+   showError("هذه الدعوة غير موجودة أو غير منشورة حالياً.");
+   return;
+  }
+  invitation=data;
+  document.title=(data.title||"دعوة مميزة قصيرة")+" | باب الفرح";
+  renderVisual(data);
+  fillDetails(data);
+  $("status").classList.add("hidden");
+  $("invitation").classList.remove("hidden");
+ }catch(e){
+  showError("تعذر تحميل الدعوة. تحقق من اتصال قاعدة البيانات وإعدادات النشر.");
+  console.error(e);
+ }
+})();
+</script>
+</body>
+</html>
