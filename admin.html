@@ -702,8 +702,7 @@ if(!song){status("اختر أغنية من القائمة أولاً.");return}u
 $("uploadLibrarySongBtn").addEventListener("click",async()=>{
 const file=$("librarySongFile").files[0],name=$("librarySongName").value.trim()||file?.name.replace(/\.mp3$/i,"")||"أغنية زفاف";
 if(!file){status("اختر ملف MP3 من جهازك أولاً.");return}
-if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){status("اختر ملف MP3 صحيحاً.");return}
-if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
+if(!file.name.toLowerCase().endsWith(".mp3")){status("اختر ملف MP3 صحيحاً.");return}if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
 $("uploadLibrarySongBtn").disabled=true;$("librarySongStatus").textContent="جارٍ رفع الأغنية...";
 try{
 const path="library/"+Date.now()+"-"+crypto.randomUUID()+"-"+safeAudioName(file);
@@ -819,8 +818,7 @@ if(!file){
 $("audioFileStatus").textContent=currentAudioUrl?"توجد أغنية محفوظة لهذه الدعوة. لن يتغير الرابط ما لم تختر ملفاً جديداً.":"لم يتم اختيار ملف جديد.";
 return;
 }
-if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){
-$("audioFile").value="";status("اختر ملف MP3 صحيحاً.");$("audioFileStatus").textContent="لم يتم اختيار ملف صالح.";return;
+if(!file.name.toLowerCase().endsWith(".mp3")){$("audioFile").value="";status("اختر ملف MP3 صحيحاً.");$("audioFileStatus").textContent="لم يتم اختيار ملف صالح.";return;
 }
 if(file.size>MAX_AUDIO_SIZE){$("audioFile").value="";status("حجم الأغنية أكبر من 10 ميغابايت.");$("audioFileStatus").textContent="الملف أكبر من الحجم المسموح.";return}
 $("audioType").value="song";currentLibrarySongId=null;$("audioLibrary").value="";
@@ -1032,8 +1030,7 @@ if(!Number.isInteger(record.template_id)||record.template_id<1||record.template_
 const file=$("audioFile").files[0];
 if(selectedType==="song"&&!currentAudioUrl&&!file){status("اختر أغنية من المكتبة أو ارفع ملف MP3.");return}
 if(file){
-if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3")){status("اختر ملف MP3 صحيحاً.");return}
-if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
+if(!file.name.toLowerCase().endsWith(".mp3")){status("اختر ملف MP3 صحيحاً.");return}if(file.size>MAX_AUDIO_SIZE){status("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");return}
 }
 busy=true;$("saveBtn").disabled=true;$("saveBtn").textContent="جارٍ الحفظ...";
 status("تم استلام طلب الحفظ، جارٍ التحقق من البيانات...");
@@ -1264,12 +1261,28 @@ media.src=objectUrl;box.appendChild(media);
 }
 function validateFeaturedFile(file,kind){
 if(!file)return null;
+
+if(kind==="audio"){
+if(!file.name.toLowerCase().endsWith(".mp3"))
+throw new Error("اختر ملف MP3 صحيحاً.");
+if(file.size>MAX_AUDIO_SIZE)
+throw new Error("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");
+return "audio/mpeg";
+}
+
+const type=mediaTypeFromFile(file);
+if(!allowedDoorImageTypes.includes(type))
+throw new Error("نوع الملف غير مدعوم. استخدم JPG أو PNG أو WEBP أو GIF أو MP4.");
+if(file.size>MAX_DOOR_IMAGE_SIZE)
+throw new Error("حجم الصورة أو الفيديو يجب ألا يتجاوز 50 ميغابايت.");
+
+return type;
+}if(!file)return null;
 const type=mediaTypeFromFile(file);
 if(!allowedDoorImageTypes.includes(type))throw new Error("نوع الملف غير مدعوم. استخدم JPG أو PNG أو WEBP أو GIF أو MP4.");
 if(file.size>MAX_DOOR_IMAGE_SIZE)throw new Error("حجم الصورة أو الفيديو يجب ألا يتجاوز 50 ميغابايت.");
 if(kind==="audio"){
-if(!file.name.toLowerCase().endsWith(".mp3")||(file.type&&file.type!=="audio/mpeg"&&file.type!=="audio/mp3"))throw new Error("اختر ملف MP3 صحيحاً.");
-if(file.size>MAX_AUDIO_SIZE)throw new Error("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");
+if(!file.name.toLowerCase().endsWith(".mp3"))throw new Error("اختر ملف MP3 صحيحاً.");if(file.size>MAX_AUDIO_SIZE)throw new Error("حجم الأغنية يجب ألا يتجاوز 10 ميغابايت.");
 }
 return type;
 }
