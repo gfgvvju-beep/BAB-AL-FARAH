@@ -32,7 +32,7 @@ button{cursor:pointer}
 .stage.open .env-flap{transform:rotateX(180deg);z-index:0}
 .stage.open .env-paper{transform:translateY(-95px);z-index:2}
 .stage.open .seal{opacity:0}
-.book{width:min(350px,95%);min-height:280px;display:grid;grid-template-columns:1fr 1fr;perspective:1000px;filter:drop-shadow(0 14px 18px #0008)}
+.book{position:relative;width:min(350px,95%);min-height:280px;display:grid;grid-template-columns:1fr 1fr;perspective:1000px;filter:drop-shadow(0 14px 18px #0008)}
 .book-page{min-height:270px;background:linear-gradient(100deg,#d9c38b,#fff2d0);color:#533c13;padding:22px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-family:Amiri,serif;border:2px solid #b3944e;overflow-wrap:anywhere}
 .book-page:first-child{border-radius:8px 0 0 8px}
 .book-page:last-child{border-radius:0 8px 8px 0}
@@ -59,7 +59,7 @@ h1{font:700 clamp(29px,7vw,43px) Amiri,serif;color:var(--gold);margin:8px 0 12px
 .info strong{font-size:14px}
 .notes{border:1px solid #6e5528;border-radius:12px;padding:12px;margin-top:14px}
 .map{margin-top:15px}
-#status{text-align:center;color:#ddc989;line-height:2;padding:25px}
+#status{text-align:center;color:#ddc989;line-height:2;padding:25px;white-space:pre-wrap;overflow-wrap:anywhere}
 #status.error{color:#ffb5a7}
 .footer{text-align:center;color:#a99a75;font-size:11px;margin-top:26px}
 .hidden{display:none!important}
@@ -110,157 +110,346 @@ h1{font:700 clamp(29px,7vw,43px) Amiri,serif;color:var(--gold);margin:8px 0 12px
 
 <script>
 "use strict";
+
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+
+const db=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY,
+ {auth:{persistSession:false,autoRefreshToken:false}}
+);
+
 const $=id=>document.getElementById(id);
-let invitation=null,audio=null,openingVideo=null,opened=false;
+
+let invitation=null;
+let audio=null;
+let openingVideo=null;
+let opened=false;
 
 function showError(text){
  $("status").textContent=text;
  $("status").classList.add("error");
+ $("status").classList.remove("hidden");
 }
+
 function putText(id,text){
- const el=$(id);el.textContent=text||"";
+ const el=$(id);
+ el.textContent=text||"";
  el.classList.toggle("hidden",!text);
 }
+
 function safeWebUrl(value){
- try{const u=new URL(value);return ["https:","http:"].includes(u.protocol)?u.href:""}
- catch{return ""}
+ try{
+  const u=new URL(value);
+  return ["https:","http:"].includes(u.protocol)?u.href:"";
+ }catch{
+  return "";
+ }
 }
+
 function mediaElement(url,type){
  const safe=safeWebUrl(url);
  if(!safe)return null;
+
  if(type&&type.startsWith("video/")){
   const v=document.createElement("video");
-  v.src=safe;v.controls=true;v.playsInline=true;v.preload="metadata";
+  v.src=safe;
+  v.controls=true;
+  v.playsInline=true;
+  v.preload="metadata";
   v.setAttribute("aria-label","فيديو الدعوة");
   return v;
  }
+
  const img=document.createElement("img");
- img.src=safe;img.alt="تصميم الدعوة";img.loading="eager";
+ img.src=safe;
+ img.alt="تصميم الدعوة";
+ img.loading="eager";
  img.onerror=()=>{img.remove()};
  return img;
 }
+
 function renderVisual(d){
- const root=$("visual");root.replaceChildren();
- const stage=$("stage");
+ const root=$("visual");
+ root.replaceChildren();
+ root.style.backgroundImage="";
+ root.style.backgroundSize="";
+ root.style.backgroundPosition="";
+
  if(d.design_type==="video"){
-  const media=mediaElement(d.opening_media_url,d.opening_media_type);
-  if(media){root.append(media);if(media.tagName==="VIDEO")openingVideo=media}
-  else{
-   const cover=mediaElement(d.cover_media_url,d.cover_media_type);
+  const media=mediaElement(
+   d.opening_media_url,
+   d.opening_media_type
+  );
+
+  if(media){
+   root.append(media);
+   if(media.tagName==="VIDEO")openingVideo=media;
+  }else{
+   const cover=mediaElement(
+    d.cover_media_url,
+    d.cover_media_type
+   );
+
    if(cover)root.append(cover);
    else root.textContent="♥";
   }
+
   $("openBtn").textContent="عرض تفاصيل الدعوة ♥";
   return;
  }
+
  if(d.design_type==="book"){
-  const book=document.createElement("div");book.className="book";
-  const left=document.createElement("div");left.className="book-page";
-  const lh=document.createElement("h2");lh.textContent=d.title||"دعوة مميزة";
-  const lp=document.createElement("p");lp.textContent=d.host_name||"بكل الحب";
+  const book=document.createElement("div");
+  book.className="book";
+
+  const left=document.createElement("div");
+  left.className="book-page";
+
+  const lh=document.createElement("h2");
+  lh.textContent=d.title||"دعوة مميزة";
+
+  const lp=document.createElement("p");
+  lp.textContent=d.host_name||"بكل الحب";
+
   left.append(lh,lp);
-  const right=document.createElement("div");right.className="book-page";
-  const rh=document.createElement("h2");rh.textContent="أهلاً وسهلاً";
-  const rp=document.createElement("p");rp.textContent="يسعدنا حضوركم";
+
+  const right=document.createElement("div");
+  right.className="book-page";
+
+  const rh=document.createElement("h2");
+  rh.textContent="أهلاً وسهلاً";
+
+  const rp=document.createElement("p");
+  rp.textContent="يسعدنا حضوركم";
+
   right.append(rh,rp);
-  const cover=document.createElement("div");cover.className="book-cover";
-  const coverText=document.createElement("span");coverText.textContent=d.title||"دعوة خاصة ♥";
+
+  const cover=document.createElement("div");
+  cover.className="book-cover";
+
+  const coverText=document.createElement("span");
+  coverText.textContent=d.title||"دعوة خاصة ♥";
+
   cover.append(coverText);
-  book.append(left,right,cover);root.append(book);
+  book.append(left,right,cover);
+  root.append(book);
+
   const bg=safeWebUrl(d.cover_media_url);
-  if(bg){root.style.backgroundImage="linear-gradient(#08080866,#08080866),url("+JSON.stringify(bg)+")";root.style.backgroundSize="cover";root.style.backgroundPosition="center"}
+
+  if(bg){
+   root.style.backgroundImage=
+    "linear-gradient(#08080866,#08080866),url("+JSON.stringify(bg)+")";
+   root.style.backgroundSize="cover";
+   root.style.backgroundPosition="center";
+  }
+
   $("openBtn").textContent="افتح الكتاب ♥";
   return;
  }
- const env=document.createElement("div");env.className="envelope";
- const back=document.createElement("div");back.className="env-back";
- const paper=document.createElement("div");paper.className="env-paper";
+
+ const env=document.createElement("div");
+ env.className="envelope";
+
+ const back=document.createElement("div");
+ back.className="env-back";
+
+ const paper=document.createElement("div");
+ paper.className="env-paper";
  paper.textContent=d.host_name||d.title||"دعوة خاصة";
- const flap=document.createElement("div");flap.className="env-flap";
- const front=document.createElement("div");front.className="env-front";
- const seal=document.createElement("div");seal.className="seal";seal.textContent="♥";
- env.append(back,paper,flap,front,seal);root.append(env);
- const cover=mediaElement(d.cover_media_url,d.cover_media_type);
+
+ const flap=document.createElement("div");
+ flap.className="env-flap";
+
+ const front=document.createElement("div");
+ front.className="env-front";
+
+ const seal=document.createElement("div");
+ seal.className="seal";
+ seal.textContent="♥";
+
+ env.append(back,paper,flap,front,seal);
+ root.append(env);
+
+ const cover=mediaElement(
+  d.cover_media_url,
+  d.cover_media_type
+ );
+
  if(cover){
   const holder=document.createElement("div");
   holder.style.cssText="position:absolute;inset:0;opacity:.22;pointer-events:none";
   cover.style.cssText="width:100%;height:100%;object-fit:cover";
-  holder.append(cover);root.append(holder);
+  holder.append(cover);
+  root.append(holder);
  }
+
  $("openBtn").textContent="افتح الظرف ♥";
 }
+
 function fillDetails(d){
  putText("title",d.occasion||d.title||"دعوة مميزة قصيرة");
- putText("names",[d.host_name,d.second_name].filter(Boolean).join(" ♥ "));
+
+ putText(
+  "names",
+  [d.host_name,d.second_name].filter(Boolean).join(" ♥ ")
+ );
+
  putText("greeting",d.greeting);
  putText("mainText",d.main_text);
  putText("date",d.event_date);
  putText("time",d.event_time);
  putText("venue",d.venue_name);
+
  $("dateBox").classList.toggle("hidden",!d.event_date);
  $("timeBox").classList.toggle("hidden",!d.event_time);
  $("venueBox").classList.toggle("hidden",!d.venue_name);
- if(d.notes){$("notes").textContent=d.notes;$("notes").classList.remove("hidden")}
+
+ if(d.notes){
+  $("notes").textContent=d.notes;
+  $("notes").classList.remove("hidden");
+ }
+
  const map=safeWebUrl(d.map_url);
- if(map){$("mapLink").href=map;$("mapLink").classList.remove("hidden")}
+
+ if(map){
+  $("mapLink").href=map;
+  $("mapLink").classList.remove("hidden");
+ }
+
  $("title").style.color=d.text_color||"#e2c477";
  $("names").style.color=d.text_color||"#fff0bd";
  $("details .card").style.backgroundColor=d.background_color||"#080808";
- $("shareBtn").href="https://wa.me/?text="+encodeURIComponent((d.occasion||d.title||"دعوة مميزة قصيرة")+" "+location.href);
+
+ $("shareBtn").href=
+  "https://wa.me/?text="+
+  encodeURIComponent(
+   (d.occasion||d.title||"دعوة مميزة قصيرة")+" "+location.href
+  );
 }
+
 async function startMusic(){
  if(!invitation||!invitation.music_url)return;
- if(!audio){audio=new Audio(safeWebUrl(invitation.music_url));audio.loop=true;audio.preload="none"}
- try{await audio.play()}catch(e){}
+
+ if(!audio){
+  const musicUrl=safeWebUrl(invitation.music_url);
+  if(!musicUrl)return;
+
+  audio=new Audio(musicUrl);
+  audio.loop=true;
+  audio.preload="none";
+ }
+
+ try{
+  await audio.play();
+ }catch(e){
+  console.warn("تعذر تشغيل الموسيقى تلقائياً:",e);
+ }
 }
+
 async function openInvitation(){
  if(opened){
   $("details").classList.add("show");
-  $("details").scrollIntoView({behavior:"smooth",block:"start"});
+  $("details").scrollIntoView({
+   behavior:"smooth",
+   block:"start"
+  });
   return;
  }
+
  opened=true;
  await startMusic();
+
  if(invitation.design_type==="video"&&openingVideo){
-  try{await openingVideo.play()}catch(e){}
+  try{
+   await openingVideo.play();
+  }catch(e){
+   console.warn("تعذر تشغيل فيديو الدعوة:",e);
+  }
  }
+
  $("stage").classList.add("open");
  $("openBtn").disabled=true;
  $("openBtn").textContent="جاري فتح الدعوة…";
+
  setTimeout(()=>{
   $("details").classList.add("show");
   $("openBtn").disabled=false;
   $("openBtn").textContent="عرض تفاصيل الدعوة";
-  $("details").scrollIntoView({behavior:"smooth",block:"start"});
+
+  $("details").scrollIntoView({
+   behavior:"smooth",
+   block:"start"
+  });
  },invitation.design_type==="video"?350:1100);
 }
+
 $("openBtn").addEventListener("click",openInvitation);
 
 (async()=>{
  try{
   const token=new URLSearchParams(location.search).get("invite");
+
   if(!token||!/^[0-9a-f-]{36}$/i.test(token)){
-   showError("رابط الدعوة غير صحيح أو ناقص.");
+   showError("رابط الدعوة غير صحيح أو ناقص. تأكد من فتح الرابط الكامل الذي أنشأته لوحة الإدارة.");
    return;
   }
-  const {data,error}=await db.rpc("get_short_invitation_by_token",{p_token:token});
-  if(error)throw error;
+
+  const {data,error}=await db.rpc(
+   "get_short_invitation_by_token",
+   {p_token:token}
+  );
+
+  if(error){
+   console.error("Supabase RPC error:",error);
+   const errorDetails=[
+    error.message||"خطأ غير معروف",
+    error.code?"Code: "+error.code:"",
+    error.details||"",
+    error.hint?"Hint: "+error.hint:""
+   ].filter(Boolean).join("\n");
+
+   showError("تعذر تحميل الدعوة من قاعدة البيانات:\n"+errorDetails);
+   return;
+  }
+
   if(!data){
-   showError("هذه الدعوة غير موجودة أو غير منشورة حالياً.");
+   showError("هذه الدعوة غير موجودة أو غير منشورة حالياً. تأكد من نشرها من لوحة الإدارة واستخدام رابطها الصحيح.");
    return;
   }
-  invitation=data;
-  document.title=(data.title||"دعوة مميزة قصيرة")+" | باب الفرح";
-  renderVisual(data);
-  fillDetails(data);
+
+  // تدعم الدالة إرجاع سجل واحد أو سجل داخل مصفوفة.
+  if(Array.isArray(data)){
+   invitation=data.length?data[0]:null;
+  }else{
+   invitation=data;
+  }
+
+  if(!invitation){
+   showError("لم يتم العثور على بيانات الدعوة.");
+   return;
+  }
+
+  document.title=(invitation.title||"دعوة مميزة قصيرة")+" | باب الفرح";
+
+  renderVisual(invitation);
+  fillDetails(invitation);
+
   $("status").classList.add("hidden");
   $("invitation").classList.remove("hidden");
+
  }catch(e){
-  showError("تعذر تحميل الدعوة. تحقق من اتصال قاعدة البيانات وإعدادات النشر.");
-  console.error(e);
+  console.error("Short invitation load error:",e);
+
+  const details=[
+   e?.message||"خطأ غير معروف",
+   e?.code?"Code: "+e.code:"",
+   e?.details||"",
+   e?.hint?"Hint: "+e.hint:""
+  ].filter(Boolean).join("\n");
+
+  showError("تعذر تحميل الدعوة:\n"+details);
  }
 })();
 </script>
