@@ -58,7 +58,6 @@ h1{font:700 clamp(29px,7vw,43px) Amiri,serif;color:var(--gold);margin:8px 0 12px
 .info small{display:block;color:#c6b78e;margin-bottom:4px}
 .info strong{font-size:14px}
 .notes{border:1px solid #6e5528;border-radius:12px;padding:12px;margin-top:14px}
-.map{margin-top:15px}
 #status{text-align:center;color:#ddc989;line-height:2;padding:25px;white-space:pre-wrap;overflow-wrap:anywhere}
 #status.error{color:#ffb5a7}
 .footer{text-align:center;color:#a99a75;font-size:11px;margin-top:26px}
@@ -83,7 +82,7 @@ h1{font:700 clamp(29px,7vw,43px) Amiri,serif;color:var(--gold);margin:8px 0 12px
 </div>
 
 <section id="details">
-<div class="card">
+<div class="card" id="detailsCard">
 <div class="kicker">بكل الحب والفرح ندعوكم</div>
 <h1 id="title"></h1>
 <div class="names" id="names"></div>
@@ -128,13 +127,16 @@ let openingVideo=null;
 let opened=false;
 
 function showError(text){
- $("status").textContent=text;
- $("status").classList.add("error");
- $("status").classList.remove("hidden");
+ const status=$("status");
+ if(!status)return;
+ status.textContent=text;
+ status.classList.add("error");
+ status.classList.remove("hidden");
 }
 
 function putText(id,text){
  const el=$(id);
+ if(!el)return;
  el.textContent=text||"";
  el.classList.toggle("hidden",!text);
 }
@@ -166,7 +168,7 @@ function mediaElement(url,type){
  img.src=safe;
  img.alt="تصميم الدعوة";
  img.loading="eager";
- img.onerror=()=>{img.remove()};
+ img.onerror=()=>img.remove();
  return img;
 }
 
@@ -176,22 +178,16 @@ function renderVisual(d){
  root.style.backgroundImage="";
  root.style.backgroundSize="";
  root.style.backgroundPosition="";
+ openingVideo=null;
 
  if(d.design_type==="video"){
-  const media=mediaElement(
-   d.opening_media_url,
-   d.opening_media_type
-  );
+  const media=mediaElement(d.opening_media_url,d.opening_media_type);
 
   if(media){
    root.append(media);
    if(media.tagName==="VIDEO")openingVideo=media;
   }else{
-   const cover=mediaElement(
-    d.cover_media_url,
-    d.cover_media_type
-   );
-
+   const cover=mediaElement(d.cover_media_url,d.cover_media_type);
    if(cover)root.append(cover);
    else root.textContent="♥";
   }
@@ -212,7 +208,6 @@ function renderVisual(d){
 
   const lp=document.createElement("p");
   lp.textContent=d.host_name||"بكل الحب";
-
   left.append(lh,lp);
 
   const right=document.createElement("div");
@@ -223,7 +218,6 @@ function renderVisual(d){
 
   const rp=document.createElement("p");
   rp.textContent="يسعدنا حضوركم";
-
   right.append(rh,rp);
 
   const cover=document.createElement("div");
@@ -231,13 +225,12 @@ function renderVisual(d){
 
   const coverText=document.createElement("span");
   coverText.textContent=d.title||"دعوة خاصة ♥";
-
   cover.append(coverText);
+
   book.append(left,right,cover);
   root.append(book);
 
   const bg=safeWebUrl(d.cover_media_url);
-
   if(bg){
    root.style.backgroundImage=
     "linear-gradient(#08080866,#08080866),url("+JSON.stringify(bg)+")";
@@ -272,11 +265,7 @@ function renderVisual(d){
  env.append(back,paper,flap,front,seal);
  root.append(env);
 
- const cover=mediaElement(
-  d.cover_media_url,
-  d.cover_media_type
- );
-
+ const cover=mediaElement(d.cover_media_url,d.cover_media_type);
  if(cover){
   const holder=document.createElement("div");
   holder.style.cssText="position:absolute;inset:0;opacity:.22;pointer-events:none";
@@ -290,12 +279,7 @@ function renderVisual(d){
 
 function fillDetails(d){
  putText("title",d.occasion||d.title||"دعوة مميزة قصيرة");
-
- putText(
-  "names",
-  [d.host_name,d.second_name].filter(Boolean).join(" ♥ ")
- );
-
+ putText("names",[d.host_name,d.second_name].filter(Boolean).join(" ♥ "));
  putText("greeting",d.greeting);
  putText("mainText",d.main_text);
  putText("date",d.event_date);
@@ -306,21 +290,34 @@ function fillDetails(d){
  $("timeBox").classList.toggle("hidden",!d.event_time);
  $("venueBox").classList.toggle("hidden",!d.venue_name);
 
+ const notes=$("notes");
  if(d.notes){
-  $("notes").textContent=d.notes;
-  $("notes").classList.remove("hidden");
+  notes.textContent=d.notes;
+  notes.classList.remove("hidden");
+ }else{
+  notes.textContent="";
+  notes.classList.add("hidden");
  }
 
  const map=safeWebUrl(d.map_url);
-
+ const mapLink=$("mapLink");
  if(map){
-  $("mapLink").href=map;
-  $("mapLink").classList.remove("hidden");
+  mapLink.href=map;
+  mapLink.classList.remove("hidden");
+ }else{
+  mapLink.removeAttribute("href");
+  mapLink.classList.add("hidden");
  }
 
- $("title").style.color=d.text_color||"#e2c477";
- $("names").style.color=d.text_color||"#fff0bd";
- $("details .card").style.backgroundColor=d.background_color||"#080808";
+ // إصلاح الخطأ: تحديد بطاقة التفاصيل مباشرة بواسطة id ثابت.
+ const card=$("detailsCard");
+ if(card)card.style.backgroundColor=d.background_color||"#080808";
+
+ const title=$("title");
+ const names=$("names");
+
+ if(title)title.style.color=d.text_color||"#e2c477";
+ if(names)names.style.color=d.text_color||"#fff0bd";
 
  $("shareBtn").href=
   "https://wa.me/?text="+
@@ -335,7 +332,6 @@ async function startMusic(){
  if(!audio){
   const musicUrl=safeWebUrl(invitation.music_url);
   if(!musicUrl)return;
-
   audio=new Audio(musicUrl);
   audio.loop=true;
   audio.preload="none";
@@ -344,17 +340,14 @@ async function startMusic(){
  try{
   await audio.play();
  }catch(e){
-  console.warn("تعذر تشغيل الموسيقى تلقائياً:",e);
+  console.warn("تعذر تشغيل الموسيقى:",e);
  }
 }
 
 async function openInvitation(){
  if(opened){
   $("details").classList.add("show");
-  $("details").scrollIntoView({
-   behavior:"smooth",
-   block:"start"
-  });
+  $("details").scrollIntoView({behavior:"smooth",block:"start"});
   return;
  }
 
@@ -365,7 +358,7 @@ async function openInvitation(){
   try{
    await openingVideo.play();
   }catch(e){
-   console.warn("تعذر تشغيل فيديو الدعوة:",e);
+   console.warn("تعذر تشغيل الفيديو:",e);
   }
  }
 
@@ -377,11 +370,7 @@ async function openInvitation(){
   $("details").classList.add("show");
   $("openBtn").disabled=false;
   $("openBtn").textContent="عرض تفاصيل الدعوة";
-
-  $("details").scrollIntoView({
-   behavior:"smooth",
-   block:"start"
-  });
+  $("details").scrollIntoView({behavior:"smooth",block:"start"});
  },invitation.design_type==="video"?350:1100);
 }
 
@@ -392,7 +381,7 @@ $("openBtn").addEventListener("click",openInvitation);
   const token=new URLSearchParams(location.search).get("invite");
 
   if(!token||!/^[0-9a-f-]{36}$/i.test(token)){
-   showError("رابط الدعوة غير صحيح أو ناقص. تأكد من فتح الرابط الكامل الذي أنشأته لوحة الإدارة.");
+   showError("رابط الدعوة غير صحيح أو ناقص. افتح الرابط الكامل من لوحة الإدارة.");
    return;
   }
 
@@ -403,6 +392,7 @@ $("openBtn").addEventListener("click",openInvitation);
 
   if(error){
    console.error("Supabase RPC error:",error);
+
    const errorDetails=[
     error.message||"خطأ غير معروف",
     error.code?"Code: "+error.code:"",
@@ -415,16 +405,11 @@ $("openBtn").addEventListener("click",openInvitation);
   }
 
   if(!data){
-   showError("هذه الدعوة غير موجودة أو غير منشورة حالياً. تأكد من نشرها من لوحة الإدارة واستخدام رابطها الصحيح.");
+   showError("هذه الدعوة غير موجودة أو غير منشورة حالياً. تأكد من نشرها من لوحة الإدارة.");
    return;
   }
 
-  // تدعم الدالة إرجاع سجل واحد أو سجل داخل مصفوفة.
-  if(Array.isArray(data)){
-   invitation=data.length?data[0]:null;
-  }else{
-   invitation=data;
-  }
+  invitation=Array.isArray(data)?(data[0]||null):data;
 
   if(!invitation){
    showError("لم يتم العثور على بيانات الدعوة.");
