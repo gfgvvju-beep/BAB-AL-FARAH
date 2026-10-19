@@ -232,14 +232,14 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 <div class="card-body">
 <div class="form-grid">
 <div class="field full">
-<label for="bgMediaFile">رفع صورة أو فيديو لخلفية الدعوة (بعد الطرق/الفتح)</label>
-<input id="bgMediaFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4">
-<p class="help">ستظهر هذه الصورة أو الفيديو خلف كلمات الدعوة على حجم الشاشة بالكامل (الموبايل واللابتوب). إذا لم ترفع شيئاً، ستظهر الخلفية الافتراضية.</p>
+<label for="bgMediaUrl">رابط صورة أو فيديو لخلفية الدعوة (بعد الطرق/الفتح)</label>
+<input id="bgMediaUrl" type="url" placeholder="https://... (رابط صورة أو فيديو MP4)">
+<p class="help">ستظهر هذه الصورة أو الفيديو خلف كلمات الدعوة على حجم الشاشة بالكامل. إذا تُركت فارغة، ستظهر الخلفية الافتراضية.</p>
 </div>
 <div class="field full">
 <div class="inline-check">
 <input id="removeCardBox" type="checkbox">
-<label for="removeCardBox">إلغاء الصندوق المحيط بكلمات الدعوة (جعل الكلمات مباشرة فوق الخلفية بدون إطار)</label>
+<label for="removeCardBox">إلغاء الصندوق المحيط بكلمات الدعوة (جعل الكلمات مباشرة فوق الخلفية)</label>
 </div>
 </div>
 </div>
@@ -309,7 +309,7 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 <p id="doorDescription" class="door-description"></p>
 <hr>
 <h3>ملف الباب للقالب المحدد</h3>
-<p class="help">يمكن رفع JPG أو PNG أو WEBP أو GIF متحرك أو فيديو MP4. لكل مناسبة ولكل قالب ملف مستقل.</p>
+<p class="help">يمكن رفع JPG أو PNG أو WEBP أو GIF متحرك أو فيديو MP4.</p>
 <label for="doorImageFile">اختيار صورة أو GIF أو فيديو MP4</label>
 <input id="doorImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,.mp4">
 <div id="doorImagePreviewBox" class="hidden">
@@ -322,7 +322,6 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 <button type="button" id="saveDoorImageBtn" class="primary-btn">رفع وحفظ ملف الباب</button>
 <button type="button" id="deleteDoorImageBtn" class="danger-btn">إزالة الملف المخصص</button>
 </div>
-<p class="help">يتطلب هذا القسم جدول template_doors مع العمود event_type وقيد فريد مركب على event_type وtemplate_id، ومخزناً عاماً باسم template-doors في Supabase.</p>
 </div>
 </details>
 
@@ -331,7 +330,7 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 <div class="settings-content">
 <label for="expiresAt">تاريخ ووقت إيقاف الرابط</label>
 <input id="expiresAt" type="datetime-local">
-<p class="help">هذا الإعداد لا يظهر للضيوف. اتركه فارغاً إذا أردت أن يبقى الرابط بلا انتهاء.</p>
+<p class="help">اتركه فارغاً إذا أردت أن يبقى الرابط بلا انتهاء.</p>
 </div>
 </details>
 
@@ -375,7 +374,7 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 
 <section id="view-bookings" class="view">
 <div class="page-heading"><div><h1>إدارة الحجوزات</h1><p>متابعة الحجوزات وتحديث حالتها</p></div><button type="button" class="light-btn" id="refreshBookingsBtn">↻ تحديث الحجوزات</button></div>
-<div class="panel-card"><div class="card-body"><p class="help">يعرض هذا القسم الحجوزات إذا كان جدول bookings موجوداً ومهيأً في Supabase.</p><div id="bookingsList"></div></div></div>
+<div class="panel-card"><div class="card-body"><p class="help">يعرض هذا القسم الحجوزات من قاعدة البيانات.</p><div id="bookingsList"></div></div></div>
 </section>
 
 <div id="status" class="status-box" role="status" aria-live="polite"></div>
@@ -389,57 +388,53 @@ hr{border:0;border-top:1px solid var(--border);margin:15px 0}
 const SUPABASE_URL="https://gnsnbretccdlwpmimuap.supabase.co";
 const SUPABASE_KEY="sb_publishable_-YuiIyffuaJ9TkLO_bxesA_rbFOqJKU";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
 const SITE_URL="https://bab-alfarah.pages.dev";
 
 const $=id=>document.getElementById(id);
 
-let editingId=null,busy=false,loading=false;
-let currentAudioUrl="",currentAudioType="none",currentLibrarySongId=null;
-let doorImageBusy=false,currentDoorImageUrl="",currentDoorMediaType="",doorPreviewObjectUrl="",doorLoadRequest=0;
-const MAX_AUDIO_SIZE=10*1024*1024,MAX_DOOR_IMAGE_SIZE=50*1024*1024;
-const AUDIO_BUCKET="invitation-audio",AUDIO_LIBRARY_BUCKET="invitation-audio",AUDIO_LIBRARY_TABLE="audio_library",DOOR_BUCKET="template-doors";
-const allowedDoorImageTypes=["image/jpeg","image/png","image/webp","image/gif","video/mp4"];
-let librarySongs=[],cachedInvitations=[],cachedBookings=[];
+let editingId=null,busy=false;
+let cachedInvitations=[],cachedBookings=[];
 let activeInvitationCategory="all";
 
 const eventNames={wedding:"دعوة زفاف",engagement:"دعوة عقد قران",henna:"دعوة حفلة الحنّة",circumcision:"دعوة مناسبة الختان",graduation:"دعوة حفلة التخرج",birthday:"دعوة عيد ميلاد"};
-const eventShortNames={wedding:"الزفاف",engagement:"عقد القران",henna:"الحنّة",circumcision:"الختان",graduation:"التخرج",birthday:"عيد الميلاد"};
 const openingPrompts={knock:"أطرق الباب وأكتشف دعوتك الخاصة ❤️",tap:"اضغط على الشاشة 3 مرات لفتح الدعوة ❤️"};
-const doorNames={1:"الملكي الذهبي",2:"الأبيض الملكي",3:"التراثي الشرقي",4:"الزجاجي الحديث",5:"الأخضر الملكي",6:"الوردي الرومانسي",7:"الأزرق الليلي",8:"الرخام الفخم",9:"القالب التاسع",10:"القالب العاشر",11:"القالب الحادي عشر",12:"القالب الثاني عشر",13:"القالب الثالث عشر",14:"القالب الرابع عشر"};
-const doorDescriptions={1:"أسود ملكي مع زخارف ذهبية.",2:"أبيض عاجي بلمسات ذهبية.",3:"خشب داكن بنقوش شرقية.",4:"زجاج حديث بإطار معدني.",5:"أخضر زمردي بتفاصيل نحاسية.",6:"وردي لؤلؤي رومانسي.",7:"أزرق ليلي بزخارف فضية.",8:"رخام عاجي بخطوط برونزية.",9:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",10:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",11:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",12:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",13:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به.",14:"قالب جديد — يمكنك إضافة صورة أو فيديو خاص به."};
-const audioNames={none:"بدون صوت",song:"أغنية",quran:"القرآن الكريم — سورة الروم، الآية 21"};
 
 function status(message){$("status").textContent=message}
+
 function navigate(view,scroll=true){
 if(!["dashboard","editor","invitations","bookings"].includes(view))view="dashboard";
 document.querySelectorAll(".view").forEach(el=>el.classList.toggle("active",el.id==="view-"+view));
 document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.view===view));
 if(scroll)window.scrollTo({top:0,behavior:"smooth"});
 }
+
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>navigate(btn.dataset.view)));
 document.querySelectorAll("[data-goto]").forEach(btn=>btn.addEventListener("click",()=>navigate(btn.dataset.goto)));
 ["quickNewBtn","dashboardNewBtn","invitationsNewBtn"].forEach(id=>$(id).addEventListener("click",()=>{if(busy){status("انتظر حتى يكتمل الحفظ.");return}resetForm();navigate("editor")}));
 $("backDashboardBtn").addEventListener("click",()=>navigate("dashboard"));
-$("dashboardAudioBtn").addEventListener("click",()=>{$("audioSettings").open=true;navigate("editor")});
 
 function getOpeningPrompt(){
 const selected=document.querySelector('input[name="openingPrompt"]:checked');
 return selected&&openingPrompts[selected.value]?selected.value:"knock";
 }
+
 function setOpeningPrompt(value){
 const safeValue=openingPrompts[value]?value:"knock";
 const radio=document.querySelector('input[name="openingPrompt"][value="'+safeValue+'"]');
 if(radio)radio.checked=true;
 $("openingPromptPreview").textContent=openingPrompts[safeValue];
 }
+
 document.querySelectorAll('input[name="openingPrompt"]').forEach(radio=>radio.addEventListener("change",()=>setOpeningPrompt(getOpeningPrompt())));
+
 function getEventType(){return eventNames[$("eventType").value]?$("eventType").value:"wedding"}
+
 function updateEventFields(){
 const type=getEventType(),single=["henna","circumcision","graduation","birthday"].includes(type);
 $("birthdayOptions").classList.toggle("hidden",type!=="birthday");
 $("secondaryNameGroup").classList.toggle("hidden",single);
 $("bride").required=!single;
+
 const settings={
 wedding:{primary:"اسم العريس",secondary:"اسم العروس",primaryPlaceholder:"اسم العريس",secondaryPlaceholder:"اسم العروس"},
 engagement:{primary:"اسم الطرف الأول",secondary:"اسم الطرف الثاني",primaryPlaceholder:"اسم الطرف الأول",secondaryPlaceholder:"اسم الطرف الثاني"},
@@ -448,6 +443,7 @@ circumcision:{primary:"اسم الطفل",primaryPlaceholder:"اسم الطفل"
 graduation:{primary:"اسم الخريج أو الخريجة",primaryPlaceholder:"اسم الخريج أو الخريجة"},
 birthday:{primary:"اسم صاحب عيد الميلاد",primaryPlaceholder:"اسم صاحب عيد الميلاد"}
 };
+
 const s=settings[type];
 $("primaryNameLabel").textContent=s.primary;
 $("groom").placeholder=s.primaryPlaceholder;
@@ -459,6 +455,7 @@ else if(person==="daughter")$("primaryNameLabel").textContent="اسم الابن
 else $("primaryNameLabel").textContent="اسم صاحب عيد الميلاد";
 }
 }
+
 $("eventType").addEventListener("change",updateEventFields);
 $("birthdayPersonType").addEventListener("change",updateEventFields);
 
@@ -469,9 +466,173 @@ $("inviteForm").reset();
 setOpeningPrompt("knock");
 $("published").checked=true;
 $("slug").value="invitation-"+Math.random().toString(36).substring(2,8);
+$("bgMediaUrl").value="";
+$("removeCardBox").checked=false;
 updateEventFields();
 }
+
+async function checkAuth(){
+const {data:{session}}=await db.auth.getSession();
+if(session){
+$("login").classList.add("hidden");
+$("panel").classList.remove("hidden");
+loadDashboardData();
+}else{
+$("login").classList.remove("hidden");
+$("panel").classList.add("hidden");
+}
+}
+
+$("loginBtn").addEventListener("click",async()=>{
+const email=$("email").value.trim(),password=$("password").value.trim();
+if(!email||!password){status("يرجى إدخال البريد الإلكتروني وكلمة المرور.");return}
+status("جارٍ تسجيل الدخول...");
+const {error}=await db.auth.signInWithPassword({email,password});
+if(error){status("خطأ في تسجيل الدخول: "+error.message)}
+else{status("تم تسجيل الدخول بنجاح.");checkAuth()}
+});
+
+$("logoutBtn").addEventListener("click",async()=>{
+await db.auth.signOut();
+checkAuth();
+});
+
+async function loadDashboardData(){
+status("جارٍ تحميل البيانات...");
+const {data:invitations,error}=await db.from("invitations").select("*").order("created_at",{ascending:false});
+if(error){status("تعذر تحميل الدعوات.");return}
+cachedInvitations=invitations||[];
+$("statAll").textContent=cachedInvitations.length;
+$("statPublished").textContent=cachedInvitations.filter(i=>i.is_published).length;
+renderRecentInvitations();
+renderInvitationsList();
+status("");
+}
+
+function renderRecentInvitations(){
+const recent=cachedInvitations.slice(0,5);
+if(!recent.length){$("recentInvitations").innerHTML='<div class="empty-state">لا توجد دعوات محفوظة حالياً.</div>';return}
+$("recentInvitations").innerHTML=recent.map(i=>`
+<div class="item">
+<div class="item-top">
+<strong>${i.groom_name||i.person_name||'بدون اسم'}</strong>
+<span class="badge ${i.is_published?'':'pending'}">${i.is_published?'منشورة':'غير منشورة'}</span>
+</div>
+<div class="item-details">الرابط: ${SITE_URL}/?invite=${i.slug}</div>
+<div class="item-actions">
+<button type="button" class="primary-btn" onclick="editInvite('${i.id}')">تعديل</button>
+<button type="button" class="light-btn" onclick="copyLink('${i.slug}')">نسخ الرابط</button>
+</div>
+</div>
+`).join('');
+}
+
+function renderInvitationsList(){
+const list=$("list");
+if(!cachedInvitations.length){list.innerHTML='<div class="empty-state">لا توجد دعوات.</div>';return}
+list.innerHTML=cachedInvitations.map(i=>`
+<div class="item">
+<div class="item-top">
+<strong>${i.groom_name||i.person_name||'بدون اسم'}</strong>
+<span class="badge ${i.is_published?'':'pending'}">${i.is_published?'منشورة':'غير منشورة'}</span>
+</div>
+<div class="item-details">النوع: ${eventNames[i.event_type]||'زفاف'}\nالرابط: <a href="${SITE_URL}/?invite=${i.slug}" target="_blank">${SITE_URL}/?invite=${i.slug}</a></div>
+<div class="item-actions">
+<button type="button" class="primary-btn" onclick="editInvite('${i.id}')">تعديل</button>
+<button type="button" class="light-btn" onclick="copyLink('${i.slug}')">نسخ الرابط</button>
+<button type="button" class="danger-btn" onclick="deleteInvite('${i.id}')">حذف</button>
+</div>
+</div>
+`).join('');
+}
+
+window.editInvite=function(id){
+const item=cachedInvitations.find(i=>i.id==id);
+if(!item)return;
+editingId=item.id;
+$("formTitle").textContent="تعديل الدعوة";
+$("eventType").value=item.event_type||"wedding";
 updateEventFields();
+$("slug").value=item.slug;
+$("groom").value=item.groom_name||item.person_name||"";
+$("bride").value=item.bride_name||"";
+$("date").value=item.event_date||"";
+$("day").value=item.event_day||"";
+$("time").value=item.event_time||"";
+$("venue").value=item.venue||"";
+$("phone").value=item.phone||"";
+$("map").value=item.map_url||"";
+$("notes").value=item.notes||"";
+$("bgMediaUrl").value=item.bg_media_url||item.bg_media||"";
+$("removeCardBox").checked=item.remove_card_box||item.removeCardBox||false;
+$("published").checked=item.is_published!==false;
+setOpeningPrompt(item.opening_prompt||"knock");
+navigate("editor");
+};
+
+window.copyLink=function(slug){
+const url=`${SITE_URL}/?invite=${slug}`;
+navigator.clipboard.writeText(url);
+status("تم نسخ رابط الدعوة: "+url);
+};
+
+window.deleteInvite=async function(id){
+if(!confirm("هل أنت تأكد من حذف هذه الدعوة؟"))return;
+status("جارٍ الحذف...");
+const {error}=await db.from("invitations").delete().eq("id",id);
+if(error){status("خطأ أثناء الحذف: "+error.message)}
+else{status("تم حذف الدعوة بنجاح.");loadDashboardData()}
+};
+
+$("saveBtn").addEventListener("click",async()=>{
+const groom=$("groom").value.trim();
+if(!groom){status("يرجى كتابة الاسم الرئيسي للدعوة.");return}
+
+const payload={
+event_type:$("eventType").value,
+slug:$("slug").value,
+groom_name:groom,
+person_name:groom,
+bride_name:$("bride").value.trim(),
+event_date:$("date").value,
+event_day:$("day").value.trim(),
+event_time:$("time").value.trim(),
+venue:$("venue").value.trim(),
+phone:$("phone").value.trim(),
+map_url:$("map").value.trim(),
+notes:$("notes").value.trim(),
+bg_media_url:$("bgMediaUrl").value.trim(),
+remove_card_box:$("removeCardBox").checked,
+opening_prompt:getOpeningPrompt(),
+is_published:$("published").checked,
+template:Number($("template").value||1)
+};
+
+status("جارٍ حفظ الدعوة...");
+let res;
+if(editingId){
+res=await db.from("invitations").update(payload).eq("id",editingId);
+}else{
+res=await db.from("invitations").insert([payload]);
+}
+
+if(res.error){
+status("خطأ أثناء الحفظ: "+res.error.message);
+}else{
+status("تم حفظ الدعوة بنجاح! ❤️");
+resetForm();
+loadDashboardData();
+navigate("invitations");
+}
+});
+
+$("dashboardRefreshBtn").addEventListener("click",loadDashboardData);
+$("refreshBtn").addEventListener("click",loadDashboardData);
+
+window.addEventListener("DOMContentLoaded",()=>{
+resetForm();
+checkAuth();
+});
 </script>
 </body>
 </html>
