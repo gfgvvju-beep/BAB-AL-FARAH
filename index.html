@@ -598,8 +598,10 @@ async function loadInvitation(){
   const template=item.template_id||item.template||1;
   applyTemplate(template);
 
-  // تشغيل وتطبيق خلفية الوسائط وإلغاء الصندوق لكل دعوة بشكل مستقل تماماً
-  applyBackgroundMedia(item.bg_media_url || item.bg_media || "", item.remove_card_box || item.removeCardBox || false);
+  // جلب رابط الخلفية وخيار إزالة الصندوق بجميع الاحتمالات الممكنة
+  const bgUrl = item.bg_media_url || item.bg_media || item.background_url || "";
+  const removeBox = item.remove_card_box === true || item.removeCardBox === true || item.remove_box === true;
+  applyBackgroundMedia(bgUrl, removeBox);
 
   // تهيئة الصوت فور وصول بيانات الدعوة، من دون انتظار تحميل فيديو أو صورة الباب.
   configureAudio(item.audio_type||"song",item.audio_url||"");
