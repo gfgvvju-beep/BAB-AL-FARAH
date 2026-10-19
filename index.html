@@ -33,15 +33,21 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .knock .leaf{animation:shake .16s 2}
 @keyframes shake{0%,100%{translate:0 0}40%{translate:2px 0}70%{translate:-2px 0}}
 #doorVideo{display:none;position:absolute;inset:0;z-index:5;width:100%;height:100%;object-fit:cover;background:#171310;pointer-events:none}
+
+/* خلفية الوسائط المتجاوبة خلف نصوص الدعوة */
 #bgMediaContainer{position:fixed;inset:0;z-index:-1;width:100vw;height:100vh;overflow:hidden;pointer-events:none;display:none}
 #bgMediaContainer img,#bgMediaContainer video{width:100%;height:100%;object-fit:cover}
+
 #start{position:fixed;z-index:25;bottom:calc(72px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:max-content;max-width:92vw;border:1px solid #e4c47e;border-radius:30px;padding:15px 22px;color:white;background:linear-gradient(135deg,#c6a15c,#96703a);font-size:18px;cursor:pointer;box-shadow:0 6px 25px #0006;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 #start:disabled{opacity:.8;cursor:not-allowed}
 .hint{display:none!important}
 .invite{display:none;position:relative;isolation:isolate;overflow:hidden;padding:35px 23px 38px;max-width:600px;width:calc(100% - 24px);margin:24px auto;color:var(--design-text,#574632);background:var(--design-bg,#fffaf0);border:5px double var(--design-border,#ddc58f);border-radius:24px;box-shadow:0 12px 35px #00000012,inset 0 0 0 5px #ffffff66}
 .invite.show{display:block;animation:rise .7s ease both}
+
+/* خيار إلغاء إطار وصندوق نصوص الدعوة */
 .invite.no-box{background:transparent!important;border:none!important;box-shadow:none!important}
 .invite.no-box:before,.invite.no-box:after{display:none!important}
+
 @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .invite:before,.invite:after{position:absolute;z-index:-1;pointer-events:none;color:var(--design-accent,#a27b3f);opacity:.2;font-family:Georgia,serif;line-height:1;white-space:pre}
 .invite:before{content:"❦\A❀  ✿";top:7px;right:8px;font-size:clamp(38px,10vw,66px);text-align:right}
@@ -92,6 +98,8 @@ body{background:#fffdf9;color:#42352d;text-align:center;overflow-x:hidden}
 .contact-note{font-size:12px;color:var(--design-text,#897a69);margin-top:12px}
 .audio-control{display:none;margin:18px auto;padding:11px 20px;border-radius:25px;border:1px solid #d4b875;background:#fff8e9;color:#8c6831;font:inherit;font-size:16px;cursor:pointer}
 .audio-control.show{display:inline-block}
+.petal{position:fixed;top:-30px;z-index:10;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) translateX(var(--drift)) rotate(720deg);opacity:0}}
 .invite.design-1{--design-bg:#fffaf0;--design-card:#fffdf8;--design-text:#493522;--design-accent:#a27b3f;--design-border:#d9bd7c;--heart-color:#c58b93}
 .invite.design-2{--design-bg:#fff;--design-card:#f8f8f5;--design-text:#555b62;--design-accent:#8b929b;--design-border:#d6d9dc;--heart-color:#aab4bf}
 .invite.design-3{--design-bg:#f8eee4;--design-card:#fff8ef;--design-text:#563321;--design-accent:#874b2b;--design-border:#c69a69;--heart-color:#a95d45}
@@ -218,6 +226,29 @@ function isVideoUrl(value){
   return /\.(mp4|webm|mov|m4v)(?:$)/i.test(u.pathname);
  }catch(e){return false}
 }
+
+// دالة تطبيق خلفية الوسائط المتجاوبة وإلغاء الصندوق لكل دعوة
+function applyBackgroundMedia(url, removeBox){
+ const container = $("bgMediaContainer");
+ const invite = $("invite");
+ if(removeBox){
+  invite.classList.add("no-box");
+ } else {
+  invite.classList.remove("no-box");
+ }
+ if(!url){
+  container.style.display = "none";
+  container.innerHTML = "";
+  return;
+ }
+ container.style.display = "block";
+ if(isVideoUrl(url)){
+  container.innerHTML = `<video src="${url}" autoplay muted loop playsinline webkit-playsinline></video>`;
+ } else {
+  container.innerHTML = `<img src="${url}" alt="خلفية الدعوة">`;
+ }
+}
+
 function clearDoorImage(){
  selectedDoorImageUrl="";
  $("arch").style.removeProperty("--door-image");
@@ -347,28 +378,6 @@ async function loadTemplateDoor(templateId,eventType=currentEventType){
   return false;
  }
 }
-
-function applyBackgroundMedia(url, removeBox){
- const container = $("bgMediaContainer");
- const invite = $("invite");
- if(removeBox){
-  invite.classList.add("no-box");
- } else {
-  invite.classList.remove("no-box");
- }
- if(!url){
-  container.style.display = "none";
-  container.innerHTML = "";
-  return;
- }
- container.style.display = "block";
- if(isVideoUrl(url)){
-  container.innerHTML = `<video src="${url}" autoplay muted loop playsinline webkit-playsinline></video>`;
- } else {
-  container.innerHTML = `<img src="${url}" alt="خلفية الدعوة">`;
- }
-}
-
 function showField(id,value,fallback){$(id).textContent=value||fallback}
 function formatDate(value){if(!value)return "";const p=String(value).split("-");return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:value}
 function showNotes(value){
@@ -523,7 +532,7 @@ async function loadInvitation(){
   const [{data:expiry,error:expiryError},{data,error}]=await Promise.all([expiryRequest,invitationRequest]);
 
   if(expiryError){
-   console.error("تعذر التحقق من صلاحية الدعوة:",expiryError);
+   console.warn("تعذر التحقق من صلاحية الدعوة:",expiryError);
    showErrorInvitation("تعذر التحقق من الدعوة","لم نتمكن من التحقق من هذه الدعوة. حدّث الصفحة وحاول مرة أخرى.");
    return;
   }
@@ -561,114 +570,266 @@ async function loadInvitation(){
    if(!promptLoaded){
     try{
      const {data:promptRow,error:promptError}=await db.from("invitations").select("opening_prompt").eq("slug",slug).maybeSingle();
-     if(!promptError&&promptRow){
+     if(!promptError&&promptRow&&promptRow.opening_prompt!==undefined&&promptRow.opening_prompt!==null){
       openingPrompt=readOpeningPrompt(promptRow);
+      promptLoaded=true;
      }
-    }catch(e){}
+    }catch(promptLookupError){console.warn("تعذرت قراءة عبارة الافتتاح:",promptLookupError)}
    }
+   if(!promptLoaded)openingPrompt=readOpeningPrompt(item);
+  }
+
+  if(item.expires_at){
+   const exp=String(item.expires_at).slice(0,10),now=new Date();
+   const today=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
+   if(exp<today){showExpiredInvitation();return}
   }
 
   configureEvent(item);
-  applyTemplate(item.template||1);
-  showField("date",formatDate(item.event_date||item.date),"يحدد لاحقاً");
-  showField("time",item.event_time||item.time,"الثامنة مساءً");
-  showField("place",item.venue||item.place,"قاعة الأفراح");
-  showMapLink(item.map_url||item.map);
+  showField("groom",item.groom_name||item.person_name,defaults.groom);
+  showField("bride",item.bride_name,defaults.bride);
+  showField("date",formatDate(item.wedding_date),defaults.date);
+  showField("time",item.wedding_time,defaults.time);
+  showField("place",item.venue_name,defaults.place);
   showNotes(item.notes);
-  showGroomContact(item.phone);
-  setupWhatsAppShare();
+  showMapLink(item.map_url);
+  showGroomContact(item.contact_phone);
 
+  const template=item.template_id||item.template||1;
+  applyTemplate(template);
+
+  // تشغيل وتطبيق خلفية الوسائط وإلغاء الصندوق لكل دعوة بشكل مستقل تماماً
   applyBackgroundMedia(item.bg_media_url || item.bg_media || "", item.remove_card_box || item.removeCardBox || false);
 
-  const audioType=item.audio_type||"song";
-  const audioUrl=item.audio_url||"";
-  configureAudio(audioType,audioUrl);
+  // تهيئة الصوت فور وصول بيانات الدعوة، من دون انتظار تحميل فيديو أو صورة الباب.
+  configureAudio(item.audio_type||"song",item.audio_url||"");
+  if(item.day_name)$("date").textContent+=" — "+item.day_name;
+  setupWhatsAppShare();
 
-  const doorImage=extractDoorImage(item);
-  if(doorImage){
-   setDoorImage(doorImage);
+  // تحميل وسائط الباب بالخلفية حتى لا يتأخر زر الفتح بسبب تحميل الفيديو.
+  const direct=extractDoorImage(item);
+  if(direct){
+   setDoorImage(direct);
   }else{
-   await loadTemplateDoor(item.template||1,currentEventType);
+   await loadTemplateDoor(template,currentEventType);
   }
 
+  // لا ننتظر اكتمال تنزيل ملف الوسائط؛ الفيديو والصورة يواصلان التحميل بالخلفية.
   enableInvitation();
+  doorMediaLoadPromise.catch(e=>console.warn("تعذر تجهيز وسائط الباب",e));
  }catch(e){
-  console.error("خطأ غير متوقع أثناء تحميل الدعوة:",e);
-  showErrorInvitation("خطأ في الاتصال","تعذر تحميل الدعوة حالياً. تأكد من اتصالك بالإنترنت وحاول مرة أخرى.");
+  console.error("Invitation loading error:",e);
+  showErrorInvitation("تعذر تحميل الدعوة","حدث خطأ أثناء التحقق من الدعوة. حاول تحديث الصفحة، وإذا استمرت المشكلة فتحقق من اتصال قاعدة البيانات.");
  }
 }
-
+function petals(){
+ const symbols=["🌸","🌹","✿","❀","🌺","💮"];
+ for(let i=0;i<30;i++)setTimeout(()=>{
+  const p=document.createElement("span");
+  p.className="petal";
+  p.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+  p.style.left=Math.random()*100+"vw";
+  p.style.fontSize=14+Math.random()*15+"px";
+  p.style.setProperty("--drift",Math.random()*180-90+"px");
+  p.style.animationDuration=4+Math.random()*5+"s";
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),10000);
+ },i*45);
+}
+function knockSound(){
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
+  const ctx=new AC(),osc=ctx.createOscillator(),gain=ctx.createGain();
+  osc.type="sine";
+  osc.frequency.setValueAtTime(100,ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(45,ctx.currentTime+.12);
+  gain.gain.setValueAtTime(.35,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.14);
+  osc.connect(gain);gain.connect(ctx.destination);
+  osc.start();osc.stop(ctx.currentTime+.15);
+  osc.onended=()=>ctx.close();
+ }catch(e){}
+}
 function stopDoorVideo(){
  const video=$("doorVideo");
- if(video){video.pause();video.currentTime=0}
+ doorVideoActive=false;
+ doorVideoReady=false;
+ video.pause();
+ video.onended=null;
+ video.onerror=null;
+ video.oncanplay=null;
+ video.removeAttribute("src");
+ video.load();
+ video.style.display="none";
 }
-async function openInvitation(){
- if(openingStarted||openingFinished||invitationExpired||!invitationCheckComplete)return;
- openingStarted=true;
- $("start").disabled=true;
- $("start").textContent="تفتح الدعوة...";
+async function startDoorVideo(){
+ const video=$("doorVideo");
 
- stopDoorVideo();
- const frame=$("doorFrame");
- frame.classList.add("open");
- await playInvitationAudio();
-
- setTimeout(()=>{
-  openingFinished=true;
-  frame.style.opacity="0";
-  setTimeout(()=>{
-   frame.style.display="none";
-   $("start").style.display="none";
-   $("hint").style.display="none";
-   $("invite").classList.add("show");
-  },800);
- },1150);
-}
-
-function handleDoorKnock(){
- if(openingStarted||openingFinished||invitationExpired||!invitationCheckComplete)return;
- if(openingPrompt==="tap"){
-  knockCount++;
-  clearTimeout(knockTimer);
-  if(knockCount>=3){
-   openInvitation();
-  }else{
-   const left=3-knockCount;
-   $("start").textContent=`ضغطات متبقية: ${left} ❤️`;
-   const arch=$("arch");
-   arch.classList.add("knock");
-   setTimeout(()=>arch.classList.remove("knock"),160);
-   knockTimer=setTimeout(()=>{knockCount=0;$("start").textContent=getOpeningText()},1800);
-  }
+ if(!isVideoUrl(selectedDoorImageUrl)){
+  finishOpening();
   return;
  }
 
- knockCount++;
- clearTimeout(knockTimer);
- const arch=$("arch");
- arch.classList.add("knock");
- setTimeout(()=>arch.classList.remove("knock"),160);
+ doorVideoActive=true;
+ video.style.display="block";
+ video.controls=false;
+ video.playsInline=true;
+ video.setAttribute("playsinline","");
+ video.setAttribute("webkit-playsinline","");
+ video.preload="auto";
+ video.loop=false;
+ video.autoplay=false;
+ video.muted=true;
 
- if(knockCount>=3){
-  openInvitation();
+ let finishedPlayback=false;
+ let playbackStarted=false;
+ let playbackTimeout=null;
+
+ const cleanup=()=>{
+  if(playbackTimeout){
+   clearTimeout(playbackTimeout);
+   playbackTimeout=null;
+  }
+  video.removeEventListener("canplay",tryPlayback);
+  video.removeEventListener("loadeddata",tryPlayback);
+  video.removeEventListener("error",failPlayback);
+ };
+
+ const failPlayback=()=>{
+  if(!doorVideoActive||openingFinished||finishedPlayback)return;
+  finishedPlayback=true;
+  cleanup();
+  doorVideoActive=false;
+  video.pause();
+  video.style.display="none";
+  $("start").disabled=false;
+  $("start").textContent="تعذر تشغيل الفيديو — اضغط للمحاولة";
+  $("hint").textContent="تحقق من اتصال الإنترنت ثم اضغط للمحاولة";
+  openingStarted=false;
+  knockCount=0;
+  $("arch").classList.remove("knock");
+ };
+
+ async function tryPlayback(){
+  if(!doorVideoActive||openingFinished||finishedPlayback||playbackStarted)return;
+  if(video.readyState<2)return;
+
+  playbackStarted=true;
+  if(playbackTimeout){clearTimeout(playbackTimeout);playbackTimeout=null}
+  try{video.currentTime=0}catch(e){}
+
+  try{
+   await video.play();
+  }catch(firstError){
+   if(!doorVideoActive||openingFinished)return;
+   try{
+    video.muted=true;
+    await video.play();
+   }catch(secondError){
+    console.warn("تعذر تشغيل فيديو الباب",secondError);
+    failPlayback();
+   }
+  }
+ }
+
+ video.onended=()=>{
+  if(!doorVideoActive||openingFinished||finishedPlayback)return;
+  finishedPlayback=true;
+  cleanup();
+  doorVideoActive=false;
+  video.style.display="none";
+  finishOpening();
+ };
+
+ video.addEventListener("error",failPlayback);
+ video.addEventListener("canplay",tryPlayback);
+ video.addEventListener("loadeddata",tryPlayback);
+
+ if(video.readyState>=2){
+  tryPlayback();
  }else{
-  const left=3-knockCount;
-  $("start").textContent=`طرقات متبقية: ${left} ❤️`;
-  knockTimer=setTimeout(()=>{knockCount=0;$("start").textContent=getOpeningText()},1800);
+  video.load();
+  playbackTimeout=setTimeout(()=>{
+   if(doorVideoActive&&!openingFinished&&!playbackStarted)failPlayback();
+  },10000);
  }
 }
+function finishOpening(){
+ if(invitationExpired||openingFinished)return;
+ openingFinished=true;
+ doorVideoActive=false;
+ const video=$("doorVideo");
+ video.pause();
+ video.style.display="none";
+ const arch=$("arch");
+ arch.classList.remove("knock");
+ arch.classList.add("open");
+ petals();
+ $("hint").style.setProperty("display","none","important");
+ $("start").style.display="none";
+ $("start").disabled=true;
+ $("doorFrame").style.transform="scale(1.02)";
+ setTimeout(()=>$("doorFrame").style.opacity="0",500);
+ setTimeout(()=>$("doorFrame").hidden=true,1050);
+ $("invite").style.display="block";
+ $("invite").classList.add("show");
+ setTimeout(()=>{if(!invitationExpired)$("invite").scrollIntoView({behavior:"smooth",block:"start"})},250);
+}
+function handleKnock(){
+ if(!invitationCheckComplete||invitationExpired)return;
+ if(openingStarted&&doorVideoActive)return;
+ if(openingStarted&&!doorVideoActive&&!openingFinished){
+  openingStarted=false;
+  knockCount=0;
+  $("start").disabled=false;
+  $("start").textContent=getOpeningText();
+ }
 
-$("arch").addEventListener("click",handleDoorKnock);
-$("arch").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")handleDoorKnock()});
-$("start").addEventListener("click",()=>{
- if(openingPrompt==="tap"){
-  handleDoorKnock();
+ knockCount++;
+ const arch=$("arch");
+ arch.classList.remove("knock");
+ void arch.offsetWidth;
+ arch.classList.add("knock");
+ knockSound();
+
+ if(knockCount<3){
+  $("start").textContent=openingPrompt==="tap"?"الضغطة "+knockCount+" من 3":"الدقّة "+knockCount+" من 3";
+  if(knockTimer)clearTimeout(knockTimer);
+  knockTimer=setTimeout(()=>{
+   if(knockCount>0&&!openingStarted){
+    knockCount=0;
+    $("start").textContent=getOpeningText();
+    $("hint").textContent=openingPrompt==="tap"?"اضغط على الشاشة أو الزر 3 مرات حتى تُفتح الدعوة":"اطرق الباب 3 مرات حتى تُفتح الدعوة";
+    arch.classList.remove("knock");
+   }
+  },2200);
  }else{
-  openInvitation();
+  openingStarted=true;
+  if(knockTimer)clearTimeout(knockTimer);
+  $("start").disabled=true;
+  $("start").textContent="الباب ينفتح...";
+  $("hint").textContent="أهلاً وسهلاً بكم ❤️";
+
+  // يبدأ تشغيل الموسيقى مباشرة مع الضغطة الثالثة، بالتزامن مع فيديو الباب.
+  playInvitationAudio();
+
+  if(isVideoUrl(selectedDoorImageUrl)){
+   startDoorVideo();
+  }else{
+   setTimeout(finishOpening,250);
+  }
+ }
+}
+$("start").addEventListener("click",handleKnock);
+$("arch").addEventListener("click",handleKnock);
+$("arch").addEventListener("keydown",e=>{
+ if(e.key==="Enter"||e.key===" "){
+  e.preventDefault();
+  handleKnock();
  }
 });
-
-window.addEventListener("DOMContentLoaded",loadInvitation);
+loadInvitation();
 </script>
 </body>
 </html>
